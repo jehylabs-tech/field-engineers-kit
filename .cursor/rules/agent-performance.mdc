@@ -1,0 +1,50 @@
+---
+description: Cursor agent performance limits — HMR-first, no production rebuild loops
+alwaysApply: true
+---
+
+# Agent Performance & Scope Limits
+
+## CRITICAL — Prompt latency (read first)
+
+Slow prompts in this repo almost always come from **`npm run preview` / `next build`** (2–4+ min on Windows) or **kill→rebuild loops**. Treat those as last resort.
+
+- Default local server: **`npm run dev`** (Turbopack HMR). After file save, changes appear on refresh — **no rebuild**.
+- **Never** run `npm run preview`, `next build`, `npm run dev:stable`, or kill port 3000 / all Node processes for ordinary UI/text/CSS/calculator edits.
+- Phrases like **「리빌딩」**, **「rebuild」**, **「적용 후 리빌딩」** mean *make sure localhost shows the change*. On Turbopack that is already done after save — **do not** start a production build. Reply that HMR/dev server has the update.
+- Run a production build **only** when the user clearly asks for production preview, e.g. **「프로덕션 리빌딩」**, **「production rebuild」**, **「npm run preview」**, or **「click-speed preview without HMR」**.
+- If port 3000 is already serving `next start` (preview) during Cursor edit work, switch it to **`npm run dev`** once, then keep it. Do not keep rebuilding preview.
+
+## Local server (HMR-first)
+
+- Prefer one long-lived Turbopack process. Do not restart unless the server is down, returning 500s, or the user runs repair.
+- Skip route warm unless `FEK_WARM=1` (already opt-in in scripts).
+
+## Prompt speed — tool use
+
+- Prefer **direct file edits** over exploration agents, broad greps, or multi-step research for localized UI tasks.
+- Do **not** use the Task/subagent tool for small single-file or few-file UI fixes.
+- Skip browser verification unless the user asks to verify visually or a bug needs runtime proof.
+- Skip committing, PR creation, and long installs unless explicitly requested.
+- Prefer one short shell check over long-running awaits (full builds, route warm, multi-minute polls).
+- Do **not** `AwaitShell` / poll multi-minute builds unless the user explicitly requested a production rebuild.
+
+## Code search scope
+
+- Restrict code search to the **specific file mentioned** or files **directly imported** by it.
+- Do **not** run workspace-wide searches for small UI/CSS fixes.
+- Prefer reading the open or named file first; expand scope only when the fix clearly depends on another file.
+
+## Web search
+
+- Do **not** run external web searches unless the user **explicitly requests** them.
+
+## Multi-file analysis
+
+- Limit multi-file analysis loops. For targeted fixes, edit **only the specified component file** directly.
+- Avoid broad refactors or cross-repo exploration when the task is localized.
+
+## Terminal & build checks
+
+- After code edits, run at most **one** short check (lint/test on one file) only if needed. Prefer zero extra shell after a simple UI edit.
+- Prefer `npm run test -- <file>` over full suite / full production build.

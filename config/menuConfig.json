@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "updatedAt": "2026-08-12",
+  "categories": [
+    {
+      "id": "piping",
+      "label": "Piping",
+      "description": "Pipe sizing, pressure drop, and material take-off tools.",
+      "isVisible": true,
+      "order": 1
+    },
+    {
+      "id": "mechanical",
+      "label": "Mechanical",
+      "description": "Rotating equipment, torque, and mechanical clearance calculators.",
+      "isVisible": true,
+      "order": 2
+    },
+    {
+      "id": "procurement",
+      "label": "Procurement",
+      "description": "Material cost, lead time, and vendor comparison utilities.",
+      "isVisible": true,
+      "order": 3
+    },
+    {
+      "id": "inspection",
+      "label": "Inspection",
+      "description": "NDT scheduling, thickness monitoring, and compliance checklists.",
+      "isVisible": true,
+      "order": 4
+    },
+    {
+      "id": "electrical",
+      "label": "Electrical",
+      "description": "Cable sizing, load calculations, and power distribution tools.",
+      "isVisible": false,
+      "order": 5
+    },
+    {
+      "id": "instrumentation",
+      "label": "Instrumentation",
+      "description": "Loop diagrams, calibration, and signal conversion calculators.",
+      "isVisible": false,
+      "order": 6
+    },
+    {
+      "id": "hvac",
+      "label": "HVAC",
+      "description": "Airflow, duct sizing, and thermal load estimation tools.",
+      "isVisible": false,
+      "order": 7
+    },
+    {
+      "id": "structural",
+      "label": "Structural",
+      "description": "Beam loads, anchor bolt, and structural steel calculators.",
+      "isVisible": false,
+      "order": 8
+    }
+  ]
+}

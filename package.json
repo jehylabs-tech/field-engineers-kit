@@ -1,0 +1,45 @@
+{
+  "name": "field-engineer-kit",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "node scripts/local.mjs --watch --turbo",
+    "dev:stable": "node scripts/local.mjs",
+    "dev:watch": "node scripts/local.mjs --watch --turbo",
+    "dev:webpack": "node scripts/local.mjs --watch",
+    "dev:clean": "node scripts/local.mjs --watch --turbo --clean",
+    "dev:repair": "node scripts/repair-dev.mjs",
+    "dev:repair:start": "node scripts/repair-dev.mjs --start",
+    "preview": "next build && next start -p 3000",
+    "dev:turbo": "node scripts/local.mjs --watch --turbo",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.12.4",
+    "@supabase/supabase-js": "^2.45.0",
+    "@vercel/analytics": "^2.0.1",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.8",
+    "lucide-react": "^1.33.0",
+    "next": "14.2.5",
+    "qrcode.react": "^4.2.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.10",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "autoprefixer": "^10.4.19",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "14.2.5",
+    "postcss": "^8.4.39",
+    "tailwindcss": "^3.4.6",
+    "typescript": "^5.5.3",
+    "vitest": "^4.1.10"
+  }
+}

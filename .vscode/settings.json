@@ -1,0 +1,30 @@
+{
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/.next/**": true,
+    "**/out/**": true,
+    "**/build/**": true,
+    "**/coverage/**": true,
+    "**/.git/objects/**": true,
+    "**/.git/lfs/**": true,
+    "**/.turbo/**": true,
+    "**/.vercel/**": true,
+    "**/*.tsbuildinfo": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/.next": true,
+    "**/out": true,
+    "**/build": true,
+    "**/coverage": true,
+    "**/.turbo": true,
+    "**/.vercel": true,
+    "**/*.tsbuildinfo": true
+  },
+  "files.exclude": {
+    "**/.next": true,
+    "**/*.tsbuildinfo": true
+  },
+  "search.followSymlinks": false,
+  "typescript.tsserver.maxTsServerMemory": 3072
+}

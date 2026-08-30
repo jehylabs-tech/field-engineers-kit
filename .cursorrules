@@ -1,0 +1,3 @@
+# Project Rules
+- NEVER modify existing grid ratio (e.g. col-span-*, grid-cols-*) or layout structure of individual calculator pages.
+- Keep all calculator-specific component inner layouts preserved 100%.

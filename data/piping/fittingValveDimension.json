@@ -1,0 +1,2208 @@
+{
+  "standard": "ASME B16.9 / B16.10",
+  "version": 4,
+  "updatedAt": "2026-08-20",
+  "notes": "Valve FTF from ASME B16.10 (Class 150/300 flanged). Elbow/tee/reducer from ASME B16.9 STD. Weights are screening estimates. Verify against the governing edition before procurement.",
+  "components": [
+    {
+      "id": "gate_valve",
+      "label": "Gate Valve (Flanged RF)",
+      "standard": "ASME B16.10",
+      "dimensionLabel": "Face-to-face (L)",
+      "sizes": [
+        {
+          "nps": "0.5",
+          "npsLabel": "1/2\"",
+          "dn": 15,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 108,
+              "weightKg": 0.6
+            },
+            {
+              "class": "300",
+              "dimensionMm": 152,
+              "weightKg": 0.9
+            }
+          ]
+        },
+        {
+          "nps": "0.75",
+          "npsLabel": "3/4\"",
+          "dn": 20,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 117,
+              "weightKg": 1.5
+            },
+            {
+              "class": "300",
+              "dimensionMm": 165,
+              "weightKg": 2
+            }
+          ]
+        },
+        {
+          "nps": "1",
+          "npsLabel": "1\"",
+          "dn": 25,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 127,
+              "weightKg": 2.6
+            },
+            {
+              "class": "300",
+              "dimensionMm": 165,
+              "weightKg": 3.6
+            }
+          ]
+        },
+        {
+          "nps": "1.5",
+          "npsLabel": "1-1/2\"",
+          "dn": 40,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 165,
+              "weightKg": 6
+            },
+            {
+              "class": "300",
+              "dimensionMm": 190,
+              "weightKg": 8.3
+            }
+          ]
+        },
+        {
+          "nps": "2",
+          "npsLabel": "2\"",
+          "dn": 50,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 178,
+              "weightKg": 10.9
+            },
+            {
+              "class": "300",
+              "dimensionMm": 216,
+              "weightKg": 15
+            }
+          ]
+        },
+        {
+          "nps": "3",
+          "npsLabel": "3\"",
+          "dn": 80,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 203,
+              "weightKg": 25
+            },
+            {
+              "class": "300",
+              "dimensionMm": 282,
+              "weightKg": 34.4
+            }
+          ]
+        },
+        {
+          "nps": "4",
+          "npsLabel": "4\"",
+          "dn": 100,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 229,
+              "weightKg": 45
+            },
+            {
+              "class": "300",
+              "dimensionMm": 305,
+              "weightKg": 62
+            }
+          ]
+        },
+        {
+          "nps": "6",
+          "npsLabel": "6\"",
+          "dn": 150,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 267,
+              "weightKg": 103.3
+            },
+            {
+              "class": "300",
+              "dimensionMm": 403,
+              "weightKg": 142.4
+            }
+          ]
+        },
+        {
+          "nps": "8",
+          "npsLabel": "8\"",
+          "dn": 200,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 292,
+              "weightKg": 186.3
+            },
+            {
+              "class": "300",
+              "dimensionMm": 419,
+              "weightKg": 256.7
+            }
+          ]
+        },
+        {
+          "nps": "10",
+          "npsLabel": "10\"",
+          "dn": 250,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 330,
+              "weightKg": 294.4
+            },
+            {
+              "class": "300",
+              "dimensionMm": 457,
+              "weightKg": 405.7
+            }
+          ]
+        },
+        {
+          "nps": "12",
+          "npsLabel": "12\"",
+          "dn": 300,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 356,
+              "weightKg": 427.9
+            },
+            {
+              "class": "300",
+              "dimensionMm": 502,
+              "weightKg": 589.5
+            }
+          ]
+        },
+        {
+          "nps": "14",
+          "npsLabel": "14\"",
+          "dn": 350,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 381,
+              "weightKg": 586.9
+            },
+            {
+              "class": "300",
+              "dimensionMm": 762,
+              "weightKg": 808.6
+            }
+          ]
+        },
+        {
+          "nps": "16",
+          "npsLabel": "16\"",
+          "dn": 400,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 406,
+              "weightKg": 771.7
+            },
+            {
+              "class": "300",
+              "dimensionMm": 838,
+              "weightKg": 1063.2
+            }
+          ]
+        },
+        {
+          "nps": "18",
+          "npsLabel": "18\"",
+          "dn": 450,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 432,
+              "weightKg": 982.4
+            },
+            {
+              "class": "300",
+              "dimensionMm": 914,
+              "weightKg": 1353.6
+            }
+          ]
+        },
+        {
+          "nps": "20",
+          "npsLabel": "20\"",
+          "dn": 500,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 457,
+              "weightKg": 1219.3
+            },
+            {
+              "class": "300",
+              "dimensionMm": 991,
+              "weightKg": 1679.9
+            }
+          ]
+        },
+        {
+          "nps": "24",
+          "npsLabel": "24\"",
+          "dn": 600,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 508,
+              "weightKg": 1771.8
+            },
+            {
+              "class": "300",
+              "dimensionMm": 1143,
+              "weightKg": 2441.2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "globe_valve",
+      "label": "Globe Valve (Flanged RF)",
+      "standard": "ASME B16.10",
+      "dimensionLabel": "Face-to-face (L)",
+      "sizes": [
+        {
+          "nps": "0.5",
+          "npsLabel": "1/2\"",
+          "dn": 15,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 108,
+              "weightKg": 0.7
+            },
+            {
+              "class": "300",
+              "dimensionMm": 152,
+              "weightKg": 1
+            }
+          ]
+        },
+        {
+          "nps": "0.75",
+          "npsLabel": "3/4\"",
+          "dn": 20,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 117,
+              "weightKg": 1.7
+            },
+            {
+              "class": "300",
+              "dimensionMm": 165,
+              "weightKg": 2.3
+            }
+          ]
+        },
+        {
+          "nps": "1",
+          "npsLabel": "1\"",
+          "dn": 25,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 127,
+              "weightKg": 3
+            },
+            {
+              "class": "300",
+              "dimensionMm": 165,
+              "weightKg": 4.2
+            }
+          ]
+        },
+        {
+          "nps": "1.5",
+          "npsLabel": "1-1/2\"",
+          "dn": 40,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 165,
+              "weightKg": 7
+            },
+            {
+              "class": "300",
+              "dimensionMm": 190,
+              "weightKg": 9.6
+            }
+          ]
+        },
+        {
+          "nps": "2",
+          "npsLabel": "2\"",
+          "dn": 50,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 203,
+              "weightKg": 12.6
+            },
+            {
+              "class": "300",
+              "dimensionMm": 232,
+              "weightKg": 17.4
+            }
+          ]
+        },
+        {
+          "nps": "3",
+          "npsLabel": "3\"",
+          "dn": 80,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 241,
+              "weightKg": 28.8
+            },
+            {
+              "class": "300",
+              "dimensionMm": 318,
+              "weightKg": 39.9
+            }
+          ]
+        },
+        {
+          "nps": "4",
+          "npsLabel": "4\"",
+          "dn": 100,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 292,
+              "weightKg": 52
+            },
+            {
+              "class": "300",
+              "dimensionMm": 356,
+              "weightKg": 72
+            }
+          ]
+        },
+        {
+          "nps": "6",
+          "npsLabel": "6\"",
+          "dn": 150,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 406,
+              "weightKg": 119.4
+            },
+            {
+              "class": "300",
+              "dimensionMm": 495,
+              "weightKg": 165.3
+            }
+          ]
+        },
+        {
+          "nps": "8",
+          "npsLabel": "8\"",
+          "dn": 200,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 495,
+              "weightKg": 215.3
+            },
+            {
+              "class": "300",
+              "dimensionMm": 521,
+              "weightKg": 298.2
+            }
+          ]
+        },
+        {
+          "nps": "10",
+          "npsLabel": "10\"",
+          "dn": 250,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 622,
+              "weightKg": 340.2
+            },
+            {
+              "class": "300",
+              "dimensionMm": 559,
+              "weightKg": 471.1
+            }
+          ]
+        },
+        {
+          "nps": "12",
+          "npsLabel": "12\"",
+          "dn": 300,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 698,
+              "weightKg": 494.4
+            },
+            {
+              "class": "300",
+              "dimensionMm": 635,
+              "weightKg": 684.6
+            }
+          ]
+        },
+        {
+          "nps": "14",
+          "npsLabel": "14\"",
+          "dn": 350,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 787,
+              "weightKg": 678.2
+            },
+            {
+              "class": "300",
+              "dimensionMm": 762,
+              "weightKg": 939
+            }
+          ]
+        },
+        {
+          "nps": "16",
+          "npsLabel": "16\"",
+          "dn": 400,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 914,
+              "weightKg": 891.7
+            },
+            {
+              "class": "300",
+              "dimensionMm": 838,
+              "weightKg": 1234.7
+            }
+          ]
+        },
+        {
+          "nps": "18",
+          "npsLabel": "18\"",
+          "dn": 450,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 978,
+              "weightKg": 1135.2
+            },
+            {
+              "class": "300",
+              "dimensionMm": 914,
+              "weightKg": 1571.9
+            }
+          ]
+        },
+        {
+          "nps": "20",
+          "npsLabel": "20\"",
+          "dn": 500,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 1054,
+              "weightKg": 1408.9
+            },
+            {
+              "class": "300",
+              "dimensionMm": 991,
+              "weightKg": 1950.8
+            }
+          ]
+        },
+        {
+          "nps": "24",
+          "npsLabel": "24\"",
+          "dn": 600,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 1295,
+              "weightKg": 2047.5
+            },
+            {
+              "class": "300",
+              "dimensionMm": 1143,
+              "weightKg": 2834.9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "check_valve",
+      "label": "Swing Check Valve",
+      "standard": "ASME B16.10",
+      "dimensionLabel": "Face-to-face (L)",
+      "sizes": [
+        {
+          "nps": "0.5",
+          "npsLabel": "1/2\"",
+          "dn": 15,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 108,
+              "weightKg": 0.5
+            },
+            {
+              "class": "300",
+              "dimensionMm": 152,
+              "weightKg": 0.6
+            }
+          ]
+        },
+        {
+          "nps": "0.75",
+          "npsLabel": "3/4\"",
+          "dn": 20,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 117,
+              "weightKg": 1
+            },
+            {
+              "class": "300",
+              "dimensionMm": 165,
+              "weightKg": 1.4
+            }
+          ]
+        },
+        {
+          "nps": "1",
+          "npsLabel": "1\"",
+          "dn": 25,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 127,
+              "weightKg": 1.9
+            },
+            {
+              "class": "300",
+              "dimensionMm": 165,
+              "weightKg": 2.6
+            }
+          ]
+        },
+        {
+          "nps": "1.5",
+          "npsLabel": "1-1/2\"",
+          "dn": 40,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 165,
+              "weightKg": 4.3
+            },
+            {
+              "class": "300",
+              "dimensionMm": 190,
+              "weightKg": 5.9
+            }
+          ]
+        },
+        {
+          "nps": "2",
+          "npsLabel": "2\"",
+          "dn": 50,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 203,
+              "weightKg": 7.7
+            },
+            {
+              "class": "300",
+              "dimensionMm": 232,
+              "weightKg": 10.6
+            }
+          ]
+        },
+        {
+          "nps": "3",
+          "npsLabel": "3\"",
+          "dn": 80,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 241,
+              "weightKg": 17.7
+            },
+            {
+              "class": "300",
+              "dimensionMm": 318,
+              "weightKg": 24.4
+            }
+          ]
+        },
+        {
+          "nps": "4",
+          "npsLabel": "4\"",
+          "dn": 100,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 292,
+              "weightKg": 32
+            },
+            {
+              "class": "300",
+              "dimensionMm": 356,
+              "weightKg": 44
+            }
+          ]
+        },
+        {
+          "nps": "6",
+          "npsLabel": "6\"",
+          "dn": 150,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 406,
+              "weightKg": 73.5
+            },
+            {
+              "class": "300",
+              "dimensionMm": 495,
+              "weightKg": 101
+            }
+          ]
+        },
+        {
+          "nps": "8",
+          "npsLabel": "8\"",
+          "dn": 200,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 495,
+              "weightKg": 132.5
+            },
+            {
+              "class": "300",
+              "dimensionMm": 521,
+              "weightKg": 182.2
+            }
+          ]
+        },
+        {
+          "nps": "10",
+          "npsLabel": "10\"",
+          "dn": 250,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 622,
+              "weightKg": 209.4
+            },
+            {
+              "class": "300",
+              "dimensionMm": 559,
+              "weightKg": 287.9
+            }
+          ]
+        },
+        {
+          "nps": "12",
+          "npsLabel": "12\"",
+          "dn": 300,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 698,
+              "weightKg": 304.3
+            },
+            {
+              "class": "300",
+              "dimensionMm": 635,
+              "weightKg": 418.4
+            }
+          ]
+        },
+        {
+          "nps": "14",
+          "npsLabel": "14\"",
+          "dn": 350,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 787,
+              "weightKg": 417.3
+            },
+            {
+              "class": "300",
+              "dimensionMm": 762,
+              "weightKg": 573.8
+            }
+          ]
+        },
+        {
+          "nps": "16",
+          "npsLabel": "16\"",
+          "dn": 400,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 914,
+              "weightKg": 548.7
+            },
+            {
+              "class": "300",
+              "dimensionMm": 838,
+              "weightKg": 754.5
+            }
+          ]
+        },
+        {
+          "nps": "18",
+          "npsLabel": "18\"",
+          "dn": 450,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 978,
+              "weightKg": 698.6
+            },
+            {
+              "class": "300",
+              "dimensionMm": 914,
+              "weightKg": 960.6
+            }
+          ]
+        },
+        {
+          "nps": "20",
+          "npsLabel": "20\"",
+          "dn": 500,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 1054,
+              "weightKg": 867
+            },
+            {
+              "class": "300",
+              "dimensionMm": 991,
+              "weightKg": 1192.2
+            }
+          ]
+        },
+        {
+          "nps": "24",
+          "npsLabel": "24\"",
+          "dn": 600,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 1295,
+              "weightKg": 1260
+            },
+            {
+              "class": "300",
+              "dimensionMm": 1143,
+              "weightKg": 1732.5
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ball_valve",
+      "label": "Ball Valve (Flanged RF)",
+      "standard": "ASME B16.10",
+      "dimensionLabel": "Face-to-face (L)",
+      "sizes": [
+        {
+          "nps": "0.5",
+          "npsLabel": "1/2\"",
+          "dn": 15,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 108,
+              "weightKg": 0.5
+            },
+            {
+              "class": "300",
+              "dimensionMm": 152,
+              "weightKg": 0.8
+            }
+          ]
+        },
+        {
+          "nps": "0.75",
+          "npsLabel": "3/4\"",
+          "dn": 20,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 117,
+              "weightKg": 1.2
+            },
+            {
+              "class": "300",
+              "dimensionMm": 165,
+              "weightKg": 1.7
+            }
+          ]
+        },
+        {
+          "nps": "1",
+          "npsLabel": "1\"",
+          "dn": 25,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 127,
+              "weightKg": 2.2
+            },
+            {
+              "class": "300",
+              "dimensionMm": 165,
+              "weightKg": 3.1
+            }
+          ]
+        },
+        {
+          "nps": "1.5",
+          "npsLabel": "1-1/2\"",
+          "dn": 40,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 165,
+              "weightKg": 5.1
+            },
+            {
+              "class": "300",
+              "dimensionMm": 190,
+              "weightKg": 7.2
+            }
+          ]
+        },
+        {
+          "nps": "2",
+          "npsLabel": "2\"",
+          "dn": 50,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 178,
+              "weightKg": 9.2
+            },
+            {
+              "class": "300",
+              "dimensionMm": 216,
+              "weightKg": 13
+            }
+          ]
+        },
+        {
+          "nps": "3",
+          "npsLabel": "3\"",
+          "dn": 80,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 203,
+              "weightKg": 21.1
+            },
+            {
+              "class": "300",
+              "dimensionMm": 282,
+              "weightKg": 29.9
+            }
+          ]
+        },
+        {
+          "nps": "4",
+          "npsLabel": "4\"",
+          "dn": 100,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 229,
+              "weightKg": 38
+            },
+            {
+              "class": "300",
+              "dimensionMm": 305,
+              "weightKg": 54
+            }
+          ]
+        },
+        {
+          "nps": "6",
+          "npsLabel": "6\"",
+          "dn": 150,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 267,
+              "weightKg": 87.3
+            },
+            {
+              "class": "300",
+              "dimensionMm": 403,
+              "weightKg": 124
+            }
+          ]
+        },
+        {
+          "nps": "8",
+          "npsLabel": "8\"",
+          "dn": 200,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 292,
+              "weightKg": 157.4
+            },
+            {
+              "class": "300",
+              "dimensionMm": 419,
+              "weightKg": 223.6
+            }
+          ]
+        },
+        {
+          "nps": "10",
+          "npsLabel": "10\"",
+          "dn": 250,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 330,
+              "weightKg": 248.6
+            },
+            {
+              "class": "300",
+              "dimensionMm": 457,
+              "weightKg": 353.3
+            }
+          ]
+        },
+        {
+          "nps": "12",
+          "npsLabel": "12\"",
+          "dn": 300,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 356,
+              "weightKg": 361.3
+            },
+            {
+              "class": "300",
+              "dimensionMm": 502,
+              "weightKg": 513.4
+            }
+          ]
+        },
+        {
+          "nps": "14",
+          "npsLabel": "14\"",
+          "dn": 350,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 381,
+              "weightKg": 495.6
+            },
+            {
+              "class": "300",
+              "dimensionMm": 762,
+              "weightKg": 704.3
+            }
+          ]
+        },
+        {
+          "nps": "16",
+          "npsLabel": "16\"",
+          "dn": 400,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 406,
+              "weightKg": 651.6
+            },
+            {
+              "class": "300",
+              "dimensionMm": 838,
+              "weightKg": 926
+            }
+          ]
+        },
+        {
+          "nps": "18",
+          "npsLabel": "18\"",
+          "dn": 450,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 432,
+              "weightKg": 829.6
+            },
+            {
+              "class": "300",
+              "dimensionMm": 914,
+              "weightKg": 1178.9
+            }
+          ]
+        },
+        {
+          "nps": "20",
+          "npsLabel": "20\"",
+          "dn": 500,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 457,
+              "weightKg": 1029.6
+            },
+            {
+              "class": "300",
+              "dimensionMm": 991,
+              "weightKg": 1463.1
+            }
+          ]
+        },
+        {
+          "nps": "24",
+          "npsLabel": "24\"",
+          "dn": 600,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 508,
+              "weightKg": 1496.2
+            },
+            {
+              "class": "300",
+              "dimensionMm": 1143,
+              "weightKg": 2126.2
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "butterfly_valve",
+      "label": "Butterfly Valve (Wafer / Lug)",
+      "standard": "ASME B16.10 / API 609",
+      "dimensionLabel": "Face-to-face (L)",
+      "sizes": [
+        {
+          "nps": "0.5",
+          "npsLabel": "1/2\"",
+          "dn": 15,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 33,
+              "weightKg": 0.2
+            },
+            {
+              "class": "300",
+              "dimensionMm": 36,
+              "weightKg": 0.2
+            }
+          ]
+        },
+        {
+          "nps": "0.75",
+          "npsLabel": "3/4\"",
+          "dn": 20,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 36,
+              "weightKg": 0.3
+            },
+            {
+              "class": "300",
+              "dimensionMm": 39,
+              "weightKg": 0.4
+            }
+          ]
+        },
+        {
+          "nps": "1",
+          "npsLabel": "1\"",
+          "dn": 25,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 38,
+              "weightKg": 0.5
+            },
+            {
+              "class": "300",
+              "dimensionMm": 41,
+              "weightKg": 0.6
+            }
+          ]
+        },
+        {
+          "nps": "1.5",
+          "npsLabel": "1-1/2\"",
+          "dn": 40,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 40,
+              "weightKg": 1.1
+            },
+            {
+              "class": "300",
+              "dimensionMm": 44,
+              "weightKg": 1.5
+            }
+          ]
+        },
+        {
+          "nps": "2",
+          "npsLabel": "2\"",
+          "dn": 50,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 43,
+              "weightKg": 2.1
+            },
+            {
+              "class": "300",
+              "dimensionMm": 49,
+              "weightKg": 2.7
+            }
+          ]
+        },
+        {
+          "nps": "3",
+          "npsLabel": "3\"",
+          "dn": 80,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 46,
+              "weightKg": 4.7
+            },
+            {
+              "class": "300",
+              "dimensionMm": 52,
+              "weightKg": 6.1
+            }
+          ]
+        },
+        {
+          "nps": "4",
+          "npsLabel": "4\"",
+          "dn": 100,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 52,
+              "weightKg": 8.5
+            },
+            {
+              "class": "300",
+              "dimensionMm": 56,
+              "weightKg": 11
+            }
+          ]
+        },
+        {
+          "nps": "6",
+          "npsLabel": "6\"",
+          "dn": 150,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 56,
+              "weightKg": 19.5
+            },
+            {
+              "class": "300",
+              "dimensionMm": 64,
+              "weightKg": 25.3
+            }
+          ]
+        },
+        {
+          "nps": "8",
+          "npsLabel": "8\"",
+          "dn": 200,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 64,
+              "weightKg": 35.2
+            },
+            {
+              "class": "300",
+              "dimensionMm": 73,
+              "weightKg": 45.6
+            }
+          ]
+        },
+        {
+          "nps": "10",
+          "npsLabel": "10\"",
+          "dn": 250,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 68,
+              "weightKg": 55.6
+            },
+            {
+              "class": "300",
+              "dimensionMm": 79,
+              "weightKg": 72
+            }
+          ]
+        },
+        {
+          "nps": "12",
+          "npsLabel": "12\"",
+          "dn": 300,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 78,
+              "weightKg": 80.8
+            },
+            {
+              "class": "300",
+              "dimensionMm": 86,
+              "weightKg": 104.6
+            }
+          ]
+        },
+        {
+          "nps": "14",
+          "npsLabel": "14\"",
+          "dn": 350,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 92,
+              "weightKg": 110.9
+            },
+            {
+              "class": "300",
+              "dimensionMm": 102,
+              "weightKg": 143.5
+            }
+          ]
+        },
+        {
+          "nps": "16",
+          "npsLabel": "16\"",
+          "dn": 400,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 102,
+              "weightKg": 145.8
+            },
+            {
+              "class": "300",
+              "dimensionMm": 114,
+              "weightKg": 188.6
+            }
+          ]
+        },
+        {
+          "nps": "18",
+          "npsLabel": "18\"",
+          "dn": 450,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 114,
+              "weightKg": 185.6
+            },
+            {
+              "class": "300",
+              "dimensionMm": 127,
+              "weightKg": 240.1
+            }
+          ]
+        },
+        {
+          "nps": "20",
+          "npsLabel": "20\"",
+          "dn": 500,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 127,
+              "weightKg": 230.3
+            },
+            {
+              "class": "300",
+              "dimensionMm": 140,
+              "weightKg": 298
+            }
+          ]
+        },
+        {
+          "nps": "24",
+          "npsLabel": "24\"",
+          "dn": 600,
+          "ratings": [
+            {
+              "class": "150",
+              "dimensionMm": 154,
+              "weightKg": 334.7
+            },
+            {
+              "class": "300",
+              "dimensionMm": 168,
+              "weightKg": 433.1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "elbow_90_lr",
+      "label": "90° LR Elbow",
+      "standard": "ASME B16.9",
+      "dimensionLabel": "Center-to-end (A)",
+      "sizes": [
+        {
+          "nps": "0.5",
+          "npsLabel": "1/2\"",
+          "dn": 15,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 38,
+              "weightKg": 0.2
+            }
+          ]
+        },
+        {
+          "nps": "0.75",
+          "npsLabel": "3/4\"",
+          "dn": 20,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 38,
+              "weightKg": 0.2
+            }
+          ]
+        },
+        {
+          "nps": "1",
+          "npsLabel": "1\"",
+          "dn": 25,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 38,
+              "weightKg": 0.2
+            }
+          ]
+        },
+        {
+          "nps": "1.5",
+          "npsLabel": "1-1/2\"",
+          "dn": 40,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 57,
+              "weightKg": 0.5
+            }
+          ]
+        },
+        {
+          "nps": "2",
+          "npsLabel": "2\"",
+          "dn": 50,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 76,
+              "weightKg": 0.8
+            }
+          ]
+        },
+        {
+          "nps": "3",
+          "npsLabel": "3\"",
+          "dn": 80,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 114,
+              "weightKg": 1.9
+            }
+          ]
+        },
+        {
+          "nps": "4",
+          "npsLabel": "4\"",
+          "dn": 100,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 152,
+              "weightKg": 3.5
+            }
+          ]
+        },
+        {
+          "nps": "6",
+          "npsLabel": "6\"",
+          "dn": 150,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 229,
+              "weightKg": 8
+            }
+          ]
+        },
+        {
+          "nps": "8",
+          "npsLabel": "8\"",
+          "dn": 200,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 305,
+              "weightKg": 14.5
+            }
+          ]
+        },
+        {
+          "nps": "10",
+          "npsLabel": "10\"",
+          "dn": 250,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 381,
+              "weightKg": 22.9
+            }
+          ]
+        },
+        {
+          "nps": "12",
+          "npsLabel": "12\"",
+          "dn": 300,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 457,
+              "weightKg": 33.3
+            }
+          ]
+        },
+        {
+          "nps": "14",
+          "npsLabel": "14\"",
+          "dn": 350,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 533,
+              "weightKg": 45.6
+            }
+          ]
+        },
+        {
+          "nps": "16",
+          "npsLabel": "16\"",
+          "dn": 400,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 610,
+              "weightKg": 60
+            }
+          ]
+        },
+        {
+          "nps": "18",
+          "npsLabel": "18\"",
+          "dn": 450,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 686,
+              "weightKg": 76.4
+            }
+          ]
+        },
+        {
+          "nps": "20",
+          "npsLabel": "20\"",
+          "dn": 500,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 762,
+              "weightKg": 94.8
+            }
+          ]
+        },
+        {
+          "nps": "24",
+          "npsLabel": "24\"",
+          "dn": 600,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 914,
+              "weightKg": 137.8
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "elbow_45_lr",
+      "label": "45° LR Elbow",
+      "standard": "ASME B16.9",
+      "dimensionLabel": "Center-to-end (A)",
+      "sizes": [
+        {
+          "nps": "0.5",
+          "npsLabel": "1/2\"",
+          "dn": 15,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 16,
+              "weightKg": 0.2
+            }
+          ]
+        },
+        {
+          "nps": "0.75",
+          "npsLabel": "3/4\"",
+          "dn": 20,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 19,
+              "weightKg": 0.2
+            }
+          ]
+        },
+        {
+          "nps": "1",
+          "npsLabel": "1\"",
+          "dn": 25,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 22,
+              "weightKg": 0.2
+            }
+          ]
+        },
+        {
+          "nps": "1.5",
+          "npsLabel": "1-1/2\"",
+          "dn": 40,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 35,
+              "weightKg": 0.3
+            }
+          ]
+        },
+        {
+          "nps": "2",
+          "npsLabel": "2\"",
+          "dn": 50,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 38,
+              "weightKg": 0.5
+            }
+          ]
+        },
+        {
+          "nps": "3",
+          "npsLabel": "3\"",
+          "dn": 80,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 57,
+              "weightKg": 1.1
+            }
+          ]
+        },
+        {
+          "nps": "4",
+          "npsLabel": "4\"",
+          "dn": 100,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 76,
+              "weightKg": 2
+            }
+          ]
+        },
+        {
+          "nps": "6",
+          "npsLabel": "6\"",
+          "dn": 150,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 95,
+              "weightKg": 4.6
+            }
+          ]
+        },
+        {
+          "nps": "8",
+          "npsLabel": "8\"",
+          "dn": 200,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 152,
+              "weightKg": 8.3
+            }
+          ]
+        },
+        {
+          "nps": "10",
+          "npsLabel": "10\"",
+          "dn": 250,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 191,
+              "weightKg": 13.1
+            }
+          ]
+        },
+        {
+          "nps": "12",
+          "npsLabel": "12\"",
+          "dn": 300,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 229,
+              "weightKg": 19
+            }
+          ]
+        },
+        {
+          "nps": "14",
+          "npsLabel": "14\"",
+          "dn": 350,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 267,
+              "weightKg": 26.1
+            }
+          ]
+        },
+        {
+          "nps": "16",
+          "npsLabel": "16\"",
+          "dn": 400,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 305,
+              "weightKg": 34.3
+            }
+          ]
+        },
+        {
+          "nps": "18",
+          "npsLabel": "18\"",
+          "dn": 450,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 343,
+              "weightKg": 43.7
+            }
+          ]
+        },
+        {
+          "nps": "20",
+          "npsLabel": "20\"",
+          "dn": 500,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 381,
+              "weightKg": 54.2
+            }
+          ]
+        },
+        {
+          "nps": "24",
+          "npsLabel": "24\"",
+          "dn": 600,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 457,
+              "weightKg": 78.7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tee_equal",
+      "label": "Equal Tee",
+      "standard": "ASME B16.9",
+      "dimensionLabel": "Center-to-end (M)",
+      "sizes": [
+        {
+          "nps": "0.5",
+          "npsLabel": "1/2\"",
+          "dn": 15,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 25,
+              "weightKg": 0.2
+            }
+          ]
+        },
+        {
+          "nps": "0.75",
+          "npsLabel": "3/4\"",
+          "dn": 20,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 29,
+              "weightKg": 0.2
+            }
+          ]
+        },
+        {
+          "nps": "1",
+          "npsLabel": "1\"",
+          "dn": 25,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 38,
+              "weightKg": 0.2
+            }
+          ]
+        },
+        {
+          "nps": "1.5",
+          "npsLabel": "1-1/2\"",
+          "dn": 40,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 57,
+              "weightKg": 0.6
+            }
+          ]
+        },
+        {
+          "nps": "2",
+          "npsLabel": "2\"",
+          "dn": 50,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 64,
+              "weightKg": 1
+            }
+          ]
+        },
+        {
+          "nps": "3",
+          "npsLabel": "3\"",
+          "dn": 80,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 86,
+              "weightKg": 2.3
+            }
+          ]
+        },
+        {
+          "nps": "4",
+          "npsLabel": "4\"",
+          "dn": 100,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 102,
+              "weightKg": 4.2
+            }
+          ]
+        },
+        {
+          "nps": "6",
+          "npsLabel": "6\"",
+          "dn": 150,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 143,
+              "weightKg": 9.6
+            }
+          ]
+        },
+        {
+          "nps": "8",
+          "npsLabel": "8\"",
+          "dn": 200,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 178,
+              "weightKg": 17.4
+            }
+          ]
+        },
+        {
+          "nps": "10",
+          "npsLabel": "10\"",
+          "dn": 250,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 216,
+              "weightKg": 27.5
+            }
+          ]
+        },
+        {
+          "nps": "12",
+          "npsLabel": "12\"",
+          "dn": 300,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 254,
+              "weightKg": 39.9
+            }
+          ]
+        },
+        {
+          "nps": "14",
+          "npsLabel": "14\"",
+          "dn": 350,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 279,
+              "weightKg": 54.8
+            }
+          ]
+        },
+        {
+          "nps": "16",
+          "npsLabel": "16\"",
+          "dn": 400,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 305,
+              "weightKg": 72
+            }
+          ]
+        },
+        {
+          "nps": "18",
+          "npsLabel": "18\"",
+          "dn": 450,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 343,
+              "weightKg": 91.7
+            }
+          ]
+        },
+        {
+          "nps": "20",
+          "npsLabel": "20\"",
+          "dn": 500,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 381,
+              "weightKg": 113.8
+            }
+          ]
+        },
+        {
+          "nps": "24",
+          "npsLabel": "24\"",
+          "dn": 600,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 419,
+              "weightKg": 165.4
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "reducer_concentric",
+      "label": "Concentric Reducer",
+      "standard": "ASME B16.9",
+      "dimensionLabel": "End-to-end (E)",
+      "sizes": [
+        {
+          "nps": "0.5",
+          "npsLabel": "1/2\" × 3/8\"",
+          "dn": 15,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 38,
+              "weightKg": 0.2
+            }
+          ]
+        },
+        {
+          "nps": "0.75",
+          "npsLabel": "3/4\" × 1/2\"",
+          "dn": 20,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 38,
+              "weightKg": 0.2
+            }
+          ]
+        },
+        {
+          "nps": "1",
+          "npsLabel": "1\" × 3/4\"",
+          "dn": 25,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 51,
+              "weightKg": 0.2
+            }
+          ]
+        },
+        {
+          "nps": "1.5",
+          "npsLabel": "1-1/2\" × 1\"",
+          "dn": 40,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 64,
+              "weightKg": 0.4
+            }
+          ]
+        },
+        {
+          "nps": "2",
+          "npsLabel": "2\" × 1½\"",
+          "dn": 50,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 76,
+              "weightKg": 0.7
+            }
+          ]
+        },
+        {
+          "nps": "3",
+          "npsLabel": "3\" × 2\"",
+          "dn": 80,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 89,
+              "weightKg": 1.6
+            }
+          ]
+        },
+        {
+          "nps": "4",
+          "npsLabel": "4\" × 3\"",
+          "dn": 100,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 102,
+              "weightKg": 2.8
+            }
+          ]
+        },
+        {
+          "nps": "6",
+          "npsLabel": "6\" × 4\"",
+          "dn": 150,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 140,
+              "weightKg": 6.4
+            }
+          ]
+        },
+        {
+          "nps": "8",
+          "npsLabel": "8\" × 6\"",
+          "dn": 200,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 152,
+              "weightKg": 11.6
+            }
+          ]
+        },
+        {
+          "nps": "10",
+          "npsLabel": "10\" × 8\"",
+          "dn": 250,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 178,
+              "weightKg": 18.3
+            }
+          ]
+        },
+        {
+          "nps": "12",
+          "npsLabel": "12\" × 10\"",
+          "dn": 300,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 203,
+              "weightKg": 26.6
+            }
+          ]
+        },
+        {
+          "nps": "14",
+          "npsLabel": "14\" × 12\"",
+          "dn": 350,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 330,
+              "weightKg": 36.5
+            }
+          ]
+        },
+        {
+          "nps": "16",
+          "npsLabel": "16\" × 14\"",
+          "dn": 400,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 356,
+              "weightKg": 48
+            }
+          ]
+        },
+        {
+          "nps": "18",
+          "npsLabel": "18\" × 16\"",
+          "dn": 450,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 381,
+              "weightKg": 61.1
+            }
+          ]
+        },
+        {
+          "nps": "20",
+          "npsLabel": "20\" × 18\"",
+          "dn": 500,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 508,
+              "weightKg": 75.9
+            }
+          ]
+        },
+        {
+          "nps": "24",
+          "npsLabel": "24\" × 20\"",
+          "dn": 600,
+          "ratings": [
+            {
+              "class": "STD",
+              "dimensionMm": 508,
+              "weightKg": 110.2
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

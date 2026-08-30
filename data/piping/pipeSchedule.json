@@ -1,0 +1,734 @@
+{
+  "standard": "ASME B36.10M",
+  "version": 2,
+  "updatedAt": "2026-08-18",
+  "notes": "NPS 1/2–24. Schedules used for WN hub-bore lookup. Existing 2/3/4/6/8/10 rows unchanged.",
+  "pipes": [
+    {
+      "nps": "0.5",
+      "npsLabel": "1/2\"",
+      "dn": 15,
+      "outsideDiameterMm": 21.34,
+      "outsideDiameterIn": 0.84,
+      "schedules": [
+        {
+          "schedule": "10",
+          "wallThicknessMm": 2.11,
+          "insideDiameterMm": 17.12,
+          "weightKgPerM": 1
+        },
+        {
+          "schedule": "40",
+          "wallThicknessMm": 2.77,
+          "insideDiameterMm": 15.8,
+          "weightKgPerM": 1.27
+        },
+        {
+          "schedule": "80",
+          "wallThicknessMm": 3.73,
+          "insideDiameterMm": 13.88,
+          "weightKgPerM": 1.62
+        },
+        {
+          "schedule": "XXS",
+          "wallThicknessMm": 7.47,
+          "insideDiameterMm": 6.4,
+          "weightKgPerM": 2.56
+        }
+      ]
+    },
+    {
+      "nps": "0.75",
+      "npsLabel": "3/4\"",
+      "dn": 20,
+      "outsideDiameterMm": 26.67,
+      "outsideDiameterIn": 1.05,
+      "schedules": [
+        {
+          "schedule": "10",
+          "wallThicknessMm": 2.11,
+          "insideDiameterMm": 22.45,
+          "weightKgPerM": 1.28
+        },
+        {
+          "schedule": "40",
+          "wallThicknessMm": 2.87,
+          "insideDiameterMm": 20.93,
+          "weightKgPerM": 1.68
+        },
+        {
+          "schedule": "80",
+          "wallThicknessMm": 3.91,
+          "insideDiameterMm": 18.85,
+          "weightKgPerM": 2.19
+        },
+        {
+          "schedule": "XXS",
+          "wallThicknessMm": 7.82,
+          "insideDiameterMm": 11.03,
+          "weightKgPerM": 3.64
+        }
+      ]
+    },
+    {
+      "nps": "1",
+      "npsLabel": "1\"",
+      "dn": 25,
+      "outsideDiameterMm": 33.4,
+      "outsideDiameterIn": 1.315,
+      "schedules": [
+        {
+          "schedule": "10",
+          "wallThicknessMm": 2.77,
+          "insideDiameterMm": 27.86,
+          "weightKgPerM": 2.09
+        },
+        {
+          "schedule": "40",
+          "wallThicknessMm": 3.38,
+          "insideDiameterMm": 26.64,
+          "weightKgPerM": 2.5
+        },
+        {
+          "schedule": "80",
+          "wallThicknessMm": 4.55,
+          "insideDiameterMm": 24.3,
+          "weightKgPerM": 3.24
+        },
+        {
+          "schedule": "160",
+          "wallThicknessMm": 6.35,
+          "insideDiameterMm": 20.7,
+          "weightKgPerM": 4.24
+        },
+        {
+          "schedule": "XXS",
+          "wallThicknessMm": 9.09,
+          "insideDiameterMm": 15.22,
+          "weightKgPerM": 5.45
+        }
+      ]
+    },
+    {
+      "nps": "1.25",
+      "npsLabel": "1-1/4\"",
+      "dn": 32,
+      "outsideDiameterMm": 42.16,
+      "outsideDiameterIn": 1.66,
+      "schedules": [
+        {
+          "schedule": "10",
+          "wallThicknessMm": 2.77,
+          "insideDiameterMm": 36.62,
+          "weightKgPerM": 2.69
+        },
+        {
+          "schedule": "40",
+          "wallThicknessMm": 3.56,
+          "insideDiameterMm": 35.04,
+          "weightKgPerM": 3.39
+        },
+        {
+          "schedule": "80",
+          "wallThicknessMm": 4.85,
+          "insideDiameterMm": 32.46,
+          "weightKgPerM": 4.46
+        },
+        {
+          "schedule": "160",
+          "wallThicknessMm": 6.35,
+          "insideDiameterMm": 29.46,
+          "weightKgPerM": 5.61
+        },
+        {
+          "schedule": "XXS",
+          "wallThicknessMm": 9.7,
+          "insideDiameterMm": 22.76,
+          "weightKgPerM": 7.76
+        }
+      ]
+    },
+    {
+      "nps": "1.5",
+      "npsLabel": "1-1/2\"",
+      "dn": 40,
+      "outsideDiameterMm": 48.26,
+      "outsideDiameterIn": 1.9,
+      "schedules": [
+        {
+          "schedule": "10",
+          "wallThicknessMm": 2.77,
+          "insideDiameterMm": 42.72,
+          "weightKgPerM": 3.11
+        },
+        {
+          "schedule": "40",
+          "wallThicknessMm": 3.68,
+          "insideDiameterMm": 40.9,
+          "weightKgPerM": 4.05
+        },
+        {
+          "schedule": "80",
+          "wallThicknessMm": 5.08,
+          "insideDiameterMm": 38.1,
+          "weightKgPerM": 5.41
+        },
+        {
+          "schedule": "160",
+          "wallThicknessMm": 7.14,
+          "insideDiameterMm": 33.98,
+          "weightKgPerM": 7.24
+        },
+        {
+          "schedule": "XXS",
+          "wallThicknessMm": 10.15,
+          "insideDiameterMm": 27.96,
+          "weightKgPerM": 9.54
+        }
+      ]
+    },
+    {
+      "nps": "2",
+      "npsLabel": "2\"",
+      "dn": 50,
+      "outsideDiameterMm": 60.33,
+      "outsideDiameterIn": 2.375,
+      "schedules": [
+        {
+          "schedule": "10",
+          "wallThicknessMm": 2.77,
+          "insideDiameterMm": 54.79,
+          "weightKgPerM": 3.93
+        },
+        {
+          "schedule": "40",
+          "wallThicknessMm": 3.91,
+          "insideDiameterMm": 52.51,
+          "weightKgPerM": 5.44
+        },
+        {
+          "schedule": "80",
+          "wallThicknessMm": 5.54,
+          "insideDiameterMm": 49.25,
+          "weightKgPerM": 7.48
+        },
+        {
+          "schedule": "160",
+          "wallThicknessMm": 8.74,
+          "insideDiameterMm": 42.85,
+          "weightKgPerM": 11.41
+        }
+      ]
+    },
+    {
+      "nps": "2.5",
+      "npsLabel": "2-1/2\"",
+      "dn": 65,
+      "outsideDiameterMm": 73.03,
+      "outsideDiameterIn": 2.875,
+      "schedules": [
+        {
+          "schedule": "10",
+          "wallThicknessMm": 3.05,
+          "insideDiameterMm": 66.93,
+          "weightKgPerM": 5.26
+        },
+        {
+          "schedule": "40",
+          "wallThicknessMm": 5.16,
+          "insideDiameterMm": 62.71,
+          "weightKgPerM": 8.64
+        },
+        {
+          "schedule": "80",
+          "wallThicknessMm": 7.01,
+          "insideDiameterMm": 59.01,
+          "weightKgPerM": 11.41
+        },
+        {
+          "schedule": "160",
+          "wallThicknessMm": 9.53,
+          "insideDiameterMm": 53.97,
+          "weightKgPerM": 14.92
+        },
+        {
+          "schedule": "XXS",
+          "wallThicknessMm": 14.02,
+          "insideDiameterMm": 44.99,
+          "weightKgPerM": 20.4
+        }
+      ]
+    },
+    {
+      "nps": "3",
+      "npsLabel": "3\"",
+      "dn": 80,
+      "outsideDiameterMm": 88.9,
+      "outsideDiameterIn": 3.5,
+      "schedules": [
+        {
+          "schedule": "10",
+          "wallThicknessMm": 3.05,
+          "insideDiameterMm": 82.8,
+          "weightKgPerM": 6.41
+        },
+        {
+          "schedule": "40",
+          "wallThicknessMm": 5.49,
+          "insideDiameterMm": 77.92,
+          "weightKgPerM": 11.29
+        },
+        {
+          "schedule": "80",
+          "wallThicknessMm": 7.62,
+          "insideDiameterMm": 73.66,
+          "weightKgPerM": 15.27
+        },
+        {
+          "schedule": "160",
+          "wallThicknessMm": 11.13,
+          "insideDiameterMm": 66.64,
+          "weightKgPerM": 21.35
+        }
+      ]
+    },
+    {
+      "nps": "3.5",
+      "npsLabel": "3-1/2\"",
+      "dn": 90,
+      "outsideDiameterMm": 101.6,
+      "outsideDiameterIn": 4,
+      "schedules": [
+        {
+          "schedule": "10",
+          "wallThicknessMm": 3.05,
+          "insideDiameterMm": 95.5,
+          "weightKgPerM": 7.41
+        },
+        {
+          "schedule": "40",
+          "wallThicknessMm": 5.74,
+          "insideDiameterMm": 90.12,
+          "weightKgPerM": 13.57
+        },
+        {
+          "schedule": "80",
+          "wallThicknessMm": 8.08,
+          "insideDiameterMm": 85.44,
+          "weightKgPerM": 18.64
+        },
+        {
+          "schedule": "XXS",
+          "wallThicknessMm": 16.15,
+          "insideDiameterMm": 69.3,
+          "weightKgPerM": 34.03
+        }
+      ]
+    },
+    {
+      "nps": "4",
+      "npsLabel": "4\"",
+      "dn": 100,
+      "outsideDiameterMm": 114.3,
+      "outsideDiameterIn": 4.5,
+      "schedules": [
+        {
+          "schedule": "10",
+          "wallThicknessMm": 3.05,
+          "insideDiameterMm": 108.2,
+          "weightKgPerM": 8.56
+        },
+        {
+          "schedule": "40",
+          "wallThicknessMm": 6.02,
+          "insideDiameterMm": 102.26,
+          "weightKgPerM": 16.07
+        },
+        {
+          "schedule": "80",
+          "wallThicknessMm": 8.56,
+          "insideDiameterMm": 97.18,
+          "weightKgPerM": 22.32
+        },
+        {
+          "schedule": "160",
+          "wallThicknessMm": 13.49,
+          "insideDiameterMm": 87.32,
+          "weightKgPerM": 33.54
+        }
+      ]
+    },
+    {
+      "nps": "5",
+      "npsLabel": "5\"",
+      "dn": 125,
+      "outsideDiameterMm": 141.3,
+      "outsideDiameterIn": 5.563,
+      "schedules": [
+        {
+          "schedule": "10",
+          "wallThicknessMm": 3.4,
+          "insideDiameterMm": 134.5,
+          "weightKgPerM": 11.56
+        },
+        {
+          "schedule": "40",
+          "wallThicknessMm": 6.55,
+          "insideDiameterMm": 128.2,
+          "weightKgPerM": 21.77
+        },
+        {
+          "schedule": "80",
+          "wallThicknessMm": 9.53,
+          "insideDiameterMm": 122.24,
+          "weightKgPerM": 30.97
+        },
+        {
+          "schedule": "160",
+          "wallThicknessMm": 15.88,
+          "insideDiameterMm": 109.54,
+          "weightKgPerM": 49.12
+        },
+        {
+          "schedule": "XXS",
+          "wallThicknessMm": 19.05,
+          "insideDiameterMm": 103.2,
+          "weightKgPerM": 57.43
+        }
+      ]
+    },
+    {
+      "nps": "6",
+      "npsLabel": "6\"",
+      "dn": 150,
+      "outsideDiameterMm": 168.28,
+      "outsideDiameterIn": 6.625,
+      "schedules": [
+        {
+          "schedule": "10",
+          "wallThicknessMm": 3.4,
+          "insideDiameterMm": 161.48,
+          "weightKgPerM": 14.11
+        },
+        {
+          "schedule": "40",
+          "wallThicknessMm": 7.11,
+          "insideDiameterMm": 154.06,
+          "weightKgPerM": 28.26
+        },
+        {
+          "schedule": "80",
+          "wallThicknessMm": 10.97,
+          "insideDiameterMm": 146.34,
+          "weightKgPerM": 42.56
+        },
+        {
+          "schedule": "160",
+          "wallThicknessMm": 18.26,
+          "insideDiameterMm": 131.76,
+          "weightKgPerM": 67.56
+        }
+      ]
+    },
+    {
+      "nps": "8",
+      "npsLabel": "8\"",
+      "dn": 200,
+      "outsideDiameterMm": 219.1,
+      "outsideDiameterIn": 8.625,
+      "schedules": [
+        {
+          "schedule": "10",
+          "wallThicknessMm": 3.76,
+          "insideDiameterMm": 211.58,
+          "weightKgPerM": 20.09
+        },
+        {
+          "schedule": "40",
+          "wallThicknessMm": 8.18,
+          "insideDiameterMm": 202.74,
+          "weightKgPerM": 42.55
+        },
+        {
+          "schedule": "80",
+          "wallThicknessMm": 12.7,
+          "insideDiameterMm": 193.7,
+          "weightKgPerM": 64.64
+        },
+        {
+          "schedule": "160",
+          "wallThicknessMm": 18.23,
+          "insideDiameterMm": 182.64,
+          "weightKgPerM": 90.44
+        }
+      ]
+    },
+    {
+      "nps": "10",
+      "npsLabel": "10\"",
+      "dn": 250,
+      "outsideDiameterMm": 273.05,
+      "outsideDiameterIn": 10.75,
+      "schedules": [
+        {
+          "schedule": "10",
+          "wallThicknessMm": 4.19,
+          "insideDiameterMm": 264.67,
+          "weightKgPerM": 28.24
+        },
+        {
+          "schedule": "40",
+          "wallThicknessMm": 9.27,
+          "insideDiameterMm": 254.51,
+          "weightKgPerM": 60.29
+        },
+        {
+          "schedule": "80",
+          "wallThicknessMm": 15.09,
+          "insideDiameterMm": 242.87,
+          "weightKgPerM": 96.01
+        },
+        {
+          "schedule": "160",
+          "wallThicknessMm": 28.58,
+          "insideDiameterMm": 215.89,
+          "weightKgPerM": 172.33
+        }
+      ]
+    },
+    {
+      "nps": "12",
+      "npsLabel": "12\"",
+      "dn": 300,
+      "outsideDiameterMm": 323.85,
+      "outsideDiameterIn": 12.75,
+      "schedules": [
+        {
+          "schedule": "10",
+          "wallThicknessMm": 4.57,
+          "insideDiameterMm": 314.71,
+          "weightKgPerM": 35.98
+        },
+        {
+          "schedule": "40",
+          "wallThicknessMm": 10.31,
+          "insideDiameterMm": 303.23,
+          "weightKgPerM": 79.72
+        },
+        {
+          "schedule": "80",
+          "wallThicknessMm": 17.48,
+          "insideDiameterMm": 288.89,
+          "weightKgPerM": 132.07
+        },
+        {
+          "schedule": "160",
+          "wallThicknessMm": 33.32,
+          "insideDiameterMm": 257.21,
+          "weightKgPerM": 238.73
+        },
+        {
+          "schedule": "XXS",
+          "wallThicknessMm": 25.4,
+          "insideDiameterMm": 273.05,
+          "weightKgPerM": 186.95
+        }
+      ]
+    },
+    {
+      "nps": "14",
+      "npsLabel": "14\"",
+      "dn": 350,
+      "outsideDiameterMm": 355.6,
+      "outsideDiameterIn": 14,
+      "schedules": [
+        {
+          "schedule": "10",
+          "wallThicknessMm": 6.35,
+          "insideDiameterMm": 342.9,
+          "weightKgPerM": 54.69
+        },
+        {
+          "schedule": "40",
+          "wallThicknessMm": 11.13,
+          "insideDiameterMm": 333.34,
+          "weightKgPerM": 94.55
+        },
+        {
+          "schedule": "80",
+          "wallThicknessMm": 15.09,
+          "insideDiameterMm": 325.42,
+          "weightKgPerM": 126.72
+        },
+        {
+          "schedule": "160",
+          "wallThicknessMm": 35.71,
+          "insideDiameterMm": 284.18,
+          "weightKgPerM": 281.72
+        },
+        {
+          "schedule": "STD",
+          "wallThicknessMm": 9.53,
+          "insideDiameterMm": 336.54,
+          "weightKgPerM": 81.33
+        }
+      ]
+    },
+    {
+      "nps": "16",
+      "npsLabel": "16\"",
+      "dn": 400,
+      "outsideDiameterMm": 406.4,
+      "outsideDiameterIn": 16,
+      "schedules": [
+        {
+          "schedule": "10",
+          "wallThicknessMm": 6.35,
+          "insideDiameterMm": 393.7,
+          "weightKgPerM": 62.65
+        },
+        {
+          "schedule": "40",
+          "wallThicknessMm": 12.7,
+          "insideDiameterMm": 381,
+          "weightKgPerM": 123.31
+        },
+        {
+          "schedule": "80",
+          "wallThicknessMm": 15.88,
+          "insideDiameterMm": 374.64,
+          "weightKgPerM": 152.94
+        },
+        {
+          "schedule": "160",
+          "wallThicknessMm": 40.49,
+          "insideDiameterMm": 325.42,
+          "weightKgPerM": 365.38
+        },
+        {
+          "schedule": "STD",
+          "wallThicknessMm": 9.53,
+          "insideDiameterMm": 387.34,
+          "weightKgPerM": 93.27
+        }
+      ]
+    },
+    {
+      "nps": "18",
+      "npsLabel": "18\"",
+      "dn": 450,
+      "outsideDiameterMm": 457.2,
+      "outsideDiameterIn": 18,
+      "schedules": [
+        {
+          "schedule": "10",
+          "wallThicknessMm": 6.35,
+          "insideDiameterMm": 444.5,
+          "weightKgPerM": 70.6
+        },
+        {
+          "schedule": "40",
+          "wallThicknessMm": 14.27,
+          "insideDiameterMm": 428.66,
+          "weightKgPerM": 155.88
+        },
+        {
+          "schedule": "80",
+          "wallThicknessMm": 19.05,
+          "insideDiameterMm": 419.1,
+          "weightKgPerM": 205.84
+        },
+        {
+          "schedule": "160",
+          "wallThicknessMm": 45.24,
+          "insideDiameterMm": 366.72,
+          "weightKgPerM": 459.62
+        },
+        {
+          "schedule": "STD",
+          "wallThicknessMm": 9.53,
+          "insideDiameterMm": 438.14,
+          "weightKgPerM": 105.21
+        }
+      ]
+    },
+    {
+      "nps": "20",
+      "npsLabel": "20\"",
+      "dn": 500,
+      "outsideDiameterMm": 508,
+      "outsideDiameterIn": 20,
+      "schedules": [
+        {
+          "schedule": "10",
+          "wallThicknessMm": 6.35,
+          "insideDiameterMm": 495.3,
+          "weightKgPerM": 78.56
+        },
+        {
+          "schedule": "40",
+          "wallThicknessMm": 15.09,
+          "insideDiameterMm": 477.82,
+          "weightKgPerM": 183.43
+        },
+        {
+          "schedule": "80",
+          "wallThicknessMm": 20.62,
+          "insideDiameterMm": 466.76,
+          "weightKgPerM": 247.84
+        },
+        {
+          "schedule": "160",
+          "wallThicknessMm": 50.01,
+          "insideDiameterMm": 407.98,
+          "weightKgPerM": 564.85
+        },
+        {
+          "schedule": "STD",
+          "wallThicknessMm": 9.53,
+          "insideDiameterMm": 488.94,
+          "weightKgPerM": 117.15
+        }
+      ]
+    },
+    {
+      "nps": "24",
+      "npsLabel": "24\"",
+      "dn": 600,
+      "outsideDiameterMm": 609.6,
+      "outsideDiameterIn": 24,
+      "schedules": [
+        {
+          "schedule": "10",
+          "wallThicknessMm": 6.35,
+          "insideDiameterMm": 596.9,
+          "weightKgPerM": 94.47
+        },
+        {
+          "schedule": "40",
+          "wallThicknessMm": 17.48,
+          "insideDiameterMm": 574.64,
+          "weightKgPerM": 255.25
+        },
+        {
+          "schedule": "80",
+          "wallThicknessMm": 24.61,
+          "insideDiameterMm": 560.38,
+          "weightKgPerM": 355.04
+        },
+        {
+          "schedule": "160",
+          "wallThicknessMm": 59.54,
+          "insideDiameterMm": 490.52,
+          "weightKgPerM": 807.68
+        },
+        {
+          "schedule": "STD",
+          "wallThicknessMm": 9.53,
+          "insideDiameterMm": 590.54,
+          "weightKgPerM": 141.03
+        }
+      ]
+    }
+  ]
+}

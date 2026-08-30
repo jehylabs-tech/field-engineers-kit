@@ -1,0 +1,11 @@
+# Index less, still allow @-mention when needed
+node_modules/
+.next/
+out/
+build/
+coverage/
+*.tsbuildinfo
+.git/
+.turbo/
+.vercel/
+agent-transcripts/

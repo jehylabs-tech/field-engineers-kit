@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FieldEngineersKit — 모바일 홈</title>
+<style>
+  :root{
+    --bg:#FFFFFF;--panel:#F7F8FA;--border:#E4E6EA;--border-strong:#D2D5DC;
+    --text:#15181E;--text2:#5B6270;--text3:#8A909C;
+    --accent:#3D5AFE;--accent-bg:#EEF1FF;--accent-text:#2D3FC9;
+    --success:#1C8A5A;--success-bg:#E9F7EF;
+    --mono:'SFMono-Regular',ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:#fff;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Pretendard,"Noto Sans KR",sans-serif;font-size:14px;line-height:1.5;}
+
+  header{height:50px;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 14px;gap:8px;position:sticky;top:0;background:#fff;z-index:20;}
+  .logo{display:flex;align-items:center;gap:7px;font-weight:600;font-size:13.5px;}
+  .logo .mark{width:16px;height:16px;border-radius:4px;background:var(--accent);}
+  .header-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+  .offline-dot{width:7px;height:7px;border-radius:50%;background:var(--success);}
+  .menu-ic{font-size:16px;color:var(--text2);}
+
+  .hero{padding:24px 16px 18px;text-align:center;border-bottom:1px solid var(--border);}
+  .hero h1{font-size:19px;font-weight:700;letter-spacing:-0.01em;margin-bottom:6px;}
+  .hero p{font-size:12.5px;color:var(--text2);margin-bottom:18px;}
+  .search-box{
+    display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--border-strong);
+    border-radius:10px;padding:12px 14px;
+  }
+  .search-box .ic{color:var(--text3);font-size:14px;}
+  .search-box input{flex:1;border:none;background:transparent;font-size:13px;outline:none;color:var(--text);font-family:inherit;}
+  .search-suggest{display:flex;gap:6px;margin-top:10px;overflow-x:auto;padding-bottom:2px;}
+  .sg-chip{flex-shrink:0;font-size:11px;color:var(--text2);background:#fff;border:1px solid var(--border);padding:5px 10px;border-radius:20px;}
+
+  .diff-strip{display:flex;overflow-x:auto;gap:18px;padding:12px 16px;background:var(--panel);border-bottom:1px solid var(--border);}
+  .diff-item{flex-shrink:0;display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--text2);}
+
+  .section{padding:20px 16px;border-bottom:1px solid var(--border);}
+  .section-title{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px;}
+  .section-title h2{font-size:14px;font-weight:600;}
+  .section-title .more{font-size:11px;color:var(--text3);}
+
+  .recent-row{display:flex;gap:10px;overflow-x:auto;}
+  .recent-card{flex-shrink:0;width:180px;border:1px solid var(--border);border-radius:10px;padding:12px;}
+  .recent-card .cat{font-size:9.5px;color:var(--text3);margin-bottom:5px;}
+  .recent-card .name{font-size:12.5px;font-weight:500;margin-bottom:6px;}
+  .recent-card .snap{font-size:10px;color:var(--text2);font-family:var(--mono);background:var(--panel);padding:5px 7px;border-radius:6px;}
+
+  .bento{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .bento-card{border:1px solid var(--border);border-radius:12px;padding:14px;}
+  .bento-card.lg{grid-column:span 2;}
+  .bento-card .ic{font-size:18px;margin-bottom:8px;}
+  .bento-card .name{font-size:13px;font-weight:600;margin-bottom:3px;}
+  .bento-card .cnt{font-size:11px;color:var(--text3);}
+
+  .popular-list{border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+  .pop-row{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--border);}
+  .pop-row:last-child{border-bottom:none;}
+  .pop-rank{font-size:11px;color:var(--text3);font-family:var(--mono);width:16px;}
+  .pop-row .name{font-size:12.5px;font-weight:500;flex:1;}
+  .pop-row .tag{font-size:9.5px;color:var(--text3);background:var(--panel);padding:2px 7px;border-radius:20px;}
+
+  .std-strip{padding:20px 16px;text-align:center;}
+  .std-strip .cap{font-size:10.5px;color:var(--text3);margin-bottom:12px;}
+  .std-row{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;}
+  .std-row span{font-size:12px;font-weight:600;color:var(--text3);}
+
+  footer{padding:18px;text-align:center;font-size:11px;color:var(--text3);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><span class="mark"></span>FieldEngineersKit</div>
+  <div class="header-right">
+    <span class="offline-dot"></span>
+    <span class="menu-ic">☰</span>
+  </div>
+</header>
+
+<div class="hero">
+  <h1>현장에서 바로 쓰는<br>엔지니어링 계산기</h1>
+  <p>ASME · AISC · IEC 기준 → PDF/엑셀까지 3초</p>
+  <div class="search-box">
+    <span class="ic">🔍</span>
+    <input type="text" placeholder="계산기, 규격 검색...">
+  </div>
+  <div class="search-suggest">
+    <span class="sg-chip">B31.3 배관 두께</span>
+    <span class="sg-chip">보 처짐</span>
+    <span class="sg-chip">체결 토크</span>
+  </div>
+</div>
+
+<div class="diff-strip">
+  <div class="diff-item">🔗 URL 공유</div>
+  <div class="diff-item">⇄ 값 자동 이관</div>
+  <div class="diff-item">📄 PDF·엑셀</div>
+  <div class="diff-item">📶 오프라인</div>
+</div>
+
+<div class="section">
+  <div class="section-title"><h2>최근 사용한 계산기</h2><span class="more">전체 →</span></div>
+  <div class="recent-row">
+    <div class="recent-card">
+      <div class="cat">STRUCTURAL</div>
+      <div class="name">보 처짐 계산기</div>
+      <div class="snap">span=6m · load=12.5kN/m</div>
+    </div>
+    <div class="recent-card">
+      <div class="cat">PIPING</div>
+      <div class="name">B31.3 배관 두께</div>
+      <div class="snap">nps=10 · sch=40</div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title"><h2>카테고리</h2><span class="more">전체 →</span></div>
+  <div class="bento">
+    <div class="bento-card lg">
+      <div class="ic">🏗️</div>
+      <div class="name">구조 (Structural)</div>
+      <div class="cnt">18개 계산기</div>
+    </div>
+    <div class="bento-card">
+      <div class="ic">⚙️</div>
+      <div class="name">배관</div>
+      <div class="cnt">14개</div>
+    </div>
+    <div class="bento-card">
+      <div class="ic">⚡</div>
+      <div class="name">전기</div>
+      <div class="cnt">12개</div>
+    </div>
+    <div class="bento-card">
+      <div class="ic">💧</div>
+      <div class="name">유체</div>
+      <div class="cnt">9개</div>
+    </div>
+    <div class="bento-card">
+      <div class="ic">🌡️</div>
+      <div class="name">열전달</div>
+      <div class="cnt">7개</div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="border-bottom:none;">
+  <div class="section-title"><h2>이번 주 인기</h2></div>
+  <div class="popular-list">
+    <div class="pop-row"><span class="pop-rank">01</span><span class="name">B31.3 배관 두께</span><span class="tag">Piping</span></div>
+    <div class="pop-row"><span class="pop-rank">02</span><span class="name">보 처짐 계산기</span><span class="tag">Struct</span></div>
+    <div class="pop-row"><span class="pop-rank">03</span><span class="name">체결 토크 계산기</span><span class="tag">Piping</span></div>
+  </div>
+</div>
+
+<div class="std-strip">
+  <div class="cap">지원 규격</div>
+  <div class="std-row"><span>ASME</span><span>AISC</span><span>IEC</span><span>ISO</span><span>API</span></div>
+</div>
+
+<footer>© 2026 FieldEngineersKit</footer>
+
+</body>
+</html>

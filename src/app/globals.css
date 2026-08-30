@@ -1,0 +1,233 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --spec-bg: #ffffff;
+    --spec-panel: #f7f8fa;
+    --spec-border: #e4e6ea;
+    --spec-border-strong: #d2d5dc;
+    --spec-text: #15181e;
+    --spec-text2: #5b6270;
+    --spec-text3: #8a909c;
+    --spec-accent: #3d5afe;
+    --spec-accent-bg: #eef1ff;
+    --spec-accent-text: #2d3fc9;
+    --spec-danger: #8b1a12;
+    --spec-danger-bg: #f8d5cf;
+    --spec-success: #1c8a5a;
+    --spec-success-bg: #e9f7ef;
+    --spec-spon-bg: #fff8ec;
+    --spec-spon-border: #ebd8ae;
+    --spec-spon-text: #8a5a0c;
+    --spec-ad-bg: #f2f2f0;
+    color-scheme: light;
+  }
+
+  html.dark {
+    --spec-bg: #12141a;
+    --spec-panel: #1b1e26;
+    --spec-border: #2e3340;
+    --spec-border-strong: #3d4454;
+    --spec-text: #f3f5f8;
+    --spec-text2: #c2c7d1;
+    --spec-text3: #8e95a3;
+    --spec-accent: #6b7cff;
+    --spec-accent-bg: #23284a;
+    --spec-accent-text: #c5cdff;
+    --spec-danger: #ff8a78;
+    --spec-danger-bg: #4a1c18;
+    --spec-success: #3dce86;
+    --spec-success-bg: #163528;
+    --spec-spon-bg: #2c2416;
+    --spec-spon-border: #6b5424;
+    --spec-spon-text: #f0d48a;
+    --spec-ad-bg: #1f2128;
+    color-scheme: dark;
+  }
+
+  html {
+    @apply scroll-smooth;
+    font-size: 16px;
+  }
+
+  body {
+    @apply min-h-screen bg-spec-bg text-base text-spec-text antialiased;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  input[type="text"],
+  input[type="number"],
+  input[type="search"],
+  select,
+  textarea {
+    min-height: 44px;
+    font-size: 16px;
+  }
+
+  @media (min-width: 768px) {
+    input[type="text"],
+    input[type="number"],
+    input[type="search"],
+    select,
+    textarea {
+      min-height: 48px;
+      font-size: 18px;
+    }
+  }
+}
+
+@layer utilities {
+  .carry-flash input,
+  .carry-flash select {
+    animation: carry-flash 1.8s ease-out;
+  }
+}
+
+@keyframes schematic-glow {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 1px var(--spec-accent))
+      drop-shadow(0 0 4px var(--spec-spon-text));
+  }
+  50% {
+    filter: drop-shadow(0 0 3px var(--spec-accent))
+      drop-shadow(0 0 9px var(--spec-spon-text));
+  }
+}
+
+.schematic-hot {
+  animation: schematic-glow 1.15s ease-in-out infinite;
+}
+
+@keyframes carry-flash {
+  0%,
+  18% {
+    border-color: var(--spec-accent);
+    box-shadow: 0 0 0 3px var(--spec-accent-bg);
+  }
+  100% {
+    border-color: var(--spec-border-strong);
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
+@keyframes carry-bus-flow {
+  to {
+    stroke-dashoffset: -28;
+  }
+}
+
+@keyframes carry-chip-pulse {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
+@layer utilities {
+  .carry-bus {
+    stroke-dasharray: 7 6;
+    animation: carry-bus-flow 1.15s linear infinite;
+  }
+
+  .carry-chip {
+    animation: carry-chip-pulse 2.4s ease-in-out infinite;
+  }
+
+  .carry-chip:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  .carry-chip:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carry-bus,
+  .carry-chip {
+    animation: none;
+  }
+}
+
+@layer components {
+  .eng-eq {
+    @apply m-0 inline-flex items-center justify-center gap-2 font-serif text-xl italic md:text-2xl;
+  }
+
+  .eng-frac {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    vertical-align: middle;
+    font-style: normal;
+    line-height: 1.2;
+  }
+
+  .eng-num,
+  .eng-den {
+    padding: 0.1em 0.45em;
+    font-style: italic;
+    font-size: 1em;
+  }
+
+  .eng-num {
+    border-bottom: 1.5px solid currentColor;
+    padding-bottom: 0.15em;
+  }
+
+  .eng-den {
+    padding-top: 0.15em;
+  }
+
+  .eng-plain {
+    @apply mt-3 mb-0 font-mono text-base not-italic text-slate-800 dark:text-slate-100;
+  }
+
+  .eng-formula-html {
+    @apply flex flex-col items-center gap-3;
+  }
+
+  .eng-formula-html p {
+    margin: 0;
+  }
+
+  .eng-formula-html .eng-eq {
+    @apply m-0 inline-flex flex-wrap items-center justify-center gap-2 font-serif text-xl italic md:text-2xl;
+  }
+
+  .eng-formula-html .eng-frac {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    vertical-align: middle;
+    font-style: normal;
+    line-height: 1.15;
+  }
+
+  .eng-formula-html .eng-num,
+  .eng-formula-html .eng-den {
+    padding: 0.1em 0.45em;
+    font-style: italic;
+    font-size: 1em;
+  }
+
+  .eng-formula-html .eng-num {
+    border-bottom: 1.5px solid currentColor;
+    padding-bottom: 0.15em;
+  }
+
+  .eng-formula-html .eng-den {
+    padding-top: 0.15em;
+  }
+
+  .eng-formula-html .eng-plain {
+    @apply m-0 font-mono text-base not-italic text-slate-800 dark:text-slate-100;
+  }
+}

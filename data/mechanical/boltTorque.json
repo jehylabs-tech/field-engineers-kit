@@ -1,0 +1,621 @@
+{
+  "standard": "ASME PCC-1",
+  "version": 3,
+  "updatedAt": "2026-08-25",
+  "lubrication": "Moly-based anti-seize K = 0.13 (field maintenance default)",
+  "notes": "Bolt counts and stud sizes follow ASME B16.5 WN RF. Assembly torques are PCC-1 style moly screening values; rescale by K and bolt grade in the calculator.",
+  "entries": [
+    {
+      "nps": "0.5",
+      "npsLabel": "1/2\"",
+      "dn": 15,
+      "ratings": [
+        {
+          "class": "150",
+          "studSize": "1/2\" (M12)",
+          "studSizeMm": 12.7,
+          "boltCount": 4,
+          "torqueNm": 81,
+          "torqueFtLb": 60,
+          "tighteningPattern": "4-bolt cross: 1 -> 3 -> 2 -> 4. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        },
+        {
+          "class": "300",
+          "studSize": "1/2\" (M12)",
+          "studSizeMm": 12.7,
+          "boltCount": 4,
+          "torqueNm": 110,
+          "torqueFtLb": 81,
+          "tighteningPattern": "4-bolt cross: 1 -> 3 -> 2 -> 4. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        },
+        {
+          "class": "600",
+          "studSize": "1/2\" (M12)",
+          "studSizeMm": 12.7,
+          "boltCount": 4,
+          "torqueNm": 138,
+          "torqueFtLb": 102,
+          "tighteningPattern": "4-bolt cross: 1 -> 3 -> 2 -> 4. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        }
+      ]
+    },
+    {
+      "nps": "0.75",
+      "npsLabel": "3/4\"",
+      "dn": 20,
+      "ratings": [
+        {
+          "class": "150",
+          "studSize": "1/2\" (M12)",
+          "studSizeMm": 12.7,
+          "boltCount": 4,
+          "torqueNm": 81,
+          "torqueFtLb": 60,
+          "tighteningPattern": "4-bolt cross: 1 -> 3 -> 2 -> 4. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        },
+        {
+          "class": "300",
+          "studSize": "5/8\" (M16)",
+          "studSizeMm": 15.9,
+          "boltCount": 4,
+          "torqueNm": 183,
+          "torqueFtLb": 135,
+          "tighteningPattern": "4-bolt cross: 1 -> 3 -> 2 -> 4. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        },
+        {
+          "class": "600",
+          "studSize": "5/8\" (M16)",
+          "studSizeMm": 15.9,
+          "boltCount": 4,
+          "torqueNm": 230,
+          "torqueFtLb": 170,
+          "tighteningPattern": "4-bolt cross: 1 -> 3 -> 2 -> 4. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        }
+      ]
+    },
+    {
+      "nps": "1",
+      "npsLabel": "1\"",
+      "dn": 25,
+      "ratings": [
+        {
+          "class": "150",
+          "studSize": "1/2\" (M12)",
+          "studSizeMm": 12.7,
+          "boltCount": 4,
+          "torqueNm": 81,
+          "torqueFtLb": 60,
+          "tighteningPattern": "4-bolt cross: 1 -> 3 -> 2 -> 4. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        },
+        {
+          "class": "300",
+          "studSize": "5/8\" (M16)",
+          "studSizeMm": 15.9,
+          "boltCount": 4,
+          "torqueNm": 183,
+          "torqueFtLb": 135,
+          "tighteningPattern": "4-bolt cross: 1 -> 3 -> 2 -> 4. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        },
+        {
+          "class": "600",
+          "studSize": "5/8\" (M16)",
+          "studSizeMm": 15.9,
+          "boltCount": 4,
+          "torqueNm": 230,
+          "torqueFtLb": 170,
+          "tighteningPattern": "4-bolt cross: 1 -> 3 -> 2 -> 4. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        }
+      ]
+    },
+    {
+      "nps": "1.5",
+      "npsLabel": "1-1/2\"",
+      "dn": 40,
+      "ratings": [
+        {
+          "class": "150",
+          "studSize": "1/2\" (M12)",
+          "studSizeMm": 12.7,
+          "boltCount": 4,
+          "torqueNm": 81,
+          "torqueFtLb": 60,
+          "tighteningPattern": "4-bolt cross: 1 -> 3 -> 2 -> 4. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        },
+        {
+          "class": "300",
+          "studSize": "3/4\" (M20)",
+          "studSizeMm": 19.1,
+          "boltCount": 4,
+          "torqueNm": 366,
+          "torqueFtLb": 270,
+          "tighteningPattern": "4-bolt cross: 1 -> 3 -> 2 -> 4. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        },
+        {
+          "class": "600",
+          "studSize": "3/4\" (M20)",
+          "studSizeMm": 19.1,
+          "boltCount": 4,
+          "torqueNm": 461,
+          "torqueFtLb": 340,
+          "tighteningPattern": "4-bolt cross: 1 -> 3 -> 2 -> 4. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        }
+      ]
+    },
+    {
+      "nps": "2",
+      "npsLabel": "2\"",
+      "dn": 50,
+      "ratings": [
+        {
+          "class": "150",
+          "studSize": "5/8\" (M16)",
+          "studSizeMm": 15.9,
+          "boltCount": 4,
+          "torqueNm": 135,
+          "torqueFtLb": 100,
+          "tighteningPattern": "4-bolt cross: 1 -> 3 -> 2 -> 4. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        },
+        {
+          "class": "300",
+          "studSize": "5/8\" (M16)",
+          "studSizeMm": 15.9,
+          "boltCount": 8,
+          "torqueNm": 190,
+          "torqueFtLb": 140,
+          "tighteningPattern": "8-bolt star: 1 -> 5 -> 3 -> 7 -> 2 -> 6 -> 4 -> 8. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        },
+        {
+          "class": "600",
+          "studSize": "5/8\" (M16)",
+          "studSizeMm": 15.9,
+          "boltCount": 8,
+          "torqueNm": 340,
+          "torqueFtLb": 250,
+          "tighteningPattern": "8-bolt star: 1 -> 5 -> 3 -> 7 -> 2 -> 6 -> 4 -> 8. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        }
+      ]
+    },
+    {
+      "nps": "2.5",
+      "npsLabel": "2-1/2\"",
+      "dn": 65,
+      "ratings": [
+        {
+          "class": "150",
+          "studSize": "5/8\" (M16)",
+          "studSizeMm": 15.9,
+          "boltCount": 4,
+          "torqueNm": 136,
+          "torqueFtLb": 100,
+          "tighteningPattern": "4-bolt cross: 1 -> 3 -> 2 -> 4. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        },
+        {
+          "class": "300",
+          "studSize": "3/4\" (M20)",
+          "studSizeMm": 19.1,
+          "boltCount": 8,
+          "torqueNm": 366,
+          "torqueFtLb": 270,
+          "tighteningPattern": "8-bolt star: 1 -> 5 -> 3 -> 7 -> 2 -> 6 -> 4 -> 8. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        },
+        {
+          "class": "600",
+          "studSize": "3/4\" (M20)",
+          "studSizeMm": 19.1,
+          "boltCount": 8,
+          "torqueNm": 461,
+          "torqueFtLb": 340,
+          "tighteningPattern": "8-bolt star: 1 -> 5 -> 3 -> 7 -> 2 -> 6 -> 4 -> 8. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        }
+      ]
+    },
+    {
+      "nps": "3",
+      "npsLabel": "3\"",
+      "dn": 80,
+      "ratings": [
+        {
+          "class": "150",
+          "studSize": "5/8\" (M16)",
+          "studSizeMm": 15.9,
+          "boltCount": 4,
+          "torqueNm": 136,
+          "torqueFtLb": 100,
+          "tighteningPattern": "4-bolt cross: 1 -> 3 -> 2 -> 4. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        },
+        {
+          "class": "300",
+          "studSize": "3/4\" (M20)",
+          "studSizeMm": 19.1,
+          "boltCount": 8,
+          "torqueNm": 366,
+          "torqueFtLb": 270,
+          "tighteningPattern": "8-bolt star: 1 -> 5 -> 3 -> 7 -> 2 -> 6 -> 4 -> 8. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        },
+        {
+          "class": "600",
+          "studSize": "3/4\" (M20)",
+          "studSizeMm": 19.1,
+          "boltCount": 8,
+          "torqueNm": 461,
+          "torqueFtLb": 340,
+          "tighteningPattern": "8-bolt star: 1 -> 5 -> 3 -> 7 -> 2 -> 6 -> 4 -> 8. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        }
+      ]
+    },
+    {
+      "nps": "4",
+      "npsLabel": "4\"",
+      "dn": 100,
+      "ratings": [
+        {
+          "class": "150",
+          "studSize": "5/8\" (M16)",
+          "studSizeMm": 15.9,
+          "boltCount": 8,
+          "torqueNm": 190,
+          "torqueFtLb": 140,
+          "tighteningPattern": "8-bolt star: 1 -> 5 -> 3 -> 7 -> 2 -> 6 -> 4 -> 8. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        },
+        {
+          "class": "300",
+          "studSize": "3/4\" (M20)",
+          "studSizeMm": 19.1,
+          "boltCount": 8,
+          "torqueNm": 340,
+          "torqueFtLb": 250,
+          "tighteningPattern": "8-bolt star: 1 -> 5 -> 3 -> 7 -> 2 -> 6 -> 4 -> 8. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        },
+        {
+          "class": "600",
+          "studSize": "3/4\" (M20)",
+          "studSizeMm": 19.1,
+          "boltCount": 8,
+          "torqueNm": 475,
+          "torqueFtLb": 350,
+          "tighteningPattern": "8-bolt star: 1 -> 5 -> 3 -> 7 -> 2 -> 6 -> 4 -> 8. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        }
+      ]
+    },
+    {
+      "nps": "5",
+      "npsLabel": "5\"",
+      "dn": 125,
+      "ratings": [
+        {
+          "class": "150",
+          "studSize": "3/4\" (M20)",
+          "studSizeMm": 19.1,
+          "boltCount": 8,
+          "torqueNm": 271,
+          "torqueFtLb": 200,
+          "tighteningPattern": "8-bolt star: 1 -> 5 -> 3 -> 7 -> 2 -> 6 -> 4 -> 8. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        },
+        {
+          "class": "300",
+          "studSize": "3/4\" (M20)",
+          "studSizeMm": 19.1,
+          "boltCount": 8,
+          "torqueNm": 366,
+          "torqueFtLb": 270,
+          "tighteningPattern": "8-bolt star: 1 -> 5 -> 3 -> 7 -> 2 -> 6 -> 4 -> 8. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        },
+        {
+          "class": "600",
+          "studSize": "1\" (M24)",
+          "studSizeMm": 25.4,
+          "boltCount": 8,
+          "torqueNm": 1037,
+          "torqueFtLb": 765,
+          "tighteningPattern": "8-bolt star: 1 -> 5 -> 3 -> 7 -> 2 -> 6 -> 4 -> 8. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        }
+      ]
+    },
+    {
+      "nps": "6",
+      "npsLabel": "6\"",
+      "dn": 150,
+      "ratings": [
+        {
+          "class": "150",
+          "studSize": "3/4\" (M20)",
+          "studSizeMm": 19.1,
+          "boltCount": 8,
+          "torqueNm": 271,
+          "torqueFtLb": 200,
+          "tighteningPattern": "8-bolt star: 1 -> 5 -> 3 -> 7 -> 2 -> 6 -> 4 -> 8. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        },
+        {
+          "class": "300",
+          "studSize": "3/4\" (M20)",
+          "studSizeMm": 19.1,
+          "boltCount": 12,
+          "torqueNm": 366,
+          "torqueFtLb": 270,
+          "tighteningPattern": "12-bolt star: 1 -> 7 -> 4 -> 10 -> 2 -> 8 -> 5 -> 11 -> 3 -> 9 -> 6 -> 12. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        },
+        {
+          "class": "600",
+          "studSize": "1\" (M24)",
+          "studSizeMm": 25.4,
+          "boltCount": 12,
+          "torqueNm": 1037,
+          "torqueFtLb": 765,
+          "tighteningPattern": "12-bolt star: 1 -> 7 -> 4 -> 10 -> 2 -> 8 -> 5 -> 11 -> 3 -> 9 -> 6 -> 12. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        }
+      ]
+    },
+    {
+      "nps": "8",
+      "npsLabel": "8\"",
+      "dn": 200,
+      "ratings": [
+        {
+          "class": "150",
+          "studSize": "3/4\" (M20)",
+          "studSizeMm": 19.1,
+          "boltCount": 8,
+          "torqueNm": 340,
+          "torqueFtLb": 250,
+          "tighteningPattern": "8-bolt star: 1 -> 5 -> 3 -> 7 -> 2 -> 6 -> 4 -> 8. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        },
+        {
+          "class": "300",
+          "studSize": "7/8\" (M22)",
+          "studSizeMm": 22.2,
+          "boltCount": 12,
+          "torqueNm": 475,
+          "torqueFtLb": 350,
+          "tighteningPattern": "12-bolt star: 1 -> 7 -> 4 -> 10 -> 2 -> 8 -> 5 -> 11 -> 3 -> 9 -> 6 -> 12. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        },
+        {
+          "class": "600",
+          "studSize": "1\" (M24)",
+          "studSizeMm": 25.4,
+          "boltCount": 12,
+          "torqueNm": 680,
+          "torqueFtLb": 500,
+          "tighteningPattern": "12-bolt star: 1 -> 7 -> 4 -> 10 -> 2 -> 8 -> 5 -> 11 -> 3 -> 9 -> 6 -> 12. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        }
+      ]
+    },
+    {
+      "nps": "10",
+      "npsLabel": "10\"",
+      "dn": 250,
+      "ratings": [
+        {
+          "class": "150",
+          "studSize": "7/8\" (M22)",
+          "studSizeMm": 22.2,
+          "boltCount": 12,
+          "torqueNm": 434,
+          "torqueFtLb": 320,
+          "tighteningPattern": "12-bolt star: 1 -> 7 -> 4 -> 10 -> 2 -> 8 -> 5 -> 11 -> 3 -> 9 -> 6 -> 12. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        },
+        {
+          "class": "300",
+          "studSize": "1\" (M24)",
+          "studSizeMm": 25.4,
+          "boltCount": 16,
+          "torqueNm": 824,
+          "torqueFtLb": 608,
+          "tighteningPattern": "16-bolt star pattern. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        },
+        {
+          "class": "600",
+          "studSize": "1-1/8\" (M27)",
+          "studSizeMm": 28.6,
+          "boltCount": 16,
+          "torqueNm": 1383,
+          "torqueFtLb": 1020,
+          "tighteningPattern": "16-bolt star pattern. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        }
+      ]
+    },
+    {
+      "nps": "12",
+      "npsLabel": "12\"",
+      "dn": 300,
+      "ratings": [
+        {
+          "class": "150",
+          "studSize": "7/8\" (M22)",
+          "studSizeMm": 22.2,
+          "boltCount": 12,
+          "torqueNm": 434,
+          "torqueFtLb": 320,
+          "tighteningPattern": "12-bolt star: 1 -> 7 -> 4 -> 10 -> 2 -> 8 -> 5 -> 11 -> 3 -> 9 -> 6 -> 12. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        },
+        {
+          "class": "300",
+          "studSize": "1-1/8\" (M27)",
+          "studSizeMm": 28.6,
+          "boltCount": 16,
+          "torqueNm": 1098,
+          "torqueFtLb": 810,
+          "tighteningPattern": "16-bolt star pattern. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        },
+        {
+          "class": "600",
+          "studSize": "1-1/4\" (M30)",
+          "studSizeMm": 31.8,
+          "boltCount": 20,
+          "torqueNm": 1729,
+          "torqueFtLb": 1275,
+          "tighteningPattern": "20-bolt star pattern. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        }
+      ]
+    },
+    {
+      "nps": "14",
+      "npsLabel": "14\"",
+      "dn": 350,
+      "ratings": [
+        {
+          "class": "150",
+          "studSize": "1\" (M24)",
+          "studSizeMm": 25.4,
+          "boltCount": 12,
+          "torqueNm": 610,
+          "torqueFtLb": 450,
+          "tighteningPattern": "12-bolt star: 1 -> 7 -> 4 -> 10 -> 2 -> 8 -> 5 -> 11 -> 3 -> 9 -> 6 -> 12. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        },
+        {
+          "class": "300",
+          "studSize": "1-1/8\" (M27)",
+          "studSizeMm": 28.6,
+          "boltCount": 20,
+          "torqueNm": 1098,
+          "torqueFtLb": 810,
+          "tighteningPattern": "20-bolt star pattern. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        },
+        {
+          "class": "600",
+          "studSize": "1-1/4\" (M30)",
+          "studSizeMm": 31.8,
+          "boltCount": 20,
+          "torqueNm": 1729,
+          "torqueFtLb": 1275,
+          "tighteningPattern": "20-bolt star pattern. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        }
+      ]
+    },
+    {
+      "nps": "16",
+      "npsLabel": "16\"",
+      "dn": 400,
+      "ratings": [
+        {
+          "class": "150",
+          "studSize": "1\" (M24)",
+          "studSizeMm": 25.4,
+          "boltCount": 16,
+          "torqueNm": 610,
+          "torqueFtLb": 450,
+          "tighteningPattern": "16-bolt star pattern. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        },
+        {
+          "class": "300",
+          "studSize": "1-1/4\" (M30)",
+          "studSizeMm": 31.8,
+          "boltCount": 20,
+          "torqueNm": 1373,
+          "torqueFtLb": 1013,
+          "tighteningPattern": "20-bolt star pattern. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        },
+        {
+          "class": "600",
+          "studSize": "1-1/2\" (M36)",
+          "studSizeMm": 38.1,
+          "boltCount": 20,
+          "torqueNm": 2535,
+          "torqueFtLb": 1870,
+          "tighteningPattern": "20-bolt star pattern. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        }
+      ]
+    },
+    {
+      "nps": "18",
+      "npsLabel": "18\"",
+      "dn": 450,
+      "ratings": [
+        {
+          "class": "150",
+          "studSize": "1-1/8\" (M27)",
+          "studSizeMm": 28.6,
+          "boltCount": 16,
+          "torqueNm": 813,
+          "torqueFtLb": 600,
+          "tighteningPattern": "16-bolt star pattern. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        },
+        {
+          "class": "300",
+          "studSize": "1-1/4\" (M30)",
+          "studSizeMm": 31.8,
+          "boltCount": 24,
+          "torqueNm": 1373,
+          "torqueFtLb": 1013,
+          "tighteningPattern": "24-bolt star pattern. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        },
+        {
+          "class": "600",
+          "studSize": "1-1/2\" (M36)",
+          "studSizeMm": 38.1,
+          "boltCount": 24,
+          "torqueNm": 2535,
+          "torqueFtLb": 1870,
+          "tighteningPattern": "24-bolt star pattern. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        }
+      ]
+    },
+    {
+      "nps": "20",
+      "npsLabel": "20\"",
+      "dn": 500,
+      "ratings": [
+        {
+          "class": "150",
+          "studSize": "1-1/8\" (M27)",
+          "studSizeMm": 28.6,
+          "boltCount": 20,
+          "torqueNm": 813,
+          "torqueFtLb": 600,
+          "tighteningPattern": "20-bolt star pattern. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        },
+        {
+          "class": "300",
+          "studSize": "1-1/4\" (M30)",
+          "studSizeMm": 31.8,
+          "boltCount": 24,
+          "torqueNm": 1373,
+          "torqueFtLb": 1013,
+          "tighteningPattern": "24-bolt star pattern. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        },
+        {
+          "class": "600",
+          "studSize": "1-1/2\" (M36)",
+          "studSizeMm": 38.1,
+          "boltCount": 24,
+          "torqueNm": 2535,
+          "torqueFtLb": 1870,
+          "tighteningPattern": "24-bolt star pattern. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        }
+      ]
+    },
+    {
+      "nps": "24",
+      "npsLabel": "24\"",
+      "dn": 600,
+      "ratings": [
+        {
+          "class": "150",
+          "studSize": "1-1/4\" (M30)",
+          "studSizeMm": 31.8,
+          "boltCount": 20,
+          "torqueNm": 1017,
+          "torqueFtLb": 750,
+          "tighteningPattern": "20-bolt star pattern. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        },
+        {
+          "class": "300",
+          "studSize": "1-1/2\" (M36)",
+          "studSizeMm": 38.1,
+          "boltCount": 24,
+          "torqueNm": 2013,
+          "torqueFtLb": 1485,
+          "tighteningPattern": "24-bolt star pattern. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        },
+        {
+          "class": "600",
+          "studSize": "1-1/2\" (M36)",
+          "studSizeMm": 38.1,
+          "boltCount": 24,
+          "torqueNm": 2535,
+          "torqueFtLb": 1870,
+          "tighteningPattern": "24-bolt star pattern. Apply Round 1-4 (30% -> 60% -> 100% -> circular 100%)."
+        }
+      ]
+    }
+  ]
+}

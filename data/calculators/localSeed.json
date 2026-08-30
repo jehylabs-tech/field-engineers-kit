@@ -1,0 +1,255 @@
+[
+  {
+    "id": "local-pipe-wall-thickness",
+    "category": "piping",
+    "title": "ASME B31.3 Pipe Thickness Calculator",
+    "slug": "pipe-wall-thickness",
+    "meta_description": "Calculate minimum required pipe wall thickness per ASME B31.3 for process piping maintenance and inspection planning.",
+    "formula_json": {
+      "type": "pipe-thickness",
+      "standard": "ASME B31.3",
+      "formulaBasis": "Required thickness t = P D / [2(S E + P Y)] + c per ASME B31.3 para. 304.1.2. Ferritic steels through 482 °C use Y = 0.4."
+    },
+    "is_published": true,
+    "created_at": "2026-08-12T00:00:00.000Z"
+  },
+  {
+    "id": "local-pipe-schedule-dimension",
+    "category": "piping",
+    "title": "Pipe Schedule & Dimension",
+    "slug": "pipe-schedule-dimension",
+    "meta_description": "Look up ASME B36.10M pipe outside diameter, inside diameter, wall thickness, and unit weight by NPS and schedule.",
+    "formula_json": {
+      "type": "pipe-schedule",
+      "standard": "ASME B36.10M",
+      "formulaBasis": "OD, ID, wall, and unit weight from ASME B36.10M by NPS and schedule."
+    },
+    "is_published": true,
+    "created_at": "2026-08-12T00:00:01.000Z"
+  },
+  {
+    "id": "local-flange-dimension-weight",
+    "category": "piping",
+    "title": "Flange Dimension & Weight",
+    "slug": "flange-dimension-weight",
+    "meta_description": "Look up ASME B16.5 weld neck RF flange dimensions, bolt circle, and approximate weight for Class 150, 300, and 600.",
+    "formula_json": {
+      "type": "flange-dimension",
+      "standard": "ASME B16.5",
+      "formulaBasis": "WN RF dimensions and mass from ASME B16.5. Hub bore follows ASME B36.10M pipe ID. RF stud length is a two-nut screening value."
+    },
+    "is_published": true,
+    "created_at": "2026-08-12T00:00:02.000Z"
+  },
+  {
+    "id": "local-fitting-valve-dimension",
+    "category": "piping",
+    "title": "Fitting & Valve Face-to-Face",
+    "slug": "fitting-valve-dimension",
+    "meta_description": "Look up ASME B16.10 flanged valve face-to-face dimensions by NPS and pressure class.",
+    "formula_json": {
+      "type": "fitting-valve-dimension",
+      "standard": "ASME B16.10",
+      "formulaBasis": "Valve face-to-face from ASME B16.10 flanged RF tables."
+    },
+    "is_published": true,
+    "created_at": "2026-08-12T00:00:03.000Z"
+  },
+  {
+    "id": "local-butt-weld-fitting-dimension",
+    "category": "piping",
+    "title": "Butt-Weld Fitting Dimensions",
+    "slug": "butt-weld-fitting-dimension",
+    "meta_description": "ASME B16.9 butt-weld fitting center-to-end and end-to-end dimensions with matching pipe schedule OD, ID, and wall.",
+    "formula_json": {
+      "type": "butt-weld-fitting",
+      "standard": "ASME B16.9",
+      "formulaBasis": "90° LR A = 1.5 × NPS(in) = 38.1 × NPS(mm basis). SR A = 1.0 × NPS(in). Bevel 37.5°."
+    },
+    "is_published": true,
+    "created_at": "2026-08-28T00:00:00.000Z"
+  },
+  {
+    "id": "local-gasket-dimension-selection",
+    "category": "piping",
+    "title": "Gasket Dimension & Selection",
+    "slug": "gasket-dimension-selection",
+    "meta_description": "Look up ASME B16.20 spiral wound and RTJ ring gasket dimensions by NPS and pressure class.",
+    "formula_json": {
+      "type": "gasket-dimension",
+      "standard": "ASME B16.20",
+      "formulaBasis": "Spiral-wound and RTJ ring dimensions from ASME B16.20, matched to the B16.5 flange class."
+    },
+    "is_published": true,
+    "created_at": "2026-08-12T00:00:04.000Z"
+  },
+  {
+    "id": "local-valve-cv-sizing",
+    "category": "mechanical",
+    "title": "Valve Cv Sizing Calculator",
+    "slug": "valve-cv-sizing",
+    "meta_description": "Size control valves for liquid and gas service by calculating required flow coefficient (Cv) from process conditions.",
+    "formula_json": {
+      "type": "valve-cv",
+      "standard": "ISA / IEC 60534",
+      "formulaBasis": "US Cv per ISA / IEC 60534. Liquid Cv = Q_gpm √(SG / ΔP_psi) after converting m³/h and bar."
+    },
+    "is_published": true,
+    "created_at": "2026-08-12T00:00:05.000Z"
+  },
+  {
+    "id": "local-bolt-torque-tensioning",
+    "category": "mechanical",
+    "title": "Bolt Torque & Tensioning",
+    "slug": "bolt-torque-tensioning",
+    "meta_description": "Look up ASME PCC-1 recommended flange joint assembly torque, stud size, bolt count, and star tightening sequence.",
+    "formula_json": {
+      "type": "bolt-torque",
+      "standard": "ASME PCC-1",
+      "subtitle": "ASME PCC-1 Guidelines for Pressure Boundary Bolted Flange Joint Assembly.",
+      "formulaBasis": "Assembly torque, stud size, and star-pattern tightening follow ASME PCC-1 for pressure-boundary bolted flange joints. NPS and class nominators come from the ASME B16.5 flange geometry used with the joint."
+    },
+    "is_published": true,
+    "created_at": "2026-08-12T00:00:06.000Z"
+  },
+  {
+    "id": "local-blind-flange-thickness",
+    "category": "mechanical",
+    "title": "Blind Flange Thickness",
+    "slug": "blind-flange-thickness",
+    "meta_description": "Calculate ASME B31.3 / VIII-1 UG-34 flat blind thickness t = d × √(0.3P / SE) + c from diameter, design pressure, and corrosion allowance.",
+    "formula_json": {
+      "type": "blind-flange",
+      "standard": "ASME B31.3",
+      "subtitle": "t = d × √(0.3P / SE) + c using attachment factor C = 0.30 (B31.3 304.4.1 / VIII-1 UG-34).",
+      "formulaBasis": "Required thickness uses t = d × √(0.3P / SE) + c. C = 0.30 is the ASME Section VIII Division 1 UG-34 / B31.3 para. 304.4.1 bolted flat-cover factor. d is inside or gasket contact diameter; P and S share stress units; c is corrosion allowance."
+    },
+    "is_published": true,
+    "created_at": "2026-08-12T00:00:07.000Z"
+  },
+  {
+    "id": "local-metal-weight-cost",
+    "category": "procurement",
+    "title": "Metal Weight & Cost Estimator",
+    "slug": "metal-weight-cost",
+    "meta_description": "Estimate metal weight and procurement cost for plate, pipe, and bar shapes using material density and unit price.",
+    "formula_json": {
+      "type": "metal-weight",
+      "standard": "Procurement Estimate",
+      "formulaBasis": "Mass = density × volume for plate, pipe, and bar. Densities are typical CS / 304 / Al / Cu screening values."
+    },
+    "is_published": true,
+    "created_at": "2026-08-12T00:00:08.000Z"
+  },
+  {
+    "id": "local-hydro-test-pressure",
+    "category": "inspection",
+    "title": "Hydro/Pneumatic Test Pressure",
+    "slug": "hydro-test-pressure",
+    "meta_description": "Calculate ASME B31.3 hydrostatic and pneumatic test pressure with St/S temperature correction and yield-limit screening.",
+    "formula_json": {
+      "type": "hydro-test",
+      "standard": "ASME B31.3",
+      "subtitle": "ASME B31.3 St/S stress ratio & yield limit check",
+      "formulaBasis": "Hydrostatic test pressure Pt = 1.5 × P × (St/S). Pneumatic Pt = 1.1 × P × (St/S) per ASME B31.3 para. 345.4.2. St is allowable stress at the test temperature and S is allowable at the design temperature. Default St/S = 1.0; field guide cap is 6.5. Confirm that test hoop stress stays below yield."
+    },
+    "is_published": true,
+    "created_at": "2026-08-12T00:00:09.000Z"
+  },
+  {
+    "id": "local-thermal-expansion-loop",
+    "category": "piping",
+    "title": "Thermal Expansion & Loop Sizing",
+    "slug": "thermal-expansion-loop",
+    "meta_description": "Calculate ASME B31.3 thermal growth and screen L-shape / U-loop leg length from material, T1/T2, and straight-run length.",
+    "formula_json": {
+      "type": "thermal-expansion",
+      "standard": "ASME B31.3 (2022 Edition) · Appendix C",
+      "subtitle": "ΔL = α L ΔT with guided-cantilever loop screening. Not a CAESAR II / Appendix P computer analysis.",
+      "formulaBasis": "Thermal expansion ΔL = α × L × (T2 − T1) using mean coefficients typical of ASME B31.3 Appendix C. L-shape min. guided length L = √(3 E D Δ / (4 Sa)). U-loop width taken as 0.65 L. Screening only.",
+      "faq": [
+        {
+          "q": "Does this replace a flexibility analysis?",
+          "a": "No. It is a field screening estimate for expansion loop size. Formal analysis is required where B31.3 flexibility rules are not obviously satisfied."
+        }
+      ],
+      "related": [
+        { "slug": "pipe-wall-thickness", "title": "Pipe Thickness", "carry": "Same NPS / T" },
+        { "slug": "pipe-schedule-dimension", "title": "Pipe Schedule", "carry": "Same NPS" }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-08-15T00:00:10.000Z"
+  },
+  {
+    "id": "local-pressure-drop-friction",
+    "category": "piping",
+    "title": "Pressure Drop & Friction Loss",
+    "slug": "pressure-drop-friction",
+    "meta_description": "Darcy–Weisbach pressure drop with NPS/schedule ID, fittings as equivalent length, and ΔP in bar and psi.",
+    "formula_json": {
+      "type": "pressure-drop",
+      "standard": "Darcy–Weisbach",
+      "subtitle": "ΔP = f (L/D) (ρ v² / 2) with Haaland friction factor for commercial steel pipe.",
+      "formulaBasis": "Darcy–Weisbach equation. Friction factor by the Haaland approximation to Colebrook. Elbow / gate / globe equivalent lengths use Crane TP-410 typical L/D values.",
+      "faq": [
+        {
+          "q": "Are steam and air densities fixed?",
+          "a": "Yes — typical screening densities. For HP steam or compressed air, treat the result as order-of-magnitude only."
+        }
+      ],
+      "related": [
+        { "slug": "flow-velocity-erosion", "title": "Flow Velocity", "carry": "Same Q / NPS" },
+        { "slug": "pipe-schedule-dimension", "title": "Pipe Schedule", "carry": "Same NPS / Sch" }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-08-15T00:00:11.000Z"
+  },
+  {
+    "id": "local-flow-velocity-erosion",
+    "category": "piping",
+    "title": "Flow Rate & Velocity",
+    "slug": "flow-velocity-erosion",
+    "meta_description": "Compute pipe velocity v = Q/A and flag API RP 14E erosion velocity limit vc = c / √ρ.",
+    "formula_json": {
+      "type": "flow-velocity",
+      "standard": "API RP 14E",
+      "subtitle": "Mean velocity versus API RP 14E erosion velocity. Safe / Warning / Erosion Risk.",
+      "formulaBasis": "v = Q / A using ASME B36.10M inside diameter. Erosion limit vc = c / √ρ with ρ in lb/ft³ per API RP 14E. Default c = 100 for continuous service.",
+      "faq": [
+        {
+          "q": "What c factor should I use?",
+          "a": "c = 100 is conservative continuous service. 125–150 is common for intermittent two-phase; site standards prevail."
+        }
+      ],
+      "related": [
+        { "slug": "pressure-drop-friction", "title": "Pressure Drop", "carry": "Same NPS / flow" },
+        { "slug": "pipe-schedule-dimension", "title": "Pipe Schedule", "carry": "Same NPS / Sch" }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-08-15T00:00:12.000Z"
+  },
+  {
+    "id": "local-unit-converter",
+    "category": "procurement",
+    "title": "Quick Engineering Unit Converter",
+    "slug": "unit-converter",
+    "meta_description": "Convert plant units: pressure, dimension, temperature, flow, torque, weight, and velocity.",
+    "formula_json": {
+      "type": "unit-converter",
+      "standard": "SI conversion",
+      "subtitle": "Seven categories: pressure, dimension, temperature, flow, torque, weight, and velocity. Also available from the floating Quick Unit dock.",
+      "formulaBasis": "Exact SI conversion factors. Torque uses 1 ft·lb = 1.355817948 N·m and 1 kgf·m = 9.80665 N·m. Mass uses the avoirdupois pound and metric tonne (1000 kg). Velocity uses 1 ft = 0.3048 m. Mass/volume flow uses the entered density (default 1000 kg/m³ water).",
+      "faq": [
+        {
+          "q": "Where is the floating converter?",
+          "a": "The ⚡ Quick Unit button stays on the lower right of every public page except this full converter."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-08-15T00:00:14.000Z"
+  }
+]

@@ -1,0 +1,36 @@
+﻿# Keep Cursor indexing/search off heavy generated trees
+node_modules/
+.next/
+dist/
+out/
+build/
+coverage/
+*.tsbuildinfo
+
+# Version control (skip full tree indexing)
+.git/
+.git/objects/
+.git/lfs/
+
+# Lock files & logs
+*.log
+*.lock
+package-lock.json
+pnpm-lock.yaml
+
+# Large binary / generated artifacts
+*.map
+*.pack
+public/sw.js
+public/workbox-*.js
+
+# Local caches & tooling noise
+.turbo/
+.vercel/
+playwright-report/
+test-results/
+
+# Chat / agent noise (speeds Cursor prompt context)
+**/*.jsonl
+**/agent-transcripts/
+**/terminals/

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="Field Engineer Kit">
+  <rect width="512" height="512" rx="96" fill="#3D5AFE"/>
+  <rect x="96" y="128" width="320" height="64" rx="16" fill="#FFFFFF"/>
+  <rect x="96" y="224" width="224" height="48" rx="12" fill="#EEF1FF"/>
+  <rect x="96" y="304" width="288" height="48" rx="12" fill="#EEF1FF"/>
+  <rect x="96" y="384" width="160" height="48" rx="12" fill="#FFFFFF"/>
+</svg>

@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>FieldEngineersKit — 보 처짐 계산기 (최종 스펙)</title>
+<style>
+  :root{
+    --bg:#FFFFFF;
+    --panel:#F7F8FA;
+    --border:#E4E6EA;
+    --border-strong:#D2D5DC;
+    --text:#15181E;
+    --text2:#5B6270;
+    --text3:#8A909C;
+    --accent:#3D5AFE;
+    --accent-bg:#EEF1FF;
+    --accent-text:#2D3FC9;
+    --danger:#C4432B;
+    --danger-bg:#FDEEEA;
+    --success:#1C8A5A;
+    --success-bg:#E9F7EF;
+    --spon-bg:#FFF8EC;
+    --spon-border:#EBD8AE;
+    --spon-text:#8A5A0C;
+    --ad-bg:#F2F2F0;
+    --mono:'SFMono-Regular',ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Pretendard,"Noto Sans KR",sans-serif;font-size:14px;line-height:1.5;}
+  a{color:inherit;text-decoration:none;}
+
+  header{height:54px;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:20px;background:#FFFFFF;position:sticky;top:0;z-index:20;}
+  .logo{display:flex;align-items:center;gap:8px;font-weight:600;font-size:14px;letter-spacing:-0.01em;}
+  .logo .mark{width:18px;height:18px;border-radius:5px;background:var(--accent);display:inline-block;}
+  .cmdk-btn{display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:6px 10px;color:var(--text3);font-size:13px;width:300px;cursor:pointer;}
+  .cmdk-btn kbd{margin-left:auto;background:#FFFFFF;border:1px solid var(--border-strong);border-radius:4px;padding:1px 6px;font-size:11px;color:var(--text2);font-family:var(--mono);}
+  .header-right{margin-left:auto;display:flex;align-items:center;gap:10px;}
+  .offline-chip{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--success);background:var(--success-bg);padding:4px 9px;border-radius:20px;font-weight:500;}
+  .offline-chip .dot{width:6px;height:6px;border-radius:50%;background:var(--success);}
+  .icon-btn{width:30px;height:30px;border-radius:6px;display:flex;align-items:center;justify-content:center;color:var(--text2);cursor:pointer;}
+  .icon-btn:hover{background:var(--panel);color:var(--text);}
+  .signin{background:var(--text);color:#FFFFFF;padding:6px 14px;border-radius:6px;font-weight:500;font-size:13px;cursor:pointer;}
+
+  .shell{display:flex;}
+  aside{width:216px;flex-shrink:0;border-right:1px solid var(--border);padding:18px 12px;background:var(--panel);}
+  .side-title{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.04em;padding:6px 8px;font-weight:600;}
+  .side-item{display:flex;align-items:center;justify-content:space-between;padding:7px 8px;border-radius:6px;color:var(--text2);font-size:13px;cursor:pointer;}
+  .side-item:hover{background:#FFFFFF;color:var(--text);}
+  .side-item.active{background:var(--accent-bg);color:var(--accent-text);font-weight:500;}
+  .side-item .count{font-size:11px;color:var(--text3);}
+  .side-sub{padding-left:20px;margin-top:2px;margin-bottom:8px;}
+  .side-sub .side-item{font-size:12.5px;padding:5px 8px;}
+
+  main{flex:1;min-width:0;}
+  .breadcrumb{padding:12px 24px;border-bottom:1px solid var(--border);font-size:12.5px;color:var(--text3);display:flex;align-items:center;gap:6px;}
+  .breadcrumb b{color:var(--text2);font-weight:500;}
+
+  .url-bar{display:flex;align-items:center;gap:10px;padding:9px 24px;border-bottom:1px solid var(--border);background:var(--panel);}
+  .url-bar .url-ic{color:var(--text3);font-size:13px;flex-shrink:0;}
+  .url-bar .url-text{font-family:var(--mono);font-size:12px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;}
+  .url-bar .url-text b{color:var(--accent-text);font-weight:500;}
+  .url-chip-btn{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--text2);border:1px solid var(--border-strong);background:#fff;padding:5px 10px;border-radius:6px;cursor:pointer;flex-shrink:0;}
+  .url-chip-btn:hover{background:var(--panel);}
+
+  .page-title-row{padding:18px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;}
+  .page-title-row h1{font-size:19px;font-weight:600;letter-spacing:-0.01em;margin-bottom:4px;}
+  .page-title-row p{font-size:13px;color:var(--text2);}
+  .tag{font-size:11px;background:var(--panel);border:1px solid var(--border);color:var(--text2);padding:3px 8px;border-radius:20px;}
+
+  .summary-bar{display:flex;align-items:center;gap:28px;padding:10px 24px;border-bottom:1px solid var(--border);background:var(--panel);position:sticky;top:54px;z-index:10;}
+  .summary-item .k{font-size:11px;color:var(--text3);margin-bottom:2px;}
+  .summary-item .v{font-size:15px;font-weight:600;font-family:var(--mono);}
+  .summary-status{margin-left:auto;display:flex;align-items:center;gap:6px;background:var(--danger-bg);color:var(--danger);font-size:12px;font-weight:500;padding:5px 10px;border-radius:20px;}
+  .summary-status .dot{width:6px;height:6px;border-radius:50%;background:var(--danger);}
+
+  /* CLEAN ZONE 라벨 — 스플릿 스크린 전체 */
+  .clean-zone-flag{
+    display:flex;align-items:center;justify-content:center;gap:6px;
+    padding:6px;font-size:11px;color:var(--success);background:var(--success-bg);
+    border-bottom:1px dashed #BEE3CE;
+  }
+
+  .split{display:flex;}
+  .pane{width:50%;padding:24px;}
+  .pane-left{border-right:1px solid var(--border);}
+
+  .section{margin-bottom:22px;}
+  .section-head{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+  .section-num{width:18px;height:18px;border-radius:5px;background:var(--panel);border:1px solid var(--border);font-size:10.5px;color:var(--text3);display:flex;align-items:center;justify-content:center;font-weight:600;}
+  .section-head h3{font-size:13px;font-weight:600;}
+
+  .field-group{margin-bottom:14px;}
+  label{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--text2);margin-bottom:6px;font-weight:500;}
+  .auto-badge{font-size:10px;color:var(--accent-text);background:var(--accent-bg);padding:1px 6px;border-radius:10px;font-weight:500;}
+  .unit-row{display:flex;gap:8px;}
+  input[type=text], select{width:100%;background:#FFFFFF;border:1px solid var(--border-strong);color:var(--text);border-radius:6px;padding:9px 10px;font-size:13.5px;font-family:var(--mono);}
+  input[type=text]:focus, select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-bg);}
+  select{width:88px;flex-shrink:0;font-family:inherit;}
+
+  .unit-toggle{display:inline-flex;background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:2px;margin-bottom:20px;}
+  .unit-toggle span{padding:5px 12px;border-radius:5px;font-size:12.5px;color:var(--text3);cursor:pointer;}
+  .unit-toggle span.active{background:#FFFFFF;color:var(--text);border:1px solid var(--border-strong);}
+
+  .field-error input{border-color:var(--danger);background:var(--danger-bg);}
+  .error-text{font-size:12px;color:var(--danger);margin-top:6px;display:flex;align-items:center;gap:5px;}
+  .error-text .ic{width:14px;height:14px;border-radius:50%;background:var(--danger);color:#fff;font-size:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+
+  .result-hero{background:var(--panel);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:16px;}
+  .result-hero .label{font-size:12px;color:var(--text2);margin-bottom:6px;}
+  .result-hero .value{font-size:28px;font-weight:600;font-family:var(--mono);letter-spacing:-0.02em;}
+  .result-hero .status{display:inline-flex;align-items:center;gap:6px;font-size:12px;margin-top:8px;color:var(--danger);}
+  .status .dot{width:6px;height:6px;border-radius:50%;background:var(--danger);}
+  .gauge{margin-top:14px;}
+  .gauge-track{position:relative;height:8px;background:var(--border);border-radius:4px;}
+  .gauge-fill{position:absolute;left:0;top:0;height:8px;border-radius:4px;background:var(--danger);width:78%;}
+  .gauge-limit{position:absolute;top:-3px;left:71%;width:2px;height:14px;background:var(--text);}
+  .gauge-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-top:6px;}
+
+  .result-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;}
+  .result-row span:first-child{color:var(--text2);}
+  .result-row span:last-child{font-family:var(--mono);}
+  .result-row.warn span:last-child{color:var(--danger);font-weight:500;}
+
+  .export-row{display:flex;gap:8px;margin-top:20px;}
+  .btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 0;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--border-strong);color:var(--text);background:#fff;}
+  .btn:hover{background:var(--panel);}
+  .btn.primary{background:var(--accent);color:#fff;border:none;}
+  .btn.primary:hover{background:var(--accent-text);}
+
+  /* 하단 문서/SEO 영역 */
+  .doc-section{padding:32px 24px;border-top:1px solid var(--border);}
+  .doc-section h2{font-size:16px;font-weight:600;margin-bottom:10px;}
+  .doc-section p{font-size:13.5px;color:var(--text2);margin-bottom:18px;max-width:720px;}
+  .faq-item{border-top:1px solid var(--border);padding:12px 0;}
+  .faq-item .q{font-size:13.5px;font-weight:500;margin-bottom:4px;}
+  .faq-item .a{font-size:13px;color:var(--text2);}
+
+  /* 관련 계산기 그리드 + 네이티브 스폰서 카드 */
+  .related-section{padding:8px 24px 32px;border-top:1px solid var(--border);}
+  .related-section h2{font-size:16px;font-weight:600;margin-bottom:14px;}
+  .related-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+  .rc-card{border:1px solid var(--border);border-radius:10px;padding:16px;background:#fff;}
+  .rc-card .name{font-size:13.5px;font-weight:500;margin-bottom:6px;}
+  .rc-card .carry{font-size:11px;color:var(--accent-text);background:var(--accent-bg);padding:2px 8px;border-radius:10px;}
+  .rc-card.sponsored{
+    background:var(--spon-bg);border:1px solid var(--spon-border);
+    display:flex;flex-direction:column;
+  }
+  .rc-card.sponsored .spon-label{
+    display:inline-flex;align-self:flex-start;font-size:10px;font-weight:600;
+    color:var(--spon-text);background:#FBEBC8;padding:2px 8px;border-radius:4px;margin-bottom:8px;
+    letter-spacing:0.02em;
+  }
+  .rc-card.sponsored .name{color:var(--spon-text);}
+  .rc-card.sponsored .desc{font-size:12px;color:#9C7A3C;margin-top:4px;}
+
+  /* 최하단 전폭 배너 */
+  .bottom-banner-wrap{padding:20px 24px 32px;border-top:1px solid var(--border);}
+  .ad-label{font-size:10px;color:var(--text3);margin-bottom:6px;text-align:center;letter-spacing:0.03em;}
+  .bottom-banner{
+    background:var(--ad-bg);border:1px dashed var(--border-strong);border-radius:8px;
+    height:90px;display:flex;align-items:center;justify-content:center;
+    color:var(--text3);font-size:12px;max-width:728px;margin:0 auto;
+  }
+
+  /* 모바일 프레임 데모 */
+  .mobile-demo-wrap{
+    background:var(--panel);padding:32px 24px;display:flex;flex-direction:column;align-items:center;gap:10px;
+    border-top:1px solid var(--border);
+  }
+  .mobile-demo-wrap .cap{font-size:12px;color:var(--text3);margin-bottom:6px;}
+  .phone{
+    width:320px;border:1px solid var(--border-strong);border-radius:20px;background:#fff;
+    overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.08);position:relative;
+  }
+  .phone-header{height:44px;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 14px;gap:8px;}
+  .phone-header .mark{width:14px;height:14px;border-radius:4px;background:var(--accent);}
+  .phone-header .t{font-size:12px;font-weight:600;}
+  .phone-body{padding:14px;}
+  .phone-body .mini-label{font-size:10.5px;color:var(--text3);margin-bottom:5px;}
+  .phone-body .mini-input{border:1px solid var(--border-strong);border-radius:6px;padding:7px;font-size:12px;font-family:var(--mono);margin-bottom:10px;}
+  .phone-result{background:var(--panel);border:1px solid var(--border);border-radius:8px;padding:12px;margin:10px 0;}
+  .phone-result .v{font-size:20px;font-weight:600;font-family:var(--mono);}
+  .phone-btn{background:var(--accent);color:#fff;text-align:center;padding:9px;border-radius:6px;font-size:12.5px;font-weight:500;margin-top:8px;}
+  .phone-clean{
+    text-align:center;font-size:10.5px;color:var(--success);background:var(--success-bg);
+    padding:5px;border-radius:6px;margin-top:10px;
+  }
+  .sticky-ad{
+    position:relative;height:50px;background:var(--ad-bg);border-top:1px solid var(--border-strong);
+    display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:11px;
+  }
+  .sticky-ad .x{
+    position:absolute;right:8px;top:50%;transform:translateY(-50%);
+    width:18px;height:18px;border-radius:50%;background:#fff;border:1px solid var(--border-strong);
+    display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text2);
+  }
+  .sticky-ad .ad-tag{position:absolute;left:8px;top:4px;font-size:8px;color:var(--text3);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo"><span class="mark"></span>FieldEngineersKit</div>
+  <div class="cmdk-btn">검색... b313, torque, 4-20ma<kbd>⌘K</kbd></div>
+  <div class="header-right">
+    <div class="offline-chip"><span class="dot"></span>오프라인 사용 가능</div>
+    <div class="icon-btn" title="다크모드 전환">🌙</div>
+    <div class="signin">Sign in</div>
+  </div>
+</header>
+
+<div class="shell">
+  <aside>
+    <div class="side-title">카테고리</div>
+    <div class="side-item active">구조 (Structural)<span class="count">18</span></div>
+    <div class="side-sub">
+      <div class="side-item active">보 처짐 계산기</div>
+      <div class="side-item">기둥 좌굴 계산기</div>
+      <div class="side-item">용접부 강도 계산기</div>
+    </div>
+    <div class="side-item">배관 (Piping)<span class="count">14</span></div>
+    <div class="side-item">전기 (Electrical)<span class="count">12</span></div>
+    <div class="side-item">유체 (Fluid)<span class="count">9</span></div>
+  </aside>
+
+  <main>
+    <div class="breadcrumb"><span>Home</span><span>/</span><span>Structural</span><span>/</span><b>보 처짐 계산기</b></div>
+
+    <div class="url-bar">
+      <span class="url-ic">🔗</span>
+      <div class="url-text">kit.com/structural/beam-deflection?<b>span=6</b>&amp;<b>load=12.5</b>&amp;<b>i=8360</b>&amp;<b>e=200</b></div>
+      <div class="url-chip-btn">⧉ 링크 복사</div>
+      <div class="url-chip-btn">▦ QR 코드</div>
+    </div>
+
+    <div class="page-title-row">
+      <div>
+        <h1>보 처짐 계산기 (Beam Deflection Calculator)</h1>
+        <p>단순보의 최대 처짐량을 AISC 360 기준에 따라 즉시 계산합니다 · 입력값은 URL에 자동 저장됩니다</p>
+      </div>
+      <span class="tag">AISC 360</span>
+    </div>
+
+    <div class="summary-bar">
+      <div class="summary-item"><div class="k">최대 처짐량</div><div class="v">18.4 mm</div></div>
+      <div class="summary-item"><div class="k">허용 한계 (L/360)</div><div class="v">16.7 mm</div></div>
+      <div class="summary-status"><span class="dot"></span>기준 초과 — 재검토 필요</div>
+    </div>
+
+    <div class="clean-zone-flag">✓ CLEAN ZONE — 이 작업 영역에는 광고가 삽입되지 않습니다</div>
+
+    <div class="split">
+      <div class="pane pane-left">
+        <div class="unit-toggle"><span class="active">Metric</span><span>Imperial</span></div>
+
+        <div class="section">
+          <div class="section-head"><span class="section-num">1</span><h3>형상 (Geometry)</h3></div>
+          <div class="field-group">
+            <label>보 길이 (Span Length) <span class="auto-badge">이전 계산기에서 적용됨</span></label>
+            <div class="unit-row"><input type="text" value="6.00"><select><option>m</option></select></div>
+          </div>
+          <div class="field-group field-error">
+            <label>단면 2차 모멘트 (I)</label>
+            <div class="unit-row"><input type="text" value="8360"><select><option>cm⁴</option></select></div>
+            <div class="error-text"><span class="ic">!</span>단면 규격 대비 값이 낮습니다 — 재검토가 필요합니다</div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-head"><span class="section-num">2</span><h3>재료 (Material)</h3></div>
+          <div class="field-group">
+            <label>탄성계수 (Elastic Modulus, E)</label>
+            <div class="unit-row"><input type="text" value="200"><select><option>GPa</option></select></div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="section-head"><span class="section-num">3</span><h3>하중 및 지지조건 (Load &amp; Support)</h3></div>
+          <div class="field-group">
+            <label>등분포 하중 (Distributed Load)</label>
+            <div class="unit-row"><input type="text" value="12.5"><select><option>kN/m</option></select></div>
+          </div>
+          <div class="field-group">
+            <label>지지 조건 (Support Condition)</label>
+            <select style="width:100%;"><option>단순지지 (Simply Supported)</option></select>
+          </div>
+        </div>
+      </div>
+
+      <div class="pane">
+        <div class="result-hero">
+          <div class="label">최대 처짐량 (δmax)</div>
+          <div class="value">18.4 mm</div>
+          <div class="status"><span class="dot"></span>허용 처짐 기준 초과 (L/360)</div>
+          <div class="gauge">
+            <div class="gauge-track"><div class="gauge-fill"></div><div class="gauge-limit"></div></div>
+            <div class="gauge-labels"><span>0 mm</span><span>허용한계 16.7 mm</span><span>23.5 mm</span></div>
+          </div>
+        </div>
+        <div class="result-row"><span>허용 처짐 한계</span><span>16.7 mm</span></div>
+        <div class="result-row"><span>최대 휨모멘트</span><span>56.3 kN·m</span></div>
+        <div class="result-row"><span>최대 전단력</span><span>37.5 kN</span></div>
+        <div class="result-row warn"><span>사용성 검토</span><span>기준 초과</span></div>
+        <div class="export-row">
+          <div class="btn primary">↓ PDF</div>
+          <div class="btn">↓ Excel</div>
+          <div class="btn">⧉ 표 복사</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 하단 문서/SEO 영역 — 작업 완료 후 도달하는 저-목표지향 구간 -->
+    <div class="doc-section">
+      <h2>계산 근거 (Applied Formula — AISC 360)</h2>
+      <p>단순지지보의 등분포 하중에 대한 최대 처짐량은 δmax = 5wL⁴ / 384EI 로 산출되며, 사용성 한계상태는 L/360 기준을 적용합니다.</p>
+      <div class="faq-item"><div class="q">허용 처짐 기준은 왜 L/360인가요?</div><div class="a">바닥 마감재 손상을 방지하기 위한 일반적인 사용성 한계이며, 부재 용도에 따라 L/240~L/600까지 적용될 수 있습니다.</div></div>
+      <div class="faq-item"><div class="q">단면 2차 모멘트(I) 값은 어디서 확인하나요?</div><div class="a">강재 단면 규격표(KS/AISC Shape DB)에서 확인 가능하며, SpecSelect 검색으로 규격명을 입력하면 자동 반영됩니다.</div></div>
+    </div>
+
+    <!-- 관련 계산기 + 네이티브 스폰서 카드 (시각적으로 구분됨) -->
+    <div class="related-section">
+      <h2>관련 계산기 — 값 자동 이관</h2>
+      <div class="related-grid">
+        <div class="rc-card">
+          <div class="name">기둥 좌굴 계산기</div>
+          <span class="carry">E, 하중 자동 적용 →</span>
+        </div>
+        <div class="rc-card">
+          <div class="name">용접부 강도 계산기</div>
+          <span class="carry">전단력 자동 적용 →</span>
+        </div>
+        <div class="rc-card sponsored">
+          <span class="spon-label">SPONSORED</span>
+          <div class="name">A992 H형강 자재 재고 확인</div>
+          <div class="desc">현대제철 유통사 — 입력하신 단면 규격 재고를 실시간 확인하세요</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 최하단 전폭 배너 — 문서/관련계산기까지 확인한 사용자만 도달 -->
+    <div class="bottom-banner-wrap">
+      <div class="ad-label">광고 · ADVERTISEMENT</div>
+      <div class="bottom-banner">728×90 Display Banner</div>
+    </div>
+  </main>
+</div>
+
+</body>
+</html>

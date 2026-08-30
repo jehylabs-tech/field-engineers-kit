@@ -1,0 +1,3 @@
+# Pending AdSense Approval
+# Replace the publisher ID after Google AdSense approval, then uncomment:
+# google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0

@@ -1,0 +1,1052 @@
+{
+  "standard": "ASME B16.9",
+  "version": 2,
+  "updatedAt": "2026-08-28",
+  "notes": "Butt-weld envelopes per ASME B16.9. 90° LR A=1.5×NPS(in)=38.1×NPS(mm); SR A=1.0×NPS(in)=25.4×NPS(mm); 45° LR B≈0.625×NPS(in) with published overrides. Tee C / reducer H / cap E from B16.9 screening. OD/t from B36.10M/B36.19M; ID=OD−2t; weight = STD screening × (t/t_STD).",
+  "bevelAngleDeg": 37.5,
+  "components": [
+    {
+      "id": "elbow_90_lr",
+      "label": "90° Long Radius (LR) Elbow",
+      "standard": "ASME B16.9",
+      "dimensionLabel": "Center-to-end (A)",
+      "heroSymbol": "A",
+      "sizes": [
+        {
+          "nps": "0.5",
+          "npsLabel": "1/2\"",
+          "dn": 15,
+          "dimensionMm": 38,
+          "weightKgStd": 0.2
+        },
+        {
+          "nps": "0.75",
+          "npsLabel": "3/4\"",
+          "dn": 20,
+          "dimensionMm": 38,
+          "weightKgStd": 0.2
+        },
+        {
+          "nps": "1",
+          "npsLabel": "1\"",
+          "dn": 25,
+          "dimensionMm": 38,
+          "weightKgStd": 0.2
+        },
+        {
+          "nps": "1.25",
+          "npsLabel": "1-1/4\"",
+          "dn": 32,
+          "dimensionMm": 48,
+          "weightKgStd": 0.3
+        },
+        {
+          "nps": "1.5",
+          "npsLabel": "1-1/2\"",
+          "dn": 40,
+          "dimensionMm": 57,
+          "weightKgStd": 0.5
+        },
+        {
+          "nps": "2",
+          "npsLabel": "2\"",
+          "dn": 50,
+          "dimensionMm": 76,
+          "weightKgStd": 0.8
+        },
+        {
+          "nps": "2.5",
+          "npsLabel": "2-1/2\"",
+          "dn": 65,
+          "dimensionMm": 95,
+          "weightKgStd": 1.3
+        },
+        {
+          "nps": "3",
+          "npsLabel": "3\"",
+          "dn": 80,
+          "dimensionMm": 114,
+          "weightKgStd": 1.9
+        },
+        {
+          "nps": "3.5",
+          "npsLabel": "3-1/2\"",
+          "dn": 90,
+          "dimensionMm": 133,
+          "weightKgStd": 2.5
+        },
+        {
+          "nps": "4",
+          "npsLabel": "4\"",
+          "dn": 100,
+          "dimensionMm": 152,
+          "weightKgStd": 3.5
+        },
+        {
+          "nps": "5",
+          "npsLabel": "5\"",
+          "dn": 125,
+          "dimensionMm": 191,
+          "weightKgStd": 5
+        },
+        {
+          "nps": "6",
+          "npsLabel": "6\"",
+          "dn": 150,
+          "dimensionMm": 229,
+          "weightKgStd": 8
+        },
+        {
+          "nps": "8",
+          "npsLabel": "8\"",
+          "dn": 200,
+          "dimensionMm": 305,
+          "weightKgStd": 14.5
+        },
+        {
+          "nps": "10",
+          "npsLabel": "10\"",
+          "dn": 250,
+          "dimensionMm": 381,
+          "weightKgStd": 22.9
+        },
+        {
+          "nps": "12",
+          "npsLabel": "12\"",
+          "dn": 300,
+          "dimensionMm": 457,
+          "weightKgStd": 33.3
+        },
+        {
+          "nps": "14",
+          "npsLabel": "14\"",
+          "dn": 350,
+          "dimensionMm": 533,
+          "weightKgStd": 45.6
+        },
+        {
+          "nps": "16",
+          "npsLabel": "16\"",
+          "dn": 400,
+          "dimensionMm": 610,
+          "weightKgStd": 60
+        },
+        {
+          "nps": "18",
+          "npsLabel": "18\"",
+          "dn": 450,
+          "dimensionMm": 686,
+          "weightKgStd": 76.4
+        },
+        {
+          "nps": "20",
+          "npsLabel": "20\"",
+          "dn": 500,
+          "dimensionMm": 762,
+          "weightKgStd": 94.8
+        },
+        {
+          "nps": "24",
+          "npsLabel": "24\"",
+          "dn": 600,
+          "dimensionMm": 914,
+          "weightKgStd": 137.8
+        }
+      ]
+    },
+    {
+      "id": "elbow_90_sr",
+      "label": "90° Short Radius (SR) Elbow",
+      "standard": "ASME B16.9",
+      "dimensionLabel": "Center-to-end (A)",
+      "heroSymbol": "A",
+      "sizes": [
+        {
+          "nps": "0.5",
+          "npsLabel": "1/2\"",
+          "dn": 15,
+          "dimensionMm": 13,
+          "weightKgStd": 0.1
+        },
+        {
+          "nps": "0.75",
+          "npsLabel": "3/4\"",
+          "dn": 20,
+          "dimensionMm": 19,
+          "weightKgStd": 0.1
+        },
+        {
+          "nps": "1",
+          "npsLabel": "1\"",
+          "dn": 25,
+          "dimensionMm": 25,
+          "weightKgStd": 0.1
+        },
+        {
+          "nps": "1.25",
+          "npsLabel": "1-1/4\"",
+          "dn": 32,
+          "dimensionMm": 32,
+          "weightKgStd": 0.2
+        },
+        {
+          "nps": "1.5",
+          "npsLabel": "1-1/2\"",
+          "dn": 40,
+          "dimensionMm": 38,
+          "weightKgStd": 0.3
+        },
+        {
+          "nps": "2",
+          "npsLabel": "2\"",
+          "dn": 50,
+          "dimensionMm": 51,
+          "weightKgStd": 0.6
+        },
+        {
+          "nps": "2.5",
+          "npsLabel": "2-1/2\"",
+          "dn": 65,
+          "dimensionMm": 64,
+          "weightKgStd": 0.9
+        },
+        {
+          "nps": "3",
+          "npsLabel": "3\"",
+          "dn": 80,
+          "dimensionMm": 76,
+          "weightKgStd": 1.3
+        },
+        {
+          "nps": "3.5",
+          "npsLabel": "3-1/2\"",
+          "dn": 90,
+          "dimensionMm": 89,
+          "weightKgStd": 1.8
+        },
+        {
+          "nps": "4",
+          "npsLabel": "4\"",
+          "dn": 100,
+          "dimensionMm": 102,
+          "weightKgStd": 2.4
+        },
+        {
+          "nps": "5",
+          "npsLabel": "5\"",
+          "dn": 125,
+          "dimensionMm": 127,
+          "weightKgStd": 3.5
+        },
+        {
+          "nps": "6",
+          "npsLabel": "6\"",
+          "dn": 150,
+          "dimensionMm": 152,
+          "weightKgStd": 5.6
+        },
+        {
+          "nps": "8",
+          "npsLabel": "8\"",
+          "dn": 200,
+          "dimensionMm": 203,
+          "weightKgStd": 10.1
+        },
+        {
+          "nps": "10",
+          "npsLabel": "10\"",
+          "dn": 250,
+          "dimensionMm": 254,
+          "weightKgStd": 16
+        },
+        {
+          "nps": "12",
+          "npsLabel": "12\"",
+          "dn": 300,
+          "dimensionMm": 305,
+          "weightKgStd": 23.3
+        },
+        {
+          "nps": "14",
+          "npsLabel": "14\"",
+          "dn": 350,
+          "dimensionMm": 356,
+          "weightKgStd": 31.9
+        },
+        {
+          "nps": "16",
+          "npsLabel": "16\"",
+          "dn": 400,
+          "dimensionMm": 406,
+          "weightKgStd": 42
+        },
+        {
+          "nps": "18",
+          "npsLabel": "18\"",
+          "dn": 450,
+          "dimensionMm": 457,
+          "weightKgStd": 53.5
+        },
+        {
+          "nps": "20",
+          "npsLabel": "20\"",
+          "dn": 500,
+          "dimensionMm": 508,
+          "weightKgStd": 66.4
+        },
+        {
+          "nps": "24",
+          "npsLabel": "24\"",
+          "dn": 600,
+          "dimensionMm": 610,
+          "weightKgStd": 96.5
+        }
+      ]
+    },
+    {
+      "id": "elbow_45_lr",
+      "label": "45° Long Radius (LR) Elbow",
+      "standard": "ASME B16.9",
+      "dimensionLabel": "Center-to-end (B)",
+      "heroSymbol": "B",
+      "sizes": [
+        {
+          "nps": "0.5",
+          "npsLabel": "1/2\"",
+          "dn": 15,
+          "dimensionMm": 16,
+          "weightKgStd": 0.2
+        },
+        {
+          "nps": "0.75",
+          "npsLabel": "3/4\"",
+          "dn": 20,
+          "dimensionMm": 19,
+          "weightKgStd": 0.2
+        },
+        {
+          "nps": "1",
+          "npsLabel": "1\"",
+          "dn": 25,
+          "dimensionMm": 22,
+          "weightKgStd": 0.2
+        },
+        {
+          "nps": "1.25",
+          "npsLabel": "1-1/4\"",
+          "dn": 32,
+          "dimensionMm": 20,
+          "weightKgStd": 0.2
+        },
+        {
+          "nps": "1.5",
+          "npsLabel": "1-1/2\"",
+          "dn": 40,
+          "dimensionMm": 35,
+          "weightKgStd": 0.3
+        },
+        {
+          "nps": "2",
+          "npsLabel": "2\"",
+          "dn": 50,
+          "dimensionMm": 38,
+          "weightKgStd": 0.5
+        },
+        {
+          "nps": "2.5",
+          "npsLabel": "2-1/2\"",
+          "dn": 65,
+          "dimensionMm": 40,
+          "weightKgStd": 0.6
+        },
+        {
+          "nps": "3",
+          "npsLabel": "3\"",
+          "dn": 80,
+          "dimensionMm": 57,
+          "weightKgStd": 1.1
+        },
+        {
+          "nps": "3.5",
+          "npsLabel": "3-1/2\"",
+          "dn": 90,
+          "dimensionMm": 56,
+          "weightKgStd": 1.2
+        },
+        {
+          "nps": "4",
+          "npsLabel": "4\"",
+          "dn": 100,
+          "dimensionMm": 76,
+          "weightKgStd": 2
+        },
+        {
+          "nps": "5",
+          "npsLabel": "5\"",
+          "dn": 125,
+          "dimensionMm": 79,
+          "weightKgStd": 2.5
+        },
+        {
+          "nps": "6",
+          "npsLabel": "6\"",
+          "dn": 150,
+          "dimensionMm": 95,
+          "weightKgStd": 4.6
+        },
+        {
+          "nps": "8",
+          "npsLabel": "8\"",
+          "dn": 200,
+          "dimensionMm": 152,
+          "weightKgStd": 8.3
+        },
+        {
+          "nps": "10",
+          "npsLabel": "10\"",
+          "dn": 250,
+          "dimensionMm": 191,
+          "weightKgStd": 13.1
+        },
+        {
+          "nps": "12",
+          "npsLabel": "12\"",
+          "dn": 300,
+          "dimensionMm": 229,
+          "weightKgStd": 19
+        },
+        {
+          "nps": "14",
+          "npsLabel": "14\"",
+          "dn": 350,
+          "dimensionMm": 267,
+          "weightKgStd": 26.1
+        },
+        {
+          "nps": "16",
+          "npsLabel": "16\"",
+          "dn": 400,
+          "dimensionMm": 305,
+          "weightKgStd": 34.3
+        },
+        {
+          "nps": "18",
+          "npsLabel": "18\"",
+          "dn": 450,
+          "dimensionMm": 343,
+          "weightKgStd": 43.7
+        },
+        {
+          "nps": "20",
+          "npsLabel": "20\"",
+          "dn": 500,
+          "dimensionMm": 381,
+          "weightKgStd": 54.2
+        },
+        {
+          "nps": "24",
+          "npsLabel": "24\"",
+          "dn": 600,
+          "dimensionMm": 457,
+          "weightKgStd": 78.7
+        }
+      ]
+    },
+    {
+      "id": "tee_equal",
+      "label": "Straight / Equal Tee",
+      "standard": "ASME B16.9",
+      "dimensionLabel": "Center-to-end (C)",
+      "heroSymbol": "C",
+      "sizes": [
+        {
+          "nps": "0.5",
+          "npsLabel": "1/2\"",
+          "dn": 15,
+          "dimensionMm": 25,
+          "weightKgStd": 0.2
+        },
+        {
+          "nps": "0.75",
+          "npsLabel": "3/4\"",
+          "dn": 20,
+          "dimensionMm": 29,
+          "weightKgStd": 0.2
+        },
+        {
+          "nps": "1",
+          "npsLabel": "1\"",
+          "dn": 25,
+          "dimensionMm": 38,
+          "weightKgStd": 0.2
+        },
+        {
+          "nps": "1.25",
+          "npsLabel": "1-1/4\"",
+          "dn": 32,
+          "dimensionMm": 48,
+          "weightKgStd": 0.4
+        },
+        {
+          "nps": "1.5",
+          "npsLabel": "1-1/2\"",
+          "dn": 40,
+          "dimensionMm": 57,
+          "weightKgStd": 0.6
+        },
+        {
+          "nps": "2",
+          "npsLabel": "2\"",
+          "dn": 50,
+          "dimensionMm": 64,
+          "weightKgStd": 1
+        },
+        {
+          "nps": "2.5",
+          "npsLabel": "2-1/2\"",
+          "dn": 65,
+          "dimensionMm": 76,
+          "weightKgStd": 1.6
+        },
+        {
+          "nps": "3",
+          "npsLabel": "3\"",
+          "dn": 80,
+          "dimensionMm": 86,
+          "weightKgStd": 2.3
+        },
+        {
+          "nps": "3.5",
+          "npsLabel": "3-1/2\"",
+          "dn": 90,
+          "dimensionMm": 95,
+          "weightKgStd": 3.1
+        },
+        {
+          "nps": "4",
+          "npsLabel": "4\"",
+          "dn": 100,
+          "dimensionMm": 102,
+          "weightKgStd": 4.2
+        },
+        {
+          "nps": "5",
+          "npsLabel": "5\"",
+          "dn": 125,
+          "dimensionMm": 124,
+          "weightKgStd": 6.3
+        },
+        {
+          "nps": "6",
+          "npsLabel": "6\"",
+          "dn": 150,
+          "dimensionMm": 143,
+          "weightKgStd": 9.6
+        },
+        {
+          "nps": "8",
+          "npsLabel": "8\"",
+          "dn": 200,
+          "dimensionMm": 178,
+          "weightKgStd": 17.4
+        },
+        {
+          "nps": "10",
+          "npsLabel": "10\"",
+          "dn": 250,
+          "dimensionMm": 216,
+          "weightKgStd": 27.5
+        },
+        {
+          "nps": "12",
+          "npsLabel": "12\"",
+          "dn": 300,
+          "dimensionMm": 254,
+          "weightKgStd": 39.9
+        },
+        {
+          "nps": "14",
+          "npsLabel": "14\"",
+          "dn": 350,
+          "dimensionMm": 279,
+          "weightKgStd": 54.8
+        },
+        {
+          "nps": "16",
+          "npsLabel": "16\"",
+          "dn": 400,
+          "dimensionMm": 305,
+          "weightKgStd": 72
+        },
+        {
+          "nps": "18",
+          "npsLabel": "18\"",
+          "dn": 450,
+          "dimensionMm": 343,
+          "weightKgStd": 91.7
+        },
+        {
+          "nps": "20",
+          "npsLabel": "20\"",
+          "dn": 500,
+          "dimensionMm": 381,
+          "weightKgStd": 113.8
+        },
+        {
+          "nps": "24",
+          "npsLabel": "24\"",
+          "dn": 600,
+          "dimensionMm": 419,
+          "weightKgStd": 165.4
+        }
+      ]
+    },
+    {
+      "id": "reducer_concentric",
+      "label": "Concentric Reducer",
+      "standard": "ASME B16.9",
+      "dimensionLabel": "Overall length (H)",
+      "heroSymbol": "H",
+      "sizes": [
+        {
+          "nps": "0.5",
+          "npsLabel": "1/2\"",
+          "dn": 15,
+          "dimensionMm": 38,
+          "weightKgStd": 0.2
+        },
+        {
+          "nps": "0.75",
+          "npsLabel": "3/4\"",
+          "dn": 20,
+          "dimensionMm": 38,
+          "weightKgStd": 0.2
+        },
+        {
+          "nps": "1",
+          "npsLabel": "1\"",
+          "dn": 25,
+          "dimensionMm": 51,
+          "weightKgStd": 0.2
+        },
+        {
+          "nps": "1.25",
+          "npsLabel": "1-1/4\"",
+          "dn": 32,
+          "dimensionMm": 51,
+          "weightKgStd": 0.2
+        },
+        {
+          "nps": "1.5",
+          "npsLabel": "1-1/2\"",
+          "dn": 40,
+          "dimensionMm": 64,
+          "weightKgStd": 0.4
+        },
+        {
+          "nps": "2",
+          "npsLabel": "2\"",
+          "dn": 50,
+          "dimensionMm": 76,
+          "weightKgStd": 0.7
+        },
+        {
+          "nps": "2.5",
+          "npsLabel": "2-1/2\"",
+          "dn": 65,
+          "dimensionMm": 89,
+          "weightKgStd": 0.9
+        },
+        {
+          "nps": "3",
+          "npsLabel": "3\"",
+          "dn": 80,
+          "dimensionMm": 89,
+          "weightKgStd": 1.6
+        },
+        {
+          "nps": "3.5",
+          "npsLabel": "3-1/2\"",
+          "dn": 90,
+          "dimensionMm": 102,
+          "weightKgStd": 1.8
+        },
+        {
+          "nps": "4",
+          "npsLabel": "4\"",
+          "dn": 100,
+          "dimensionMm": 102,
+          "weightKgStd": 2.8
+        },
+        {
+          "nps": "5",
+          "npsLabel": "5\"",
+          "dn": 125,
+          "dimensionMm": 127,
+          "weightKgStd": 3.8
+        },
+        {
+          "nps": "6",
+          "npsLabel": "6\"",
+          "dn": 150,
+          "dimensionMm": 140,
+          "weightKgStd": 6.4
+        },
+        {
+          "nps": "8",
+          "npsLabel": "8\"",
+          "dn": 200,
+          "dimensionMm": 152,
+          "weightKgStd": 11.6
+        },
+        {
+          "nps": "10",
+          "npsLabel": "10\"",
+          "dn": 250,
+          "dimensionMm": 178,
+          "weightKgStd": 18.3
+        },
+        {
+          "nps": "12",
+          "npsLabel": "12\"",
+          "dn": 300,
+          "dimensionMm": 203,
+          "weightKgStd": 26.6
+        },
+        {
+          "nps": "14",
+          "npsLabel": "14\"",
+          "dn": 350,
+          "dimensionMm": 330,
+          "weightKgStd": 36.5
+        },
+        {
+          "nps": "16",
+          "npsLabel": "16\"",
+          "dn": 400,
+          "dimensionMm": 356,
+          "weightKgStd": 48
+        },
+        {
+          "nps": "18",
+          "npsLabel": "18\"",
+          "dn": 450,
+          "dimensionMm": 381,
+          "weightKgStd": 61.1
+        },
+        {
+          "nps": "20",
+          "npsLabel": "20\"",
+          "dn": 500,
+          "dimensionMm": 508,
+          "weightKgStd": 75.9
+        },
+        {
+          "nps": "24",
+          "npsLabel": "24\"",
+          "dn": 600,
+          "dimensionMm": 508,
+          "weightKgStd": 110.2
+        }
+      ]
+    },
+    {
+      "id": "reducer_eccentric",
+      "label": "Eccentric Reducer",
+      "standard": "ASME B16.9",
+      "dimensionLabel": "Overall length (H)",
+      "heroSymbol": "H",
+      "sizes": [
+        {
+          "nps": "0.5",
+          "npsLabel": "1/2\"",
+          "dn": 15,
+          "dimensionMm": 38,
+          "weightKgStd": 0.2
+        },
+        {
+          "nps": "0.75",
+          "npsLabel": "3/4\"",
+          "dn": 20,
+          "dimensionMm": 38,
+          "weightKgStd": 0.2
+        },
+        {
+          "nps": "1",
+          "npsLabel": "1\"",
+          "dn": 25,
+          "dimensionMm": 51,
+          "weightKgStd": 0.2
+        },
+        {
+          "nps": "1.25",
+          "npsLabel": "1-1/4\"",
+          "dn": 32,
+          "dimensionMm": 51,
+          "weightKgStd": 0.2
+        },
+        {
+          "nps": "1.5",
+          "npsLabel": "1-1/2\"",
+          "dn": 40,
+          "dimensionMm": 64,
+          "weightKgStd": 0.4
+        },
+        {
+          "nps": "2",
+          "npsLabel": "2\"",
+          "dn": 50,
+          "dimensionMm": 76,
+          "weightKgStd": 0.7
+        },
+        {
+          "nps": "2.5",
+          "npsLabel": "2-1/2\"",
+          "dn": 65,
+          "dimensionMm": 89,
+          "weightKgStd": 0.9
+        },
+        {
+          "nps": "3",
+          "npsLabel": "3\"",
+          "dn": 80,
+          "dimensionMm": 89,
+          "weightKgStd": 1.6
+        },
+        {
+          "nps": "3.5",
+          "npsLabel": "3-1/2\"",
+          "dn": 90,
+          "dimensionMm": 102,
+          "weightKgStd": 1.8
+        },
+        {
+          "nps": "4",
+          "npsLabel": "4\"",
+          "dn": 100,
+          "dimensionMm": 102,
+          "weightKgStd": 2.8
+        },
+        {
+          "nps": "5",
+          "npsLabel": "5\"",
+          "dn": 125,
+          "dimensionMm": 127,
+          "weightKgStd": 3.8
+        },
+        {
+          "nps": "6",
+          "npsLabel": "6\"",
+          "dn": 150,
+          "dimensionMm": 140,
+          "weightKgStd": 6.4
+        },
+        {
+          "nps": "8",
+          "npsLabel": "8\"",
+          "dn": 200,
+          "dimensionMm": 152,
+          "weightKgStd": 11.6
+        },
+        {
+          "nps": "10",
+          "npsLabel": "10\"",
+          "dn": 250,
+          "dimensionMm": 178,
+          "weightKgStd": 18.3
+        },
+        {
+          "nps": "12",
+          "npsLabel": "12\"",
+          "dn": 300,
+          "dimensionMm": 203,
+          "weightKgStd": 26.6
+        },
+        {
+          "nps": "14",
+          "npsLabel": "14\"",
+          "dn": 350,
+          "dimensionMm": 330,
+          "weightKgStd": 36.5
+        },
+        {
+          "nps": "16",
+          "npsLabel": "16\"",
+          "dn": 400,
+          "dimensionMm": 356,
+          "weightKgStd": 48
+        },
+        {
+          "nps": "18",
+          "npsLabel": "18\"",
+          "dn": 450,
+          "dimensionMm": 381,
+          "weightKgStd": 61.1
+        },
+        {
+          "nps": "20",
+          "npsLabel": "20\"",
+          "dn": 500,
+          "dimensionMm": 508,
+          "weightKgStd": 75.9
+        },
+        {
+          "nps": "24",
+          "npsLabel": "24\"",
+          "dn": 600,
+          "dimensionMm": 508,
+          "weightKgStd": 110.2
+        }
+      ]
+    },
+    {
+      "id": "cap",
+      "label": "Cap",
+      "standard": "ASME B16.9",
+      "dimensionLabel": "Overall length (E)",
+      "heroSymbol": "E",
+      "sizes": [
+        {
+          "nps": "0.5",
+          "npsLabel": "1/2\"",
+          "dn": 15,
+          "dimensionMm": 25,
+          "weightKgStd": 0.1
+        },
+        {
+          "nps": "0.75",
+          "npsLabel": "3/4\"",
+          "dn": 20,
+          "dimensionMm": 25,
+          "weightKgStd": 0.1
+        },
+        {
+          "nps": "1",
+          "npsLabel": "1\"",
+          "dn": 25,
+          "dimensionMm": 38,
+          "weightKgStd": 0.1
+        },
+        {
+          "nps": "1.25",
+          "npsLabel": "1-1/4\"",
+          "dn": 32,
+          "dimensionMm": 38,
+          "weightKgStd": 0.1
+        },
+        {
+          "nps": "1.5",
+          "npsLabel": "1-1/2\"",
+          "dn": 40,
+          "dimensionMm": 38,
+          "weightKgStd": 0.2
+        },
+        {
+          "nps": "2",
+          "npsLabel": "2\"",
+          "dn": 50,
+          "dimensionMm": 38,
+          "weightKgStd": 0.3
+        },
+        {
+          "nps": "2.5",
+          "npsLabel": "2-1/2\"",
+          "dn": 65,
+          "dimensionMm": 38,
+          "weightKgStd": 0.5
+        },
+        {
+          "nps": "3",
+          "npsLabel": "3\"",
+          "dn": 80,
+          "dimensionMm": 38,
+          "weightKgStd": 0.7
+        },
+        {
+          "nps": "3.5",
+          "npsLabel": "3-1/2\"",
+          "dn": 90,
+          "dimensionMm": 48,
+          "weightKgStd": 0.9
+        },
+        {
+          "nps": "4",
+          "npsLabel": "4\"",
+          "dn": 100,
+          "dimensionMm": 48,
+          "weightKgStd": 1.2
+        },
+        {
+          "nps": "5",
+          "npsLabel": "5\"",
+          "dn": 125,
+          "dimensionMm": 57,
+          "weightKgStd": 1.8
+        },
+        {
+          "nps": "6",
+          "npsLabel": "6\"",
+          "dn": 150,
+          "dimensionMm": 64,
+          "weightKgStd": 2.8
+        },
+        {
+          "nps": "8",
+          "npsLabel": "8\"",
+          "dn": 200,
+          "dimensionMm": 79,
+          "weightKgStd": 5.1
+        },
+        {
+          "nps": "10",
+          "npsLabel": "10\"",
+          "dn": 250,
+          "dimensionMm": 95,
+          "weightKgStd": 8
+        },
+        {
+          "nps": "12",
+          "npsLabel": "12\"",
+          "dn": 300,
+          "dimensionMm": 111,
+          "weightKgStd": 11.7
+        },
+        {
+          "nps": "14",
+          "npsLabel": "14\"",
+          "dn": 350,
+          "dimensionMm": 124,
+          "weightKgStd": 16
+        },
+        {
+          "nps": "16",
+          "npsLabel": "16\"",
+          "dn": 400,
+          "dimensionMm": 140,
+          "weightKgStd": 21
+        },
+        {
+          "nps": "18",
+          "npsLabel": "18\"",
+          "dn": 450,
+          "dimensionMm": 156,
+          "weightKgStd": 26.7
+        },
+        {
+          "nps": "20",
+          "npsLabel": "20\"",
+          "dn": 500,
+          "dimensionMm": 171,
+          "weightKgStd": 33.2
+        },
+        {
+          "nps": "24",
+          "npsLabel": "24\"",
+          "dn": 600,
+          "dimensionMm": 203,
+          "weightKgStd": 48.2
+        }
+      ]
+    }
+  ]
+}

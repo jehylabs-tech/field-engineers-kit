@@ -1,0 +1,1432 @@
+{
+  "standard": "ASME B16.20",
+  "version": 3,
+  "updatedAt": "2026-08-26",
+  "notes": "Spiral-wound and RTJ screening dimensions per ASME B16.20 for NPS ½–24 and Class 150–1500. Confirm against the manufacturer datasheet before procurement.",
+  "gasketTypes": [
+    {
+      "id": "spiral_wound",
+      "label": "Spiral Wound Gasket",
+      "standard": "ASME B16.20",
+      "sizes": [
+        {
+          "nps": "0.5",
+          "npsLabel": "1/2\"",
+          "dn": 15,
+          "ratings": [
+            {
+              "class": "150",
+              "innerRingOdMm": 32,
+              "sealingElementOdMm": 47.6,
+              "outerRingOdMm": 66.7,
+              "innerDiameterMm": 21.3
+            },
+            {
+              "class": "300",
+              "innerRingOdMm": 32,
+              "sealingElementOdMm": 47.6,
+              "outerRingOdMm": 73,
+              "innerDiameterMm": 21.3
+            },
+            {
+              "class": "600",
+              "innerRingOdMm": 32,
+              "sealingElementOdMm": 47.6,
+              "outerRingOdMm": 73,
+              "innerDiameterMm": 21.3
+            },
+            {
+              "class": "900",
+              "innerRingOdMm": 32,
+              "sealingElementOdMm": 52.3,
+              "outerRingOdMm": 82.6,
+              "innerDiameterMm": 21.3
+            },
+            {
+              "class": "1500",
+              "innerRingOdMm": 32,
+              "sealingElementOdMm": 52.3,
+              "outerRingOdMm": 88.9,
+              "innerDiameterMm": 21.3
+            }
+          ]
+        },
+        {
+          "nps": "0.75",
+          "npsLabel": "3/4\"",
+          "dn": 20,
+          "ratings": [
+            {
+              "class": "150",
+              "innerRingOdMm": 38.1,
+              "sealingElementOdMm": 57.2,
+              "outerRingOdMm": 82.6,
+              "innerDiameterMm": 26.7
+            },
+            {
+              "class": "300",
+              "innerRingOdMm": 38.1,
+              "sealingElementOdMm": 57.2,
+              "outerRingOdMm": 92.1,
+              "innerDiameterMm": 26.7
+            },
+            {
+              "class": "600",
+              "innerRingOdMm": 38.1,
+              "sealingElementOdMm": 57.2,
+              "outerRingOdMm": 92.1,
+              "innerDiameterMm": 26.7
+            },
+            {
+              "class": "900",
+              "innerRingOdMm": 38.1,
+              "sealingElementOdMm": 63.5,
+              "outerRingOdMm": 104.8,
+              "innerDiameterMm": 26.7
+            },
+            {
+              "class": "1500",
+              "innerRingOdMm": 38.1,
+              "sealingElementOdMm": 63.5,
+              "outerRingOdMm": 111.1,
+              "innerDiameterMm": 26.7
+            }
+          ]
+        },
+        {
+          "nps": "1",
+          "npsLabel": "1\"",
+          "dn": 25,
+          "ratings": [
+            {
+              "class": "150",
+              "innerRingOdMm": 44.5,
+              "sealingElementOdMm": 66.7,
+              "outerRingOdMm": 92.1,
+              "innerDiameterMm": 33.4
+            },
+            {
+              "class": "300",
+              "innerRingOdMm": 44.5,
+              "sealingElementOdMm": 66.7,
+              "outerRingOdMm": 101.6,
+              "innerDiameterMm": 33.4
+            },
+            {
+              "class": "600",
+              "innerRingOdMm": 44.5,
+              "sealingElementOdMm": 66.7,
+              "outerRingOdMm": 101.6,
+              "innerDiameterMm": 33.4
+            },
+            {
+              "class": "900",
+              "innerRingOdMm": 44.5,
+              "sealingElementOdMm": 73,
+              "outerRingOdMm": 114.3,
+              "innerDiameterMm": 33.4
+            },
+            {
+              "class": "1500",
+              "innerRingOdMm": 44.5,
+              "sealingElementOdMm": 73,
+              "outerRingOdMm": 123.8,
+              "innerDiameterMm": 33.4
+            }
+          ]
+        },
+        {
+          "nps": "2",
+          "npsLabel": "2\"",
+          "dn": 50,
+          "ratings": [
+            {
+              "class": "150",
+              "innerRingOdMm": 62,
+              "sealingElementOdMm": 91.9,
+              "outerRingOdMm": 120.7,
+              "innerDiameterMm": 54
+            },
+            {
+              "class": "300",
+              "innerRingOdMm": 62,
+              "sealingElementOdMm": 91.9,
+              "outerRingOdMm": 127,
+              "innerDiameterMm": 54
+            },
+            {
+              "class": "600",
+              "innerRingOdMm": 62,
+              "sealingElementOdMm": 91.9,
+              "outerRingOdMm": 127,
+              "innerDiameterMm": 54
+            },
+            {
+              "class": "900",
+              "innerRingOdMm": 62,
+              "sealingElementOdMm": 101.6,
+              "outerRingOdMm": 165.1,
+              "innerDiameterMm": 54
+            },
+            {
+              "class": "1500",
+              "innerRingOdMm": 62,
+              "sealingElementOdMm": 101.6,
+              "outerRingOdMm": 177.8,
+              "innerDiameterMm": 54
+            }
+          ]
+        },
+        {
+          "nps": "3",
+          "npsLabel": "3\"",
+          "dn": 80,
+          "ratings": [
+            {
+              "class": "150",
+              "innerRingOdMm": 76.2,
+              "sealingElementOdMm": 108,
+              "outerRingOdMm": 152.4,
+              "innerDiameterMm": 66.7
+            },
+            {
+              "class": "300",
+              "innerRingOdMm": 76.2,
+              "sealingElementOdMm": 108,
+              "outerRingOdMm": 168.3,
+              "innerDiameterMm": 66.7
+            },
+            {
+              "class": "600",
+              "innerRingOdMm": 76.2,
+              "sealingElementOdMm": 108,
+              "outerRingOdMm": 168.3,
+              "innerDiameterMm": 66.7
+            },
+            {
+              "class": "900",
+              "innerRingOdMm": 76.2,
+              "sealingElementOdMm": 120.7,
+              "outerRingOdMm": 190.5,
+              "innerDiameterMm": 66.7
+            },
+            {
+              "class": "1500",
+              "innerRingOdMm": 76.2,
+              "sealingElementOdMm": 120.7,
+              "outerRingOdMm": 209.6,
+              "innerDiameterMm": 66.7
+            }
+          ]
+        },
+        {
+          "nps": "4",
+          "npsLabel": "4\"",
+          "dn": 100,
+          "ratings": [
+            {
+              "class": "150",
+              "innerRingOdMm": 87,
+              "sealingElementOdMm": 117.5,
+              "outerRingOdMm": 190.5,
+              "innerDiameterMm": 78
+            },
+            {
+              "class": "300",
+              "innerRingOdMm": 87,
+              "sealingElementOdMm": 117.5,
+              "outerRingOdMm": 200,
+              "innerDiameterMm": 78
+            },
+            {
+              "class": "600",
+              "innerRingOdMm": 87,
+              "sealingElementOdMm": 117.5,
+              "outerRingOdMm": 215.9,
+              "innerDiameterMm": 78
+            },
+            {
+              "class": "900",
+              "innerRingOdMm": 87,
+              "sealingElementOdMm": 133.4,
+              "outerRingOdMm": 241.3,
+              "innerDiameterMm": 78
+            },
+            {
+              "class": "1500",
+              "innerRingOdMm": 87,
+              "sealingElementOdMm": 133.4,
+              "outerRingOdMm": 254,
+              "innerDiameterMm": 78
+            }
+          ]
+        },
+        {
+          "nps": "6",
+          "npsLabel": "6\"",
+          "dn": 150,
+          "ratings": [
+            {
+              "class": "150",
+              "innerRingOdMm": 111.1,
+              "sealingElementOdMm": 149.4,
+              "outerRingOdMm": 241.3,
+              "innerDiameterMm": 98.4
+            },
+            {
+              "class": "300",
+              "innerRingOdMm": 111.1,
+              "sealingElementOdMm": 149.4,
+              "outerRingOdMm": 266.7,
+              "innerDiameterMm": 98.4
+            },
+            {
+              "class": "600",
+              "innerRingOdMm": 111.1,
+              "sealingElementOdMm": 149.4,
+              "outerRingOdMm": 279.4,
+              "innerDiameterMm": 98.4
+            },
+            {
+              "class": "900",
+              "innerRingOdMm": 111.1,
+              "sealingElementOdMm": 168.3,
+              "outerRingOdMm": 317.5,
+              "innerDiameterMm": 98.4
+            },
+            {
+              "class": "1500",
+              "innerRingOdMm": 111.1,
+              "sealingElementOdMm": 168.3,
+              "outerRingOdMm": 342.9,
+              "innerDiameterMm": 98.4
+            }
+          ]
+        },
+        {
+          "nps": "8",
+          "npsLabel": "8\"",
+          "dn": 200,
+          "ratings": [
+            {
+              "class": "150",
+              "innerRingOdMm": 131,
+              "sealingElementOdMm": 176,
+              "outerRingOdMm": 298.5,
+              "innerDiameterMm": 118
+            },
+            {
+              "class": "300",
+              "innerRingOdMm": 131,
+              "sealingElementOdMm": 176,
+              "outerRingOdMm": 320.7,
+              "innerDiameterMm": 118
+            },
+            {
+              "class": "600",
+              "innerRingOdMm": 131,
+              "sealingElementOdMm": 176,
+              "outerRingOdMm": 346.1,
+              "innerDiameterMm": 118
+            },
+            {
+              "class": "900",
+              "innerRingOdMm": 131,
+              "sealingElementOdMm": 196.9,
+              "outerRingOdMm": 381,
+              "innerDiameterMm": 118
+            },
+            {
+              "class": "1500",
+              "innerRingOdMm": 131,
+              "sealingElementOdMm": 196.9,
+              "outerRingOdMm": 419.1,
+              "innerDiameterMm": 118
+            }
+          ]
+        },
+        {
+          "nps": "10",
+          "npsLabel": "10\"",
+          "dn": 250,
+          "ratings": [
+            {
+              "class": "150",
+              "innerRingOdMm": 157.2,
+              "sealingElementOdMm": 215.9,
+              "outerRingOdMm": 362,
+              "innerDiameterMm": 144.5
+            },
+            {
+              "class": "300",
+              "innerRingOdMm": 157.2,
+              "sealingElementOdMm": 215.9,
+              "outerRingOdMm": 400.1,
+              "innerDiameterMm": 144.5
+            },
+            {
+              "class": "600",
+              "innerRingOdMm": 157.2,
+              "sealingElementOdMm": 215.9,
+              "outerRingOdMm": 425.5,
+              "innerDiameterMm": 144.5
+            },
+            {
+              "class": "900",
+              "innerRingOdMm": 157.2,
+              "sealingElementOdMm": 241.3,
+              "outerRingOdMm": 457.2,
+              "innerDiameterMm": 144.5
+            },
+            {
+              "class": "1500",
+              "innerRingOdMm": 157.2,
+              "sealingElementOdMm": 241.3,
+              "outerRingOdMm": 508,
+              "innerDiameterMm": 144.5
+            }
+          ]
+        },
+        {
+          "nps": "12",
+          "npsLabel": "12\"",
+          "dn": 300,
+          "ratings": [
+            {
+              "class": "150",
+              "innerRingOdMm": 182.6,
+              "sealingElementOdMm": 241.3,
+              "outerRingOdMm": 419.1,
+              "innerDiameterMm": 168.1
+            },
+            {
+              "class": "300",
+              "innerRingOdMm": 182.6,
+              "sealingElementOdMm": 241.3,
+              "outerRingOdMm": 457.2,
+              "innerDiameterMm": 168.1
+            },
+            {
+              "class": "600",
+              "innerRingOdMm": 182.6,
+              "sealingElementOdMm": 241.3,
+              "outerRingOdMm": 495.3,
+              "innerDiameterMm": 168.1
+            },
+            {
+              "class": "900",
+              "innerRingOdMm": 182.6,
+              "sealingElementOdMm": 269.9,
+              "outerRingOdMm": 533.4,
+              "innerDiameterMm": 168.1
+            },
+            {
+              "class": "1500",
+              "innerRingOdMm": 182.6,
+              "sealingElementOdMm": 269.9,
+              "outerRingOdMm": 584.2,
+              "innerDiameterMm": 168.1
+            }
+          ]
+        },
+        {
+          "nps": "14",
+          "npsLabel": "14\"",
+          "dn": 350,
+          "ratings": [
+            {
+              "class": "150",
+              "innerRingOdMm": 212.7,
+              "sealingElementOdMm": 273.1,
+              "outerRingOdMm": 450.9,
+              "innerDiameterMm": 196.9
+            },
+            {
+              "class": "300",
+              "innerRingOdMm": 212.7,
+              "sealingElementOdMm": 273.1,
+              "outerRingOdMm": 492.1,
+              "innerDiameterMm": 196.9
+            },
+            {
+              "class": "600",
+              "innerRingOdMm": 212.7,
+              "sealingElementOdMm": 273.1,
+              "outerRingOdMm": 533.4,
+              "innerDiameterMm": 196.9
+            },
+            {
+              "class": "900",
+              "innerRingOdMm": 212.7,
+              "sealingElementOdMm": 301.6,
+              "outerRingOdMm": 571.5,
+              "innerDiameterMm": 196.9
+            },
+            {
+              "class": "1500",
+              "innerRingOdMm": 212.7,
+              "sealingElementOdMm": 301.6,
+              "outerRingOdMm": 635,
+              "innerDiameterMm": 196.9
+            }
+          ]
+        },
+        {
+          "nps": "16",
+          "npsLabel": "16\"",
+          "dn": 400,
+          "ratings": [
+            {
+              "class": "150",
+              "innerRingOdMm": 238.1,
+              "sealingElementOdMm": 304.8,
+              "outerRingOdMm": 514.4,
+              "innerDiameterMm": 222.3
+            },
+            {
+              "class": "300",
+              "innerRingOdMm": 238.1,
+              "sealingElementOdMm": 304.8,
+              "outerRingOdMm": 565.2,
+              "innerDiameterMm": 222.3
+            },
+            {
+              "class": "600",
+              "innerRingOdMm": 238.1,
+              "sealingElementOdMm": 304.8,
+              "outerRingOdMm": 603.3,
+              "innerDiameterMm": 222.3
+            },
+            {
+              "class": "900",
+              "innerRingOdMm": 238.1,
+              "sealingElementOdMm": 336.6,
+              "outerRingOdMm": 647.7,
+              "innerDiameterMm": 222.3
+            },
+            {
+              "class": "1500",
+              "innerRingOdMm": 238.1,
+              "sealingElementOdMm": 336.6,
+              "outerRingOdMm": 711.2,
+              "innerDiameterMm": 222.3
+            }
+          ]
+        },
+        {
+          "nps": "18",
+          "npsLabel": "18\"",
+          "dn": 450,
+          "ratings": [
+            {
+              "class": "150",
+              "innerRingOdMm": 269.9,
+              "sealingElementOdMm": 339.7,
+              "outerRingOdMm": 549.3,
+              "innerDiameterMm": 254
+            },
+            {
+              "class": "300",
+              "innerRingOdMm": 269.9,
+              "sealingElementOdMm": 339.7,
+              "outerRingOdMm": 612.7,
+              "innerDiameterMm": 254
+            },
+            {
+              "class": "600",
+              "innerRingOdMm": 269.9,
+              "sealingElementOdMm": 339.7,
+              "outerRingOdMm": 654.1,
+              "innerDiameterMm": 254
+            },
+            {
+              "class": "900",
+              "innerRingOdMm": 269.9,
+              "sealingElementOdMm": 374.7,
+              "outerRingOdMm": 711.2,
+              "innerDiameterMm": 254
+            },
+            {
+              "class": "1500",
+              "innerRingOdMm": 269.9,
+              "sealingElementOdMm": 374.7,
+              "outerRingOdMm": 774.7,
+              "innerDiameterMm": 254
+            }
+          ]
+        },
+        {
+          "nps": "20",
+          "npsLabel": "20\"",
+          "dn": 500,
+          "ratings": [
+            {
+              "class": "150",
+              "innerRingOdMm": 301.6,
+              "sealingElementOdMm": 371.5,
+              "outerRingOdMm": 606.4,
+              "innerDiameterMm": 285.8
+            },
+            {
+              "class": "300",
+              "innerRingOdMm": 301.6,
+              "sealingElementOdMm": 371.5,
+              "outerRingOdMm": 673.1,
+              "innerDiameterMm": 285.8
+            },
+            {
+              "class": "600",
+              "innerRingOdMm": 301.6,
+              "sealingElementOdMm": 371.5,
+              "outerRingOdMm": 720.7,
+              "innerDiameterMm": 285.8
+            },
+            {
+              "class": "900",
+              "innerRingOdMm": 301.6,
+              "sealingElementOdMm": 409.6,
+              "outerRingOdMm": 774.7,
+              "innerDiameterMm": 285.8
+            },
+            {
+              "class": "1500",
+              "innerRingOdMm": 301.6,
+              "sealingElementOdMm": 409.6,
+              "outerRingOdMm": 850.9,
+              "innerDiameterMm": 285.8
+            }
+          ]
+        },
+        {
+          "nps": "24",
+          "npsLabel": "24\"",
+          "dn": 600,
+          "ratings": [
+            {
+              "class": "150",
+              "innerRingOdMm": 362,
+              "sealingElementOdMm": 438.2,
+              "outerRingOdMm": 711.2,
+              "innerDiameterMm": 342.9
+            },
+            {
+              "class": "300",
+              "innerRingOdMm": 362,
+              "sealingElementOdMm": 438.2,
+              "outerRingOdMm": 790.6,
+              "innerDiameterMm": 342.9
+            },
+            {
+              "class": "600",
+              "innerRingOdMm": 362,
+              "sealingElementOdMm": 438.2,
+              "outerRingOdMm": 850.9,
+              "innerDiameterMm": 342.9
+            },
+            {
+              "class": "900",
+              "innerRingOdMm": 362,
+              "sealingElementOdMm": 482.6,
+              "outerRingOdMm": 914.4,
+              "innerDiameterMm": 342.9
+            },
+            {
+              "class": "1500",
+              "innerRingOdMm": 362,
+              "sealingElementOdMm": 482.6,
+              "outerRingOdMm": 1016,
+              "innerDiameterMm": 342.9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rtj_ring",
+      "label": "RTJ Ring Gasket",
+      "standard": "ASME B16.20",
+      "sizes": [
+        {
+          "nps": "0.5",
+          "npsLabel": "1/2\"",
+          "dn": 15,
+          "ratings": [
+            {
+              "class": "150",
+              "ringNumber": "R-11",
+              "pitchDiameterMm": 34.93,
+              "ringWidthMm": 6.4,
+              "ringHeightMm": 11.1,
+              "innerDiameterMm": 28.6,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "300",
+              "ringNumber": "R-12",
+              "pitchDiameterMm": 39.69,
+              "ringWidthMm": 6.4,
+              "ringHeightMm": 11.1,
+              "innerDiameterMm": 33.3,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "600",
+              "ringNumber": "R-12",
+              "pitchDiameterMm": 39.69,
+              "ringWidthMm": 6.4,
+              "ringHeightMm": 11.1,
+              "innerDiameterMm": 33.3,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "900",
+              "ringNumber": "R-12",
+              "pitchDiameterMm": 39.69,
+              "ringWidthMm": 6.4,
+              "ringHeightMm": 11.1,
+              "innerDiameterMm": 33.3,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "1500",
+              "ringNumber": "R-12",
+              "pitchDiameterMm": 39.69,
+              "ringWidthMm": 7.9,
+              "ringHeightMm": 14.3,
+              "innerDiameterMm": 31.8,
+              "ringStyle": "Octagonal"
+            }
+          ]
+        },
+        {
+          "nps": "0.75",
+          "npsLabel": "3/4\"",
+          "dn": 20,
+          "ratings": [
+            {
+              "class": "150",
+              "ringNumber": "R-13",
+              "pitchDiameterMm": 42.86,
+              "ringWidthMm": 7.9,
+              "ringHeightMm": 14.3,
+              "innerDiameterMm": 34.9,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "300",
+              "ringNumber": "R-14",
+              "pitchDiameterMm": 47.63,
+              "ringWidthMm": 7.9,
+              "ringHeightMm": 14.3,
+              "innerDiameterMm": 39.7,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "600",
+              "ringNumber": "R-14",
+              "pitchDiameterMm": 47.63,
+              "ringWidthMm": 7.9,
+              "ringHeightMm": 14.3,
+              "innerDiameterMm": 39.7,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "900",
+              "ringNumber": "R-14",
+              "pitchDiameterMm": 47.63,
+              "ringWidthMm": 7.9,
+              "ringHeightMm": 14.3,
+              "innerDiameterMm": 39.7,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "1500",
+              "ringNumber": "R-14",
+              "pitchDiameterMm": 47.63,
+              "ringWidthMm": 7.9,
+              "ringHeightMm": 14.3,
+              "innerDiameterMm": 39.7,
+              "ringStyle": "Octagonal"
+            }
+          ]
+        },
+        {
+          "nps": "1",
+          "npsLabel": "1\"",
+          "dn": 25,
+          "ratings": [
+            {
+              "class": "150",
+              "ringNumber": "R-15",
+              "pitchDiameterMm": 50.8,
+              "ringWidthMm": 7.9,
+              "ringHeightMm": 14.3,
+              "innerDiameterMm": 42.9,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "300",
+              "ringNumber": "R-16",
+              "pitchDiameterMm": 57.15,
+              "ringWidthMm": 7.9,
+              "ringHeightMm": 14.3,
+              "innerDiameterMm": 49.2,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "600",
+              "ringNumber": "R-16",
+              "pitchDiameterMm": 57.15,
+              "ringWidthMm": 7.9,
+              "ringHeightMm": 14.3,
+              "innerDiameterMm": 49.2,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "900",
+              "ringNumber": "R-16",
+              "pitchDiameterMm": 57.15,
+              "ringWidthMm": 7.9,
+              "ringHeightMm": 14.3,
+              "innerDiameterMm": 49.2,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "1500",
+              "ringNumber": "RX-16",
+              "pitchDiameterMm": 57.15,
+              "ringWidthMm": 7.9,
+              "ringHeightMm": 14.3,
+              "innerDiameterMm": 49.2,
+              "ringStyle": "RX"
+            }
+          ]
+        },
+        {
+          "nps": "2",
+          "npsLabel": "2\"",
+          "dn": 50,
+          "ratings": [
+            {
+              "class": "150",
+              "ringNumber": "R-23",
+              "pitchDiameterMm": 82.55,
+              "ringWidthMm": 11.1,
+              "ringHeightMm": 17.5,
+              "innerDiameterMm": 71.4,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "300",
+              "ringNumber": "R-23",
+              "pitchDiameterMm": 82.55,
+              "ringWidthMm": 11.1,
+              "ringHeightMm": 17.5,
+              "innerDiameterMm": 71.4,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "600",
+              "ringNumber": "R-24",
+              "pitchDiameterMm": 88.9,
+              "ringWidthMm": 11.1,
+              "ringHeightMm": 17.5,
+              "innerDiameterMm": 77.8,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "900",
+              "ringNumber": "R-24",
+              "pitchDiameterMm": 88.9,
+              "ringWidthMm": 11.1,
+              "ringHeightMm": 17.5,
+              "innerDiameterMm": 77.8,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "1500",
+              "ringNumber": "RX-24",
+              "pitchDiameterMm": 88.9,
+              "ringWidthMm": 11.1,
+              "ringHeightMm": 17.5,
+              "innerDiameterMm": 77.8,
+              "ringStyle": "RX"
+            }
+          ]
+        },
+        {
+          "nps": "3",
+          "npsLabel": "3\"",
+          "dn": 80,
+          "ratings": [
+            {
+              "class": "150",
+              "ringNumber": "R-31",
+              "pitchDiameterMm": 106.4,
+              "ringWidthMm": 11.1,
+              "ringHeightMm": 17.5,
+              "innerDiameterMm": 95.3,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "300",
+              "ringNumber": "R-31",
+              "pitchDiameterMm": 106.4,
+              "ringWidthMm": 11.1,
+              "ringHeightMm": 17.5,
+              "innerDiameterMm": 95.3,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "600",
+              "ringNumber": "R-32",
+              "pitchDiameterMm": 114.3,
+              "ringWidthMm": 11.1,
+              "ringHeightMm": 17.5,
+              "innerDiameterMm": 103.2,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "900",
+              "ringNumber": "R-32",
+              "pitchDiameterMm": 114.3,
+              "ringWidthMm": 11.1,
+              "ringHeightMm": 17.5,
+              "innerDiameterMm": 103.2,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "1500",
+              "ringNumber": "RX-32",
+              "pitchDiameterMm": 114.3,
+              "ringWidthMm": 11.1,
+              "ringHeightMm": 17.5,
+              "innerDiameterMm": 103.2,
+              "ringStyle": "RX"
+            }
+          ]
+        },
+        {
+          "nps": "4",
+          "npsLabel": "4\"",
+          "dn": 100,
+          "ratings": [
+            {
+              "class": "150",
+              "ringNumber": "R-37",
+              "pitchDiameterMm": 123.8,
+              "ringWidthMm": 11.1,
+              "ringHeightMm": 17.5,
+              "innerDiameterMm": 112.7,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "300",
+              "ringNumber": "R-37",
+              "pitchDiameterMm": 123.8,
+              "ringWidthMm": 11.1,
+              "ringHeightMm": 17.5,
+              "innerDiameterMm": 112.7,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "600",
+              "ringNumber": "R-38",
+              "pitchDiameterMm": 136.5,
+              "ringWidthMm": 11.1,
+              "ringHeightMm": 17.5,
+              "innerDiameterMm": 125.4,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "900",
+              "ringNumber": "R-39",
+              "pitchDiameterMm": 149.2,
+              "ringWidthMm": 14.3,
+              "ringHeightMm": 22.2,
+              "innerDiameterMm": 134.9,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "1500",
+              "ringNumber": "RX-39",
+              "pitchDiameterMm": 149.2,
+              "ringWidthMm": 14.3,
+              "ringHeightMm": 22.2,
+              "innerDiameterMm": 134.9,
+              "ringStyle": "RX"
+            }
+          ]
+        },
+        {
+          "nps": "6",
+          "npsLabel": "6\"",
+          "dn": 150,
+          "ratings": [
+            {
+              "class": "150",
+              "ringNumber": "R-45",
+              "pitchDiameterMm": 171.5,
+              "ringWidthMm": 14.3,
+              "ringHeightMm": 22.2,
+              "innerDiameterMm": 157.2,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "300",
+              "ringNumber": "R-45",
+              "pitchDiameterMm": 171.5,
+              "ringWidthMm": 14.3,
+              "ringHeightMm": 22.2,
+              "innerDiameterMm": 157.2,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "600",
+              "ringNumber": "R-46",
+              "pitchDiameterMm": 193.7,
+              "ringWidthMm": 14.3,
+              "ringHeightMm": 22.2,
+              "innerDiameterMm": 179.4,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "900",
+              "ringNumber": "R-46",
+              "pitchDiameterMm": 193.7,
+              "ringWidthMm": 14.3,
+              "ringHeightMm": 22.2,
+              "innerDiameterMm": 179.4,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "1500",
+              "ringNumber": "BX-151",
+              "pitchDiameterMm": 193.7,
+              "ringWidthMm": 12.7,
+              "ringHeightMm": 19.1,
+              "innerDiameterMm": 181,
+              "ringStyle": "BX"
+            }
+          ]
+        },
+        {
+          "nps": "8",
+          "npsLabel": "8\"",
+          "dn": 200,
+          "ratings": [
+            {
+              "class": "150",
+              "ringNumber": "R-49",
+              "pitchDiameterMm": 177.8,
+              "ringWidthMm": 14.3,
+              "ringHeightMm": 22.2,
+              "innerDiameterMm": 163.5,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "300",
+              "ringNumber": "R-49",
+              "pitchDiameterMm": 177.8,
+              "ringWidthMm": 14.3,
+              "ringHeightMm": 22.2,
+              "innerDiameterMm": 163.5,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "600",
+              "ringNumber": "R-50",
+              "pitchDiameterMm": 193.7,
+              "ringWidthMm": 14.3,
+              "ringHeightMm": 22.2,
+              "innerDiameterMm": 179.4,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "900",
+              "ringNumber": "R-53",
+              "pitchDiameterMm": 211.1,
+              "ringWidthMm": 15.9,
+              "ringHeightMm": 25.4,
+              "innerDiameterMm": 195.3,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "1500",
+              "ringNumber": "BX-154",
+              "pitchDiameterMm": 211.1,
+              "ringWidthMm": 14.3,
+              "ringHeightMm": 22.2,
+              "innerDiameterMm": 196.9,
+              "ringStyle": "BX"
+            }
+          ]
+        },
+        {
+          "nps": "10",
+          "npsLabel": "10\"",
+          "dn": 250,
+          "ratings": [
+            {
+              "class": "150",
+              "ringNumber": "R-57",
+              "pitchDiameterMm": 228.6,
+              "ringWidthMm": 15.9,
+              "ringHeightMm": 25.4,
+              "innerDiameterMm": 212.7,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "300",
+              "ringNumber": "R-57",
+              "pitchDiameterMm": 228.6,
+              "ringWidthMm": 15.9,
+              "ringHeightMm": 25.4,
+              "innerDiameterMm": 212.7,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "600",
+              "ringNumber": "R-59",
+              "pitchDiameterMm": 247.7,
+              "ringWidthMm": 15.9,
+              "ringHeightMm": 25.4,
+              "innerDiameterMm": 231.8,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "900",
+              "ringNumber": "R-60",
+              "pitchDiameterMm": 269.9,
+              "ringWidthMm": 19.1,
+              "ringHeightMm": 28.6,
+              "innerDiameterMm": 250.8,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "1500",
+              "ringNumber": "BX-156",
+              "pitchDiameterMm": 269.9,
+              "ringWidthMm": 15.9,
+              "ringHeightMm": 25.4,
+              "innerDiameterMm": 254,
+              "ringStyle": "BX"
+            }
+          ]
+        },
+        {
+          "nps": "12",
+          "npsLabel": "12\"",
+          "dn": 300,
+          "ratings": [
+            {
+              "class": "150",
+              "ringNumber": "R-61",
+              "pitchDiameterMm": 247.7,
+              "ringWidthMm": 15.9,
+              "ringHeightMm": 25.4,
+              "innerDiameterMm": 231.8,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "300",
+              "ringNumber": "R-61",
+              "pitchDiameterMm": 247.7,
+              "ringWidthMm": 15.9,
+              "ringHeightMm": 25.4,
+              "innerDiameterMm": 231.8,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "600",
+              "ringNumber": "R-65",
+              "pitchDiameterMm": 269.9,
+              "ringWidthMm": 15.9,
+              "ringHeightMm": 25.4,
+              "innerDiameterMm": 254,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "900",
+              "ringNumber": "R-66",
+              "pitchDiameterMm": 301.6,
+              "ringWidthMm": 19.1,
+              "ringHeightMm": 28.6,
+              "innerDiameterMm": 282.6,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "1500",
+              "ringNumber": "BX-160",
+              "pitchDiameterMm": 301.6,
+              "ringWidthMm": 15.9,
+              "ringHeightMm": 25.4,
+              "innerDiameterMm": 285.8,
+              "ringStyle": "BX"
+            }
+          ]
+        },
+        {
+          "nps": "14",
+          "npsLabel": "14\"",
+          "dn": 350,
+          "ratings": [
+            {
+              "class": "150",
+              "ringNumber": "R-65",
+              "pitchDiameterMm": 269.9,
+              "ringWidthMm": 15.9,
+              "ringHeightMm": 25.4,
+              "innerDiameterMm": 254,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "300",
+              "ringNumber": "R-65",
+              "pitchDiameterMm": 269.9,
+              "ringWidthMm": 15.9,
+              "ringHeightMm": 25.4,
+              "innerDiameterMm": 254,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "600",
+              "ringNumber": "R-69",
+              "pitchDiameterMm": 301.6,
+              "ringWidthMm": 15.9,
+              "ringHeightMm": 25.4,
+              "innerDiameterMm": 285.8,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "900",
+              "ringNumber": "R-70",
+              "pitchDiameterMm": 323.9,
+              "ringWidthMm": 19.1,
+              "ringHeightMm": 28.6,
+              "innerDiameterMm": 304.8,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "1500",
+              "ringNumber": "BX-162",
+              "pitchDiameterMm": 323.9,
+              "ringWidthMm": 15.9,
+              "ringHeightMm": 25.4,
+              "innerDiameterMm": 308,
+              "ringStyle": "BX"
+            }
+          ]
+        },
+        {
+          "nps": "16",
+          "npsLabel": "16\"",
+          "dn": 400,
+          "ratings": [
+            {
+              "class": "150",
+              "ringNumber": "R-69",
+              "pitchDiameterMm": 301.6,
+              "ringWidthMm": 15.9,
+              "ringHeightMm": 25.4,
+              "innerDiameterMm": 285.8,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "300",
+              "ringNumber": "R-69",
+              "pitchDiameterMm": 301.6,
+              "ringWidthMm": 15.9,
+              "ringHeightMm": 25.4,
+              "innerDiameterMm": 285.8,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "600",
+              "ringNumber": "R-73",
+              "pitchDiameterMm": 333.4,
+              "ringWidthMm": 15.9,
+              "ringHeightMm": 25.4,
+              "innerDiameterMm": 317.5,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "900",
+              "ringNumber": "R-74",
+              "pitchDiameterMm": 358.8,
+              "ringWidthMm": 19.1,
+              "ringHeightMm": 28.6,
+              "innerDiameterMm": 339.7,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "1500",
+              "ringNumber": "BX-164",
+              "pitchDiameterMm": 358.8,
+              "ringWidthMm": 15.9,
+              "ringHeightMm": 25.4,
+              "innerDiameterMm": 342.9,
+              "ringStyle": "BX"
+            }
+          ]
+        },
+        {
+          "nps": "18",
+          "npsLabel": "18\"",
+          "dn": 450,
+          "ratings": [
+            {
+              "class": "150",
+              "ringNumber": "R-73",
+              "pitchDiameterMm": 333.4,
+              "ringWidthMm": 15.9,
+              "ringHeightMm": 25.4,
+              "innerDiameterMm": 317.5,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "300",
+              "ringNumber": "R-73",
+              "pitchDiameterMm": 333.4,
+              "ringWidthMm": 15.9,
+              "ringHeightMm": 25.4,
+              "innerDiameterMm": 317.5,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "600",
+              "ringNumber": "R-77",
+              "pitchDiameterMm": 368.3,
+              "ringWidthMm": 15.9,
+              "ringHeightMm": 25.4,
+              "innerDiameterMm": 352.4,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "900",
+              "ringNumber": "R-78",
+              "pitchDiameterMm": 393.7,
+              "ringWidthMm": 19.1,
+              "ringHeightMm": 28.6,
+              "innerDiameterMm": 374.7,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "1500",
+              "ringNumber": "BX-166",
+              "pitchDiameterMm": 393.7,
+              "ringWidthMm": 15.9,
+              "ringHeightMm": 25.4,
+              "innerDiameterMm": 377.8,
+              "ringStyle": "BX"
+            }
+          ]
+        },
+        {
+          "nps": "20",
+          "npsLabel": "20\"",
+          "dn": 500,
+          "ratings": [
+            {
+              "class": "150",
+              "ringNumber": "R-77",
+              "pitchDiameterMm": 368.3,
+              "ringWidthMm": 15.9,
+              "ringHeightMm": 25.4,
+              "innerDiameterMm": 352.4,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "300",
+              "ringNumber": "R-77",
+              "pitchDiameterMm": 368.3,
+              "ringWidthMm": 15.9,
+              "ringHeightMm": 25.4,
+              "innerDiameterMm": 352.4,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "600",
+              "ringNumber": "R-81",
+              "pitchDiameterMm": 419.1,
+              "ringWidthMm": 19.1,
+              "ringHeightMm": 28.6,
+              "innerDiameterMm": 400.1,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "900",
+              "ringNumber": "R-82",
+              "pitchDiameterMm": 444.5,
+              "ringWidthMm": 22.2,
+              "ringHeightMm": 31.8,
+              "innerDiameterMm": 422.3,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "1500",
+              "ringNumber": "BX-168",
+              "pitchDiameterMm": 444.5,
+              "ringWidthMm": 19.1,
+              "ringHeightMm": 28.6,
+              "innerDiameterMm": 425.5,
+              "ringStyle": "BX"
+            }
+          ]
+        },
+        {
+          "nps": "24",
+          "npsLabel": "24\"",
+          "dn": 600,
+          "ratings": [
+            {
+              "class": "150",
+              "ringNumber": "R-85",
+              "pitchDiameterMm": 431.8,
+              "ringWidthMm": 19.1,
+              "ringHeightMm": 28.6,
+              "innerDiameterMm": 412.8,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "300",
+              "ringNumber": "R-85",
+              "pitchDiameterMm": 431.8,
+              "ringWidthMm": 19.1,
+              "ringHeightMm": 28.6,
+              "innerDiameterMm": 412.8,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "600",
+              "ringNumber": "R-89",
+              "pitchDiameterMm": 482.6,
+              "ringWidthMm": 19.1,
+              "ringHeightMm": 28.6,
+              "innerDiameterMm": 463.6,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "900",
+              "ringNumber": "R-90",
+              "pitchDiameterMm": 520.7,
+              "ringWidthMm": 22.2,
+              "ringHeightMm": 31.8,
+              "innerDiameterMm": 498.5,
+              "ringStyle": "Octagonal"
+            },
+            {
+              "class": "1500",
+              "ringNumber": "BX-170",
+              "pitchDiameterMm": 520.7,
+              "ringWidthMm": 19.1,
+              "ringHeightMm": 28.6,
+              "innerDiameterMm": 501.7,
+              "ringStyle": "BX"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
