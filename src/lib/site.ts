@@ -1,3 +1,5 @@
+export const PRODUCTION_SITE_URL = "https://www.fieldengineerskit.com";
+
 function isLocalhostUrl(url: string) {
   return /localhost|127\.0\.0\.1/i.test(url);
 }
@@ -17,22 +19,18 @@ function isDeployed() {
 
 /**
  * Public origin for canonical, sitemap, robots, and Open Graph.
- * Local preview may use localhost. A Vercel deploy never falls back to localhost.
+ * Defaults to https://www.fieldengineerskit.com.
+ * Local development falls back to localhost if not explicitly set.
  */
 export function getSiteUrl() {
   const explicit = process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/$/, "");
 
+  if (explicit && !isLocalhostUrl(explicit)) {
+    return explicit;
+  }
+
   if (isDeployed()) {
-    if (explicit && !isLocalhostUrl(explicit)) {
-      return explicit;
-    }
-    const host = vercelHost();
-    if (host) {
-      return `https://${host}`;
-    }
-    throw new Error(
-      "NEXT_PUBLIC_SITE_URL must be a public https origin on Vercel. Localhost is not allowed in a deployed build.",
-    );
+    return PRODUCTION_SITE_URL;
   }
 
   if (explicit) {
