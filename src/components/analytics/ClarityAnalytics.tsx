@@ -5,7 +5,7 @@ type ClarityAnalyticsProps = {
 };
 
 export default function ClarityAnalytics({
-  clarityId = process.env.NEXT_PUBLIC_CLARITY_ID,
+  clarityId = process.env.NEXT_PUBLIC_CLARITY_ID || "yai3eq242v",
 }: ClarityAnalyticsProps) {
   if (!clarityId) return null;
 

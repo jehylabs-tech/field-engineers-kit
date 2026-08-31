@@ -5,7 +5,7 @@ type GoogleAnalyticsProps = {
 };
 
 export default function GoogleAnalytics({
-  gaId = process.env.NEXT_PUBLIC_GA_ID,
+  gaId = process.env.NEXT_PUBLIC_GA_ID || "G-FHN5N1MZV6",
 }: GoogleAnalyticsProps) {
   if (!gaId) return null;
 
