@@ -15,9 +15,9 @@ export const BLIND_FLANGE_URL_CONFIG: ParamConfig<BlindFlangeInputs> = {
   },
   mode: {
     param: "mode",
-    serialize: (value: BlindDesignMode | undefined) => value ?? "permanent",
-    deserialize: (value: string | null, fallback: BlindDesignMode | undefined) =>
-      value === "hydrotest" ? "hydrotest" : value === "permanent" ? "permanent" : (fallback ?? "permanent"),
+    serialize: (value: BlindDesignMode) => value,
+    deserialize: (value: string | null, fallback: BlindDesignMode) =>
+      value === "hydrotest" ? "hydrotest" : value === "permanent" ? "permanent" : fallback,
   },
   nps: {
     param: "nps",

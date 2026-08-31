@@ -5,15 +5,15 @@ export type BlindDesignMode = "permanent" | "hydrotest";
 
 export type BlindFlangeInputs = {
   unitSystem: UnitSystem;
-  mode?: BlindDesignMode;
-  nps?: string;
-  pressureClass?: string;
+  mode: BlindDesignMode;
+  nps: string;
+  pressureClass: string;
   insideDiameter: number; // Gasket contact diameter d (mm in metric, in in imperial)
   designPressure: number; // Pressure P / Pt (MPa in metric, psi in imperial)
   allowableStress: number; // Allowable stress S (MPa in metric, psi in imperial)
   weldEfficiency: number; // Joint efficiency E (default 1.0)
   corrosionAllowance: number; // Corrosion allowance c (mm in metric, in in imperial)
-  materialId?: string;
+  materialId: string;
 };
 
 export type MaterialStressPreset = {
