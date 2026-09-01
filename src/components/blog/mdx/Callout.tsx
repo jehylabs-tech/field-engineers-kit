@@ -26,7 +26,7 @@ const variantStyles: Record<
 type CalloutProps = {
   title?: string;
   variant?: CalloutVariant;
-  children: ReactNode;
+  children?: ReactNode;
 };
 
 export default function Callout({

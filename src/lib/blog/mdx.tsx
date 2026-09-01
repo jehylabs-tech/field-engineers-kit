@@ -1,9 +1,8 @@
-import type { ComponentType, ReactNode } from "react";
+import type { ComponentType, HTMLAttributes, ReactNode } from "react";
 import { slugifyHeading } from "@/lib/blog/slugify";
 import Callout from "@/components/blog/mdx/Callout";
 
-type MdxComponent = ComponentType<Record<string, unknown>>;
-type MDXComponentsMap = Record<string, MdxComponent>;
+export type BlogMdxComponents = Record<string, ComponentType<Record<string, unknown>>>;
 
 function getTextContent(children: ReactNode): string {
   if (typeof children === "string" || typeof children === "number") {
@@ -40,7 +39,9 @@ function createHeading(level: 2 | 3) {
   };
 }
 
-export const blogMdxComponents: MDXComponentsMap = {
+type CodeProps = HTMLAttributes<HTMLElement> & { children?: ReactNode };
+
+export const blogMdxComponents: BlogMdxComponents = {
   h2: createHeading(2),
   h3: createHeading(3),
   h4: (props) => (
@@ -113,9 +114,8 @@ export const blogMdxComponents: MDXComponentsMap = {
       {...props}
     />
   ),
-  code: (props) => {
-    const className =
-      typeof props.className === "string" ? props.className : "";
+  code: (props: CodeProps) => {
+    const className = props.className ?? "";
     const isBlock = className.includes("language-");
     if (isBlock) {
       return <code {...props} />;
@@ -127,5 +127,5 @@ export const blogMdxComponents: MDXComponentsMap = {
       />
     );
   },
-  Callout,
+  Callout: Callout as ComponentType<Record<string, unknown>>,
 };

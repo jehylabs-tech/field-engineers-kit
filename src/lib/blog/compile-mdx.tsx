@@ -3,10 +3,10 @@ import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
 import { Fragment, type ComponentType } from "react";
 import { jsx, jsxs } from "react/jsx-runtime";
-import { blogMdxComponents } from "@/lib/blog/mdx";
+import { blogMdxComponents, type BlogMdxComponents } from "@/lib/blog/mdx";
 
 type MdxModule = {
-  default: ComponentType<{ components?: typeof blogMdxComponents }>;
+  default: ComponentType<{ components?: BlogMdxComponents }>;
 };
 
 export async function compileBlogMdx(source: string) {
@@ -30,7 +30,7 @@ export async function compileBlogMdx(source: string) {
 }
 
 export function renderBlogMdx(
-  Content: ComponentType<{ components?: typeof blogMdxComponents }>,
+  Content: ComponentType<{ components?: BlogMdxComponents }>,
 ) {
   return <Content components={blogMdxComponents} />;
 }
