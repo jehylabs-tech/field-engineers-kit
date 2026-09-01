@@ -84,13 +84,10 @@ export function buildSiteMetadata(overrides: SiteMetadataOptions = {}): Metadata
       images: ["/opengraph-image"],
       ...twitter,
     },
-    ...(googleVerification
-      ? {
-          verification: {
-            google: googleVerification,
-          },
-        }
-      : {}),
+    verification: {
+      yandex: "2bcf7f066295b824",
+      ...(googleVerification ? { google: googleVerification } : {}),
+    },
     ...rest,
   };
 }
