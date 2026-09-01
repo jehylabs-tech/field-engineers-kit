@@ -114,7 +114,9 @@ export const blogMdxComponents: MDXComponentsMap = {
     />
   ),
   code: (props) => {
-    const isBlock = Boolean(props.className?.includes("language-"));
+    const className =
+      typeof props.className === "string" ? props.className : "";
+    const isBlock = className.includes("language-");
     if (isBlock) {
       return <code {...props} />;
     }
