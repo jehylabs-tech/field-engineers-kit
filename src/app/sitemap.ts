@@ -3,6 +3,8 @@ import { getPublishedCalculators } from "@/lib/calculators/queries";
 import { getLocalPublishedCalculators } from "@/lib/calculators/local-seed";
 import { listAllSpecRoutes } from "@/lib/calculators/spec-routes";
 import { getVisibleCategories } from "@/lib/menu/config";
+import { getAllPosts } from "@/lib/blog/posts";
+import { docsPath } from "@/lib/docs/constants";
 import { canonicalUrl } from "@/lib/site";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -21,6 +23,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { path: "/calculators", changeFrequency: "weekly", priority: 0.9 },
     { path: "/standards", changeFrequency: "weekly", priority: 0.8 },
     { path: "/about", changeFrequency: "weekly", priority: 0.8 },
+    { path: "/docs", changeFrequency: "weekly", priority: 0.85 },
     { path: "/advertise", changeFrequency: "weekly", priority: 0.7 },
     { path: "/disclaimer", changeFrequency: "weekly", priority: 0.3 },
     { path: "/privacy", changeFrequency: "weekly", priority: 0.3 },
@@ -70,9 +73,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }),
   );
 
+  const blogRoutes: MetadataRoute.Sitemap = [
+    ...getAllPosts().map((post) => ({
+      url: canonicalUrl(docsPath(post.slug)),
+      lastModified: post.date || nowIso,
+      changeFrequency: "monthly" as const,
+      priority: 0.75,
+    })),
+  ];
+
   return [
     ...staticRoutes,
     ...categoryRoutes,
+    ...blogRoutes,
     ...calculatorRoutes,
     ...specRoutes,
     ...calculationRoutes,

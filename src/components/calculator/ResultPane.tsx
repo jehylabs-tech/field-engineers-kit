@@ -439,6 +439,8 @@ export default function ResultPane({
           tActual={output.gauge.tActual ?? 0}
           unit={output.gauge.unit ?? "mm"}
           caption={output.gauge.caption}
+          captionInfo={output.gauge.captionInfo}
+          markerLabel={output.gauge.markerLabel}
         />
       ) : output.gauge ? (
         <div className="mt-3">

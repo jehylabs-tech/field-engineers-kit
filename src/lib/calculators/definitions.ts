@@ -83,6 +83,8 @@ export type CalculatorOutput = {
     limitLabel: string;
     maxLabel: string;
     caption?: string;
+    captionInfo?: string;
+    markerLabel?: string;
     /** Renders single-color thickness bar with t_min pointer. */
     variant?: "thickness-margin";
     tMin?: number;

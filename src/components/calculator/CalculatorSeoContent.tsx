@@ -146,6 +146,33 @@ export default function CalculatorSeoContent({
                 dangerouslySetInnerHTML={{ __html: data.formulaHtml }}
               />
             </div>
+            {data.slug === "pipe-wall-thickness" && data.formulaLatex ? (
+              <div
+                className="mb-3 mt-3 rounded-lg border border-slate-200 bg-white/70 px-4 py-3 dark:border-slate-700 dark:bg-slate-900/40"
+                aria-label="ASME B31.3 LaTeX formula reference"
+              >
+                <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                  LaTeX (Para. 304.1.2)
+                </p>
+                <div className="eng-formula-html space-y-2 text-lg text-slate-900 dark:text-slate-100">
+                  <p className="eng-eq m-0">
+                    <i>t</i> ={" "}
+                    <span className="eng-frac">
+                      <span className="eng-num">
+                        <i>P</i> · <i>D</i>
+                      </span>
+                      <span className="eng-den">
+                        2(<i>S</i> · <i>E</i> + <i>P</i> · <i>Y</i>)
+                      </span>
+                    </span>
+                  </p>
+                  <p className="eng-eq m-0">
+                    <i>t</i>
+                    <sub>m</sub> = <i>t</i> + <i>c</i>
+                  </p>
+                </div>
+              </div>
+            ) : null}
             {data.formulaBadges && data.formulaBadges.length > 0 ? (
               <div className="mb-3 mt-3 flex flex-wrap items-center justify-center gap-2">
                 {data.formulaBadges.map((badge) => (

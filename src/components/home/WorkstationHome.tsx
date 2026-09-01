@@ -5,6 +5,11 @@ import { useRouter } from "next/navigation";
 import { navigateToHref } from "@/lib/navigation/navigate";
 import Link from "@/components/ui/AppLink";
 import {
+  DOCS_BASE_PATH,
+  DOCS_HOME_FILTER_LABEL,
+  DOCS_NAV_LABEL,
+} from "@/lib/docs/constants";
+import {
   orderedWorkstationDomains,
   searchWorkstationTools,
   WORKSTATION_DOMAIN_TABS,
@@ -535,6 +540,12 @@ function StandardsSeoSection() {
               Standards Index →
             </Link>
             <Link
+              href={DOCS_BASE_PATH}
+              className="text-blue-700 hover:underline dark:text-blue-300"
+            >
+              {DOCS_NAV_LABEL} →
+            </Link>
+            <Link
               href="/about"
               className="text-blue-700 hover:underline dark:text-blue-300"
             >
@@ -677,29 +688,39 @@ export default function WorkstationHome() {
             Live engineering calculator catalog
           </h2>
           <div
-            role="tablist"
-            aria-label="Filter by engineering domain"
-            className="mb-5 flex flex-wrap gap-2 overflow-x-auto pb-1"
+            className="mb-5 flex flex-wrap items-center justify-between gap-2"
           >
-            {WORKSTATION_DOMAIN_TABS.map((tab) => {
-              const selected = filter === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  type="button"
-                  role="tab"
-                  aria-selected={selected}
-                  onClick={() => selectDomainTab(tab.id)}
-                  className={`shrink-0 rounded-lg px-3 py-1.5 text-xs transition-all md:text-sm ${
-                    selected
-                      ? "bg-blue-600 font-bold text-white shadow-sm"
-                      : "bg-slate-100 font-semibold text-slate-700 hover:bg-slate-200 dark:bg-spec-panel dark:text-slate-300 dark:hover:bg-spec-border"
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              );
-            })}
+            <div
+              role="tablist"
+              aria-label="Filter by engineering domain"
+              className="flex flex-wrap gap-2 overflow-x-auto pb-1"
+            >
+              {WORKSTATION_DOMAIN_TABS.map((tab) => {
+                const selected = filter === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    role="tab"
+                    aria-selected={selected}
+                    onClick={() => selectDomainTab(tab.id)}
+                    className={`shrink-0 rounded-lg px-3 py-1.5 text-xs transition-all md:text-sm ${
+                      selected
+                        ? "bg-blue-600 font-bold text-white shadow-sm"
+                        : "bg-slate-100 font-semibold text-slate-700 hover:bg-slate-200 dark:bg-spec-panel dark:text-slate-300 dark:hover:bg-spec-border"
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </div>
+            <Link
+              href={DOCS_BASE_PATH}
+              className="shrink-0 rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-semibold text-blue-700 transition-colors hover:bg-blue-100 dark:border-blue-900/50 dark:bg-blue-950/40 dark:text-blue-300 dark:hover:bg-blue-950/60 md:text-sm"
+            >
+              {DOCS_HOME_FILTER_LABEL} 📖
+            </Link>
           </div>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5 lg:grid-cols-4">
             {domains.map((domain) => (

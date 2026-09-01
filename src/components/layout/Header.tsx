@@ -5,6 +5,7 @@ import Link from "@/components/ui/AppLink";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { useSearch } from "@/components/search/SearchProvider";
+import DocsNavLink from "@/components/layout/DocsNavLink";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import UnitSwitcher from "@/components/layout/UnitSwitcher";
 import { QuickUnitButton } from "@/components/layout/QuickUnitProvider";
@@ -86,9 +87,10 @@ export default function Header() {
             className="h-2 w-2 rounded-full border border-emerald-200 bg-emerald-600 sm:hidden"
             title="Offline ready / PWA"
           />
+          <DocsNavLink />
           <Link
             href="/advertise"
-            className="hidden text-sm font-medium text-slate-700 transition-colors hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400 md:inline"
+            className="text-sm font-medium text-slate-700 transition-colors hover:text-blue-600 dark:text-slate-300 dark:hover:text-blue-400"
           >
             Advertise
           </Link>
@@ -133,6 +135,10 @@ export default function Header() {
                 {category.label}
               </Link>
             ))}
+            <DocsNavLink
+              className="rounded-md px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 hover:text-slate-900"
+              activeClassName="font-semibold text-blue-600 dark:text-blue-400"
+            />
             <Link
               href="/advertise"
               onClick={() => setMenuOpen(false)}

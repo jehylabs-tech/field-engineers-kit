@@ -108,7 +108,7 @@ const PRESSURE_LOOKUP_ROWS = [1, 5, 10, 20, 50, 100].map((bar) => [
 ]);
 
 const NPS_WALL = [
-  { nps: '2"', od: 60.33, sch40: 3.91, sch80: 5.54 },
+  { nps: '2"', od: 60.32, sch40: 3.91, sch80: 5.54 },
   { nps: '4"', od: 114.3, sch40: 6.02, sch80: 8.56 },
   { nps: '6"', od: 168.28, sch40: 7.11, sch80: 10.97 },
   { nps: '8"', od: 219.1, sch40: 8.18, sch80: 12.7 },
@@ -316,9 +316,11 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
     slug: "pipe-wall-thickness",
     formulaTitle: "Core Formula & Variable Definitions",
     formulaHtml:
-      '<p class="eng-eq"><i>t</i> = <span class="eng-frac"><span class="eng-num"><i>PD</i></span><span class="eng-den">2(<i>SE</i> + <i>PY</i>)</span></span> &nbsp;·&nbsp; <i>t</i><sub>m</sub> = <i>t</i> + <i>c</i></p>' +
+      '<p class="eng-eq"><i>t</i> = <span class="eng-frac"><span class="eng-num"><i>P</i> · <i>D</i></span><span class="eng-den">2(<i>S</i> · <i>E</i> + <i>P</i> · <i>Y</i>)</span></span></p>' +
+      '<p class="eng-eq"><i>t</i><sub>m</sub> = <i>t</i> + <i>c</i></p>' +
       '<p class="eng-plain">ASME B31.3 Para. 304.1.2(a) Eq. (3a) · Thin-wall pipe (t &lt; D/6)</p>',
-    formulaLatex: "t = \\frac{PD}{2(SE + PY)},\\quad t_m = t + c",
+    formulaLatex:
+      "t = \\frac{P \\cdot D}{2(S \\cdot E + P \\cdot Y)},\\quad t_m = t + c",
     formulaNotes:
       "Minimum required wall thickness for straight process pipe under internal design pressure follows ASME B31.3 paragraph 304.1.2(a) Equation (3a). For ferritic steels at or below 482 °C (900 °F), coefficient Y = 0.4. Pressure P and allowable stress S must share identical stress units (MPa or psi); outside diameter D, thickness t, and corrosion allowance c share length units (mm or in).",
     formulaBadges: [
@@ -571,7 +573,7 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
     tableCaption: "ASME B36.10M carbon steel — selected NPS Sch 40 / Sch 80",
     tableHeaders: ["NPS", "OD (mm)", "Sch 40 t (mm)", "Sch 40 ID (mm)", "Sch 80 t (mm)"],
     tableRows: [
-      ["2\"", "60.33", "3.91", "52.51", "5.54"],
+      ["2\"", "60.32", "3.91", "52.51", "5.54"],
       ["4\"", "114.30", "6.02", "102.26", "8.56"],
       ["6\"", "168.28", "7.11", "154.06", "10.97"],
       ["8\"", "219.10", "8.18", "202.74", "12.70"],

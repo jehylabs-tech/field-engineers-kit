@@ -1,7 +1,9 @@
 import {
   DEFAULT_PIPE_INPUTS,
+  JOINT_QUALITY_PRESETS,
   PIPE_THICKNESS_MATERIAL_PRESETS,
   mapPipeThicknessMaterialId,
+  type JointQualityId,
   type PipeThicknessInputs,
 } from "@/lib/calculators/engines/pipe-thickness";
 import { urlSyncHelpers, type ParamConfig } from "@/lib/calculators/url-sync";
@@ -14,12 +16,24 @@ export const PIPE_URL_CONFIG: ParamConfig<PipeThicknessInputs> = {
     deserialize: (value: string | null, fallback: UnitSystem) =>
       value === "imperial" ? "imperial" : value === "metric" ? "metric" : fallback,
   },
+  nps: {
+    param: "nps",
+    ...urlSyncHelpers.string,
+  },
+  schedule: {
+    param: "schedule",
+    ...urlSyncHelpers.string,
+  },
   outsideDiameter: {
     param: "od",
     ...urlSyncHelpers.number,
   },
   designPressure: {
     param: "pressure",
+    ...urlSyncHelpers.number,
+  },
+  designTemperature: {
+    param: "temp",
     ...urlSyncHelpers.number,
   },
   allowableStress: {
@@ -29,6 +43,22 @@ export const PIPE_URL_CONFIG: ParamConfig<PipeThicknessInputs> = {
   weldEfficiency: {
     param: "e",
     ...urlSyncHelpers.number,
+  },
+  jointType: {
+    param: "joint",
+    serialize: (value: JointQualityId) => value,
+    deserialize: (value: string | null, fallback: JointQualityId) => {
+      if (
+        value === "seamless" ||
+        value === "erw" ||
+        value === "efw" ||
+        value === "custom"
+      ) {
+        return value;
+      }
+      const preset = JOINT_QUALITY_PRESETS.find((item) => item.id === value);
+      return preset?.id ?? fallback;
+    },
   },
   corrosionAllowance: {
     param: "ca",

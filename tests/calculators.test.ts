@@ -109,12 +109,12 @@ describe("01 ASME B31.3 Pipe Thickness", () => {
     expect(tmin).toBeLessThan(6.02);
   });
 
-  it("scales the wall gauge to actual thickness, not 1.25 × tmin", () => {
+  it("scales the wall gauge to schedule wall vs t_nom_req", () => {
     const out = calculatePipeThickness(DEFAULT_PIPE_INPUTS);
     expect(out.gauge?.maxLabel).toContain("6.02");
     expect(out.gauge?.fillPercent).toBe(100);
-    expect(out.gauge?.limitPercent).toBeLessThan(30);
-    expect(out.gauge?.caption).toMatch(/Safety margin/i);
+    expect(out.heroStatusLevel).toBe("pass");
+    expect(out.summaryStatus?.label).toBe("SAFE (PASS)");
   });
 
   it("rejects non-positive / non-finite inputs without NaN", () => {
@@ -134,10 +134,14 @@ describe("01 ASME B31.3 Pipe Thickness", () => {
     })).toBe(0);
     const out = calculatePipeThickness({
       unitSystem: "metric",
+      nps: "4",
+      schedule: "40",
       outsideDiameter: 114.3,
       designPressure: 0,
+      designTemperature: 38,
       allowableStress: 138,
       weldEfficiency: 1,
+      jointType: "seamless",
       corrosionAllowance: 0,
       actualThickness: 6.02,
     });

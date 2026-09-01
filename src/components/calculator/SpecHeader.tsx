@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "@/components/ui/AppLink";
+import DocsNavLink from "@/components/layout/DocsNavLink";
 import CleanZoneFlag from "@/components/calculator/CleanZoneFlag";
 import ThemeToggle from "@/components/ui/ThemeToggle";
 import UnitSwitcher from "@/components/layout/UnitSwitcher";
@@ -63,6 +64,10 @@ export default function SpecHeader({
             <span className="h-1.5 w-1.5 rounded-full bg-spec-success" />
             Offline
           </div>
+          <DocsNavLink
+            className="text-sm font-medium text-spec-text2 transition-colors hover:text-spec-accent"
+            activeClassName="font-semibold text-spec-accent"
+          />
           <CleanZoneFlag />
           <ThemeToggle />
           <button

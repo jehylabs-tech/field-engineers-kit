@@ -1,4 +1,5 @@
 import Link from "@/components/ui/AppLink";
+import { DOCS_BASE_PATH, DOCS_NAV_LABEL } from "@/lib/docs/constants";
 import { CATEGORY_UI } from "@/lib/home/ui";
 import { getAllCategories, getVisibleCategories } from "@/lib/menu/config";
 
@@ -65,6 +66,33 @@ export default function CalculatorNavList({
           ))}
         </div>
       ) : null}
+
+      <div className="mt-4 border-t border-spec-border pt-3">
+        <p className="px-2 py-1.5 text-[15px] font-semibold uppercase tracking-wide text-spec-text3">
+          Resources
+        </p>
+        <Link
+          href="/standards"
+          onClick={onNavigate}
+          className="block rounded-md px-2 py-2 text-base text-spec-text2 hover:bg-spec-bg hover:text-spec-text focus:outline-none focus:ring-2 focus:ring-spec-accent"
+        >
+          Standards Index
+        </Link>
+        <Link
+          href={DOCS_BASE_PATH}
+          onClick={onNavigate}
+          className="block rounded-md px-2 py-2 text-base text-spec-text2 hover:bg-spec-bg hover:text-spec-text focus:outline-none focus:ring-2 focus:ring-spec-accent"
+        >
+          {DOCS_NAV_LABEL}
+        </Link>
+        <Link
+          href="/calculators"
+          onClick={onNavigate}
+          className="block rounded-md px-2 py-2 text-base text-spec-text2 hover:bg-spec-bg hover:text-spec-text focus:outline-none focus:ring-2 focus:ring-spec-accent"
+        >
+          All Calculators
+        </Link>
+      </div>
     </>
   );
 }
