@@ -24,7 +24,6 @@ export async function compileBlogMdx(source: string) {
     Fragment,
     jsx,
     jsxs,
-    development: false,
   })) as MdxModule;
 
   return Content;
