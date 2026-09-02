@@ -1,9 +1,11 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import BlogArticleBody from "@/components/blog/BlogArticleBody";
+import DocsArticleSkeleton from "@/components/blog/DocsArticleSkeleton";
 import RelatedCalculatorCTA from "@/components/blog/RelatedCalculatorCTA";
 import TableOfContents from "@/components/blog/TableOfContents";
 import Link from "@/components/ui/AppLink";
-import { compileBlogMdx, renderBlogMdx } from "@/lib/blog/compile-mdx";
 import { getAllPostSlugs, getPostBySlug } from "@/lib/blog/posts";
 import { docsPath } from "@/lib/docs/constants";
 import { buildSiteMetadata } from "@/lib/metadata/site-metadata";
@@ -12,6 +14,8 @@ import { canonicalUrl } from "@/lib/site";
 type DocsArticlePageProps = {
   params: { slug: string };
 };
+
+export const dynamic = "force-static";
 
 export function generateStaticParams() {
   return getAllPostSlugs().map((slug) => ({ slug }));
@@ -61,8 +65,6 @@ export default async function DocsArticlePage({ params }: DocsArticlePageProps) 
   const calculatorUrl = post.relatedCalculatorUrl ?? "/calculators";
   const calculatorName =
     post.relatedCalculatorName ?? "FieldEngineersKit Calculator";
-
-  const MdxContent = await compileBlogMdx(post.content);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -143,9 +145,9 @@ export default async function DocsArticlePage({ params }: DocsArticlePageProps) 
               ) : null}
             </header>
 
-            <div className="blog-mdx-content">
-              {renderBlogMdx(MdxContent)}
-            </div>
+            <Suspense fallback={<DocsArticleSkeleton />}>
+              <BlogArticleBody source={post.content} />
+            </Suspense>
 
             {post.relatedCalculatorUrl ? (
               <RelatedCalculatorCTA

@@ -1,6 +1,8 @@
+import { cache } from "react";
 import { compile, run } from "@mdx-js/mdx";
 import remarkMath from "remark-math";
 import rehypeKatex from "rehype-katex";
+import "server-only";
 import { Fragment, type ComponentType } from "react";
 import { jsx, jsxs } from "react/jsx-runtime";
 import { blogMdxComponents, type BlogMdxComponents } from "@/lib/blog/mdx";
@@ -9,8 +11,7 @@ type MdxModule = {
   default: ComponentType<{ components?: BlogMdxComponents }>;
 };
 
-export async function compileBlogMdx(source: string) {
-  // Server MDX always uses production JSX runtime — avoids _jsxDEV mismatch in Turbopack/RSC.
+export const compileBlogMdx = cache(async (source: string) => {
   const compiled = String(
     await compile(source, {
       outputFormat: "function-body",
@@ -27,10 +28,4 @@ export async function compileBlogMdx(source: string) {
   })) as MdxModule;
 
   return Content;
-}
-
-export function renderBlogMdx(
-  Content: ComponentType<{ components?: BlogMdxComponents }>,
-) {
-  return <Content components={blogMdxComponents} />;
-}
+});

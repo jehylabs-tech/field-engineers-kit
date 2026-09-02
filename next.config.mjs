@@ -20,6 +20,11 @@ const nextConfig = {
         destination: "/docs/:slug",
         permanent: true,
       },
+      {
+        source: "/calculators/pipe-schedule-dimensions",
+        destination: "/calculator/pipe-schedule-dimension",
+        permanent: true,
+      },
     ];
   },
 };

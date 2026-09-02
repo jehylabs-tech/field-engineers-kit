@@ -6,7 +6,7 @@ import { useEffect } from "react";
 function isRecoverableClientError(error: Error) {
   const message = `${error.name} ${error.message}`;
   return (
-    /ChunkLoadError|Loading chunk|Failed to fetch|ReadableStream|Invalid state/i.test(
+    /ChunkLoadError|Loading chunk|Failed to fetch|ReadableStream|Invalid state|Connection closed/i.test(
       message,
     ) || /digest/i.test(error.message)
   );
