@@ -209,19 +209,21 @@ export function calculateFlangeDimension(
       label: "Mated pair assembly weight",
       value: assemblyWeight,
       section: "Procurement & rigging weight",
+      emphasis: true,
     },
   ];
 
   return {
-    heroLabel: "Estimated Weight",
-    heroValue: singleWeight,
-    heroStatus: `${flange.npsLabel} · Class ${rating.class} · ${style}`,
+    heroLabel: "Total Mated Pair Weight",
+    heroValue: assemblyWeight,
+    heroStatus: `${flange.npsLabel} · Class ${rating.class} · ${style} · single flange ${singleWeight}`,
     heroStatusLevel: "neutral",
     summary: [
       {
         label: "Rating & type",
         value: `Class ${rating.class} · ${flangeType.toUpperCase()} ${facing.toUpperCase()}`,
       },
+      { label: "Single flange weight", value: singleWeight },
       { label: "Flange OD", value: od },
       { label: flangeType === "bl" ? "Bore" : "Hub bore (ID)", value: hubBore },
     ],

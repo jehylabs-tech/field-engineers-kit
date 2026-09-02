@@ -21,6 +21,7 @@ import UrlShareBar from "@/components/calculator/UrlShareBar";
 import { CalculatorMetaProvider } from "@/components/calculator/CalculatorMetaContext";
 import { SpecSeedProvider } from "@/components/calculator/SpecSeedContext";
 import type { Calculator } from "@/lib/calculators/types";
+import { getCalculatorSeo } from "../../../data/calculatorSeoData";
 import {
   parseCalculatorDefinition,
   type CalculatorDefinition,
@@ -146,6 +147,14 @@ function CalculatorMain({
     category: item.category,
   }));
 
+  const seo = getCalculatorSeo(calculator.slug);
+  const nextActionsSectionNumber =
+    seo?.allowancesAndTolerances &&
+    seo?.materialLimitations &&
+    seo?.workedExample
+      ? 6
+      : 5;
+
   return (
     <div className="bg-spec-bg text-spec-text">
       <TrackRecentVisit
@@ -208,6 +217,7 @@ function CalculatorMain({
             calculators={allCalculators}
             related={definition.related}
             sponsor={definition.sponsor}
+            sectionNumber={nextActionsSectionNumber}
           />
         </Suspense>
         <BottomBanner />

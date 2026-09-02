@@ -221,7 +221,10 @@ describe("03 Flange Dimension (ASME B16.5)", () => {
       nps: "4",
       pressureClass: "150",
     });
-    expect(out.heroValue).toContain("10.00");
+    expect(out.heroValue).toContain("22.50");
+    expect(out.summary.find((row) => row.label === "Single flange weight")?.value).toContain(
+      "10.00",
+    );
     expect(out.rows.find((row) => row.label.includes("Flange OD"))?.value).toContain("228.600");
     expect(out.rows.find((row) => row.label.includes("Number of bolts"))?.value).toBe("8");
     expect(out.rows.find((row) => row.label.includes("hub bore"))?.value).toContain("102.260");
@@ -259,7 +262,10 @@ describe("03 Flange Dimension (ASME B16.5)", () => {
       flangeType: "so",
       facing: "rf",
     });
-    expect(so.heroValue).toContain("7.00");
+    expect(so.heroValue).toContain("16.50");
+    expect(so.summary.find((row) => row.label === "Single flange weight")?.value).toContain(
+      "7.00",
+    );
     expect(so.rows.find((row) => row.label.includes("hub bore"))?.value).toContain("114.300");
 
     const rtj150 = calculateFlangeDimension({

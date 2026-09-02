@@ -5,6 +5,7 @@ import { useCarryOver } from "@/components/calculator/CarryOverContext";
 import PresetChips from "@/components/calculator/PresetChips";
 import type { PresetOption } from "@/components/calculator/presets";
 import { useSchematicHighlight } from "@/components/calculator/schematics/SchematicHighlight";
+import type { UnitSystem } from "@/lib/calculators/definitions";
 
 export const FIELD_SELECT_CLASS =
   "h-10 min-h-10 w-full min-w-0 rounded-lg border border-slate-300 bg-white px-2.5 font-mono text-sm text-slate-900 outline-none focus:border-spec-accent focus:ring-2 focus:ring-spec-accent dark:border-slate-600 dark:bg-spec-bg dark:text-spec-text";
@@ -262,6 +263,135 @@ export function FieldSelect({
             ))
           : children}
       </select>
+    </div>
+  );
+}
+
+type FieldChipRadioProps = {
+  label: string;
+  labelNote?: string;
+  value: string;
+  onChange: (value: string) => void;
+  options: PresetOption[];
+  highlight?: string;
+  hint?: string;
+  /** Full-width chip grid (lookup calculators). */
+  wide?: boolean;
+};
+
+/** Chip-only radio grid — no dropdown. */
+export function FieldChipRadio({
+  label,
+  labelNote,
+  value,
+  onChange,
+  options,
+  highlight,
+  hint,
+  wide = false,
+}: FieldChipRadioProps) {
+  const schematic = useSchematicHighlight();
+  const resolvedHint = hint ?? fieldLabelHint(label);
+  const safeValue = options.some((o) => o.value === value)
+    ? value
+    : (options[0]?.value ?? value);
+
+  return (
+    <div className={wide ? "calc-field mb-0 w-full min-w-0" : FIELD_WRAP}>
+      <label className={FIELD_LABEL_CLASS}>
+        <span>{label}</span>
+        {labelNote ? (
+          <span className="text-xs font-normal text-slate-500 dark:text-slate-400">
+            {labelNote}
+          </span>
+        ) : null}
+        {resolvedHint ? (
+          <span
+            className="inline-flex h-4 w-4 cursor-help items-center justify-center rounded-full border border-slate-300 text-sm font-bold leading-none text-slate-500"
+            title={resolvedHint}
+            aria-label={resolvedHint}
+          >
+            ?
+          </span>
+        ) : null}
+      </label>
+      <div
+        role="radiogroup"
+        aria-label={label}
+        className="flex flex-wrap gap-1.5"
+        onMouseLeave={() => {
+          if (highlight) schematic?.setActive(null);
+        }}
+      >
+        {options.map((option) => {
+          const active = option.value === safeValue;
+          return (
+            <button
+              key={`${label}-${option.value}`}
+              type="button"
+              role="radio"
+              aria-checked={active}
+              tabIndex={0}
+              onClick={() => onChange(option.value)}
+              onFocus={() => {
+                if (highlight) schematic?.setActive(highlight);
+              }}
+              onBlur={() => {
+                if (highlight) schematic?.setActive(null);
+              }}
+              className={`min-h-9 rounded-lg border px-3 text-sm font-medium transition-colors ${
+                active
+                  ? "border-spec-accent bg-spec-accentBg text-spec-accentText shadow-sm"
+                  : "border-slate-300 bg-white text-slate-700 hover:border-spec-accent/50 dark:border-slate-600 dark:bg-spec-bg dark:text-slate-200"
+              }`}
+            >
+              {option.label}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+type InlineUnitToggleProps = {
+  value: UnitSystem;
+  onChange: (next: UnitSystem) => void;
+};
+
+/** Compact metric / imperial toggle for calculator input panels. */
+export function InlineUnitToggle({ value, onChange }: InlineUnitToggleProps) {
+  return (
+    <div className={`${FIELD_WRAP} max-w-none`}>
+      <span className={FIELD_LABEL_CLASS}>Unit system</span>
+      <div
+        role="group"
+        aria-label="Unit system"
+        className="inline-flex w-full items-center rounded-lg border border-slate-200 bg-slate-100 p-0.5 text-sm font-medium dark:border-spec-border dark:bg-spec-panel"
+      >
+        <button
+          type="button"
+          onClick={() => onChange("metric")}
+          className={`min-h-9 flex-1 rounded-md px-3 py-1.5 transition-all ${
+            value === "metric"
+              ? "bg-white font-semibold text-slate-900 shadow-sm dark:bg-spec-bg dark:text-slate-50"
+              : "text-slate-600 hover:bg-slate-200/80 dark:text-slate-300"
+          }`}
+        >
+          Metric (mm, kg)
+        </button>
+        <button
+          type="button"
+          onClick={() => onChange("imperial")}
+          className={`min-h-9 flex-1 rounded-md px-3 py-1.5 transition-all ${
+            value === "imperial"
+              ? "bg-white font-semibold text-slate-900 shadow-sm dark:bg-spec-bg dark:text-slate-50"
+              : "text-slate-600 hover:bg-slate-200/80 dark:text-slate-300"
+          }`}
+        >
+          Imperial (in, lb)
+        </button>
+      </div>
     </div>
   );
 }

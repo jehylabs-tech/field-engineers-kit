@@ -705,9 +705,9 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
     slug: "flange-dimension-weight",
     formulaTitle: "Core Formula & Variable Definitions",
     formulaHtml:
-      '<p class="eng-eq"><i>W</i><sub>pair</sub> = 2<i>W</i><sub>f</sub> + <i>W</i><sub>g</sub> + <i>n</i>(<i>W</i><sub>stud</sub> + 2<i>W</i><sub>nut</sub>) &nbsp;·&nbsp; <i>PCD</i> = 2<i>R</i><sub>bc</sub></p>' +
+      '<p class="eng-eq"><i>W</i><sub>pair</sub> = 2<i>W</i><sub>f</sub> + <i>W</i><sub>g</sub> + <i>n</i>(<i>W</i><sub>stud</sub> + 2<i>W</i><sub>nut</sub>)</p>' +
       '<p class="eng-plain">ASME B16.5 / B16.47 Flange Envelope, Bolt Pattern &amp; Total Joint Assembly Mass</p>',
-    formulaLatex: "W_{pair} = 2W_f + W_g + n(W_{stud}+2W_{nut}),\\quad PCD = 2R_{bc}",
+    formulaLatex: "W_{pair} = 2W_f + W_g + n(W_{stud}+2W_{nut})",
     formulaNotes:
       "Weld-neck raised-face (WN RF), slip-on (SO), and blind flanges for NPS 1/2 through NPS 24 in Pressure Classes 150 through 2500 are dimensioned in ASME B16.5. Large diameter flanges (NPS 26 through NPS 60) are governed by ASME B16.47 (Series A / MSS SP-44 vs Series B / API 605). Hub bore matches standard pipe schedule inside diameter per ASME B36.10M. Total mated-pair mass accounts for two flanges, one gasket, and all threaded stud bolts with two heavy-hex nuts each.",
     formulaBadges: [
@@ -884,7 +884,7 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
       {
         question: "Why does Class 600 have a 1/4 inch raised face while Class 150/300 has 1/16 inch?",
         answer:
-          "Per ASME B16.5, **Class 150 and 300 flanges have a 1.6 mm (1/16 in) raised face**, which is *included* within the nominal flange thickness T. **Class 600, 900, 1500, and 2500 flanges have a 6.4 mm (1/4 in) raised face**, which is *added in addition* to the minimum flange thickness T to provide deeper gasket containment under extreme hydrostatic bolt loads.",
+          "Per ASME B16.5, **Class 150 and 300 flanges have a 1.6 mm (1/16 in) raised face**, which is included within the nominal flange thickness T. **Class 600, 900, 1500, and 2500 flanges have a 6.4 mm (1/4 in) raised face**, which is added in addition to the minimum flange thickness T to provide deeper gasket containment under extreme hydrostatic bolt loads.",
       },
       {
         question: "What is total mated-pair assembly weight and why is it critical for field engineering?",

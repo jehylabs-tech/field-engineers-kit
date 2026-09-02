@@ -21,6 +21,8 @@ type NextActionsSectionProps = {
     title: string;
     description: string;
   };
+  /** Section index in page outline (default 5; use 6 when SEO ends at section 5 FAQ). */
+  sectionNumber?: number;
 };
 
 export default function NextActionsSection({
@@ -28,6 +30,7 @@ export default function NextActionsSection({
   calculators,
   related = [],
   sponsor,
+  sectionNumber = 5,
 }: NextActionsSectionProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -61,7 +64,7 @@ export default function NextActionsSection({
     <section className="pt-2">
       <div className="border border-slate-200 rounded-xl bg-white shadow-sm p-6 dark:bg-slate-900">
         <h2 className="mb-2 text-lg font-semibold text-slate-800 dark:text-slate-100">
-          5. Next actions
+          {sectionNumber}. Next actions
         </h2>
         <p className="mb-4 text-sm leading-relaxed text-slate-700 dark:text-slate-300">
           {currentType === "butt-weld-fitting"

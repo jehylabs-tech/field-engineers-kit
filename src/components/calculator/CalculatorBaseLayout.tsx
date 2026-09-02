@@ -36,6 +36,10 @@ type CalculatorBaseLayoutProps = {
   diagramSection?: string;
   /** Lookup layout: give the CAD column more width (3 / 4 / 5). */
   diagramEmphasis?: boolean;
+  /** Full-width panel below the main input/results grid. */
+  footerPanel?: ReactNode;
+  /** Keep the input card at natural height (no equal-height stretch). */
+  inputNaturalHeight?: boolean;
 };
 
 export default function CalculatorBaseLayout({
@@ -54,15 +58,18 @@ export default function CalculatorBaseLayout({
   resultDashboard = false,
   diagramSection,
   diagramEmphasis = false,
+  footerPanel,
+  inputNaturalHeight = false,
 }: CalculatorBaseLayoutProps) {
   const metaLayout = useWorkstationLayout();
   const layout = resolveWorkstationLayout(layoutProp ?? metaLayout);
   const showSideDiagram = layout === "lookup" && Boolean(visual) && !wideResult;
   const stretchCards =
-    Boolean(resultPanel) ||
-    layout === "formula" ||
-    layout === "converter" ||
-    (layout === "lookup" && !showSideDiagram);
+    !inputNaturalHeight &&
+    (Boolean(resultPanel) ||
+      layout === "formula" ||
+      layout === "converter" ||
+      (layout === "lookup" && !showSideDiagram));
 
   // Tailwind class literals must stay in this file (content scan).
   let gridGap = "gap-6";
@@ -159,7 +166,7 @@ export default function CalculatorBaseLayout({
         <div
           data-workstation-layout={layout}
           className={`grid w-full min-w-0 max-w-full grid-cols-12 ${
-            stretchCards ? "items-stretch" : "items-start"
+            stretchCards && !inputNaturalHeight ? "items-stretch" : "items-start"
           } ${gridGap} ${fieldMax} ${resultMax}`}
         >
           <div className={`${inputSpan}${resultPanel && !stretchCards ? " flex" : ""}`}>
@@ -244,6 +251,10 @@ export default function CalculatorBaseLayout({
             </div>
           ) : null}
         </div>
+
+        {footerPanel ? (
+          <div className="col-span-12 mt-3 w-full min-w-0 space-y-3">{footerPanel}</div>
+        ) : null}
       </div>
     </SchematicHighlightProvider>
   );
