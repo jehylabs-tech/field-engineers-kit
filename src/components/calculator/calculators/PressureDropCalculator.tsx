@@ -99,7 +99,7 @@ export default function PressureDropCalculator({ title, standard }: Props) {
               />
               <FieldSelect
                 label="Pipe roughness (ε)"
-                value={inputs.roughness}
+                value={String(inputs.roughness)}
                 onChange={(value) => setField("roughness", toNumber(String(value), inputs.roughness))}
               >
                 {PIPE_ROUGHNESS_OPTIONS.map((item) => (
