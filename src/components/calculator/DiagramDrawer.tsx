@@ -129,11 +129,11 @@ export function ViewDiagramButton({
     <button
       type="button"
       onClick={onClick}
-      className={`inline-flex shrink-0 items-center gap-1 rounded border border-slate-300 bg-white font-medium text-slate-700 transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-500/30 dark:border-spec-borderStrong dark:bg-spec-bg dark:text-slate-200 dark:hover:bg-spec-panel ${
-        compact ? "h-7 px-2 text-xs" : "h-8 px-2.5 text-sm"
+      className={`inline-flex shrink-0 items-center gap-1.5 rounded-md border border-spec-borderStrong bg-spec-bg font-medium text-spec-text transition-colors hover:bg-spec-panel focus:outline-none focus:ring-2 focus:ring-blue-500/30 ${
+        compact ? "h-8 px-2.5 text-xs" : "h-8 px-3 text-sm"
       }`}
     >
-      <RulerIcon className="h-3.5 w-3.5 shrink-0 text-slate-500" />
+      <RulerIcon className="h-3.5 w-3.5 shrink-0 text-spec-text2" />
       {label}
     </button>
   );

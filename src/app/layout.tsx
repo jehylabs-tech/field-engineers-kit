@@ -8,7 +8,7 @@ import { getPublishedCalculators } from "@/lib/calculators/queries";
 import { buildSiteMetadata } from "@/lib/metadata/site-metadata";
 import "./globals.css";
 
-export const metadata: Metadata = buildSiteMetadata();
+export const metadata: Metadata = buildSiteMetadata({ canonicalPath: "/" });
 
 export const viewport: Viewport = {
   themeColor: "#ffffff",

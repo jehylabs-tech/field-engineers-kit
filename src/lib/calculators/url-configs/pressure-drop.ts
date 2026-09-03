@@ -31,6 +31,8 @@ export const PRESSURE_DROP_URL_CONFIG: ParamConfig<PressureDropInputs> = {
         ? (value as PressureDropFluid)
         : fallback,
   },
+  temperature: { param: "temp", ...urlSyncHelpers.number },
+  roughness: { param: "rough", ...urlSyncHelpers.number },
   flow: { param: "flow", ...urlSyncHelpers.number },
   flowUnit: {
     param: "qunit",

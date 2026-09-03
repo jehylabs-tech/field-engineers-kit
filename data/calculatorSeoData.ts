@@ -2493,7 +2493,7 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
       '<p class="eng-eq">Δ<i>L</i> = α · <i>L</i> · Δ<i>T</i> &nbsp;·&nbsp; <i>L</i><sub>leg</sub> = √(<span class="eng-frac"><span class="eng-num">3 · <i>E</i> · <i>D</i> · Δ<i>L</i></span><span class="eng-den"><i>S</i><sub>A</sub></span></span>)</p>' +
       '<p class="eng-eq"><i>S</i><sub>A</sub> = <i>f</i> · [1.25(<i>S</i><sub>c</sub> + <i>S</i><sub>h</sub>) − <i>S</i><sub>L</sub>] &nbsp;·&nbsp; <i>F</i><sub>anchor</sub> = <span class="eng-frac"><span class="eng-num">12 · <i>E</i> · <i>I</i> · Δ<i>L</i></span><span class="eng-den"><i>L</i><sub>leg</sub>³</span></span></p>' +
       '<p class="eng-plain">ASME B31.3 Appendix C &amp; Guided-Cantilever Thermal Flexibility Sizing</p>',
-    formulaLatex: "\\Delta L = \\alpha \\cdot L \\cdot \\Delta T,\\quad L_{\\text{leg}} = \\sqrt{\\frac{3 \\cdot E \\cdot D \\cdot \\Delta L}{S_A}},\\quad S_A = f \\left[ 1.25(S_c + S_h) - S_L \\right]",
+    formulaLatex: "\\Delta L = \\alpha \\cdot L \\cdot \\Delta T,\\quad L_{\\text{leg}} = \\sqrt{\\frac{3 \\cdot E_h \\cdot D \\cdot \\Delta L_{\\text{leg}}}{S_A}},\\quad F_{\\text{anchor,total}} = F_{\\text{bending}} + F_{\\text{friction}}",
     formulaNotes:
       "ASME B31.3 paragraph 319 governs thermal expansion and flexibility in process piping systems. Unrestrained thermal growth ΔL is calculated using the mean linear thermal expansion coefficient α from installation temperature T1 to operating temperature T2. The guided-cantilever method determines the minimum flexible leg length Lleg (loop height H or offset run) required to absorb ΔL without exceeding the allowable displacement stress range SA.",
     formulaBadges: [
@@ -2508,7 +2508,7 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
       { symbol: "L", name: "Anchor-to-Anchor Distance", definition: "Total straight pipe length between two rigid anchor supports (m or ft)." },
       { symbol: "ΔT", name: "Operating Temperature Differential", definition: "Difference between maximum operating/upset temperature and minimum ambient installation temperature (°C or °F)." },
       { symbol: "L_leg (H)", name: "Expansion Loop Leg Length", definition: "Minimum perpendicular cantilever leg height or loop depth required to absorb ΔL elastically (m or ft)." },
-      { symbol: "E", name: "Modulus of Elasticity", definition: "Cold elastic modulus of pipe material at room temperature per ASME B31.3 Table C-6 (e.g. 200,000 MPa for carbon steel)." },
+      { symbol: "E_h", name: "Hot Modulus of Elasticity", definition: "Elastic modulus at operating metal temperature T2 per ASME B31.3 Table C-6, used for elevated-temperature flexibility screening." },
       { symbol: "D", name: "Pipe Outside Diameter", definition: "Nominal outside diameter of the expanding pipe spool per ASME B36.10M (mm or in)." },
       { symbol: "S_A", name: "Allowable Displacement Stress Range", definition: "Maximum permissible thermal expansion stress range per ASME B31.3 Eq. 1a (MPa or psi)." },
     ],
@@ -2612,7 +2612,7 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
         {
           step: "Step 1",
           name: "Calculate Total Unrestrained Thermal Expansion (ΔL)",
-          formula: "\\Delta L = \\alpha · L · \\Delta T",
+          formula: "\\Delta L = \\alpha \\cdot L \\cdot \\Delta T",
           calculation: "ΔL = (12.5 × 10⁻⁶ /°C) × (80.0 m × 1,000 mm/m) × 200 °C = 12.5 × 10⁻⁶ × 80,000 mm × 200 = 200.0 mm (7.87 in).",
           result: "\\Delta L = 200.0\\text{ mm} (7.87\\text{ in})",
           note: "Total axial expansion of the 80-meter header that must be absorbed by the central loop.",
@@ -2628,7 +2628,7 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
         {
           step: "Step 3",
           name: "Calculate Minimum Guided-Cantilever Leg Height (L_leg / H)",
-          formula: "L_{\\text{leg}} = \\sqrt{\\frac{3 · E · D · \\Delta L_{\\text{leg}}}{S_A}}",
+          formula: "L_{\\text{leg}} = \\sqrt{\\frac{3 \\cdot E_h \\cdot D \\cdot \\Delta L_{\\text{leg}}}{S_A}}",
           calculation: "L_leg = √[ (3 × 200,000 N/mm² × 168.28 mm × 100.0 mm) / 190.0 N/mm² ] = √[ 10,096,800,000 / 190.0 ] = √53,141,052.6 = 7,289.8 mm ≈ 7.29 meters.",
           result: "H = L_{\\text{leg}} = 7.30\\text{ meters} (23.95\\text{ ft})",
           note: "Minimum perpendicular leg length required to keep thermal bending stress within 190 MPa.",
@@ -2644,7 +2644,7 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
         {
           step: "Step 5",
           name: "Determine Pipe Guide Spacing from Loop Tangent",
-          formula: "G_1 = 4 · D,\\quad G_2 = 14 · D",
+          formula: "G_1 = 4 \\cdot D,\\quad G_2 = 14 \\cdot D",
           calculation: "First directional guide G1 = 4 × 168.28 mm = 673 mm (0.67 m); Second directional guide G2 = 14 × 168.28 mm = 2,356 mm (2.36 m).",
           result: "G_1 = 0.67\\text{ m},\\quad G_2 = 2.36\\text{ m}",
           note: "Prevents lateral column instability while allowing free axial expansion into the loop.",
@@ -2686,10 +2686,7 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
   "pressure-drop-friction": {
     slug: "pressure-drop-friction",
     formulaTitle: "Core Formula & Variable Definitions",
-    formulaHtml:
-      '<p class="eng-eq">Δ<i>P</i> = <i>f</i> · (<span class="eng-frac"><span class="eng-num"><i>L</i><sub>total</sub></span><span class="eng-den"><i>D</i></span></span>) · (<span class="eng-frac"><span class="eng-num">1</span><span class="eng-den">2</span></span>ρ<i>v</i>²) &nbsp;·&nbsp; <i>h</i><sub>f</sub> = <span class="eng-frac"><span class="eng-num">Δ<i>P</i></span><span class="eng-den">ρ<i>g</i></span></span></p>' +
-      '<p class="eng-eq"><span class="eng-frac"><span class="eng-num">1</span><span class="eng-den">√<i>f</i></span></span> = −1.8 · log₁₀ [ (<span class="eng-frac"><span class="eng-num">ε / <i>D</i></span><span class="eng-den">3.7</span></span>)<sup>1.11</sup> + <span class="eng-frac"><span class="eng-num">6.9</span><span class="eng-den"><i>Re</i></span></span> ] &nbsp;·&nbsp; <i>Re</i> = <span class="eng-frac"><span class="eng-num">ρ<i>vD</i></span><span class="eng-den">μ</span></span></p>' +
-      '<p class="eng-plain">Darcy-Weisbach Equation, Haaland Explicit Friction &amp; Crane TP-410 Fitting Equivalents</p>',
+    formulaHtml: "PRESSURE_DROP_KATEX_FORMULAS",
     formulaLatex: "\\Delta P = f \\cdot \\left(\\frac{L + \\sum L_{\\text{eq}}}{D}\\right) \\left(\\frac{1}{2}\\rho v^2\\right),\\quad \\frac{1}{\\sqrt{f}} = -1.8 \\log_{10} \\left[ \\left(\\frac{\\varepsilon / D}{3.7}\\right)^{1.11} + \\frac{6.9}{Re} \\right]",
     formulaNotes:
       "The Darcy-Weisbach equation is the universally accepted fluid mechanics standard for calculating frictional head loss and pressure drop in closed conduits. Friction factor f is computed using the Haaland equation (an explicit approximation to the implicit Colebrook-White equation with < 1.5% error). Pipe fittings, valves, and bends are integrated as equivalent straight pipe lengths (L_eq = (L/D) × D) per Crane Technical Paper No. 410.",

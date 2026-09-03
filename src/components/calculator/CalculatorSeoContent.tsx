@@ -6,6 +6,7 @@ import {
   renderFaqAnswer,
   stripFaqMarkdown,
 } from "@/lib/calculators/faq-text";
+import { looksLikeLatex, renderKatexHtml } from "@/lib/calculators/katex-html";
 import { getCalculatorSeo } from "../../../data/calculatorSeoData";
 import { getSiteUrl } from "@/lib/site";
 import { formatCodeStandard } from "@/lib/calculators/format-standard";
@@ -23,6 +24,11 @@ function stripStepNumber(name: string) {
 
 const GUIDE_CARD =
   "mb-4 border border-slate-200 rounded-xl bg-white shadow-sm p-6 dark:bg-slate-900";
+
+function renderMaybeKatex(value: string, displayMode = false) {
+  if (!looksLikeLatex(value)) return null;
+  return { __html: renderKatexHtml(value, displayMode) };
+}
 
 export default function CalculatorSeoContent({
   slug,
@@ -100,7 +106,7 @@ export default function CalculatorSeoContent({
   };
 
   const formulaBoxClass = [
-    "eng-formula flex flex-col items-center justify-center overflow-x-auto rounded-lg px-4 py-5 text-center",
+    "eng-formula flex flex-col items-center justify-center rounded-lg px-4 py-5 text-center",
     data.formulaHighlight
       ? "border border-blue-100 bg-blue-50/50 dark:border-blue-500/30 dark:bg-blue-950/20"
       : "border border-slate-200 bg-slate-50 dark:border-spec-border dark:bg-spec-bg",
@@ -141,10 +147,43 @@ export default function CalculatorSeoContent({
                 .join(" · ")}
             </p>
             <div className={formulaBoxClass}>
-              <div
-                className="eng-formula-html text-xl font-semibold tracking-wide text-slate-900 dark:text-slate-50 md:text-2xl"
-                dangerouslySetInnerHTML={{ __html: data.formulaHtml }}
-              />
+              {data.slug === "thermal-expansion-loop" ? (
+                <div className="space-y-3 text-slate-900 dark:text-slate-50">
+                  {[
+                    String.raw`\Delta L = \alpha \cdot L \cdot \Delta T`,
+                    String.raw`L_{\text{leg}} = \sqrt{\frac{3 \cdot E_h \cdot D \cdot \Delta L_{\text{leg}}}{S_A}}`,
+                    String.raw`F_{\text{anchor,total}} = F_{\text{bending}} + F_{\text{friction}}, \quad F_{\text{friction}} = \mu \cdot W_{\text{pipe,operating}}`,
+                  ].map((latex) => (
+                    <div
+                      key={latex}
+                      className="flex justify-center rounded-lg bg-slate-50 px-3 py-2 dark:bg-slate-800/60"
+                      dangerouslySetInnerHTML={{ __html: renderKatexHtml(latex, true) }}
+                    />
+                  ))}
+                  <p className="eng-plain">ASME B31.3 Appendix C &amp; guided-cantilever thermal flexibility sizing</p>
+                </div>
+              ) : data.slug === "pressure-drop-friction" ? (
+                <div className="space-y-3 text-slate-900 dark:text-slate-50">
+                  {[
+                    String.raw`\Delta P = f \cdot \frac{L_{\text{total}}}{D} \cdot \frac{1}{2}\rho v^2`,
+                    String.raw`h_f = \frac{\Delta P}{\rho \cdot g}`,
+                    String.raw`\frac{1}{\sqrt{f}} = -1.8 \log_{10} \left[ \left(\frac{\varepsilon / D}{3.7}\right)^{1.11} + \frac{6.9}{Re} \right]`,
+                    String.raw`Re = \frac{\rho \cdot v \cdot D}{\mu}`,
+                  ].map((latex) => (
+                    <div
+                      key={latex}
+                      className="flex justify-center rounded-lg bg-slate-50 px-3 py-2 dark:bg-slate-800/60"
+                      dangerouslySetInnerHTML={{ __html: renderKatexHtml(latex, true) }}
+                    />
+                  ))}
+                  <p className="eng-plain">Darcy-Weisbach Equation, Haaland Explicit Friction &amp; Crane TP-410 Fitting Equivalents</p>
+                </div>
+              ) : (
+                <div
+                  className="eng-formula-html text-xl font-semibold tracking-wide text-slate-900 dark:text-slate-50 md:text-2xl"
+                  dangerouslySetInnerHTML={{ __html: data.formulaHtml }}
+                />
+              )}
             </div>
             {data.slug === "pipe-wall-thickness" && data.formulaLatex ? (
               <div
@@ -349,9 +388,16 @@ export default function CalculatorSeoContent({
                     </h3>
                   </div>
                   {step.formula ? (
-                    <div className="mt-2 rounded bg-slate-50 px-3 py-1.5 font-mono text-xs text-slate-700 dark:bg-slate-800/80 dark:text-slate-300">
-                      Formula: {step.formula}
-                    </div>
+                    renderMaybeKatex(step.formula, true) ? (
+                      <div
+                        className="mt-2 flex justify-center rounded bg-slate-50 px-3 py-2 text-slate-700 dark:bg-slate-800/80 dark:text-slate-200"
+                        dangerouslySetInnerHTML={renderMaybeKatex(step.formula, true)!}
+                      />
+                    ) : (
+                      <div className="mt-2 rounded bg-slate-50 px-3 py-1.5 font-mono text-xs text-slate-700 dark:bg-slate-800/80 dark:text-slate-300">
+                        Formula: {step.formula}
+                      </div>
+                    )
                   ) : null}
                   {step.calculation ? (
                     <div className="mt-1.5 rounded bg-slate-100/70 px-3 py-1.5 font-mono text-xs text-slate-800 dark:bg-slate-800/50 dark:text-slate-200">
@@ -359,11 +405,18 @@ export default function CalculatorSeoContent({
                     </div>
                   ) : null}
                   {step.result ? (
-                    <div className="mt-2 flex items-center justify-between text-xs">
+                    <div className="mt-2 flex flex-col gap-1.5 text-xs sm:flex-row sm:items-center sm:justify-between">
                       <span className="font-medium text-slate-500 dark:text-slate-400">Result:</span>
-                      <span className="rounded bg-emerald-50 px-2 py-0.5 font-mono font-bold text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300">
-                        {step.result}
-                      </span>
+                      {renderMaybeKatex(step.result, false) ? (
+                        <span
+                          className="inline-block rounded bg-emerald-50 px-2 py-1 font-bold text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300"
+                          dangerouslySetInnerHTML={renderMaybeKatex(step.result, false)!}
+                        />
+                      ) : (
+                        <span className="rounded bg-emerald-50 px-2 py-0.5 font-mono font-bold text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300">
+                          {step.result}
+                        </span>
+                      )}
                     </div>
                   ) : null}
                   {step.note ? (

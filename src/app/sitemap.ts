@@ -17,9 +17,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   );
 
   const nowIso = new Date().toISOString();
+  const postCutoff = new Date();
+  postCutoff.setDate(postCutoff.getDate() - 30);
 
   const staticRoutes: MetadataRoute.Sitemap = [
-    { path: "/", changeFrequency: "weekly", priority: 1.0 },
+    { path: "/", changeFrequency: "daily", priority: 1.0 },
     { path: "/calculators", changeFrequency: "weekly", priority: 0.9 },
     { path: "/standards", changeFrequency: "weekly", priority: 0.8 },
     { path: "/about", changeFrequency: "weekly", priority: 0.8 },
@@ -77,8 +79,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...getAllPosts().map((post) => ({
       url: canonicalUrl(docsPath(post.slug)),
       lastModified: post.date || nowIso,
-      changeFrequency: "monthly" as const,
-      priority: 0.75,
+      changeFrequency:
+        post.date && new Date(post.date) >= postCutoff ? ("daily" as const) : ("weekly" as const),
+      priority: 0.8,
     })),
   ];
 

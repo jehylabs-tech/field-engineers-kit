@@ -18,6 +18,22 @@ type ExportButtonsProps = {
   variant?: "stack" | "inline";
 };
 
+function FileIcon({ className }: { className?: string }) {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" className={className}>
+      <path d="M5.5 2A1.5 1.5 0 004 3.5v13A1.5 1.5 0 005.5 18h9a1.5 1.5 0 001.5-1.5V7.121a1.5 1.5 0 00-.44-1.06l-3.621-3.62A1.5 1.5 0 0010.879 2H5.5zm5 1.5v3A1.5 1.5 0 0012 8h3v8.5a.5.5 0 01-.5.5h-9a.5.5 0 01-.5-.5v-13a.5.5 0 01.5-.5h5z" />
+    </svg>
+  );
+}
+
+function CopyIcon({ className }: { className?: string }) {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 20 20" fill="currentColor" className={className}>
+      <path d="M6 2.75A1.75 1.75 0 007.75 1h7.5A1.75 1.75 0 0117 2.75v9.5A1.75 1.75 0 0115.25 14h-1.5v1.25A1.75 1.75 0 0112 17H4.75A1.75 1.75 0 013 15.25v-9.5A1.75 1.75 0 014.75 4H6v-1.25zm1 1.25h5A1.75 1.75 0 0113.75 5.75V13h1.5a.75.75 0 00.75-.75v-9.5a.75.75 0 00-.75-.75h-7.5a.75.75 0 00-.75.75V4zm5.75 1.75a.75.75 0 00-.75-.75H4.75a.75.75 0 00-.75.75v9.5c0 .414.336.75.75.75H12a.75.75 0 00.75-.75v-9.5z" />
+    </svg>
+  );
+}
+
 function tableText(rows: { label: string; value: string }[]) {
   return rows.map((row) => `${row.label}: ${row.value}`).join("\n");
 }
@@ -99,11 +115,8 @@ export default function ExportButtons({
 
   const compact = variant === "inline";
   const buttonClass = compact
-    ? "inline-flex h-8 items-center justify-center rounded border border-spec-borderStrong bg-spec-bg px-2.5 text-sm font-medium text-spec-text transition-colors hover:bg-spec-panel focus:outline-none focus:ring-2 focus:ring-spec-accent"
+    ? "inline-flex h-8 items-center justify-center gap-1.5 rounded-md border border-spec-borderStrong bg-spec-bg px-2.5 text-sm font-medium text-spec-text transition-colors hover:bg-spec-panel focus:outline-none focus:ring-2 focus:ring-spec-accent"
     : "flex min-h-11 items-center justify-center gap-1.5 rounded-md border border-spec-borderStrong bg-spec-bg px-2 py-2.5 text-sm font-medium text-spec-text hover:bg-spec-panel md:min-h-12 md:text-base";
-  const pdfClass = compact
-    ? "inline-flex h-8 items-center justify-center rounded bg-spec-accent px-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-spec-accentText focus:outline-none focus:ring-2 focus:ring-spec-accent"
-    : "flex min-h-11 items-center justify-center gap-1.5 rounded-md bg-spec-accent px-2 py-2.5 text-sm font-medium text-white hover:bg-spec-accentText md:min-h-12 md:text-base";
 
   return (
     <div
@@ -113,13 +126,16 @@ export default function ExportButtons({
           : "mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4"
       }
     >
-      <button type="button" onClick={handlePdf} className={pdfClass}>
+      <button type="button" onClick={handlePdf} className={buttonClass}>
+        <FileIcon className="h-3.5 w-3.5 text-spec-text2" />
         PDF
       </button>
       <button type="button" onClick={handleExcel} className={buttonClass}>
+        <FileIcon className="h-3.5 w-3.5 text-spec-text2" />
         Excel
       </button>
       <button type="button" onClick={handleCopy} className={buttonClass}>
+        <CopyIcon className="h-3.5 w-3.5 text-spec-text2" />
         {compact ? "Copy" : (
           <>
             <span className="sm:hidden">Copy</span>

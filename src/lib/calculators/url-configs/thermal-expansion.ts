@@ -28,6 +28,9 @@ export const THERMAL_EXPANSION_URL_CONFIG: ParamConfig<ThermalExpansionInputs> =
     operatingTemp: { param: "t2", ...urlSyncHelpers.number },
     length: { param: "length", ...urlSyncHelpers.number },
     nps: { param: "nps", ...urlSyncHelpers.string },
+    schedule: { param: "sch", ...urlSyncHelpers.string },
+    allowableSa: { param: "sa", ...urlSyncHelpers.number },
+    frictionFactor: { param: "mu", ...urlSyncHelpers.number },
   };
 
 export { DEFAULT_THERMAL_EXPANSION_INPUTS };

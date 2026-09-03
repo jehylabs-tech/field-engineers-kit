@@ -1,3 +1,5 @@
+@import 'katex/dist/katex.min.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -234,10 +236,25 @@
 
 .blog-mdx-content .katex-display {
   margin: 1.5rem 0;
-  overflow-x: auto;
   padding: 0.25rem 0;
 }
 
 .blog-mdx-content .katex {
   font-size: 1.05em;
+}
+
+/* KaTeX formula container fixes */
+.katex-display {
+  margin: 0.5rem 0;
+  text-align: center;
+}
+
+.katex {
+  font-size: 1em;
+}
+
+/* Hide fallback text when KaTeX renders successfully */
+.katex + .katex-fallback,
+.katex-display + .katex-fallback {
+  display: none;
 }

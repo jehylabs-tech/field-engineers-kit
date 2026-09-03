@@ -19,7 +19,7 @@ export default function SpecHeader({
   const shortcutLabel = useSearchShortcutLabel();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-slate-200 bg-white shadow-sm dark:border-slate-200 dark:bg-slate-900">
+    <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/95 shadow-sm backdrop-blur-md dark:border-slate-200 dark:bg-slate-900/95">
       <div className="mx-auto flex h-12 w-full items-center gap-2 px-6 md:h-14 md:gap-3">
         {onOpenMenu ? (
           <button

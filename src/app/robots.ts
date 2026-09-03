@@ -8,8 +8,16 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: "*",
-        allow: ["/", "/ads.txt"],
-        disallow: ["/admin", "/admin/", "/auth/"],
+        allow: ["/", "/ads.txt", "/calculator/", "/docs/", "/category/"],
+        disallow: [
+          "/api/",
+          "/admin",
+          "/admin/",
+          "/auth/",
+          "/calculation/",
+          "/*?*",
+          "/private/",
+        ],
       },
       {
         userAgent: "AdsBot-Google",

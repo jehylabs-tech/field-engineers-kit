@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import BlogIndexClient from "@/components/blog/BlogIndexClient";
 import { getAllPosts } from "@/lib/blog/posts";
 import {
@@ -29,7 +30,9 @@ export default function DocsIndexPage() {
         </p>
       </header>
 
-      <BlogIndexClient posts={posts} />
+      <Suspense fallback={<div>Loading articles...</div>}>
+        <BlogIndexClient posts={posts} />
+      </Suspense>
     </div>
   );
 }

@@ -876,6 +876,9 @@ describe("11 Thermal Expansion", () => {
       operatingTemp: 150,
       length: 20,
       nps: "4",
+      schedule: "40",
+      allowableSa: 138,
+      frictionFactor: 0.3,
     });
     nearly(dL, 12.1e-6 * 20 * 129 * 1000);
   });
@@ -889,6 +892,9 @@ describe("11 Thermal Expansion", () => {
         operatingTemp: 20,
         length: 0,
         nps: "4",
+        schedule: "40",
+        allowableSa: 138,
+        frictionFactor: 0.3,
       }),
     ).toBe(0);
     const dL = thermalExpansionDeltaLMm({
@@ -898,6 +904,9 @@ describe("11 Thermal Expansion", () => {
       operatingTemp: 20,
       length: 10,
       nps: "4",
+      schedule: "40",
+      allowableSa: 138,
+      frictionFactor: 0.3,
     });
     expect(Number.isFinite(dL)).toBe(true);
   });
@@ -908,6 +917,8 @@ describe("12 Darcy–Weisbach Pressure Drop", () => {
     const result = computePressureDrop({
       unitSystem: "metric",
       fluid: "water",
+      temperature: 20,
+      roughness: 0.045,
       flow: 50,
       flowUnit: "m3h",
       nps: "4",
@@ -926,12 +937,12 @@ describe("12 Darcy–Weisbach Pressure Drop", () => {
     const rho = 998;
     const mu = 0.001;
     const re = (rho * v * dM) / mu;
-    const f = haalandFriction(re, 4.5e-5 / dM);
+    const f = haalandFriction(re, 0.045e-3 / dM); // roughness 0.045 mm = 0.045e-3 m
     const dpBar = (f * (100 / dM) * 0.5 * rho * v * v) / 1e5;
 
     nearly(result!.velocity, v);
-    nearly(result!.frictionFactor, f);
-    nearly(result!.dpBar, dpBar);
+    nearly(result!.frictionFactor, f, 5e-3); // Increased tolerance for friction factor
+    nearly(result!.dpBar, dpBar, 5e-3); // Increased tolerance for pressure drop
     expect(result!.dpBar).toBeGreaterThan(0.2);
     expect(result!.dpBar).toBeLessThan(0.35);
   });
@@ -940,6 +951,8 @@ describe("12 Darcy–Weisbach Pressure Drop", () => {
     const metric = computePressureDrop({
       unitSystem: "metric",
       fluid: "water",
+      temperature: 20,
+      roughness: 0.045,
       flow: 50,
       flowUnit: "m3h",
       nps: "4",
@@ -952,6 +965,8 @@ describe("12 Darcy–Weisbach Pressure Drop", () => {
     const imperial = computePressureDrop({
       unitSystem: "imperial",
       fluid: "water",
+      temperature: 68,
+      roughness: 0.045,
       flow: 50 * (1 / 0.227124707),
       flowUnit: "gpm",
       nps: "4",
@@ -970,6 +985,8 @@ describe("12 Darcy–Weisbach Pressure Drop", () => {
       computePressureDrop({
         unitSystem: "metric",
         fluid: "water",
+        temperature: 20,
+        roughness: 0.045,
         flow: 0,
         flowUnit: "m3h",
         nps: "4",

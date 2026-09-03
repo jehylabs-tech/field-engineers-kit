@@ -9,6 +9,7 @@ import { usePublishCalculatorOutput } from "@/components/calculator/usePublishCa
 import {
   calculatePressureDrop,
   DEFAULT_PRESSURE_DROP_INPUTS,
+  PIPE_ROUGHNESS_OPTIONS,
   PRESSURE_DROP_FLUIDS,
   type FlowQuantityUnit,
   type PressureDropFluid,
@@ -47,6 +48,7 @@ export default function PressureDropCalculator({ title, standard }: Props) {
   usePublishCalculatorOutput(output);
 
   const lengthUnit = inputs.unitSystem === "imperial" ? "ft" : "m";
+  const tempUnit = inputs.unitSystem === "imperial" ? "°F" : "°C";
   const flowUnitLabel =
     inputs.flowUnit === "gpm" ? "GPM" : inputs.flowUnit === "kgh" ? "kg/h" : "m³/h";
 
@@ -58,10 +60,11 @@ export default function PressureDropCalculator({ title, standard }: Props) {
       exportTitle={title}
       standard={standard}
       inputRows={[
-        { label: "Fluid", value: inputs.fluid },
+        { label: "Fluid", value: `${inputs.fluid} @ ${inputs.temperature}${tempUnit}` },
         { label: "Flow", value: `${inputs.flow} ${flowUnitLabel}` },
         { label: "Pipe", value: `NPS ${inputs.nps}" Sch ${inputs.schedule}` },
         { label: "Length", value: `${inputs.length} ${lengthUnit}` },
+        { label: "Roughness", value: `${inputs.roughness} mm` },
       ]}
       chart={<PressureDropChart inputs={inputs} />}
       inputPanel={
@@ -86,6 +89,26 @@ export default function PressureDropCalculator({ title, standard }: Props) {
                 </option>
               ))}
             </FieldSelect>
+
+            <div className="grid grid-cols-2 gap-2">
+              <FieldGroup
+                label="Temperature"
+                value={inputs.temperature}
+                onChange={(value) => setField("temperature", toNumber(value, inputs.temperature))}
+                unit={tempUnit}
+              />
+              <FieldSelect
+                label="Pipe roughness (ε)"
+                value={inputs.roughness}
+                onChange={(value) => setField("roughness", toNumber(String(value), inputs.roughness))}
+              >
+                {PIPE_ROUGHNESS_OPTIONS.map((item) => (
+                  <option key={item.value} value={item.value}>
+                    {item.label}
+                  </option>
+                ))}
+              </FieldSelect>
+            </div>
 
             <div className="grid grid-cols-2 gap-2">
               <FieldGroup

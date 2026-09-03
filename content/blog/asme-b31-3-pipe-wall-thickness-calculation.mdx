@@ -42,16 +42,66 @@ $$
 
 ### Variable Definitions
 
-| Symbol | Parameter | Typical Units | Engineering Description |
-| :--- | :--- | :--- | :--- |
-| **$t$** | Pressure Design Thickness | $\text{mm}$ ($\text{in}$) | Net wall thickness required solely to resist internal design pressure $P$. |
-| **$t_m$** | Total Minimum Required Wall Thickness | $\text{mm}$ ($\text{in}$) | Minimum allowable wall thickness during operation ($t + c$). |
-| **$P$** | Internal Design Pressure | $\text{MPa}$ ($\text{bar}$, $\text{psi}$) | Design pressure from Piping Material Specifications (PMS). |
-| **$D$** | Outside Diameter | $\text{mm}$ ($\text{in}$) | Actual pipe outside diameter per ASME B36.10M / B36.19M. |
-| **$S$** | Basic Allowable Stress | $\text{MPa}$ ($\text{ksi}$) | Material stress limit at design temperature per ASME B31.3 Table A-1. |
-| **$E$** | Quality Factor (Weld Joint Efficiency) | $-$ ($0.60 \sim 1.00$) | Joint quality factor per Table 302.3.4 ($1.00$ for Seamless, $0.85$ for ERW). |
-| **$Y$** | Wall Thickness Coefficient | $-$ ($0.40$) | Geometry factor per Table 304.1.1 ($0.4$ for ferritic steel at $T \le 482^\circ\text{C}$). |
-| **$c$** | Sum of Allowances | $\text{mm}$ ($\text{in}$) | Corrosion allowance (CA) + erosion + mechanical/thread depth. |
+<table>
+  <thead>
+    <tr>
+      <th>Symbol</th>
+      <th>Parameter</th>
+      <th>Typical Units</th>
+      <th>Engineering Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>$t$</strong></td>
+      <td>Pressure Design Thickness</td>
+      <td>$\text{mm}$ ($\text{in}$)</td>
+      <td>Net wall thickness required solely to resist internal design pressure $P$.</td>
+    </tr>
+    <tr>
+      <td><strong>$t_m$</strong></td>
+      <td>Total Minimum Required Wall Thickness</td>
+      <td>$\text{mm}$ ($\text{in}$)</td>
+      <td>Minimum allowable wall thickness during operation ($t + c$).</td>
+    </tr>
+    <tr>
+      <td><strong>$P$</strong></td>
+      <td>Internal Design Pressure</td>
+      <td>$\text{MPa}$ ($\text{bar}$, $\text{psi}$)</td>
+      <td>Design pressure from Piping Material Specifications (PMS).</td>
+    </tr>
+    <tr>
+      <td><strong>$D$</strong></td>
+      <td>Outside Diameter</td>
+      <td>$\text{mm}$ ($\text{in}$)</td>
+      <td>Actual pipe outside diameter per ASME B36.10M / B36.19M.</td>
+    </tr>
+    <tr>
+      <td><strong>$S$</strong></td>
+      <td>Basic Allowable Stress</td>
+      <td>$\text{MPa}$ ($\text{ksi}$)</td>
+      <td>Material stress limit at design temperature per ASME B31.3 Table A-1.</td>
+    </tr>
+    <tr>
+      <td><strong>$E$</strong></td>
+      <td>Quality Factor (Weld Joint Efficiency)</td>
+      <td>$-$ ($0.60 \sim 1.00$)</td>
+      <td>Joint quality factor per Table 302.3.4 ($1.00$ for Seamless, $0.85$ for ERW).</td>
+    </tr>
+    <tr>
+      <td><strong>$Y$</strong></td>
+      <td>Wall Thickness Coefficient</td>
+      <td>$-$ ($0.40$)</td>
+      <td>Geometry factor per Table 304.1.1 ($0.4$ for ferritic steel at $T \le 482^\circ\text{C}$).</td>
+    </tr>
+    <tr>
+      <td><strong>$c$</strong></td>
+      <td>Sum of Allowances</td>
+      <td>$\text{mm}$ ($\text{in}$)</td>
+      <td>Corrosion allowance (CA) + erosion + mechanical/thread depth.</td>
+    </tr>
+  </tbody>
+</table>
 
 ## Step-by-Step Worked Example (Field Application)
 
@@ -105,11 +155,40 @@ If you size pipe to match $t_m$ without the $0.875$ mill factor, delivered pipe 
 
 Compare $t_{\text{req,nom}} = 4.702\text{ mm}$ with standard ASME B36.10M NPS 6 schedules:
 
-| Schedule | Nominal Thickness ($t_{\text{nom}}$) | Minimum Mill Thickness ($0.875 \times t_{\text{nom}}$) | Status vs $t_m$ ($4.114\text{ mm}$) | Conclusion |
-| :--- | :--- | :--- | :--- | :--- |
-| **Sch 20** | $3.18\text{ mm}$ | $2.78\text{ mm}$ | **REJECTED** ($< 4.114\text{ mm}$) | Wall too thin |
-| **Sch 40 (STD)** | **$7.11\text{ mm}$** | **$6.22\text{ mm}$** | **PASSED** ($6.22\text{ mm} > 4.114\text{ mm}$) | **ACCEPTED** |
-| **Sch 80 (XS)** | $10.97\text{ mm}$ | $9.60\text{ mm}$ | **PASSED** | Over-designed |
+<table>
+  <thead>
+    <tr>
+      <th>Schedule</th>
+      <th>Nominal Thickness ($t_{\text{nom}}$)</th>
+      <th>Minimum Mill Thickness ($0.875 \times t_{\text{nom}}$)</th>
+      <th>Status vs $t_m$ ($4.114\text{ mm}$)</th>
+      <th>Conclusion</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Sch 20</strong></td>
+      <td>$3.18\text{ mm}$</td>
+      <td>$2.78\text{ mm}$</td>
+      <td><strong>REJECTED</strong> ($&lt; 4.114\text{ mm}$)</td>
+      <td>Wall too thin</td>
+    </tr>
+    <tr>
+      <td><strong>Sch 40 (STD)</strong></td>
+      <td><strong>$7.11\text{ mm}$</strong></td>
+      <td><strong>$6.22\text{ mm}$</strong></td>
+      <td><strong>PASSED</strong> ($6.22\text{ mm} &gt; 4.114\text{ mm}$)</td>
+      <td><strong>ACCEPTED</strong></td>
+    </tr>
+    <tr>
+      <td><strong>Sch 80 (XS)</strong></td>
+      <td>$10.97\text{ mm}$</td>
+      <td>$9.60\text{ mm}$</td>
+      <td><strong>PASSED</strong></td>
+      <td>Over-designed</td>
+    </tr>
+  </tbody>
+</table>
 
 **Final Selection**: **NPS 6 Schedule 40 (STD, $7.11\text{ mm}$ nominal wall)** is fully code-compliant, providing a minimum mill wall of $6.22\text{ mm}$ ($+51.2\%$ safety margin over $t_m$).
 

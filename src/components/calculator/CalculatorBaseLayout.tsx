@@ -159,7 +159,7 @@ export default function CalculatorBaseLayout({
   return (
     <SchematicHighlightProvider>
       <div
-        className={`-mx-6 mt-0 bg-slate-50 px-6 dark:bg-spec-bg ${
+        className={`relative z-10 -mx-6 mt-0 bg-slate-50 px-6 pb-24 dark:bg-spec-bg ${
           compactPanel ? "py-2" : "py-3"
         }`}
       >

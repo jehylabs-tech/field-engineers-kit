@@ -8,6 +8,8 @@ export type FlowQuantityUnit = "m3h" | "gpm" | "kgh";
 export type PressureDropInputs = {
   unitSystem: UnitSystem;
   fluid: PressureDropFluid;
+  temperature: number;
+  roughness: number; // mm
   flow: number;
   flowUnit: FlowQuantityUnit;
   nps: string;
@@ -21,18 +23,77 @@ export type PressureDropInputs = {
 export const PRESSURE_DROP_FLUIDS: {
   value: PressureDropFluid;
   label: string;
-  densityKgM3: number;
-  viscosityPaS: number;
 }[] = [
-  { value: "water", label: "Water (20 °C)", densityKgM3: 998, viscosityPaS: 0.001 },
-  { value: "steam", label: "Steam (typical LP)", densityKgM3: 5.15, viscosityPaS: 1.5e-5 },
-  { value: "air", label: "Air (20 °C, 1 atm)", densityKgM3: 1.204, viscosityPaS: 1.81e-5 },
-  { value: "crude", label: "Light crude", densityKgM3: 870, viscosityPaS: 0.015 },
-  { value: "condensate", label: "Hydrocarbon condensate", densityKgM3: 960, viscosityPaS: 3.5e-4 },
+  { value: "water", label: "Water" },
+  { value: "steam", label: "Steam (typical LP)" },
+  { value: "air", label: "Air (1 atm)" },
+  { value: "crude", label: "Light crude" },
+  { value: "condensate", label: "Hydrocarbon condensate" },
 ];
 
-function fluidProps(id: PressureDropFluid) {
-  return PRESSURE_DROP_FLUIDS.find((item) => item.value === id) ?? PRESSURE_DROP_FLUIDS[0];
+export const PIPE_ROUGHNESS_OPTIONS = [
+  { value: 0.015, label: "Stainless Steel / PVC - 0.015 mm" },
+  { value: 0.045, label: "Commercial Steel (new) - 0.045 mm" },
+  { value: 0.15, label: "Commercial Steel (corroded) - 0.15 mm" },
+  { value: 0.30, label: "Heavily corroded steel - 0.30 mm" },
+];
+
+function getWaterProps(tempC: number): { density: number; viscosity: number } {
+  // Water properties at various temperatures (20°C baseline)
+  if (!Number.isFinite(tempC)) {
+    return { density: 998, viscosity: 0.001 };
+  }
+  
+  // Clamp temperature to reasonable range
+  const temp = Math.max(-10, Math.min(100, tempC));
+  
+  // Simplified correlations for water density and viscosity
+  const density = Math.max(950, Math.min(1000, 1000 - 0.05 * (temp - 4)));
+  
+  // Simplified viscosity correlation (Pa·s)
+  let viscosity: number;
+  if (temp <= 0) {
+    viscosity = 0.002;
+  } else if (temp >= 100) {
+    viscosity = 0.0003;
+  } else {
+    viscosity = 0.001 * Math.exp(-0.025 * (temp - 20));
+  }
+  
+  return {
+    density: Math.max(950, density),
+    viscosity: Math.max(1e-6, Math.min(0.01, viscosity))
+  };
+}
+
+function fluidProps(id: PressureDropFluid, tempC: number): { densityKgM3: number; viscosityPaS: number } {
+  // Ensure temperature is valid
+  const validTempC = Number.isFinite(tempC) ? tempC : 20;
+  
+  switch (id) {
+    case "water": {
+      const waterProps = getWaterProps(validTempC);
+      return {
+        densityKgM3: waterProps.density,
+        viscosityPaS: waterProps.viscosity
+      };
+    }
+    case "steam":
+      return { densityKgM3: 5.15, viscosityPaS: 1.5e-5 };
+    case "air": {
+      const tempK = validTempC + 273.15;
+      return { 
+        densityKgM3: 1.225 * (293.15 / tempK), 
+        viscosityPaS: 1.81e-5 * Math.pow(tempK / 293.15, 0.7)
+      };
+    }
+    case "crude":
+      return { densityKgM3: 870, viscosityPaS: 0.015 };
+    case "condensate":
+      return { densityKgM3: 960, viscosityPaS: 3.5e-4 };
+    default:
+      return { densityKgM3: 998, viscosityPaS: 0.001 };
+  }
 }
 
 function flowToM3s(flow: number, unit: FlowQuantityUnit, densityKgM3: number): number {
@@ -67,7 +128,11 @@ export type PressureDropResult = {
 export function computePressureDrop(
   inputs: PressureDropInputs,
 ): PressureDropResult | null {
-  const fluid = fluidProps(inputs.fluid);
+  // Convert temperature to Celsius if needed
+  const tempC = inputs.unitSystem === "imperial" 
+    ? (inputs.temperature - 32) * 5 / 9 
+    : inputs.temperature;
+  const fluid = fluidProps(inputs.fluid, tempC);
   const entry = getPipeScheduleEntry(inputs.nps, inputs.schedule);
   const lengthM =
     inputs.unitSystem === "imperial" ? inputs.length * 0.3048 : inputs.length;
@@ -91,7 +156,8 @@ export function computePressureDrop(
     velocity > 0 && fluid.viscosityPaS > 0
       ? (fluid.densityKgM3 * velocity * dM) / fluid.viscosityPaS
       : 0;
-  const f = haalandFriction(reynolds, STEEL_ROUGHNESS_M / dM);
+  const roughnessM = inputs.roughness / 1000;
+  const f = haalandFriction(reynolds, roughnessM / dM);
   const fittingLd =
     Math.max(0, finiteCount(inputs.elbowCount)) * ELBOW_L_OVER_D +
     Math.max(0, finiteCount(inputs.gateCount)) * GATE_L_OVER_D +
@@ -113,6 +179,26 @@ export function computePressureDrop(
 
 function finiteCount(value: number): number {
   return Number.isFinite(value) ? value : 0;
+}
+
+function formatReynolds(re: number): string {
+  if (re < 1000) return re.toFixed(0);
+  if (re === 0 || !Number.isFinite(re)) return "0";
+  const exponent = Math.floor(Math.log10(Math.abs(re)) / 3) * 3;
+  const mantissa = re / 10 ** exponent;
+  const superscript = String(exponent)
+    .replace(/0/g, "⁰")
+    .replace(/1/g, "¹")
+    .replace(/2/g, "²")
+    .replace(/3/g, "³")
+    .replace(/4/g, "⁴")
+    .replace(/5/g, "⁵")
+    .replace(/6/g, "⁶")
+    .replace(/7/g, "⁷")
+    .replace(/8/g, "⁸")
+    .replace(/9/g, "⁹")
+    .replace(/-/g, "⁻");
+  return `${mantissa.toFixed(2)} × 10${superscript}`;
 }
 
 export function calculatePressureDrop(inputs: PressureDropInputs): CalculatorOutput {
@@ -143,7 +229,7 @@ export function calculatePressureDrop(inputs: PressureDropInputs): CalculatorOut
   const fittingLeqM = Math.max(0, leqM - (Number.isFinite(lengthM) ? lengthM : 0));
   const idMm = entry?.row.insideDiameterMm ?? 0;
   const velocityStr = `${velocity.toFixed(2)} m/s`;
-  const reynoldsStr = reynolds.toExponential(2);
+  const reynoldsStr = formatReynolds(reynolds);
   const total =
     inputs.unitSystem === "imperial"
       ? `${barToPsi(dpBar).toFixed(2)} psi`
@@ -219,6 +305,8 @@ export function calculatePressureDrop(inputs: PressureDropInputs): CalculatorOut
 export const DEFAULT_PRESSURE_DROP_INPUTS: PressureDropInputs = {
   unitSystem: "metric",
   fluid: "water",
+  temperature: 20,
+  roughness: 0.045,
   flow: 40,
   flowUnit: "m3h",
   nps: "4",

@@ -49,53 +49,93 @@ export default function PressureDropChart({ inputs }: PressureDropChartProps) {
   const flowUnit =
     inputs.flowUnit === "gpm" ? "GPM" : inputs.flowUnit === "kgh" ? "kg/h" : "m³/h";
 
+  const dynamicLimit = Math.max(0.5, current.dpBar * 0.8); // Dynamic threshold based on current point
+  const dynamicLimitY = mapY(dynamicLimit, 0, yMax);
+
   return (
     <ChartFrame
       title="Friction drop vs flow"
-      legend={`Green below 1 bar total ΔP. Red zone is the field warning used on this page. Operating point ${current.dpBar.toFixed(3)} bar.`}
+      legend={`Operating point: ${current.dpBar.toFixed(3)} bar at ${inputs.flow} ${flowUnit}. Hover for values.`}
     >
       <svg
         viewBox={`0 0 ${CHART.width} ${CHART.height}`}
         className="h-auto w-full"
         role="img"
-        aria-label="Pressure drop versus flow with 1 bar warning"
+        aria-label="Pressure drop versus flow curve with operating point"
       >
+        {/* Grid lines */}
+        <defs>
+          <pattern id="grid" width="20" height="15" patternUnits="userSpaceOnUse">
+            <path d="M 20 0 L 0 0 0 15" fill="none" stroke="var(--spec-border)" strokeWidth="0.5" opacity="0.3"/>
+          </pattern>
+        </defs>
+        <rect x={plotLeft} y={CHART.top} width={plotRight - plotLeft} height={bottom - CHART.top} fill="url(#grid)"/>
+        
+        {/* Background zones */}
         <rect
           x={plotLeft}
-          y={limitY}
+          y={dynamicLimitY}
           width={plotRight - plotLeft}
-          height={bottom - limitY}
+          height={bottom - dynamicLimitY}
           fill="var(--spec-success-bg)"
+          opacity="0.3"
         />
         <rect
           x={plotLeft}
           y={CHART.top}
           width={plotRight - plotLeft}
-          height={Math.max(0, limitY - CHART.top)}
-          fill="var(--spec-danger-bg)"
+          height={Math.max(0, dynamicLimitY - CHART.top)}
+          fill="var(--spec-warning-bg)"
+          opacity="0.3"
         />
+        
+        {/* Threshold line */}
         <line
           x1={plotLeft}
-          y1={limitY}
+          y1={dynamicLimitY}
           x2={plotRight}
-          y2={limitY}
-          stroke="var(--spec-danger)"
-          strokeDasharray="4 3"
+          y2={dynamicLimitY}
+          stroke="var(--spec-warning)"
+          strokeDasharray="3 2"
+          strokeWidth="1.5"
         />
-        <polyline fill="none" stroke="var(--spec-text)" strokeWidth="1.6" points={points} />
+        
+        {/* Main curve */}
+        <polyline fill="none" stroke="var(--spec-accent)" strokeWidth="2.5" points={points} />
+        
+        {/* Operating point */}
         <circle
           cx={opX}
           cy={opY}
-          r="5"
-          fill={risky ? "var(--spec-danger)" : "var(--spec-success)"}
+          r="6"
+          fill={current.dpBar > dynamicLimit ? "var(--spec-warning)" : "var(--spec-success)"}
           stroke="var(--spec-bg)"
-          strokeWidth="2"
-        />
-        <text x={plotLeft} y={CHART.height - 8} fill="var(--spec-text3)" fontSize="10">
-          Q ({flowUnit})
+          strokeWidth="2.5"
+        >
+          <title>{`Q: ${inputs.flow} ${flowUnit}, ΔP: ${current.dpBar.toFixed(3)} bar`}</title>
+        </circle>
+        
+        {/* Axis labels */}
+        <text x={plotLeft} y={CHART.height - 8} fill="var(--spec-text3)" fontSize="11" fontWeight="500">
+          Flow Rate ({flowUnit})
         </text>
-        <text x={plotRight - 36} y={limitY - 4} fill="var(--spec-danger)" fontSize="10">
-          1 bar
+        <text 
+          x={12} 
+          y={CHART.top + 40} 
+          fill="var(--spec-text3)" 
+          fontSize="11" 
+          fontWeight="500"
+          transform={`rotate(-90, 12, ${CHART.top + 40})`}
+        >
+          ΔP (bar)
+        </text>
+        
+        {/* Value labels */}
+        <text x={plotRight - 60} y={dynamicLimitY - 4} fill="var(--spec-warning)" fontSize="10" fontWeight="600">
+          {dynamicLimit.toFixed(1)} bar
+        </text>
+        <text x={opX + 8} y={opY - 8} fill="var(--spec-text)" fontSize="10" fontWeight="600">
+          {current.dpBar.toFixed(3)}
         </text>
       </svg>
     </ChartFrame>

@@ -88,7 +88,7 @@ export const blogMdxComponents: BlogMdxComponents = {
   table: (props) => (
     <div className="my-6 overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-700">
       <table
-        className="min-w-full divide-y divide-slate-200 text-sm dark:divide-slate-700"
+        className="w-full min-w-[48rem] border-separate border-spacing-0 text-sm dark:divide-slate-700"
         {...props}
       />
     </div>
@@ -98,13 +98,13 @@ export const blogMdxComponents: BlogMdxComponents = {
   ),
   th: (props) => (
     <th
-      className="px-4 py-3 text-left font-semibold text-slate-900 dark:text-white"
+      className="px-5 py-3.5 text-left font-semibold tracking-wide text-slate-900 first:pl-6 last:pr-6 dark:text-white sm:px-6 sm:first:pl-7 sm:last:pr-7"
       {...props}
     />
   ),
   td: (props) => (
     <td
-      className="px-4 py-3 text-slate-700 dark:text-slate-300 border-t border-slate-200 dark:border-slate-700"
+      className="border-t border-slate-200 px-5 py-3.5 align-top leading-relaxed text-slate-700 first:pl-6 last:pr-6 dark:border-slate-700 dark:text-slate-300 sm:px-6 sm:first:pl-7 sm:last:pr-7"
       {...props}
     />
   ),
