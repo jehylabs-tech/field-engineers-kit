@@ -202,7 +202,11 @@ function formatReynolds(re: number): string {
 }
 
 export function calculatePressureDrop(inputs: PressureDropInputs): CalculatorOutput {
-  const fluid = fluidProps(inputs.fluid);
+  // Convert temperature to Celsius if needed
+  const tempC = inputs.unitSystem === "imperial" 
+    ? (inputs.temperature - 32) * 5 / 9 
+    : inputs.temperature;
+  const fluid = fluidProps(inputs.fluid, tempC);
   const computed = computePressureDrop(inputs);
 
   if (!computed) {
