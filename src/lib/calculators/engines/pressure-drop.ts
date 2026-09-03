@@ -207,6 +207,7 @@ export function calculatePressureDrop(inputs: PressureDropInputs): CalculatorOut
     ? (inputs.temperature - 32) * 5 / 9 
     : inputs.temperature;
   const fluid = fluidProps(inputs.fluid, tempC);
+  const fluidLabel = PRESSURE_DROP_FLUIDS.find(f => f.value === inputs.fluid)?.label || inputs.fluid;
   const computed = computePressureDrop(inputs);
 
   if (!computed) {
@@ -251,7 +252,7 @@ export function calculatePressureDrop(inputs: PressureDropInputs): CalculatorOut
   return {
     heroLabel: "Total pressure loss",
     heroValue: total,
-    heroStatus: `${fluid.label} · Darcy–Weisbach · commercial steel`,
+    heroStatus: `${fluidLabel} · Darcy–Weisbach · commercial steel`,
     heroStatusLevel: dpBar > 1 ? "warn" : "pass",
     summary: [
       { label: "ΔP", value: per100 },
