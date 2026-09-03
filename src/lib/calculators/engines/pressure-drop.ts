@@ -264,7 +264,7 @@ export function calculatePressureDrop(inputs: PressureDropInputs): CalculatorOut
       level: "neutral",
     },
     rows: [
-      { label: "Fluid", value: fluid.label },
+      { label: "Fluid", value: fluidLabel },
       { label: "Density ρ", value: `${fluid.densityKgM3} kg/m³` },
       { label: "Inside diameter (ID)", value: `${idMm.toFixed(2)} mm` },
       { label: "Velocity", value: velocityStr },
@@ -285,7 +285,7 @@ export function calculatePressureDrop(inputs: PressureDropInputs): CalculatorOut
     ],
     exportRows: [
       { label: "Standard", value: "Darcy–Weisbach / Haaland f" },
-      { label: "Fluid", value: fluid.label },
+      { label: "Fluid", value: fluidLabel },
       { label: "Density ρ", value: `${fluid.densityKgM3} kg/m³` },
       { label: "Inside diameter (ID)", value: `${idMm.toFixed(2)} mm` },
       { label: "Velocity", value: velocityStr },
