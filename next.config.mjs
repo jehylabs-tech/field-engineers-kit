@@ -25,6 +25,11 @@ const nextConfig = {
         destination: "/calculator/pipe-schedule-dimension",
         permanent: true,
       },
+      {
+        source: "/calculators/asme-b16-5-flange-weight-dimensions",
+        destination: "/calculator/flange-dimension-weight",
+        permanent: true,
+      },
     ];
   },
 };
