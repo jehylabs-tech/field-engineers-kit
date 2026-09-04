@@ -15,6 +15,8 @@ import { canonicalUrl } from "@/lib/site";
 
 type SpecPageProps = {
   params: { slug: string; spec: string };
+  /** Present when users share stateful URLs; ignored for SEO canonical. */
+  searchParams?: Record<string, string | string[] | undefined>;
 };
 
 export async function generateStaticParams() {
@@ -25,11 +27,15 @@ export async function generateStaticParams() {
   }));
 }
 
+/**
+ * Canonical uses clean path only (slug + spec). Query params are never included.
+ */
 export async function generateMetadata({
   params,
 }: SpecPageProps): Promise<Metadata> {
-  const calculator = await getPublishedCalculatorBySlug(params.slug);
-  const specRoute = resolveSpecRoute(params.slug, params.spec);
+  const { slug, spec } = params;
+  const calculator = await getPublishedCalculatorBySlug(slug);
+  const specRoute = resolveSpecRoute(slug, spec);
 
   if (!calculator || !specRoute) {
     return {
@@ -38,6 +44,7 @@ export async function generateMetadata({
     };
   }
 
+  // searchParams intentionally unused — strip state query params for the indexable URL
   const canonical = canonicalUrl(
     `/calculator/${calculator.slug}/${specRoute.spec}`,
   );

@@ -11,6 +11,8 @@ import { canonicalUrl } from "@/lib/site";
 
 type CalculatorPageProps = {
   params: { slug: string };
+  /** Present when users share stateful calculator URLs; ignored for SEO canonical. */
+  searchParams?: Record<string, string | string[] | undefined>;
 };
 
 export async function generateStaticParams() {
@@ -18,10 +20,15 @@ export async function generateStaticParams() {
   return slugs.map((slug) => ({ slug }));
 }
 
+/**
+ * Canonical always points at the clean calculator path (no query string).
+ * Googlebot should consolidate `?size=4in&schedule=40…` variants to this URL.
+ */
 export async function generateMetadata({
   params,
 }: CalculatorPageProps): Promise<Metadata> {
-  const calculator = await getPublishedCalculatorBySlug(params.slug);
+  const { slug } = params;
+  const calculator = await getPublishedCalculatorBySlug(slug);
 
   if (!calculator) {
     return {
@@ -30,6 +37,7 @@ export async function generateMetadata({
     };
   }
 
+  // searchParams intentionally unused — strip state query params for the indexable URL
   const canonical = canonicalUrl(`/calculator/${calculator.slug}`);
   const title = calculator.title.includes("Calculator")
     ? calculator.title
