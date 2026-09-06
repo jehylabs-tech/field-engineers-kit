@@ -5,13 +5,15 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useCarryOver } from "@/components/calculator/CarryOverContext";
 import { useSpecSeed } from "@/components/calculator/SpecSeedContext";
 import { useToast } from "@/components/ui/ToastProvider";
-import type { CalculatorType } from "@/lib/calculators/definitions";
+import type { CalculatorType, UnitSystem } from "@/lib/calculators/definitions";
 import {
   applyPlantContext,
   extractPlantContext,
   parsePlantContextFromSearchParams,
   writePlantContextToSearchParams,
 } from "@/lib/plant-context";
+import { syncCompanionUnits } from "@/lib/unitConverter";
+import { readPreferredUnitSystem } from "@/lib/units/preferred-system";
 
 type ParamConfig<T> = {
   [K in keyof T]: {
@@ -27,6 +29,16 @@ type UrlSyncOptions = {
   type: CalculatorType;
 };
 
+function applyUnitSystemChange<T extends Record<string, unknown>>(
+  current: T,
+  nextSystem: UnitSystem,
+): T {
+  if (!("unitSystem" in current)) return current;
+  const prev = (current as { unitSystem?: UnitSystem }).unitSystem;
+  if (prev === nextSystem) return current;
+  return syncCompanionUnits(current, nextSystem);
+}
+
 export function useCalculatorUrlSync<T extends Record<string, unknown>>(
   defaults: T,
   config: ParamConfig<T>,
@@ -38,6 +50,8 @@ export function useCalculatorUrlSync<T extends Record<string, unknown>>(
   const defaultsRef = useRef(defaults);
   const { showToast } = useToast();
   const carryOver = useCarryOver();
+  // Always start from defaults so SSR and the first client paint match.
+  // Preferred units / URL are applied in useEffect after hydration (see below).
   const [inputs, setInputs] = useState<T>(defaults);
   const hasHydratedFromUrl = useRef(false);
 
@@ -63,6 +77,21 @@ export function useCalculatorUrlSync<T extends Record<string, unknown>>(
       next[key] = deserialize(source.get(param), defaultsRef.current[key]);
     }
 
+    // Prefer explicit ?units=, else localStorage preference.
+    if ("unitSystem" in next) {
+      const fromUrl = source.get("units");
+      const preferred =
+        fromUrl === "metric" || fromUrl === "imperial"
+          ? fromUrl
+          : readPreferredUnitSystem();
+      const currentSystem = (next as { unitSystem?: UnitSystem }).unitSystem;
+      if (preferred && currentSystem && preferred !== currentSystem) {
+        Object.assign(next, syncCompanionUnits(next, preferred));
+      } else if (preferred) {
+        (next as Record<string, unknown>).unitSystem = preferred;
+      }
+    }
+
     if (!options?.type) return next;
 
     const plant = parsePlantContextFromSearchParams(source);
@@ -81,35 +110,25 @@ export function useCalculatorUrlSync<T extends Record<string, unknown>>(
     }
   }, [carryOver, readFromUrl, searchParams, showToast]);
 
-  // Prefer global unit toggle (GNB / SpecHeader) → live unitSystem + labels/results.
+  // Global navbar / SpecHeader unit toggle → convert inputs + labels together.
   useEffect(() => {
     function onUnits(event: Event) {
       const detail = (event as CustomEvent<string>).detail;
       if (detail !== "metric" && detail !== "imperial") return;
       if (!("unitSystem" in defaultsRef.current)) return;
-      setInputs((current) => {
-        if ((current as { unitSystem?: string }).unitSystem === detail) {
-          return current;
-        }
-        return { ...current, unitSystem: detail } as T;
-      });
+      setInputs((current) => applyUnitSystemChange(current, detail));
     }
     window.addEventListener("fek-units-change", onUnits);
     return () => window.removeEventListener("fek-units-change", onUnits);
   }, []);
 
-  // When SpecHeader rewrites ?units= after hydration, re-read unitSystem from URL.
+  // When SpecHeader rewrites ?units= after hydration, sync companion fields too.
   useEffect(() => {
     if (!hasHydratedFromUrl.current) return;
     if (!("unitSystem" in defaultsRef.current)) return;
     const fromUrl = searchParams.get("units");
     if (fromUrl !== "metric" && fromUrl !== "imperial") return;
-    setInputs((current) => {
-      if ((current as { unitSystem?: string }).unitSystem === fromUrl) {
-        return current;
-      }
-      return { ...current, unitSystem: fromUrl } as T;
-    });
+    setInputs((current) => applyUnitSystemChange(current, fromUrl));
   }, [searchParams]);
 
   useEffect(() => {
@@ -129,9 +148,12 @@ export function useCalculatorUrlSync<T extends Record<string, unknown>>(
     for (const key of Object.keys(config) as Array<keyof T>) {
       const { param, serialize } = config[key];
       const serialized = serialize(inputs[key]);
-      // Do not overwrite a unit-suffixed plant pressure/temperature with a bare number.
       const existing = params.get(param);
-      if (existing && /[a-z]/i.test(existing) && /^-?\d+(?:\.\d+)?$/.test(serialized)) {
+      if (
+        existing &&
+        /[a-z]/i.test(existing) &&
+        /^-?\d+(?:\.\d+)?$/.test(serialized)
+      ) {
         continue;
       }
       params.set(param, serialized);

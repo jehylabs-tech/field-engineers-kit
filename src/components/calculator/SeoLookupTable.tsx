@@ -1,12 +1,15 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
+import { useUnitSystemOptional } from "@/components/units/UnitContext";
 import type { UnitSystem } from "@/lib/calculators/definitions";
 import {
-  readPreferredUnitSystem,
-} from "@/lib/units/preferred-system";
-
-const NM_TO_FT_LB = 0.737562;
+  convertSeoTableCell,
+  rewriteUnitLabels,
+  type SeoTableColumnUnit,
+} from "@/lib/units/unit-aware-text";
+import { readPreferredUnitSystem } from "@/lib/units/preferred-system";
+import { useEffect, useState } from "react";
 
 type SeoLookupTableProps = {
   caption: string;
@@ -14,52 +17,48 @@ type SeoLookupTableProps = {
   rows: string[][];
   footnote?: string;
   allNumeric?: boolean;
-  /** Column indexes storing assembly torque in N·m (switch to ft-lb with navbar units). */
+  /** @deprecated Prefer tableColumnUnits with quantity "torque". */
   torqueNmColumns?: number[];
+  /** SI-stored columns converted when navbar is imperial. */
+  columnUnits?: SeoTableColumnUnit[];
   /** Column indexes to emphasize with bold weight. */
   boldColumns?: number[];
 };
 
-function useNavbarUnitSystem(): UnitSystem {
-  const [units, setUnits] = useState<UnitSystem>("metric");
+function useTableUnitSystem(): UnitSystem {
+  const ctx = useUnitSystemOptional();
+  const [fallback, setFallback] = useState<UnitSystem>("metric");
 
   useEffect(() => {
+    if (ctx) return;
     const fromUrl = new URLSearchParams(window.location.search).get("units");
     if (fromUrl === "imperial" || fromUrl === "metric") {
-      setUnits(fromUrl);
+      setFallback(fromUrl);
     } else {
-      setUnits(readPreferredUnitSystem());
+      setFallback(readPreferredUnitSystem());
     }
     function onUnits(event: Event) {
       const detail = (event as CustomEvent<UnitSystem>).detail;
-      if (detail === "metric" || detail === "imperial") setUnits(detail);
+      if (detail === "metric" || detail === "imperial") setFallback(detail);
     }
     window.addEventListener("fek-units-change", onUnits);
     return () => window.removeEventListener("fek-units-change", onUnits);
-  }, []);
+  }, [ctx]);
 
-  return units;
+  return ctx?.unitSystem ?? fallback;
 }
 
-function headerForUnits(header: string, units: UnitSystem): string {
-  if (units === "imperial") {
-    return header.replace(/\(N·m\)/g, "(ft-lb)");
-  }
-  return header;
-}
-
-function cellForUnits(
-  value: string,
-  columnIndex: number,
+function resolveColumnUnits(
+  columnUnits: SeoTableColumnUnit[] | undefined,
   torqueNmColumns: number[] | undefined,
-  units: UnitSystem,
-): string {
-  if (!torqueNmColumns?.includes(columnIndex) || units !== "imperial") {
-    return value;
-  }
-  const nm = Number(value);
-  if (!Number.isFinite(nm)) return value;
-  return String(Math.round(nm * NM_TO_FT_LB));
+): SeoTableColumnUnit[] {
+  if (columnUnits?.length) return columnUnits;
+  if (!torqueNmColumns?.length) return [];
+  return torqueNmColumns.map((index) => ({
+    index,
+    quantity: "torque" as const,
+    digits: 0,
+  }));
 }
 
 export default function SeoLookupTable({
@@ -69,19 +68,35 @@ export default function SeoLookupTable({
   footnote,
   allNumeric = false,
   torqueNmColumns,
+  columnUnits,
   boldColumns,
 }: SeoLookupTableProps) {
-  const units = useNavbarUnitSystem();
+  const units = useTableUnitSystem();
+  const columns = useMemo(
+    () => resolveColumnUnits(columnUnits, torqueNmColumns),
+    [columnUnits, torqueNmColumns],
+  );
 
   const displayHeaders = useMemo(
-    () => headers.map((header) => headerForUnits(header, units)),
+    () => headers.map((header) => rewriteUnitLabels(header, units)),
     [headers, units],
   );
 
-  const displayCaption = useMemo(() => {
-    if (!torqueNmColumns?.length || units !== "imperial") return caption;
-    return caption.replace(/\(N·m\)/g, "(ft-lb)");
-  }, [caption, torqueNmColumns, units]);
+  const displayCaption = useMemo(
+    () => rewriteUnitLabels(caption, units),
+    [caption, units],
+  );
+
+  const displayFootnote = useMemo(
+    () => (footnote ? rewriteUnitLabels(footnote, units) : undefined),
+    [footnote, units],
+  );
+
+  const columnByIndex = useMemo(() => {
+    const map = new Map<number, SeoTableColumnUnit>();
+    for (const col of columns) map.set(col.index, col);
+    return map;
+  }, [columns]);
 
   return (
     <>
@@ -94,7 +109,7 @@ export default function SeoLookupTable({
             <tr className="bg-slate-100 text-slate-800 dark:bg-slate-800 dark:text-slate-100">
               {displayHeaders.map((header, headerIndex) => (
                 <th
-                  key={header}
+                  key={`${header}-${headerIndex}`}
                   scope="col"
                   className={`border border-slate-200 bg-slate-100 px-3 py-2.5 font-mono text-sm font-semibold tabular-nums dark:border-spec-border dark:bg-slate-800 ${
                     allNumeric || headerIndex > 0 ? "text-right" : "text-left"
@@ -114,6 +129,15 @@ export default function SeoLookupTable({
                 {row.map((cell, cellIndex) => {
                   const bold = boldColumns?.includes(cellIndex);
                   const rightAlign = allNumeric || cellIndex > 0;
+                  const meta = columnByIndex.get(cellIndex);
+                  const display = meta
+                    ? convertSeoTableCell(
+                        cell,
+                        meta.quantity,
+                        units,
+                        meta.digits,
+                      )
+                    : cell;
                   return (
                     <td
                       key={`${rowIndex}-${cellIndex}`}
@@ -123,7 +147,7 @@ export default function SeoLookupTable({
                           : "font-normal text-slate-700 dark:text-slate-200"
                       } ${rightAlign ? "text-right" : "text-left"}`}
                     >
-                      {cellForUnits(cell, cellIndex, torqueNmColumns, units)}
+                      {display}
                     </td>
                   );
                 })}
@@ -132,9 +156,9 @@ export default function SeoLookupTable({
           </tbody>
         </table>
       </div>
-      {footnote ? (
+      {displayFootnote ? (
         <p className="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-400">
-          {footnote}
+          {displayFootnote}
         </p>
       ) : null}
     </>

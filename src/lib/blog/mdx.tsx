@@ -96,15 +96,33 @@ export const blogMdxComponents: BlogMdxComponents = {
   thead: (props) => (
     <thead className="bg-slate-100 dark:bg-slate-800/80" {...props} />
   ),
-  th: (props) => (
+  th: ({
+    align,
+    ...props
+  }: HTMLAttributes<HTMLTableCellElement> & { align?: string | null }) => (
     <th
-      className="px-5 py-3.5 text-left font-semibold tracking-wide text-slate-900 first:pl-6 last:pr-6 dark:text-white sm:px-6 sm:first:pl-7 sm:last:pr-7"
+      className={`px-5 py-3.5 font-semibold tracking-wide text-slate-900 first:pl-6 last:pr-6 dark:text-white sm:px-6 sm:first:pl-7 sm:last:pr-7 ${
+        align === "center"
+          ? "text-center"
+          : align === "right"
+            ? "text-right"
+            : "text-left"
+      }`}
       {...props}
     />
   ),
-  td: (props) => (
+  td: ({
+    align,
+    ...props
+  }: HTMLAttributes<HTMLTableCellElement> & { align?: string | null }) => (
     <td
-      className="border-t border-slate-200 px-5 py-3.5 align-top leading-relaxed text-slate-700 first:pl-6 last:pr-6 dark:border-slate-700 dark:text-slate-300 sm:px-6 sm:first:pl-7 sm:last:pr-7"
+      className={`border-t border-slate-200 px-5 py-3.5 align-top leading-relaxed text-slate-700 first:pl-6 last:pr-6 dark:border-slate-700 dark:text-slate-300 sm:px-6 sm:first:pl-7 sm:last:pr-7 ${
+        align === "center"
+          ? "text-center"
+          : align === "right"
+            ? "text-right"
+            : "text-left"
+      }`}
       {...props}
     />
   ),

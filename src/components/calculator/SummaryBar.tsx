@@ -68,9 +68,9 @@ export default function SummaryBar({
   return (
     <div
       aria-hidden={!pinned}
-      className={`sticky top-12 z-40 w-full md:top-14 ${
+      className={`sticky top-12 z-30 w-full md:top-14 ${
         pinned
-          ? "border-b border-slate-200 bg-white/95 shadow-md backdrop-blur-md dark:border-slate-700 dark:bg-slate-900/95"
+          ? "border-b border-slate-200/80 bg-white shadow-[0_1px_0_0_rgba(15,23,42,0.06)] dark:border-slate-800 dark:bg-slate-900 dark:shadow-[0_1px_0_0_rgba(0,0,0,0.35)]"
           : "pointer-events-none invisible max-h-0 overflow-hidden border-b-0 bg-transparent shadow-none"
       }`}
     >

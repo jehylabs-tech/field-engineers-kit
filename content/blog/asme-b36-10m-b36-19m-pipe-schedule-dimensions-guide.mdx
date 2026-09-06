@@ -27,60 +27,14 @@ In process plant design, converting Nominal Pipe Size (NPS) and Schedule numbers
 * **ASME B36.10M**: Wrought welded and seamless carbon and alloy steel pipe.
 * **ASME B36.19M**: Stainless steel pipe with S-suffix schedules (5S, 10S, 40S, 80S).
 
-<table>
-  <colgroup>
-    <col style={{ width: "16%" }} />
-    <col style={{ width: "24%" }} />
-    <col style={{ width: "18%" }} />
-    <col style={{ width: "42%" }} />
-  </colgroup>
-  <thead>
-    <tr>
-      <th>Symbol</th>
-      <th>Parameter</th>
-      <th>Units</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><strong>NPS / DN</strong></td>
-      <td>Nominal size</td>
-      <td>— / mm</td>
-      <td>Tag per NPS (in) or ISO 6708 DN (e.g., NPS 4 = DN 100).</td>
-    </tr>
-    <tr>
-      <td><strong>OD</strong></td>
-      <td>Outside diameter</td>
-      <td>mm (in)</td>
-      <td>Governing OD per B36.10M / B36.19M.</td>
-    </tr>
-    <tr>
-      <td><strong>t</strong></td>
-      <td>Wall thickness</td>
-      <td>mm (in)</td>
-      <td>Nominal catalog wall for the schedule.</td>
-    </tr>
-    <tr>
-      <td><strong>ID</strong></td>
-      <td>Inside diameter</td>
-      <td>mm (in)</td>
-      <td>Flow bore: $ID = OD - 2t$.</td>
-    </tr>
-    <tr>
-      <td><strong>W<sub>m</sub></strong></td>
-      <td>Plain-end linear weight</td>
-      <td>kg/m (lb/ft)</td>
-      <td>$W_m = 0.0246615 \cdot t \cdot (OD - t)$.</td>
-    </tr>
-    <tr>
-      <td><strong>A<sub>flow</sub></strong></td>
-      <td>Flow area</td>
-      <td>mm² (in²)</td>
-      <td>$A_{\text{flow}} = \frac{\pi \cdot ID^2}{4}$.</td>
-    </tr>
-  </tbody>
-</table>
+| Symbol | Parameter | Units | Description |
+| :---: | :--- | :---: | :--- |
+| **NPS / DN** | Nominal size | — / $\text{mm}$ | Tag per NPS (in) or ISO 6708 DN (e.g., NPS 4 = DN 100). |
+| **OD** | Outside diameter | $\text{mm}$ ($\text{in}$) | Governing OD per B36.10M / B36.19M. |
+| **$t$** | Wall thickness | $\text{mm}$ ($\text{in}$) | Nominal catalog wall for the schedule. |
+| **ID** | Inside diameter | $\text{mm}$ ($\text{in}$) | Flow bore: $ID = OD - 2t$. |
+| **$W_m$** | Plain-end linear weight | $\text{kg/m}$ ($\text{lb/ft}$) | $W_m = 0.0246615 \cdot t \cdot (OD - t)$. |
+| **$A_{\text{flow}}$** | Flow area | $\text{mm}^2$ ($\text{in}^2$) | $A_{\text{flow}} = \frac{\pi \cdot ID^2}{4}$. |
 
 ---
 
@@ -118,28 +72,10 @@ $$ W_{\text{pipe}} = 0.0246615 \times 12.70 \times (219.08 - 12.70) = 64.64\text
 ### Trap 1 — STD/XS vs Sch 40/80 Divergence
 STD and Sch 40 match only for NPS 1/8 through NPS 10. Example NPS 12:
 
-<table>
-  <colgroup>
-    <col style={{ width: "38%" }} />
-    <col style={{ width: "62%" }} />
-  </colgroup>
-  <thead>
-    <tr>
-      <th>Designation</th>
-      <th>Wall Thickness (t)</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><strong>STD</strong></td>
-      <td>9.53 mm (0.375 in)</td>
-    </tr>
-    <tr>
-      <td><strong>Sch 40</strong></td>
-      <td>10.31 mm (0.406 in)</td>
-    </tr>
-  </tbody>
-</table>
+| Designation | Wall Thickness ($t$) |
+| :--- | ---: |
+| **STD** | $9.53\text{ mm}$ ($0.375\text{ in}$) |
+| **Sch 40** | $10.31\text{ mm}$ ($0.406\text{ in}$) |
 
 > ⚠️ **Procurement Trap**: Ordering NPS 12 STD when the line class requires Sch 40 delivers an under-designed spool.
 

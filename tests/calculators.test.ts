@@ -551,6 +551,7 @@ describe("06 Valve Cv (ISA / IEC 60534 US Cv)", () => {
     expect(gasCvUs(1000, 10, 10, 0.6, 25)).toBe(0);
     expect(gasCvUs(1000, 5, 10, 0.6, 25)).toBe(0);
     const out = calculateValveCv({
+      unitSystem: "metric",
       fluid: "liquid",
       flowRate: 50,
       inletPressure: 5,
@@ -1004,6 +1005,7 @@ describe("13 Flow Velocity & API RP 14E", () => {
   it("computes v = Q/A and vc = C / √ρ with C in ft/s, ρ in lb/ft³", () => {
     const result = computeFlowVelocity({
       unitSystem: "metric",
+      materialFamily: "cs",
       nps: "4",
       schedule: "40",
       flow: 50,
@@ -1024,6 +1026,7 @@ describe("13 Flow Velocity & API RP 14E", () => {
   it("flags erosion when v ≥ vc", () => {
     const result = computeFlowVelocity({
       unitSystem: "metric",
+      materialFamily: "cs",
       nps: "4",
       schedule: "40",
       flow: 130,
@@ -1037,6 +1040,7 @@ describe("13 Flow Velocity & API RP 14E", () => {
   it("falls back for zero flow", () => {
     const out = calculateFlowVelocity({
       unitSystem: "metric",
+      materialFamily: "cs",
       nps: "4",
       schedule: "40",
       flow: 0,
@@ -1046,6 +1050,22 @@ describe("13 Flow Velocity & API RP 14E", () => {
     });
     expect(out.heroValue).toBe("—");
     expectNoPoison(out);
+  });
+
+  it("applies stainless liquid cap and B36.19M schedule pairing", () => {
+    const ss = computeFlowVelocity({
+      unitSystem: "metric",
+      materialFamily: "ss",
+      nps: "4",
+      schedule: "40S",
+      flow: 90,
+      flowUnit: "m3h",
+      density: 998,
+      erosionC: 150,
+    });
+    expect(ss).not.toBeNull();
+    expect(ss!.liquidCapMs).toBe(5);
+    expect(ss!.status).not.toBe("Erosion Risk");
   });
 });
 

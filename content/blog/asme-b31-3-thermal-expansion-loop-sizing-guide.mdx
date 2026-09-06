@@ -8,8 +8,6 @@ relatedCalculatorUrl: "/calculator/thermal-expansion-loop"
 relatedCalculatorName: "Thermal Expansion & Loop Sizing Calculator"
 ---
 
-# Thermal Expansion & Loop Sizing Guide: ASME B31.3 Rules & Guided-Cantilever Design
-
 Thermal expansion is one of the primary drivers of mechanical fatigue, pipe rack overload, and rotating equipment nozzle misalignment in industrial process plants. When a piping system experiences temperature swings from ambient installation ($T_1$) to high-temperature operating conditions ($T_2$), the unrestrained metal grows proportionally to its length and temperature change. 
 
 If this growth is restricted by rigid anchors without adequate flexibility, enormous axial forces build up—leading to bowed pipe runs, overloaded support bents, or catastrophic flange leakage.
@@ -72,78 +70,14 @@ Long straight runs experience substantial axial friction force across pipe shoes
 ### Quick Reference Lookup Table: Thermal Growth for 20m Carbon Steel Run
 *(ASTM A106 Gr. B / A53, $\alpha = 12.1 \times 10^{-6}/\text{}^\circ\text{C}$, Baseline Installation $T_1 = 21\text{ }^\circ\text{C}$)*
 
-<table className="w-full min-w-48rem border-collapse rounded-lg border border-slate-200 text-sm dark:border-slate-700">
-  <colgroup>
-    <col style={{ width: '16%' }} />
-    <col style={{ width: '16%' }} />
-    <col style={{ width: '16%' }} />
-    <col style={{ width: '26%' }} />
-    <col style={{ width: '26%' }} />
-  </colgroup>
-  <thead>
-    <tr className="bg-slate-50 dark:bg-slate-800">
-      <th className="border border-slate-200 px-3 py-2 text-left font-semibold text-slate-900 dark:border-slate-700 dark:text-slate-100">
-        T₁ (°C)
-      </th>
-      <th className="border border-slate-200 px-3 py-2 text-left font-semibold text-slate-900 dark:border-slate-700 dark:text-slate-100">
-        T₂ (°C)
-      </th>
-      <th className="border border-slate-200 px-3 py-2 text-left font-semibold text-slate-900 dark:border-slate-700 dark:text-slate-100">
-        ΔT (°C)
-      </th>
-      <th className="border border-slate-200 px-3 py-2 text-left font-semibold text-slate-900 dark:border-slate-700 dark:text-slate-100">
-        Thermal Growth ΔL (mm)
-      </th>
-      <th className="border border-slate-200 px-3 py-2 text-left font-semibold text-slate-900 dark:border-slate-700 dark:text-slate-100">
-        Growth per Meter (mm/m)
-      </th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td className="border border-slate-200 px-3 py-2 font-mono text-slate-900 dark:border-slate-700 dark:text-slate-100">21</td>
-      <td className="border border-slate-200 px-3 py-2 font-mono text-slate-900 dark:border-slate-700 dark:text-slate-100">70</td>
-      <td className="border border-slate-200 px-3 py-2 font-mono text-slate-900 dark:border-slate-700 dark:text-slate-100">49</td>
-      <td className="border border-slate-200 px-3 py-2 font-mono text-slate-900 dark:border-slate-700 dark:text-slate-100">11.9</td>
-      <td className="border border-slate-200 px-3 py-2 font-mono text-slate-900 dark:border-slate-700 dark:text-slate-100">0.59</td>
-    </tr>
-    <tr className="bg-slate-50/50 dark:bg-slate-800/30">
-      <td className="border border-slate-200 px-3 py-2 font-mono text-slate-900 dark:border-slate-700 dark:text-slate-100">21</td>
-      <td className="border border-slate-200 px-3 py-2 font-mono text-slate-900 dark:border-slate-700 dark:text-slate-100">100</td>
-      <td className="border border-slate-200 px-3 py-2 font-mono text-slate-900 dark:border-slate-700 dark:text-slate-100">79</td>
-      <td className="border border-slate-200 px-3 py-2 font-mono text-slate-900 dark:border-slate-700 dark:text-slate-100">19.1</td>
-      <td className="border border-slate-200 px-3 py-2 font-mono text-slate-900 dark:border-slate-700 dark:text-slate-100">0.96</td>
-    </tr>
-    <tr>
-      <td className="border border-slate-200 px-3 py-2 font-mono text-slate-900 dark:border-slate-700 dark:text-slate-100">21</td>
-      <td className="border border-slate-200 px-3 py-2 font-mono text-slate-900 dark:border-slate-700 dark:text-slate-100">150</td>
-      <td className="border border-slate-200 px-3 py-2 font-mono text-slate-900 dark:border-slate-700 dark:text-slate-100">129</td>
-      <td className="border border-slate-200 px-3 py-2 font-mono text-slate-900 dark:border-slate-700 dark:text-slate-100">31.2</td>
-      <td className="border border-slate-200 px-3 py-2 font-mono text-slate-900 dark:border-slate-700 dark:text-slate-100">1.56</td>
-    </tr>
-    <tr className="bg-slate-50/50 dark:bg-slate-800/30">
-      <td className="border border-slate-200 px-3 py-2 font-mono text-slate-900 dark:border-slate-700 dark:text-slate-100">21</td>
-      <td className="border border-slate-200 px-3 py-2 font-mono text-slate-900 dark:border-slate-700 dark:text-slate-100">200</td>
-      <td className="border border-slate-200 px-3 py-2 font-mono text-slate-900 dark:border-slate-700 dark:text-slate-100">179</td>
-      <td className="border border-slate-200 px-3 py-2 font-mono text-slate-900 dark:border-slate-700 dark:text-slate-100">43.3</td>
-      <td className="border border-slate-200 px-3 py-2 font-mono text-slate-900 dark:border-slate-700 dark:text-slate-100">2.17</td>
-    </tr>
-    <tr>
-      <td className="border border-slate-200 px-3 py-2 font-mono text-slate-900 dark:border-slate-700 dark:text-slate-100">21</td>
-      <td className="border border-slate-200 px-3 py-2 font-mono text-slate-900 dark:border-slate-700 dark:text-slate-100">300</td>
-      <td className="border border-slate-200 px-3 py-2 font-mono text-slate-900 dark:border-slate-700 dark:text-slate-100">279</td>
-      <td className="border border-slate-200 px-3 py-2 font-mono text-slate-900 dark:border-slate-700 dark:text-slate-100">67.5</td>
-      <td className="border border-slate-200 px-3 py-2 font-mono text-slate-900 dark:border-slate-700 dark:text-slate-100">3.38</td>
-    </tr>
-    <tr className="bg-slate-50/50 dark:bg-slate-800/30">
-      <td className="border border-slate-200 px-3 py-2 font-mono text-slate-900 dark:border-slate-700 dark:text-slate-100">15</td>
-      <td className="border border-slate-200 px-3 py-2 font-mono text-slate-900 dark:border-slate-700 dark:text-slate-100">180</td>
-      <td className="border border-slate-200 px-3 py-2 font-mono text-slate-900 dark:border-slate-700 dark:text-slate-100">165</td>
-      <td className="border border-slate-200 px-3 py-2 font-mono text-slate-900 dark:border-slate-700 dark:text-slate-100">39.9</td>
-      <td className="border border-slate-200 px-3 py-2 font-mono text-slate-900 dark:border-slate-700 dark:text-slate-100">2.00</td>
-    </tr>
-  </tbody>
-</table>
+| $T_1$ ($^\circ\text{C}$) | $T_2$ ($^\circ\text{C}$) | $\Delta T$ ($^\circ\text{C}$) | Thermal Growth $\Delta L$ ($\text{mm}$) | Growth per Meter ($\text{mm/m}$) |
+| ---: | ---: | ---: | ---: | ---: |
+| **21** | $70$ | $49$ | $11.9$ | $0.59$ |
+| **21** | $100$ | $79$ | $19.1$ | $0.96$ |
+| **21** | $150$ | $129$ | $31.2$ | $1.56$ |
+| **21** | $200$ | $179$ | $43.3$ | $2.17$ |
+| **21** | $300$ | $279$ | $67.5$ | $3.38$ |
+| **15** | $180$ | $165$ | $39.9$ | $2.00$ |
 
 ---
 
@@ -151,88 +85,12 @@ Long straight runs experience substantial axial friction force across pipe shoes
 
 Thermal expansion rates vary significantly across alloy families. Austenitic stainless steel expands over 40% more than carbon steel under identical thermal conditions, requiring deeper expansion loops.
 
-<table className="w-full min-w-48rem border-collapse rounded-lg border border-slate-200 text-sm dark:border-slate-700">
-  <colgroup>
-    <col style={{ width: '25%' }} />
-    <col style={{ width: '20%' }} />
-    <col style={{ width: '15%' }} />
-    <col style={{ width: '40%' }} />
-  </colgroup>
-  <thead>
-    <tr className="bg-slate-50 dark:bg-slate-800">
-      <th className="border border-slate-200 px-3 py-2 text-left font-semibold text-slate-900 dark:border-slate-700 dark:text-slate-100">
-        Material Group
-      </th>
-      <th className="border border-slate-200 px-3 py-2 text-left font-semibold text-slate-900 dark:border-slate-700 dark:text-slate-100">
-        Expansion Rate (α @ 200°C)
-      </th>
-      <th className="border border-slate-200 px-3 py-2 text-left font-semibold text-slate-900 dark:border-slate-700 dark:text-slate-100">
-        Cold Modulus (E)
-      </th>
-      <th className="border border-slate-200 px-3 py-2 text-left font-semibold text-slate-900 dark:border-slate-700 dark:text-slate-100">
-        Design & Application Notes
-      </th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td className="border border-slate-200 px-3 py-2 font-semibold text-slate-900 dark:border-slate-700 dark:text-slate-100">
-        Carbon Steel <em>(ASTM A106 Gr. B)</em>
-      </td>
-      <td className="border border-slate-200 px-3 py-2 font-mono text-slate-900 dark:border-slate-700 dark:text-slate-100">
-        12.1 × 10⁻⁶/°C
-      </td>
-      <td className="border border-slate-200 px-3 py-2 font-mono text-slate-900 dark:border-slate-700 dark:text-slate-100">
-        203 GPa
-      </td>
-      <td className="border border-slate-200 px-3 py-2 text-slate-700 dark:text-slate-300">
-        Industry baseline for process steam and hydrocarbon lines. Moderate thermal growth.
-      </td>
-    </tr>
-    <tr className="bg-slate-50/50 dark:bg-slate-800/30">
-      <td className="border border-slate-200 px-3 py-2 font-semibold text-slate-900 dark:border-slate-700 dark:text-slate-100">
-        Austenitic Stainless Steel <em>(TP304/TP316)</em>
-      </td>
-      <td className="border border-slate-200 px-3 py-2 font-mono text-slate-900 dark:border-slate-700 dark:text-slate-100">
-        17.3 × 10⁻⁶/°C
-      </td>
-      <td className="border border-slate-200 px-3 py-2 font-mono text-slate-900 dark:border-slate-700 dark:text-slate-100">
-        195 GPa
-      </td>
-      <td className="border border-slate-200 px-3 py-2 text-slate-700 dark:text-slate-300">
-        <strong>+43% higher growth than carbon steel.</strong> Requires ~19% longer cantilever loop legs (L_leg ∝ √α).
-      </td>
-    </tr>
-    <tr>
-      <td className="border border-slate-200 px-3 py-2 font-semibold text-slate-900 dark:border-slate-700 dark:text-slate-100">
-        Duplex Stainless Steel <em>(UNS S31803 / 2205)</em>
-      </td>
-      <td className="border border-slate-200 px-3 py-2 font-mono text-slate-900 dark:border-slate-700 dark:text-slate-100">
-        13.5 × 10⁻⁶/°C
-      </td>
-      <td className="border border-slate-200 px-3 py-2 font-mono text-slate-900 dark:border-slate-700 dark:text-slate-100">
-        200 GPa
-      </td>
-      <td className="border border-slate-200 px-3 py-2 text-slate-700 dark:text-slate-300">
-        Intermediate expansion rate. Offers higher yield strength and lower expansion than 316SS on offshore racks.
-      </td>
-    </tr>
-    <tr className="bg-slate-50/50 dark:bg-slate-800/30">
-      <td className="border border-slate-200 px-3 py-2 font-semibold text-slate-900 dark:border-slate-700 dark:text-slate-100">
-        Low-Alloy Chrome-Moly <em>(ASTM A335 P11/P22)</em>
-      </td>
-      <td className="border border-slate-200 px-3 py-2 font-mono text-slate-900 dark:border-slate-700 dark:text-slate-100">
-        12.8 × 10⁻⁶/°C
-      </td>
-      <td className="border border-slate-200 px-3 py-2 font-mono text-slate-900 dark:border-slate-700 dark:text-slate-100">
-        175 GPa
-      </td>
-      <td className="border border-slate-200 px-3 py-2 text-slate-700 dark:text-slate-300">
-        Standard for high-temperature power piping (>400°C). Elevated T₂ creates massive ΔL despite moderate α.
-      </td>
-    </tr>
-  </tbody>
-</table>
+| Material Group | Expansion Rate ($\alpha$ @ $200^\circ\text{C}$) | Cold Modulus ($E$) | Design & Application Notes |
+| :--- | :---: | :---: | :--- |
+| **Carbon Steel** *(ASTM A106 Gr. B)* | $12.1 \times 10^{-6}/^\circ\text{C}$ | $203\text{ GPa}$ | Industry baseline for process steam and hydrocarbon lines. Moderate thermal growth. |
+| **Austenitic Stainless Steel** *(TP304/TP316)* | $17.3 \times 10^{-6}/^\circ\text{C}$ | $195\text{ GPa}$ | **+43% higher growth than carbon steel.** Requires $\sim 19\%$ longer cantilever loop legs ($L_{\text{leg}} \propto \sqrt{\alpha}$). |
+| **Duplex Stainless Steel** *(UNS S31803 / 2205)* | $13.5 \times 10^{-6}/^\circ\text{C}$ | $200\text{ GPa}$ | Intermediate expansion rate. Offers higher yield strength and lower expansion than 316SS on offshore racks. |
+| **Low-Alloy Chrome-Moly** *(ASTM A335 P11/P22)* | $12.8 \times 10^{-6}/^\circ\text{C}$ | $175\text{ GPa}$ | Standard for high-temperature power piping ($>400^\circ\text{C}$). Elevated $T_2$ creates massive $\Delta L$ despite moderate $\alpha$. |
 
 ### Code Applicability & Safety Boundaries
 *   **ASME B31.3 Formal Analysis Exemption (Para. 319.4.1):** Computer stress analysis is required unless a system is duplicate of a proven layout, or satisfies the empirical criteria:

@@ -9,6 +9,7 @@ import {
   computeFlowVelocity,
   type FlowVelocityInputs,
 } from "@/lib/calculators/engines/flow-velocity";
+import { formatVelocity } from "@/lib/unitConverter";
 
 type FlowVelocityChartProps = {
   inputs: FlowVelocityInputs;
@@ -49,11 +50,12 @@ export default function FlowVelocityChart({ inputs }: FlowVelocityChartProps) {
         ? "var(--spec-spon-text)"
         : "var(--spec-success)";
   const flowUnit = inputs.flowUnit === "gpm" ? "GPM" : "m³/h";
+  const velocityLabel = formatVelocity(velocity, inputs.unitSystem);
 
   return (
     <ChartFrame
       title="Mean velocity vs API RP 14E vc"
-      legend={`Green under 0.8 vc, amber to vc, red above vc. Operating point ${velocity.toFixed(2)} m/s at ${qNow} ${flowUnit}.`}
+      legend={`Green under 0.8 vc, amber to vc, red above vc. Operating point ${velocityLabel} at ${qNow} ${flowUnit}.`}
     >
       <svg
         viewBox={`0 0 ${CHART.width} ${CHART.height}`}

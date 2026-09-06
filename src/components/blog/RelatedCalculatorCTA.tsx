@@ -36,7 +36,11 @@ export default function RelatedCalculatorCTA({
           </p>
           <p className="mt-1 text-xs leading-relaxed text-slate-600 dark:text-slate-400">
             Run deterministic, code-aligned calculations with the same inputs
-            discussed in this article.
+            discussed in this article. The interactive tool follows the navbar{" "}
+            <span className="font-medium text-slate-700 dark:text-slate-300">
+              Imperial · Metric
+            </span>{" "}
+            toggle; this article keeps SI primary with imperial in parentheses.
           </p>
           <Link
             href={calculatorUrl}

@@ -1,5 +1,11 @@
 import type { CalculatorOutput, UnitSystem } from "@/lib/calculators/definitions";
 import { getPipeScheduleEntry } from "@/lib/data/loaders";
+import {
+  formatDensity,
+  formatLengthM,
+  formatLengthMm,
+  formatVelocity,
+} from "@/lib/unitConverter";
 import { barToPsi } from "@/utils/unitConverter";
 
 export type PressureDropFluid = "water" | "steam" | "air" | "crude" | "condensate";
@@ -233,7 +239,7 @@ export function calculatePressureDrop(inputs: PressureDropInputs): CalculatorOut
   const { velocity, reynolds, frictionFactor: f, dpBar, dp100Bar, leqM } = computed;
   const fittingLeqM = Math.max(0, leqM - (Number.isFinite(lengthM) ? lengthM : 0));
   const idMm = entry?.row.insideDiameterMm ?? 0;
-  const velocityStr = `${velocity.toFixed(2)} m/s`;
+  const velocityStr = formatVelocity(velocity, inputs.unitSystem);
   const reynoldsStr = formatReynolds(reynolds);
   const total =
     inputs.unitSystem === "imperial"
@@ -248,6 +254,14 @@ export function calculatePressureDrop(inputs: PressureDropInputs): CalculatorOut
     inputs.unitSystem === "imperial"
       ? `${barToPsi(dp100Bar).toFixed(2)} psi / 100 m`
       : `${dp100Bar.toFixed(3)} bar / 100 m`;
+  const densityOut = formatDensity(fluid.densityKgM3, inputs.unitSystem);
+  const idOut = formatLengthMm(idMm, inputs.unitSystem);
+  const straightOut = formatLengthM(
+    Number.isFinite(lengthM) ? lengthM : 0,
+    inputs.unitSystem,
+  );
+  const fittingOut = formatLengthM(fittingLeqM, inputs.unitSystem);
+  const leqOut = formatLengthM(leqM, inputs.unitSystem);
 
   return {
     heroLabel: "Total pressure loss",
@@ -265,20 +279,20 @@ export function calculatePressureDrop(inputs: PressureDropInputs): CalculatorOut
     },
     rows: [
       { label: "Fluid", value: fluidLabel },
-      { label: "Density ρ", value: `${fluid.densityKgM3} kg/m³` },
-      { label: "Inside diameter (ID)", value: `${idMm.toFixed(2)} mm` },
+      { label: "Density ρ", value: densityOut },
+      { label: "Inside diameter (ID)", value: idOut },
       { label: "Velocity", value: velocityStr },
       { label: "Reynolds number (Re)", value: reynoldsStr },
       { label: "Friction factor (f)", value: f.toFixed(5) },
       {
         label: "Straight length (L)",
-        value: `${(Number.isFinite(lengthM) ? lengthM : 0).toFixed(1)} m`,
+        value: straightOut,
       },
       {
         label: "Equivalent length (fittings)",
-        value: `${fittingLeqM.toFixed(1)} m`,
+        value: fittingOut,
       },
-      { label: "Total equivalent L", value: `${leqM.toFixed(1)} m` },
+      { label: "Total equivalent L", value: leqOut },
       { label: "ΔP per 100 m", value: per100Row },
       { label: "Total ΔP (bar)", value: `${dpBar.toFixed(3)} bar` },
       { label: "Total ΔP (psi)", value: `${barToPsi(dpBar).toFixed(2)} psi` },
@@ -286,20 +300,20 @@ export function calculatePressureDrop(inputs: PressureDropInputs): CalculatorOut
     exportRows: [
       { label: "Standard", value: "Darcy–Weisbach / Haaland f" },
       { label: "Fluid", value: fluidLabel },
-      { label: "Density ρ", value: `${fluid.densityKgM3} kg/m³` },
-      { label: "Inside diameter (ID)", value: `${idMm.toFixed(2)} mm` },
+      { label: "Density ρ", value: densityOut },
+      { label: "Inside diameter (ID)", value: idOut },
       { label: "Velocity", value: velocityStr },
       { label: "Reynolds number (Re)", value: reynoldsStr },
       { label: "Friction factor (f)", value: f.toFixed(5) },
       {
         label: "Straight length (L)",
-        value: `${(Number.isFinite(lengthM) ? lengthM : 0).toFixed(1)} m`,
+        value: straightOut,
       },
       {
         label: "Equivalent length (fittings)",
-        value: `${fittingLeqM.toFixed(1)} m`,
+        value: fittingOut,
       },
-      { label: "Total equivalent L", value: `${leqM.toFixed(1)} m` },
+      { label: "Total equivalent L", value: leqOut },
       { label: "ΔP per 100 m", value: per100Row },
       { label: "Total ΔP (bar)", value: `${dpBar.toFixed(3)} bar` },
       { label: "Total ΔP (psi)", value: `${barToPsi(dpBar).toFixed(2)} psi` },

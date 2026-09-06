@@ -7,6 +7,7 @@ import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { ToastProvider } from "@/components/ui/ToastProvider";
 import QuickUnitDock from "@/components/home/QuickUnitDock";
 import { QuickUnitProvider } from "@/components/layout/QuickUnitProvider";
+import { UnitProvider } from "@/components/units/UnitContext";
 import FeedbackModal from "@/components/feedback/FeedbackModal";
 import type { Calculator } from "@/lib/calculators/types";
 import ChunkErrorRecovery from "@/components/providers/ChunkErrorRecovery";
@@ -21,17 +22,19 @@ export default function AppProviders({
   return (
     <ThemeProvider>
       <ToastProvider>
-        <SearchProvider calculators={calculators}>
-          <QuickUnitProvider>
-            <ChunkErrorRecovery />
-            {children}
-            <CommandPalette />
-            <Suspense fallback={null}>
-              <QuickUnitDock />
-            </Suspense>
-            <FeedbackModal calculators={calculators} />
-          </QuickUnitProvider>
-        </SearchProvider>
+        <UnitProvider>
+          <SearchProvider calculators={calculators}>
+            <QuickUnitProvider>
+              <ChunkErrorRecovery />
+              {children}
+              <CommandPalette />
+              <Suspense fallback={null}>
+                <QuickUnitDock />
+              </Suspense>
+              <FeedbackModal calculators={calculators} />
+            </QuickUnitProvider>
+          </SearchProvider>
+        </UnitProvider>
       </ToastProvider>
     </ThemeProvider>
   );

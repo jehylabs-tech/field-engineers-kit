@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo } from "react";
 import CalculatorBaseLayout from "@/components/calculator/CalculatorBaseLayout";
 import FieldGroup, { FieldSelect, fieldLabelHint } from "@/components/calculator/FieldGroup";
 import SectionBlock from "@/components/calculator/SectionBlock";
 import { usePublishCalculatorOutput } from "@/components/calculator/usePublishCalculatorOutput";
-import type { UnitSystem } from "@/lib/calculators/definitions";
 import {
   calculatePipeSchedule,
   DEFAULT_PIPE_SCHEDULE_INPUTS,
@@ -144,33 +143,6 @@ export default function PipeScheduleCalculator({
 
     setField(key, value);
   }
-
-  const unitSystemRef = useRef(inputs.unitSystem);
-  useEffect(() => {
-    unitSystemRef.current = inputs.unitSystem;
-  }, [inputs.unitSystem]);
-
-  useEffect(() => {
-    function onUnits(event: Event) {
-      const next = (event as CustomEvent<UnitSystem>).detail;
-      if (next !== "metric" && next !== "imperial") return;
-      setInputs((current) => {
-        const from = unitSystemRef.current;
-        if (from === next) return current;
-        unitSystemRef.current = next;
-        const length = current.length ?? 6;
-        const nextLength =
-          next === "imperial" ? length * 3.280839895 : length / 3.280839895;
-        return {
-          ...current,
-          unitSystem: next,
-          length: Number(nextLength.toFixed(3)),
-        };
-      });
-    }
-    window.addEventListener("fek-units-change", onUnits);
-    return () => window.removeEventListener("fek-units-change", onUnits);
-  }, [setInputs]);
 
   const selectedPipe = listAvailableNps().find((pipe) => pipe.nps === resolvedInputs.nps);
   const dimUnit = resolvedInputs.unitSystem === "metric" ? "mm" : "in";

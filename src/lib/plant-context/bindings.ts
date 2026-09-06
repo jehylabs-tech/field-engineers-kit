@@ -135,16 +135,23 @@ export function applyPlantContext<T extends Record<string, unknown>>(
     case "blind-flange":
       return applyDesignPressure(inputs, ctx) as T;
     case "valve-cv": {
-      // Calculator UI/engine are metric-native (bar, °C) — convert plant bus units in.
+      const unitSystem =
+        inputs.unitSystem === "imperial" ? "imperial" : "metric";
       const next = { ...inputs } as T & {
         inletPressure: number;
         temperature: number;
       };
       if (ctx.pressure) {
-        next.inletPressure = pressureToBar(ctx.pressure);
+        next.inletPressure =
+          unitSystem === "imperial"
+            ? pressureToPsi(ctx.pressure)
+            : pressureToBar(ctx.pressure);
       }
       if (ctx.temperature) {
-        next.temperature = temperatureToC(ctx.temperature);
+        next.temperature =
+          unitSystem === "imperial"
+            ? temperatureToF(ctx.temperature)
+            : temperatureToC(ctx.temperature);
       }
       return next;
     }
@@ -256,17 +263,17 @@ export function extractPlantContext(
   }
 
   if (type === "valve-cv" && typeof inputs.inletPressure === "number") {
-    ctx.pressure = {
-      value: Number(inputs.inletPressure.toFixed(3)),
-      unit: "bar",
-    };
+    ctx.pressure =
+      unitSystem === "imperial"
+        ? { value: Number(inputs.inletPressure.toFixed(1)), unit: "psi" }
+        : { value: Number(inputs.inletPressure.toFixed(3)), unit: "bar" };
   }
 
   if (type === "valve-cv" && typeof inputs.temperature === "number") {
-    ctx.temperature = {
-      value: Number(inputs.temperature.toFixed(1)),
-      unit: "C",
-    };
+    ctx.temperature =
+      unitSystem === "imperial"
+        ? { value: Number(inputs.temperature.toFixed(1)), unit: "F" }
+        : { value: Number(inputs.temperature.toFixed(1)), unit: "C" };
   }
 
   if (type === "thermal-expansion" && typeof inputs.operatingTemp === "number") {

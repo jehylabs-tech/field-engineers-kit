@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import EngineeringFaqAccordion from "@/components/calculator/EngineeringFaqAccordion";
 import SeoLookupTable from "@/components/calculator/SeoLookupTable";
-import { renderFaqAnswer } from "@/lib/calculators/faq-text";
+import UnitAwareCopy from "@/components/units/UnitAwareCopy";
 import { formatCodeStandard } from "@/lib/calculators/format-standard";
 import {
   getUnitConverterCategoryReference,
@@ -102,7 +102,7 @@ export default function UnitConverterReferenceSections() {
                   {stripStepNumber(step.name)}
                 </p>
                 <p className="text-sm leading-snug text-slate-600 dark:text-slate-300">
-                  {renderFaqAnswer(step.text)}
+                  <UnitAwareCopy text={step.text} />
                 </p>
               </div>
             </li>

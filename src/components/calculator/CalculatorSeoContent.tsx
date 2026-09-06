@@ -2,10 +2,11 @@ import EngineeringFaqAccordion from "@/components/calculator/EngineeringFaqAccor
 import FittingValveReferenceSections from "@/components/calculator/FittingValveReferenceSections";
 import SeoLookupTable from "@/components/calculator/SeoLookupTable";
 import UnitConverterReferenceSections from "@/components/calculator/UnitConverterReferenceSections";
+import UnitAwareCopy from "@/components/units/UnitAwareCopy";
 import {
-  renderFaqAnswer,
   stripFaqMarkdown,
 } from "@/lib/calculators/faq-text";
+import { flattenUnitTokens } from "@/lib/units/unit-aware-text";
 import { looksLikeLatex, renderKatexHtml } from "@/lib/calculators/katex-html";
 import { getCalculatorSeo } from "../../../data/calculatorSeoData";
 import { getSiteUrl } from "@/lib/site";
@@ -92,7 +93,7 @@ export default function CalculatorSeoContent({
           "@type": "HowToStep",
           position: index + 1,
           name: stripStepNumber(step.name),
-          text: step.text,
+          text: flattenUnitTokens(step.text, "metric"),
         })),
       },
     ],
@@ -163,7 +164,7 @@ export default function CalculatorSeoContent({
                   <p className="eng-plain">ASME B31.3 Appendix C &amp; guided-cantilever thermal flexibility sizing</p>
                 </div>
               ) : data.slug === "pressure-drop-friction" ? (
-                <div className="space-y-3 text-slate-900 dark:text-slate-50">
+                <div className="w-full max-w-full space-y-3 overflow-x-auto text-slate-900 dark:text-slate-50">
                   {[
                     String.raw`\Delta P = f \cdot \frac{L_{\text{total}}}{D} \cdot \frac{1}{2}\rho v^2`,
                     String.raw`h_f = \frac{\Delta P}{\rho \cdot g}`,
@@ -172,15 +173,31 @@ export default function CalculatorSeoContent({
                   ].map((latex) => (
                     <div
                       key={latex}
-                      className="flex justify-center rounded-lg bg-slate-50 px-3 py-2 dark:bg-slate-800/60"
+                      className="flex w-full max-w-full justify-center overflow-x-auto rounded-lg bg-slate-50 px-3 py-2 dark:bg-slate-800/60"
                       dangerouslySetInnerHTML={{ __html: renderKatexHtml(latex, true) }}
                     />
                   ))}
                   <p className="eng-plain">Darcy-Weisbach Equation, Haaland Explicit Friction &amp; Crane TP-410 Fitting Equivalents</p>
                 </div>
+              ) : data.slug === "valve-cv-sizing" ? (
+                <div className="w-full max-w-full space-y-3 overflow-x-auto text-slate-900 dark:text-slate-50">
+                  {[
+                    String.raw`C_v = Q_{\text{gpm}} \cdot \sqrt{\frac{SG}{\Delta P_{\text{psi}}}}`,
+                    String.raw`K_v = Q_{\text{m}^3/\text{h}} \cdot \sqrt{\frac{SG}{\Delta P_{\text{bar}}}}`,
+                    String.raw`C_v \approx 1.156 \cdot K_v`,
+                    String.raw`\Delta P_{\text{max}} = F_L^2 \cdot (P_{1,\text{abs}} - F_F P_v)\quad[\text{choked ceiling; absolute pressures}]`,
+                  ].map((latex) => (
+                    <div
+                      key={latex}
+                      className="flex w-full max-w-full justify-center overflow-x-auto rounded-lg bg-slate-50 px-3 py-2 dark:bg-slate-800/60"
+                      dangerouslySetInnerHTML={{ __html: renderKatexHtml(latex, true) }}
+                    />
+                  ))}
+                  <p className="eng-plain">ISA-75.01.01 &amp; IEC 60534-2-1 Control Valve Sizing Equations</p>
+                </div>
               ) : (
                 <div
-                  className="eng-formula-html text-xl font-semibold tracking-wide text-slate-900 dark:text-slate-50 md:text-2xl"
+                  className="eng-formula-html w-full max-w-full overflow-x-auto text-xl font-semibold tracking-wide text-slate-900 dark:text-slate-50 md:text-2xl"
                   dangerouslySetInnerHTML={{ __html: data.formulaHtml }}
                 />
               )}
@@ -260,14 +277,14 @@ export default function CalculatorSeoContent({
               {data.allowancesAndTolerances.items.map((item) => (
                 <div
                   key={item.label}
-                  className="rounded-lg border border-slate-200 bg-slate-50/70 p-3.5 dark:border-slate-800 dark:bg-slate-800/40"
+                  className="min-w-0 rounded-lg border border-slate-200 bg-slate-50/70 p-3.5 dark:border-slate-800 dark:bg-slate-800/40"
                 >
-                  <div className="flex items-center justify-between gap-2">
+                  <div className="flex min-w-0 flex-col gap-1.5 sm:flex-row sm:items-start sm:justify-between sm:gap-2">
                     <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">
                       {item.label}
                     </span>
                     {item.value ? (
-                      <span className="rounded bg-blue-100 px-2 py-0.5 font-mono text-xs font-medium text-blue-800 dark:bg-blue-900/50 dark:text-blue-300">
+                      <span className="max-w-full overflow-x-auto rounded bg-blue-100 px-2 py-0.5 font-mono text-xs font-medium text-blue-800 dark:bg-blue-900/50 dark:text-blue-300 sm:max-w-[55%] sm:shrink-0 sm:text-right">
                         {item.value}
                       </span>
                     ) : null}
@@ -289,6 +306,7 @@ export default function CalculatorSeoContent({
                 footnote={data.tableFootnote}
                 allNumeric={data.tableAllNumeric}
                 torqueNmColumns={data.tableTorqueNmColumns}
+                columnUnits={data.tableColumnUnits}
                 boldColumns={data.tableBoldColumns}
               />
             </div>
@@ -405,15 +423,17 @@ export default function CalculatorSeoContent({
                     </div>
                   ) : null}
                   {step.result ? (
-                    <div className="mt-2 flex flex-col gap-1.5 text-xs sm:flex-row sm:items-center sm:justify-between">
-                      <span className="font-medium text-slate-500 dark:text-slate-400">Result:</span>
+                    <div className="mt-2 flex min-w-0 flex-col gap-1.5 text-xs sm:flex-row sm:items-start sm:justify-between">
+                      <span className="shrink-0 font-medium text-slate-500 dark:text-slate-400">
+                        Result:
+                      </span>
                       {renderMaybeKatex(step.result, false) ? (
                         <span
-                          className="inline-block rounded bg-emerald-50 px-2 py-1 font-bold text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300"
+                          className="max-w-full break-words rounded bg-emerald-50 px-2 py-1 font-bold text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 sm:text-right"
                           dangerouslySetInnerHTML={renderMaybeKatex(step.result, false)!}
                         />
                       ) : (
-                        <span className="rounded bg-emerald-50 px-2 py-0.5 font-mono font-bold text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300">
+                        <span className="max-w-full break-words rounded bg-emerald-50 px-2 py-0.5 font-mono font-bold text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 sm:text-right">
                           {step.result}
                         </span>
                       )}
@@ -434,10 +454,13 @@ export default function CalculatorSeoContent({
             ) : null}
           </section>
 
-          {/* Section 5: Code Limitations & FAQ */}
+          {/* Section 5: FAQ */}
           <section className={GUIDE_CARD} id="faq" aria-labelledby="section-5-heading">
-            <h2 id="section-5-heading" className="mb-3 text-lg font-semibold text-slate-800 dark:text-slate-100">
-              5. Code Limitations &amp; FAQ
+            <h2
+              id="section-5-heading"
+              className="mb-4 text-xl font-bold text-slate-900 dark:text-slate-100"
+            >
+              5. Frequently Asked Questions &amp; Technical References
             </h2>
             <EngineeringFaqAccordion items={data.faq} />
           </section>
@@ -506,6 +529,7 @@ export default function CalculatorSeoContent({
               footnote={data.tableFootnote}
               allNumeric={data.tableAllNumeric}
               torqueNmColumns={data.tableTorqueNmColumns}
+              columnUnits={data.tableColumnUnits}
               boldColumns={data.tableBoldColumns}
             />
           </div>
@@ -525,7 +549,7 @@ export default function CalculatorSeoContent({
                       {stripStepNumber(step.name)}
                     </p>
                     <p className="text-sm leading-snug text-slate-600 dark:text-slate-300">
-                      {renderFaqAnswer(step.text)}
+                      <UnitAwareCopy text={step.text} />
                     </p>
                   </div>
                 </li>

@@ -47,13 +47,24 @@ export default function ValveCvCalculator({
     setField(key, value);
   }
 
+  const imperial = inputs.unitSystem === "imperial";
+  const flowUnit = imperial
+    ? inputs.fluid === "liquid"
+      ? "GPM"
+      : "SCFH"
+    : inputs.fluid === "liquid"
+      ? "m³/h"
+      : "Nm³/h";
+  const pressureUnit = imperial ? "psig" : "bar g";
+  const tempUnit = imperial ? "°F" : "°C";
+
   const inputRows = [
     { label: "Fluid type", value: inputs.fluid },
-    { label: "Flow rate", value: `${inputs.flowRate} m³/h` },
-    { label: "Inlet pressure", value: `${inputs.inletPressure} bar` },
-    { label: "Outlet pressure", value: `${inputs.outletPressure} bar` },
+    { label: "Flow rate", value: `${inputs.flowRate} ${flowUnit}` },
+    { label: "Inlet pressure", value: `${inputs.inletPressure} ${pressureUnit}` },
+    { label: "Outlet pressure", value: `${inputs.outletPressure} ${pressureUnit}` },
     { label: "Specific gravity", value: String(inputs.specificGravity) },
-    { label: "Temperature", value: `${inputs.temperature} °C` },
+    { label: "Temperature", value: `${inputs.temperature} ${tempUnit}` },
     { label: "Selected Cv", value: String(inputs.requiredCv) },
   ];
 
@@ -104,25 +115,35 @@ export default function ValveCvCalculator({
               onChange={(value) =>
                 updateField("flowRate", toNumber(value, inputs.flowRate))
               }
-              unit={inputs.fluid === "liquid" ? "m³/h" : "Nm³/h"}
+              unit={flowUnit}
             />
 
             <div className="grid grid-cols-2 gap-2">
               <FieldGroup
-                label="Inlet pressure (P1)"
+                label="Inlet pressure (P1, gauge)"
+                hint={
+                  inputs.fluid === "gas"
+                    ? "Enter gauge pressure. Gas Cv converts to absolute using +1 atm (1.01325 bar / 14.696 psi)."
+                    : "Enter gauge pressure. Liquid ΔP sizing uses the gauge differential directly."
+                }
                 value={inputs.inletPressure}
                 onChange={(value) =>
                   updateField("inletPressure", toNumber(value, inputs.inletPressure))
                 }
-                unit="bar"
+                unit={pressureUnit}
               />
               <FieldGroup
-                label="Outlet pressure (P2)"
+                label="Outlet pressure (P2, gauge)"
+                hint={
+                  inputs.fluid === "gas"
+                    ? "Enter gauge pressure. Converted to absolute for gas sizing with the same +1 atm offset."
+                    : "Enter gauge pressure. Units follow the metric / imperial toggle."
+                }
                 value={inputs.outletPressure}
                 onChange={(value) =>
                   updateField("outletPressure", toNumber(value, inputs.outletPressure))
                 }
-                unit="bar"
+                unit={pressureUnit}
               />
             </div>
           </SectionBlock>
@@ -155,11 +176,12 @@ export default function ValveCvCalculator({
                 <div className="grid grid-cols-2 gap-2">
                   <FieldGroup
                     label="Specific gravity (SG)"
-                    hint="Water = 1.0, Air = 1.0 (relative to base reference)."
+                    hint="Dimensionless. Water = 1.0, Air = 1.0 (relative to base reference)."
                     value={inputs.specificGravity}
                     onChange={(value) =>
                       updateField("specificGravity", toNumber(value, inputs.specificGravity))
                     }
+                    unit="dim."
                   />
                   <FieldGroup
                     label="Temperature (T)"
@@ -168,7 +190,7 @@ export default function ValveCvCalculator({
                     onChange={(value) =>
                       updateField("temperature", toNumber(value, inputs.temperature))
                     }
-                    unit="°C"
+                    unit={tempUnit}
                   />
                 </div>
                 <FieldGroup
@@ -178,6 +200,7 @@ export default function ValveCvCalculator({
                   onChange={(value) =>
                     updateField("requiredCv", toNumber(value, inputs.requiredCv))
                   }
+                  unit="Cv"
                 />
               </div>
             )}

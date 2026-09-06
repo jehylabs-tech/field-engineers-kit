@@ -6,6 +6,12 @@ import {
 import { urlSyncHelpers, type ParamConfig } from "@/lib/calculators/url-sync";
 
 export const VALVE_CV_URL_CONFIG: ParamConfig<ValveCvInputs> = {
+  unitSystem: {
+    param: "units",
+    serialize: (value) => value,
+    deserialize: (value, fallback) =>
+      value === "imperial" || value === "metric" ? value : fallback,
+  },
   fluid: {
     param: "fluid",
     serialize: (value: ValveCvFluid) => value,

@@ -507,44 +507,6 @@ export default function BoltTorqueCalculator({
               }
             />
           </SectionBlock>
-
-          <details className="group mt-auto w-full min-w-0 rounded-lg border border-slate-200 bg-slate-50 open:bg-white dark:border-spec-border dark:bg-spec-bg dark:open:bg-spec-panel">
-            <summary className="cursor-pointer list-none px-3 py-2.5 text-sm font-semibold text-slate-700 marker:content-none dark:text-slate-300 [&::-webkit-details-marker]:hidden">
-              <span className="flex items-center justify-between gap-2">
-                <span>Engineering Reference & PCC-1 Notes</span>
-                <span
-                  aria-hidden
-                  className="text-slate-400 transition-transform duration-150 group-open:rotate-180"
-                >
-                  ▾
-                </span>
-              </span>
-            </summary>
-            <div className="border-t border-slate-200 px-3 py-2.5 text-sm leading-relaxed text-spec-text2 dark:border-spec-border md:text-[15px]">
-              <p className="mb-2">
-                <span className="font-medium text-spec-text">ASME B16.5</span>{" "}
-                sets flange geometry, stud size, and bolt count.{" "}
-                <span className="font-medium text-spec-text">ASME PCC-1</span>{" "}
-                governs assembly: lubricate consistently, follow the star/cross
-                sequence, and apply Round 1–4 (30% / 60% / 100% / circular check
-                at 100%).
-              </p>
-              <p className="mb-2">
-                Screening torque uses{" "}
-                <span className="font-mono tabular-nums">T = K · D · F</span>.
-                Tabulated targets assume moly anti-seize at{" "}
-                <span className="font-mono tabular-nums">K = 0.13</span>.
-                Changing lubricant rescales torque proportionally (
-                <span className="font-mono tabular-nums">T ∝ K</span>
-                ): dry/lightly oiled steel needs more torque for the same
-                preload; PTFE/Teflon needs less. Bolt grade (B7 vs B8/B8M Class
-                2) adjusts allowable preload relative to the B7 baseline.
-              </p>
-              <p className="font-mono tabular-nums text-spec-text3">
-                1 N·m = 0.7376 ft-lbs · Unit switch converts all result torques.
-              </p>
-            </div>
-          </details>
         </div>
       }
     />

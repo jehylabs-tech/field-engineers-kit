@@ -1,12 +1,14 @@
 import {
   DEFAULT_FLOW_VELOCITY_INPUTS,
   type FlowVelocityInputs,
+  type FlowVelocityMaterial,
   type VelocityFlowUnit,
 } from "@/lib/calculators/engines/flow-velocity";
 import type { UnitSystem } from "@/lib/calculators/definitions";
 import { urlSyncHelpers, type ParamConfig } from "@/lib/calculators/url-sync";
 
 const FLOW_UNITS: VelocityFlowUnit[] = ["m3h", "gpm"];
+const MATERIALS: FlowVelocityMaterial[] = ["cs", "ss"];
 
 export const FLOW_VELOCITY_URL_CONFIG: ParamConfig<FlowVelocityInputs> = {
   unitSystem: {
@@ -14,6 +16,14 @@ export const FLOW_VELOCITY_URL_CONFIG: ParamConfig<FlowVelocityInputs> = {
     serialize: (value: UnitSystem) => value,
     deserialize: (value, fallback) =>
       value === "imperial" || value === "metric" ? value : fallback,
+  },
+  materialFamily: {
+    param: "mat",
+    serialize: (value: FlowVelocityMaterial) => value,
+    deserialize: (value, fallback) =>
+      MATERIALS.includes(value as FlowVelocityMaterial)
+        ? (value as FlowVelocityMaterial)
+        : fallback,
   },
   nps: { param: "nps", ...urlSyncHelpers.string },
   schedule: { param: "schedule", ...urlSyncHelpers.string },

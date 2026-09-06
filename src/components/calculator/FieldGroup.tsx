@@ -28,7 +28,7 @@ export function fieldLabelHint(label: string): string | undefined {
     return "ASME class (150 / 300 / 600) is a rating designation, not a psi value.";
   }
   if (text.includes("design pressure") || text.includes("inlet pressure") || text.includes("outlet pressure")) {
-    return "Enter gauge pressure. Units follow the metric / imperial toggle.";
+    return "Enter gauge pressure (bar g / psig). Units follow the metric / imperial toggle. Gas Cv adds +1 atm to convert to absolute.";
   }
   if (text.includes("pipe schedule") || text === "schedule") {
     return "Sch 40 / STD is the default wall for most process carbon-steel pipe. Sch 5S / 10S / 40S / 80S follow ASME B36.19M stainless dimensions.";

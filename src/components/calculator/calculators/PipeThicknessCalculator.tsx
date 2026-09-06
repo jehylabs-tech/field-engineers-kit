@@ -14,7 +14,6 @@ import {
   JOINT_QUALITY_PRESETS,
   PIPE_THICKNESS_MATERIAL_PRESETS,
   calculatePipeThickness,
-  convertAllowableStress,
   defaultDesignTemperature,
   defaultMechanicalAllowance,
   formatMaterialPresetOption,
@@ -29,7 +28,6 @@ import {
   type PipeThicknessInputs,
 } from "@/lib/calculators/engines/pipe-thickness";
 import PipeThicknessSchematic from "@/components/calculator/schematics/PipeThicknessSchematic";
-import type { UnitSystem } from "@/lib/calculators/definitions";
 import { useCalculatorUrlSync } from "@/lib/calculators/url-sync";
 import { PIPE_URL_CONFIG } from "@/lib/calculators/url-configs/pipe-thickness";
 import {
@@ -52,11 +50,6 @@ const NPS_MAX = 24;
 function toNumber(value: string, fallback: number) {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : fallback;
-}
-
-function convertLength(value: number, from: UnitSystem, to: UnitSystem): number {
-  if (from === to || !Number.isFinite(value)) return value;
-  return to === "metric" ? value * 25.4 : value / 25.4;
 }
 
 function npsInRange(nps: string): boolean {
@@ -237,59 +230,57 @@ export default function PipeThicknessCalculator({
     }));
   }
 
-  const unitSystemRef = useRef(inputs.unitSystem);
+  // Re-seed table/preset fields only after the user toggles units (not URL hydrate).
+  const seededUnitSystemRef = useRef(inputs.unitSystem);
+  const allowTableReseedRef = useRef(false);
   useEffect(() => {
-    unitSystemRef.current = inputs.unitSystem;
-  }, [inputs.unitSystem]);
-
-  useEffect(() => {
-    function onUnits(event: Event) {
-      const next = (event as CustomEvent<UnitSystem>).detail;
-      if (next !== "metric" && next !== "imperial") return;
-      setInputs((current) => {
-        const from = unitSystemRef.current;
-        if (from === next) return current;
-        unitSystemRef.current = next;
-        const presetStress = pipeThicknessStressForMaterial(
-          current.material ?? "",
-          next,
-        );
-        const allowableStress =
-          current.material && current.material !== "custom" && presetStress != null
-            ? presetStress
-            : convertAllowableStress(current.allowableStress, from, next);
-
-        const pipe = getPipeScheduleSize(current.nps);
-        const entry = getPipeScheduleEntry(
-          current.nps,
-          resolveScheduleOptionValue(current.nps, current.schedule),
-        );
-        const outsideDiameter = pipe
-          ? next === "metric"
-            ? pipe.outsideDiameterMm
-            : pipe.outsideDiameterIn
-          : convertLength(current.outsideDiameter, from, next);
-        const actualThickness = entry
-          ? next === "metric"
-            ? entry.row.wallThicknessMm
-            : entry.row.wallThicknessMm / 25.4
-          : convertLength(current.actualThickness, from, next);
-
-        return {
-          ...current,
-          unitSystem: next,
-          allowableStress,
-          outsideDiameter,
-          actualThickness,
-          designTemperature: defaultDesignTemperature(next),
-          corrosionAllowance: defaultMechanicalAllowance(next),
-          yCoefficient: undefined,
-        };
-      });
+    function onUnits() {
+      allowTableReseedRef.current = true;
     }
     window.addEventListener("fek-units-change", onUnits);
     return () => window.removeEventListener("fek-units-change", onUnits);
-  }, [setInputs]);
+  }, []);
+  useEffect(() => {
+    if (seededUnitSystemRef.current === inputs.unitSystem) return;
+    const next = inputs.unitSystem;
+    seededUnitSystemRef.current = next;
+    if (!allowTableReseedRef.current) return;
+    allowTableReseedRef.current = false;
+    setInputs((current) => {
+      const presetStress = pipeThicknessStressForMaterial(
+        current.material ?? "",
+        next,
+      );
+      const pipe = getPipeScheduleSize(current.nps);
+      const entry = getPipeScheduleEntry(
+        current.nps,
+        resolveScheduleOptionValue(current.nps, current.schedule),
+      );
+      const outsideDiameter = pipe
+        ? next === "metric"
+          ? pipe.outsideDiameterMm
+          : pipe.outsideDiameterIn
+        : current.outsideDiameter;
+      const actualThickness = entry
+        ? next === "metric"
+          ? entry.row.wallThicknessMm
+          : entry.row.wallThicknessMm / 25.4
+        : current.actualThickness;
+
+      return {
+        ...current,
+        allowableStress:
+          current.material && current.material !== "custom" && presetStress != null
+            ? presetStress
+            : current.allowableStress,
+        outsideDiameter,
+        actualThickness,
+        designTemperature: defaultDesignTemperature(next),
+        corrosionAllowance: defaultMechanicalAllowance(next),
+        yCoefficient: undefined,
+      };
+    });
+  }, [inputs.unitSystem, setInputs]);
 
   useEffect(() => {
     const nextSchedule = defaultScheduleForNps(inputs.nps, inputs.schedule);

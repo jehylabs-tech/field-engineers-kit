@@ -9,12 +9,19 @@ import { usePublishCalculatorOutput } from "@/components/calculator/usePublishCa
 import {
   calculateFlowVelocity,
   DEFAULT_FLOW_VELOCITY_INPUTS,
+  defaultErosionC,
+  defaultScheduleForMaterial,
+  FLOW_VELOCITY_MATERIALS,
+  liquidVelocityCapMs,
+  listSchedulesForMaterial,
+  materialShortLabel,
   type FlowVelocityInputs,
+  type FlowVelocityMaterial,
   type VelocityFlowUnit,
 } from "@/lib/calculators/engines/flow-velocity";
 import { useCalculatorUrlSync } from "@/lib/calculators/url-sync";
 import { FLOW_VELOCITY_URL_CONFIG } from "@/lib/calculators/url-configs/flow-velocity";
-import { listAvailableNps, listSchedulesForNps } from "@/lib/data/loaders";
+import { listAvailableNps } from "@/lib/data/loaders";
 
 type Props = { title: string; standard?: string };
 
@@ -31,20 +38,56 @@ export default function FlowVelocityCalculator({ title, standard }: Props) {
     { type: "flow-velocity" },
   );
 
+  const material: FlowVelocityMaterial =
+    inputs.materialFamily === "ss" ? "ss" : "cs";
+  const scheduleOptions = useMemo(
+    () => listSchedulesForMaterial(inputs.nps, material),
+    [inputs.nps, material],
+  );
+  const liquidCap = liquidVelocityCapMs(material);
+  const matShort = materialShortLabel(material);
+
   useEffect(() => {
-    const schedules = listSchedulesForNps(inputs.nps);
     if (
-      schedules.length > 0 &&
-      !schedules.some((row) => row.schedule === inputs.schedule)
+      scheduleOptions.length > 0 &&
+      !scheduleOptions.some((row) => row.schedule === inputs.schedule)
     ) {
-      setField("schedule", schedules[0].schedule);
+      setField(
+        "schedule",
+        defaultScheduleForMaterial(inputs.nps, material, inputs.schedule),
+      );
     }
-  }, [inputs.nps, inputs.schedule, setField]);
+  }, [
+    inputs.nps,
+    inputs.schedule,
+    material,
+    scheduleOptions,
+    setField,
+  ]);
 
   const output = useMemo(() => calculateFlowVelocity(inputs), [inputs]);
   usePublishCalculatorOutput(output);
 
   const flowUnitLabel = inputs.flowUnit === "gpm" ? "GPM" : "m³/h";
+  const densityUnit =
+    inputs.unitSystem === "imperial" ? "lb/ft³" : "kg/m³";
+  const velUnit = inputs.unitSystem === "imperial" ? "ft/s" : "m/s";
+  const liquidCapDisplay =
+    inputs.unitSystem === "imperial"
+      ? (liquidCap * 3.280839895).toFixed(1)
+      : liquidCap.toFixed(1);
+  const materialMeta =
+    FLOW_VELOCITY_MATERIALS.find((item) => item.value === material) ??
+    FLOW_VELOCITY_MATERIALS[0];
+
+  function applyMaterial(next: FlowVelocityMaterial) {
+    setField("materialFamily", next);
+    setField("erosionC", defaultErosionC(next));
+    setField(
+      "schedule",
+      defaultScheduleForMaterial(inputs.nps, next, inputs.schedule),
+    );
+  }
 
   return (
     <CalculatorBaseLayout
@@ -52,26 +95,54 @@ export default function FlowVelocityCalculator({ title, standard }: Props) {
       exportTitle={title}
       standard={standard}
       inputRows={[
+        {
+          label: "Material",
+          value: `${matShort} | Sch ${inputs.schedule} | C=${inputs.erosionC}`,
+        },
         { label: "Pipe", value: `NPS ${inputs.nps}" Sch ${inputs.schedule}` },
         { label: "Flow", value: `${inputs.flow} ${flowUnitLabel}` },
-        { label: "Density", value: `${inputs.density} kg/m³` },
-        { label: "API RP 14E c", value: String(inputs.erosionC) },
+        { label: "Density", value: `${inputs.density} ${densityUnit}` },
       ]}
       chart={<FlowVelocityChart inputs={inputs} />}
       inputPanel={
         <div className="flex w-full min-w-0 flex-col gap-3 [&_.calc-field]:max-w-none">
-          {/* Section 1: Pipe Geometry & Flow Rate */}
           <SectionBlock
             number={1}
             title="Pipe Geometry & Flow Rate"
             twoColumn={false}
             compact
           >
+            <FieldSelect
+              label="Material family"
+              value={material}
+              onChange={(value) =>
+                applyMaterial(value as FlowVelocityMaterial)
+              }
+              hint={`${materialMeta.standard} schedules · default C=${defaultErosionC(material)} · liquid warning cap ${liquidCapDisplay} ${velUnit}`}
+            >
+              {FLOW_VELOCITY_MATERIALS.map((item) => (
+                <option key={item.value} value={item.value}>
+                  {item.label}
+                </option>
+              ))}
+            </FieldSelect>
+
             <div className="grid grid-cols-2 gap-2">
               <FieldSelect
                 label="NPS"
                 value={inputs.nps}
-                onChange={(value) => setField("nps", value)}
+                onChange={(value) => {
+                  const nextNps = value;
+                  setField("nps", nextNps);
+                  setField(
+                    "schedule",
+                    defaultScheduleForMaterial(
+                      nextNps,
+                      material,
+                      inputs.schedule,
+                    ),
+                  );
+                }}
               >
                 {listAvailableNps().map((pipe) => (
                   <option key={pipe.nps} value={pipe.nps}>
@@ -81,10 +152,19 @@ export default function FlowVelocityCalculator({ title, standard }: Props) {
               </FieldSelect>
               <FieldSelect
                 label="Schedule"
-                value={inputs.schedule}
+                value={
+                  scheduleOptions.some((row) => row.schedule === inputs.schedule)
+                    ? inputs.schedule
+                    : (scheduleOptions[0]?.schedule ?? inputs.schedule)
+                }
                 onChange={(value) => setField("schedule", value)}
+                hint={
+                  material === "ss"
+                    ? "ASME B36.19M (5S / 10S / 40S / 80S)"
+                    : "ASME B36.10M carbon & alloy schedules"
+                }
               >
-                {listSchedulesForNps(inputs.nps).map((row) => (
+                {scheduleOptions.map((row) => (
                   <option key={row.schedule} value={row.schedule}>
                     Sch {row.schedule}
                   </option>
@@ -96,7 +176,9 @@ export default function FlowVelocityCalculator({ title, standard }: Props) {
               <FieldGroup
                 label="Flow rate"
                 value={inputs.flow}
-                onChange={(value) => setField("flow", toNumber(value, inputs.flow))}
+                onChange={(value) =>
+                  setField("flow", toNumber(value, inputs.flow))
+                }
                 unit={flowUnitLabel}
                 highlight="Q"
               />
@@ -113,14 +195,13 @@ export default function FlowVelocityCalculator({ title, standard }: Props) {
             </div>
           </SectionBlock>
 
-          {/* Section 2: Fluid Density & Erosion Constants (Collapsible) */}
           <div className="rounded-xl border border-slate-200/90 bg-slate-50/50 dark:border-slate-800/90 dark:bg-slate-900/30">
             <button
               type="button"
               onClick={() => setShowAdvanced(!showAdvanced)}
               className="flex w-full items-center justify-between px-3.5 py-2.5 text-left transition-colors hover:bg-slate-100/60 dark:hover:bg-slate-800/40"
             >
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <span className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-200/80 text-[11px] font-bold text-slate-700 dark:bg-slate-800 dark:text-slate-300">
                   2
                 </span>
@@ -128,7 +209,8 @@ export default function FlowVelocityCalculator({ title, standard }: Props) {
                   Fluid Density &amp; API RP 14E Erosion Constants
                 </span>
                 <span className="rounded bg-slate-200/60 px-1.5 py-0.5 text-[10px] text-slate-500 dark:bg-slate-800 dark:text-slate-400">
-                  Water / c=100
+                  {matShort} / C={inputs.erosionC} / cap {liquidCapDisplay}{" "}
+                  {velUnit}
                 </span>
               </div>
               <span className="text-xs font-bold text-slate-400 dark:text-slate-500">
@@ -140,16 +222,24 @@ export default function FlowVelocityCalculator({ title, standard }: Props) {
               <div className="space-y-3 border-t border-slate-200/80 p-3.5 dark:border-slate-800">
                 <FieldGroup
                   label="Fluid density (ρ)"
-                  hint="Liquid water = 1000 kg/m³, Hydrocarbon liquids ~ 700–900 kg/m³."
+                  hint={
+                    inputs.unitSystem === "imperial"
+                      ? "Liquid water ≈ 62.4 lb/ft³, hydrocarbon liquids ~ 44–56 lb/ft³."
+                      : "Liquid water = 1000 kg/m³, Hydrocarbon liquids ~ 700–900 kg/m³."
+                  }
                   value={inputs.density}
                   onChange={(value) =>
                     setField("density", toNumber(value, inputs.density))
                   }
-                  unit="kg/m³"
+                  unit={densityUnit}
                 />
                 <FieldGroup
                   label="API RP 14E empirical c-factor"
-                  hint="Continuous solids-free service c = 100. Intermittent / non-corrosive service c = 125 ~ 150."
+                  hint={
+                    material === "ss"
+                      ? "CRA default C = 150 (NORSOK P-002 / ISO 13703). Adjust up to ~200 for continuous CRA service."
+                      : "Carbon steel continuous solids-free service C = 100. Intermittent service C = 125 ~ 150."
+                  }
                   value={inputs.erosionC}
                   onChange={(value) =>
                     setField("erosionC", toNumber(value, inputs.erosionC))
@@ -157,7 +247,11 @@ export default function FlowVelocityCalculator({ title, standard }: Props) {
                   highlight="c"
                 />
                 <p className="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">
-                  Erosional velocity formula: v_e = c / √ρ (per API RP 14E).
+                  Erosional velocity: v_e = C / √ρ (API RP 14E). Practical liquid
+                  warning cap for {matShort}: {liquidCapDisplay} {velUnit}
+                  {material === "ss"
+                    ? " (CRA range typically 5–7 m/s)."
+                    : " (FAC / film-stripping threshold)."}
                 </p>
               </div>
             )}

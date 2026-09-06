@@ -62,6 +62,23 @@ export type CalculatorSeoEntry = {
   formulaHighlight?: boolean;
   /** Column indexes whose cells are torque in N·m; follow navbar metric/imperial toggle. */
   tableTorqueNmColumns?: number[];
+  /**
+   * SI-stored numeric columns converted when navbar is imperial.
+   * Prefer this over tableTorqueNmColumns for new calculators.
+   */
+  tableColumnUnits?: {
+    index: number;
+    quantity:
+      | "flow"
+      | "velocity"
+      | "pressure"
+      | "torque"
+      | "density"
+      | "length"
+      | "lengthLarge"
+      | "temperature";
+    digits?: number;
+  }[];
   /** Column indexes to render in bold for field scanning (e.g. required thickness). */
   tableBoldColumns?: number[];
   variables: SeoVariable[];
@@ -211,7 +228,7 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
           materialGroup: "Liquid Density vs Specific Gravity",
           temperatureLimit: "SG = ρ_fluid / ρ_water @ 4 °C (1,000 kg/m³ / 62.428 lb/ft³)",
           stressLimit: "Dimensionless Density Ratio",
-          notes: "In pump hydraulic calculations, water density shifts from 1,000 kg/m³ at 4 °C to 998 kg/m³ at 20 °C and 958 kg/m³ at 100 °C.",
+          notes: "In pump hydraulic calculations, water density shifts from 1,000 kg/m³ (62.4 lb/ft³) at 4 °C to 998 kg/m³ (62.3 lb/ft³) at 20 °C and 958 kg/m³ (59.8 lb/ft³) at 100 °C.",
         },
         {
           materialGroup: "Energy, Power & Heat Rate",
@@ -625,7 +642,7 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
         { label: "Nominal Size", value: "NPS 8 (DN 200)" },
         { label: "Schedule Designation", value: "Schedule 80 (XS)" },
         { label: "Material", value: "ASTM A106 Gr. B Carbon Steel (ρ = 7,850 kg/m³)" },
-        { label: "Process Medium", value: "Water @ 20 °C (ρ_w = 998 kg/m³)" },
+        { label: "Process Medium", value: "Water @ 20 °C / 68 °F (ρ_w = 998 kg/m³ / 62.3 lb/ft³)" },
       ],
       steps: [
         {
@@ -992,7 +1009,7 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
           materialGroup: "Swing & Dual-Plate Check Valves (API 594 / API 6D)",
           temperatureLimit: "Gravity & Flow Dependent Backflow Prevention",
           stressLimit: "Minimum Cracking Velocity Required to Prevent Slam",
-          notes: "Horizontal or vertical-up flow only. Requires sufficient fluid velocity (v > 1.5 m/s) to keep disc fully open against gravity.",
+          notes: "Horizontal or vertical-up flow only. Requires sufficient fluid velocity (v > 1.5 m/s / 5 ft/s) to keep disc fully open against gravity.",
         },
       ],
       codeRestrictions: [
@@ -1482,12 +1499,14 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
     slug: "valve-cv-sizing",
     formulaTitle: "Core Formula & Variable Definitions",
     formulaHtml:
-      '<p class="eng-eq"><i>C</i><sub>v</sub> = <i>Q</i><sub>gpm</sub> · √(<span class="eng-frac"><span class="eng-num"><i>SG</i></span><span class="eng-den">Δ<i>P</i><sub>psi</sub></span></span>) &nbsp;·&nbsp; <i>K</i><sub>v</sub> = <i>Q</i><sub>m³/h</sub> · √(<span class="eng-frac"><span class="eng-num"><i>SG</i></span><span class="eng-den">Δ<i>P</i><sub>bar</sub></span></span>) &nbsp;·&nbsp; <i>C</i><sub>v</sub> ≈ 1.156 · <i>K</i><sub>v</sub></p>' +
-      '<p class="eng-eq">Δ<i>P</i><sub>max</sub> = <i>F</i><sub>L</sub>² · (<i>P</i><sub>1</sub> − <i>F</i><sub>F</sub><i>P</i><sub>v</sub>) &nbsp;[Choked Flow Ceiling]</p>' +
+      '<p class="eng-eq"><i>C</i><sub>v</sub> = <i>Q</i><sub>gpm</sub> · √(<span class="eng-frac"><span class="eng-num"><i>SG</i></span><span class="eng-den">Δ<i>P</i><sub>psi</sub></span></span>)</p>' +
+      '<p class="eng-eq"><i>K</i><sub>v</sub> = <i>Q</i><sub>m³/h</sub> · √(<span class="eng-frac"><span class="eng-num"><i>SG</i></span><span class="eng-den">Δ<i>P</i><sub>bar</sub></span></span>)</p>' +
+      '<p class="eng-eq"><i>C</i><sub>v</sub> ≈ 1.156 · <i>K</i><sub>v</sub></p>' +
+      '<p class="eng-eq">Δ<i>P</i><sub>max</sub> = <i>F</i><sub>L</sub>² · (<i>P</i><sub>1,abs</sub> − <i>F</i><sub>F</sub><i>P</i><sub>v</sub>) &nbsp;[Choked ceiling · absolute pressures]</p>' +
       '<p class="eng-plain">ISA-75.01.01 &amp; IEC 60534-2-1 Control Valve Sizing Equations</p>',
     formulaLatex: "C_v = Q_{\\text{gpm}} \\sqrt{\\frac{SG}{\\Delta P_{\\text{psi}}}},\\quad K_v = Q_{\\text{m}^3/\\text{h}} \\sqrt{\\frac{SG}{\\Delta P_{\\text{bar}}}},\\quad C_v \\approx 1.156 \\cdot K_v",
     formulaNotes:
-      "ISA-75.01.01 and IEC 60534-2-1 define control valve flow capacity using the US flow coefficient Cv (gallons per minute of 60 °F water at 1 psi pressure drop) and metric Kv (m³/h of water at 1 bar pressure drop). For incompressible liquids, flow is proportional to the square root of differential pressure divided by specific gravity until vena-contracta cavitation reaches the choked flow limit (governed by the liquid pressure recovery factor FL).",
+      "ISA-75.01.01 and IEC 60534-2-1 define control valve flow capacity using the US flow coefficient Cv (gallons per minute of 60 °F water at 1 psi pressure drop) and metric Kv (m³/h of water at 1 bar pressure drop). Process P1/P2 inputs are gauge; liquid ΔP sizing uses the gauge differential directly. Choked-flow / cavitation checks require absolute upstream pressure (P1,abs = P1,g + Patm) and absolute vapor pressure Pv.",
     formulaBadges: [
       { label: "1 m³/h = 4.403 gpm" },
       { label: "1 bar = 14.504 psi" },
@@ -1498,10 +1517,10 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
       { symbol: "C_v", name: "US Flow Coefficient", definition: "Volumetric flow capacity in US gpm of 60 °F water across a 1.0 psi differential pressure." },
       { symbol: "K_v", name: "Metric Flow Coefficient", definition: "Flow capacity in m³/h of 5–40 °C water across a 1.0 bar differential pressure (Cv = 1.156 × Kv)." },
       { symbol: "Q", name: "Volumetric Flow Rate", definition: "Process liquid or gas flow rate passing through the fully or partially open valve body (m³/h, gpm, or scfh)." },
-      { symbol: "P_1 / P_2", name: "Upstream / Downstream Pressure", definition: "Static process pressure measured at upstream (P1) and downstream (P2) pipe taps (bar, MPa, or psi)." },
-      { symbol: "ΔP", name: "Valve Differential Pressure", definition: "Actual pressure drop across the valve body: ΔP = P1 - P2 (must be positive and below choked limit)." },
-      { symbol: "SG", name: "Specific Gravity", definition: "Ratio of process fluid density to clean water density at standard reference temperature (SG = 1.00 for water)." },
-      { symbol: "F_L", name: "Liquid Pressure Recovery Factor", definition: "Valve trim recovery coefficient (typically 0.85 ~ 0.90 for globe, 0.55 ~ 0.65 for ball/butterfly)." },
+      { symbol: "P_1 / P_2", name: "Upstream / Downstream Pressure", definition: "Process gauge pressures at upstream (P1) and downstream (P2) taps (bar g or psig). Liquid ΔP sizing uses the gauge differential. Gas sizing and choked-flow checks convert to absolute (P_abs = P_g + 1.01325 bar / 14.696 psi)." },
+      { symbol: "ΔP", name: "Valve Differential Pressure", definition: "Actual pressure drop across the valve body: ΔP = P1 − P2 (gauge or absolute differentials are equal; must be positive and below choked limit)." },
+      { symbol: "SG", name: "Specific Gravity", definition: "Dimensionless ratio of process fluid density to clean water density at standard reference temperature (SG = 1.00 for water)." },
+      { symbol: "F_L", name: "Liquid Pressure Recovery Factor", definition: "Valve trim recovery coefficient (typically 0.85 ~ 0.90 for globe, 0.55 ~ 0.65 for ball/butterfly). Used with absolute pressures in the choked ceiling equation." },
     ],
     standards: [
       "ISA-75.01.01 / IEC 60534-2-1 (Flow Equations for Sizing Control Valves)",
@@ -1534,9 +1553,9 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
         },
         {
           label: "Cavitation Index Check (σ)",
-          value: "σ = (P1 - Pv) / (P1 - P2) ≥ σ_mr",
+          value: "σ = (P1,abs − Pv) / (P1 − P2) ≥ σ_mr",
           description:
-            "If the operating cavitation index σ drops below the manufacturer's incipient cavitation threshold, liquid vaporizes at the vena contracta and implodes, requiring multi-stage anti-cavitation trim.",
+            "Use absolute upstream pressure and absolute vapor pressure. If σ drops below the manufacturer's incipient cavitation threshold, liquid vaporizes at the vena contracta and implodes, requiring multi-stage anti-cavitation trim.",
         },
       ],
     },
@@ -1549,6 +1568,7 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
       fmt(liquidCv(q, 3), 2),
       fmt(liquidCv(q, 5), 2),
     ]),
+    tableColumnUnits: [{ index: 0, quantity: "flow", digits: 1 }],
     tableFootnote: "Non-choked incompressible screening only. Gas sizing uses a simplified Crane/ISA non-choked form; apply IEC 60534-2-1 with xT and Fγ for purchase.",
     materialLimitations: {
       title: "Valve Body Materials & Severe Service Trim Selection",
@@ -1644,7 +1664,7 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
     },
     ...howTo("How to size a control-valve Cv", [
       { name: "1. Select fluid type", text: "Liquid uses the gpm/psi equation. Gas needs P1, P2, SG, and temperature." },
-      { name: "2. Input flow and pressures", text: "Q in m³/h (or Nm³/h for gas), P1/P2 in bar. ΔP must be positive." },
+      { name: "2. Input flow and pressures", text: "{{pick:Q in m³/h (or Nm³/h for gas), P1/P2 in bar.|Q in GPM (or SCFH for gas), P1/P2 in psi.}} ΔP must be positive." },
       { name: "3. Enter SG and selected valve Cv", text: "Water SG = 1. Compare calculated Cv with the catalog Cv." },
       { name: "4. Verify output and export PDF", text: "If calculated Cv exceeds selected Cv the valve is undersized. Export the sizing sheet." },
     ]),
@@ -1694,7 +1714,7 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
       { symbol: "D", name: "Nominal Stud Diameter", definition: "Major nominal diameter of the stud bolt in inches or mm (e.g. 5/8\", 3/4\", 7/8\", 1\")." },
       { symbol: "F_p", name: "Target Stud Preload Force", definition: "Clamping tensile preload induced in each stud bolt (kN or lbf)." },
       { symbol: "A_s", name: "Tensile Stress Area", definition: "Effective cross-sectional tensile area through the threaded root section per ASME B1.1 (mm² or in²)." },
-      { symbol: "n_t", name: "Threads Per Inch (TPI)", definition: "Thread pitch count per inch for UNC / 8UN series fasteners." },
+      { symbol: "n_t", name: "Threads Per Inch (TPI)", definition: "Thread pitch count per inch for UNC / 8UN series fasteners. Note: Per ASME B1.1 and B16.5, studs D ≤ 1.0\" use UNC thread series; studs D > 1.0\" transition to 8UN series (8 threads per inch)." },
       { symbol: "σ_b / S_y", name: "Bolt Target Stress & Yield", definition: "Target assembly bolt tensile stress (σb) as a percentage of specified minimum yield strength (Sy)." },
     ],
     standards: [
@@ -1754,7 +1774,7 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
       ["12\"", "434", "12 × 7/8\"", "1098", "16 × 1-1/8\""],
     ],
     tableFootnote:
-      "Live table covers NPS ½\"–24\" × Class 150 / 300 / 600. NPS 2 / 4 / 8 Class 150–600 match preserved screening values; other sizes use B16.5 stud geometry with PCC-1-style moly torques — confirm against the owner’s PCC-1 appendix. Dry or PTFE lubricants rescale T ∝ K. Navbar units toggle N·m ↔ ft-lb for the Class torque columns.",
+      "Live table covers NPS ½\"–24\" × Class 150 / 300 / 600. NPS 2 / 4 / 8 Class 150–600 match preserved screening values; other sizes use B16.5 stud geometry with PCC-1-style moly torques — confirm against the owner’s PCC-1 appendix. Dry or PTFE lubricants rescale T ∝ K. Imperial / Metric toggle switches Class torque columns between N·m and ft-lb.",
     materialLimitations: {
       title: "Fastener Material Grades & Preload Limits",
       summary:
@@ -2693,7 +2713,7 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
     formulaBadges: [
       { label: "Darcy-Weisbach", value: "Exact Fluid Mechanics" },
       { label: "Haaland Equation", value: "Explicit f(Re, ε/D)" },
-      { label: "Commercial Steel ε", value: "0.045 mm (45 μm)" },
+      { label: "Commercial Steel ε", value: "0.045 mm (0.0018 in / 45 μm)" },
       { label: "Crane TP-410", value: "Standard L/D Factors" },
     ],
     variables: [
@@ -2702,9 +2722,9 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
       { symbol: "f", name: "Darcy Friction Factor", definition: "Dimensionless Darcy-Weisbach friction coefficient (4× the Fanning friction factor)." },
       { symbol: "L_total", name: "Total Equivalent Length", definition: "Sum of straight physical pipe length L plus all fitting equivalent lengths ΣLeq (m or ft)." },
       { symbol: "D", name: "Pipe Inside Diameter (ID)", definition: "Actual internal bore diameter of the pipe schedule per ASME B36.10M (m or mm)." },
-      { symbol: "ρ / μ", name: "Fluid Density & Viscosity", definition: "Dynamic fluid properties at flowing temperature (ρ in kg/m³, dynamic viscosity μ in Pa·s / cP)." },
+      { symbol: "ρ / μ", name: "Fluid Density & Viscosity", definition: "Dynamic fluid properties at flowing temperature (ρ in kg/m³ or lb/ft³; dynamic viscosity μ in Pa·s / cP)." },
       { symbol: "v", name: "Mean Flow Velocity", definition: "Average fluid velocity across the cross-section: v = Q / A (m/s or ft/s)." },
-      { symbol: "ε", name: "Absolute Pipe Roughness", definition: "Average microscopic surface roughness height (ε = 0.045 mm for commercial carbon steel)." },
+      { symbol: "ε", name: "Absolute Pipe Roughness", definition: "Average microscopic surface roughness height (ε = 0.045 mm / 0.0018 in for commercial carbon steel)." },
       { symbol: "Re", name: "Reynolds Number", definition: "Dimensionless ratio of inertial forces to viscous forces: Re = ρ v D / μ." },
     ],
     standards: [
@@ -2722,7 +2742,7 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
           label: "Absolute Pipe Roughness (ε) Standards",
           value: "New CS: 45 μm, Corroded CS: 150~300 μm, SS/PVC: 15 μm",
           description:
-            "New commercial carbon steel has ε = 0.045 mm. Over years of service with untreated water, internal scaling and corrosion pit formation increase roughness to 0.15 ~ 0.30 mm, increasing ΔP by up to 30%.",
+            "New commercial carbon steel has ε = 0.045 mm (0.0018 in). Over years of service with untreated water, internal scaling and corrosion pit formation increase roughness to 0.15 ~ 0.30 mm (0.006 ~ 0.012 in), increasing ΔP by up to 30%.",
         },
         {
           label: "Crane TP-410 Fitting Equivalent Lengths",
@@ -2745,7 +2765,7 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
       ],
     },
     tableCaption:
-      "Water 20 °C (998 kg/m³) — NPS 4 Sch 40, 100 m straight, no fittings (Haaland, ε = 45 µm)",
+      "Water 20 °C / 68 °F (998 kg/m³ / 62.3 lb/ft³) — NPS 4 Sch 40, 100 m (328 ft) straight, no fittings (Haaland, ε = 45 µm)",
     tableHeaders: ["Q (m³/h)", "v (m/s)", "ΔP (bar)", "ΔP (psi)"],
     tableRows: [
       ["20", "0.676", "~0.045", "~0.65"],
@@ -2755,7 +2775,11 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
       ["100", "3.382", "~1.03", "~14.9"],
       ["150", "5.073", "~2.33", "~33.8"],
     ],
-    tableFootnote: "50 m³/h is independently verified at 0.259 bar. Other flows are v²-scaled screens; live calculator recomputes f(Re).",
+    tableColumnUnits: [
+      { index: 0, quantity: "flow", digits: 1 },
+      { index: 1, quantity: "velocity", digits: 2 },
+    ],
+    tableFootnote: "50 m³/h (220 gpm) is independently verified at 0.259 bar (3.76 psi). Other flows are v²-scaled screens; live calculator recomputes f(Re).",
     materialLimitations: {
       title: "Flow Velocity Guidelines & Material Hydraulic Limits",
       summary:
@@ -2783,7 +2807,7 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
           materialGroup: "Maximum Velocity Cap for Carbon Steel Liquids",
           temperatureLimit: "Practical Cap: 3.5 m/s (11.5 ft/s)",
           stressLimit: "Erosion-corrosion protection limit",
-          notes: "Velocities exceeding 3.5 m/s in carbon steel strip protective iron oxide films, drastically accelerating corrosion rates.",
+          notes: "Velocities exceeding 3.5 m/s (11.5 ft/s) in carbon steel strip protective iron oxide films, drastically accelerating corrosion rates.",
         },
       ],
       codeRestrictions: [
@@ -2795,14 +2819,14 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
     workedExample: {
       title: "Step-by-Step Worked Example: Cooling Water Header Friction Loss & Head Loss",
       scenario:
-        "Calculate the mean fluid velocity, Reynolds number, Darcy friction factor, total equivalent length, and pressure drop for an NPS 6 (DN 150) Schedule 40 carbon steel cooling water line (ID = 154.06 mm, absolute roughness ε = 0.045 mm) delivering Q = 120.0 m³/h of water (ρ = 998 kg/m³, dynamic viscosity μ = 1.002 × 10⁻³ Pa·s) over a straight run of 150.0 meters containing six 90° LR butt-weld elbows and two full-port gate valves.",
+        "Calculate the mean fluid velocity, Reynolds number, Darcy friction factor, total equivalent length, and pressure drop for an NPS 6 (DN 150) Schedule 40 carbon steel cooling water line (ID = 154.06 mm / 6.065 in, absolute roughness ε = 0.045 mm / 0.0018 in) delivering Q = 120.0 m³/h (528.3 gpm) of water (ρ = 998 kg/m³ / 62.3 lb/ft³, dynamic viscosity μ = 1.002 × 10⁻³ Pa·s) over a straight run of 150.0 meters (492.1 ft) containing six 90° LR butt-weld elbows and two full-port gate valves.",
       designConditions: [
-        { label: "Nominal Pipe Size", value: "NPS 6 (DN 150) Schedule 40 (ID = 154.06 mm / 0.15406 m)" },
+        { label: "Nominal Pipe Size", value: "NPS 6 (DN 150) Schedule 40 (ID = 154.06 mm / 6.065 in)" },
         { label: "Volumetric Flow Rate (Q)", value: "120.0 m³/h (0.03333 m³/s / 528.3 gpm)" },
-        { label: "Fluid Properties", value: "Water @ 20 °C (ρ = 998 kg/m³, μ = 1.002 × 10⁻³ Pa·s)" },
+        { label: "Fluid Properties", value: "Water @ 20 °C / 68 °F (ρ = 998 kg/m³ / 62.3 lb/ft³, μ = 1.002 × 10⁻³ Pa·s)" },
         { label: "Straight Pipe Length", value: "150.0 meters (492.1 ft)" },
         { label: "In-Line Fittings", value: "Six 90° LR Elbows (L/D = 30) + Two Gate Valves (L/D = 8)" },
-        { label: "Pipe Roughness (ε)", value: "0.045 mm (45 μm, Commercial Carbon Steel)" },
+        { label: "Pipe Roughness (ε)", value: "0.045 mm (0.0018 in / 45 μm, Commercial Carbon Steel)" },
       ],
       steps: [
         {
@@ -2811,7 +2835,7 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
           formula: "A = \\frac{\\pi}{4} D^2,\\quad v = \\frac{Q}{A}",
           calculation: "Flow area A = (π/4) × (0.15406 m)² = 0.018641 m². Flow rate Q = 120.0 / 3,600 = 0.033333 m³/s. Velocity v = 0.033333 m³/s / 0.018641 m² = 1.788 m/s (5.87 ft/s).",
           result: "A = 0.01864\\text{ m}^2,\\quad v = 1.788\\text{ m/s}",
-          note: "Velocity is well within the recommended 1.5 ~ 3.0 m/s range for liquid distribution headers.",
+          note: "Velocity is well within the recommended 1.5 ~ 3.0 m/s (5 ~ 10 ft/s) range for liquid distribution headers.",
         },
         {
           step: "Step 2",
@@ -2842,16 +2866,16 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
           name: "Compute Total Pressure Drop (ΔP) & Frictional Head Loss (h_f)",
           formula: "\\Delta P = f · \\left(\\frac{L_{\\text{total}}}{D}\\right) · \\left(\\frac{1}{2}\\rho v^2\\right),\\quad h_f = \\frac{\\Delta P}{\\rho · g}",
           calculation: "Dynamic pressure q = 0.5 × 998 kg/m³ × (1.788 m/s)² = 0.5 × 998 × 3.197 = 1,595.3 Pa. Length-to-diameter ratio L/D = 180.19 / 0.15406 = 1,169.6. ΔP = 0.01690 × 1,169.6 × 1,595.3 Pa = 31,533 Pa = 0.3153 bar (4.57 psi). Frictional head loss hf = 31,533 / (998 × 9.81) = 31,533 / 9,790.38 = 3.22 meters of water.",
-          result: "\\Delta P = 0.315\\text{ bar} (4.57\\text{ psi}),\\quad h_f = 3.22\\text{ m of water}",
-          note: "Friction gradient = 0.175 bar / 100 m, perfectly within the recommended 0.10 ~ 0.20 bar/100 m design guideline.",
+          result: "\\Delta P = 0.315\\text{ bar} (4.57\\text{ psi}),\\quad h_f = 3.22\\text{ m (10.6 ft) of water}",
+          note: "Friction gradient = 0.175 bar / 100 m (≈ 0.78 psi / 100 ft), perfectly within the recommended 0.10 ~ 0.20 bar/100 m (0.44 ~ 0.89 psi/100 ft) design guideline.",
         },
       ],
       conclusion:
-        "For 120.0 m³/h cooling water flowing through the 150-meter NPS 6 Sch 40 line with fittings, the fluid velocity is 1.788 m/s, yielding a total friction pressure drop of 0.315 bar (4.57 psi) and a head loss of 3.22 meters. The line satisfies all hydraulic velocity and economic pressure drop criteria.",
+        "For 120.0 m³/h (528.3 gpm) cooling water flowing through the 150-meter (492 ft) NPS 6 Sch 40 line with fittings, the fluid velocity is 1.788 m/s (5.87 ft/s), yielding a total friction pressure drop of 0.315 bar (4.57 psi) and a head loss of 3.22 meters (10.6 ft) of water. The line satisfies all hydraulic velocity and economic pressure drop criteria.",
     },
     ...howTo("How to estimate pipe pressure drop", [
       { name: "1. Select fluid, NPS, and schedule", text: "ID comes from B36.10M. Water/steam/air/crude use fixed screening densities." },
-      { name: "2. Input flow and length", text: "m³/h, GPM, or kg/h. Length in metres (or feet in imperial)." },
+      { name: "2. Input flow and length", text: "{{pick:Flow in m³/h, GPM, or kg/h. Length in metres.|Flow in GPM, m³/h, or kg/h. Length in feet.}}" },
       { name: "3. Add fitting counts", text: "Elbows, gates, and globes convert to equivalent length." },
       { name: "4. Verify output and export PDF", text: "If ΔP is large, raise NPS or cut globe valves, then export." },
     ]),
@@ -2883,12 +2907,12 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
     slug: "flow-velocity-erosion",
     formulaTitle: "Core Formula & Variable Definitions",
     formulaHtml:
-      '<p class="eng-eq"><i>v</i> = <span class="eng-frac"><span class="eng-num"><i>Q</i></span><span class="eng-den"><i>A</i></span></span> &nbsp;·&nbsp; <i>v</i><sub>e</sub> = <span class="eng-frac"><span class="eng-num"><i>C</i></span><span class="eng-den">√ρ<sub>m</sub></span></span> &nbsp;[API RP 14E] &nbsp;·&nbsp; <i>v</i><sub>max, liquid</sub> ≤ 3.5 m/s</p>' +
+      '<p class="eng-eq"><i>v</i> = <span class="eng-frac"><span class="eng-num"><i>Q</i></span><span class="eng-den"><i>A</i></span></span> &nbsp;·&nbsp; <i>v</i><sub>e</sub> = <span class="eng-frac"><span class="eng-num"><i>C</i></span><span class="eng-den">√ρ<sub>m</sub></span></span> &nbsp;[API RP 14E] &nbsp;·&nbsp; <i>v</i><sub>max, liquid</sub> ≤ 3.5 m/s (11.5 ft/s)</p>' +
       '<p class="eng-eq">ρ<sub>m</sub> = <span class="eng-frac"><span class="eng-num">12409 · <i>S</i><sub>L</sub> · <i>P</i> + 2.7 · <i>R</i> · <i>S</i><sub>g</sub> · <i>P</i></span><span class="eng-den">198.7 · <i>P</i> + <i>R</i> · <i>T</i> · <i>Z</i></span></span> &nbsp;·&nbsp; <i>Ratio</i> = <span class="eng-frac"><span class="eng-num"><i>v</i></span><span class="eng-den"><i>v</i><sub>e</sub></span></span></p>' +
       '<p class="eng-plain">API Recommended Practice 14E &amp; Norsok P-002 Fluid Erosional Velocity Sizing</p>',
     formulaLatex: "v = \\frac{Q}{A},\\quad v_e = \\frac{C}{\\sqrt{\\rho_m}},\\quad \\text{Status} = f(v / v_e)",
     formulaNotes:
-      "API Recommended Practice 14E (Design and Installation of Offshore Production Platform Piping Systems) Section 2.4 establishes the industry standard for erosional velocity limits in single-phase gas, liquid, and multiphase two-phase flow. The empirical constant C accounts for solid sand content, continuous vs intermittent flow regime, and metallurgy. Continuous liquid services are subject to an additional hydraulic limit of 3.5 m/s to prevent passive film stripping and acoustic noise.",
+      "API Recommended Practice 14E (Design and Installation of Offshore Production Platform Piping Systems) Section 2.4 establishes the industry standard for erosional velocity limits in single-phase gas, liquid, and multiphase two-phase flow. The empirical constant C accounts for solid sand content, continuous vs intermittent flow regime, and metallurgy. Continuous liquid services are subject to an additional hydraulic limit of 3.5 m/s (11.5 ft/s) to prevent passive film stripping and acoustic noise.",
     formulaBadges: [
       { label: "API RP 14E", value: "v_e = C / √ρ" },
       { label: "C (Continuous)", value: "100 (Solid-Free)" },
@@ -2931,7 +2955,7 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
           label: "Status Screening Thresholds",
           value: "Safe: < 80% v_e, Warning: 80% ~ 100%, Erosion Risk: > 100%",
           description:
-            "When v exceeds 80% of ve (or liquid velocity exceeds 3.5 m/s), the screening engine flags a Warning status, advising the piping engineer to consider increasing pipe schedule or nominal size.",
+            "When v exceeds 80% of ve (or liquid velocity exceeds 3.5 m/s / 11.5 ft/s), the screening engine flags a Warning status, advising the piping engineer to consider increasing pipe schedule or nominal size.",
         },
         {
           label: "Fitting Impingement Vulnerability",
@@ -2941,7 +2965,7 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
         },
       ],
     },
-    tableCaption: "NPS 4 Sch 40 (ID 102.26 mm) — velocity vs API RP 14E vc at ρ = 998 kg/m³, C = 100 (vc ≈ 3.86 m/s)",
+    tableCaption: "NPS 4 Sch 40 (ID 102.26 mm / 4.026 in) — velocity vs API RP 14E vc at ρ = 998 kg/m³ (62.3 lb/ft³), C = 100 (vc ≈ 3.86 m/s / 12.7 ft/s)",
     tableHeaders: ["Q (m³/h)", "v (m/s)", "v / vc", "Status"],
     tableRows: [
       ["20", "0.68", "18%", "Safe"],
@@ -2951,7 +2975,11 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
       ["100", "3.38", "88%", "Warning"],
       ["130", "4.40", "114%", "Erosion Risk"],
     ],
-    tableFootnote: "Warning if v ≥ 0.8 vc or liquid v > 3.5 m/s. Erosion Risk if v ≥ vc.",
+    tableColumnUnits: [
+      { index: 0, quantity: "flow", digits: 1 },
+      { index: 1, quantity: "velocity", digits: 2 },
+    ],
+    tableFootnote: "Warning if v ≥ 0.8 vc or liquid v > 3.5 m/s (11.5 ft/s). Erosion Risk if v ≥ vc.",
     materialLimitations: {
       title: "Flow Velocity Thresholds & Metallurgy Guidelines",
       summary:
@@ -2959,19 +2987,19 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
       items: [
         {
           materialGroup: "Carbon Steel (Single-Phase Liquid)",
-          temperatureLimit: "Max Velocity: 3.5 m/s (Continuous) / 5.0 m/s (Intermittent)",
+          temperatureLimit: "Max Velocity: 3.5 m/s / 11.5 ft/s (Continuous) · 5.0 m/s / 16.4 ft/s (Intermittent)",
           stressLimit: "Protective Iron Carbonate / Oxide Scale Preservation",
-          notes: "Velocities > 3.5 m/s scour away the protective FeCO3 scale in CO2-containing systems, causing catastrophic flow-induced localized corrosion.",
+          notes: "Velocities > 3.5 m/s (11.5 ft/s) scour away the protective FeCO3 scale in CO2-containing systems, causing catastrophic flow-induced localized corrosion.",
         },
         {
           materialGroup: "Austenitic Stainless Steel (316L / 304L)",
-          temperatureLimit: "Max Liquid: 5.0 ~ 7.0 m/s; Max Gas: 30 ~ 40 m/s",
+          temperatureLimit: "Max Liquid: 5.0 ~ 7.0 m/s (16 ~ 23 ft/s); Max Gas: 30 ~ 40 m/s (98 ~ 131 ft/s)",
           stressLimit: "Stable Passive Chromium Oxide (Cr2O3) Film",
           notes: "Tough passive film resists flow shearing; permits higher velocities and smaller line diameters (C = 150 ~ 175).",
         },
         {
           materialGroup: "Duplex 2205 / Super Duplex 2507",
-          temperatureLimit: "Max Liquid: 7.0 ~ 10.0 m/s; Max Gas: 40 ~ 50 m/s",
+          temperatureLimit: "Max Liquid: 7.0 ~ 10.0 m/s (23 ~ 33 ft/s); Max Gas: 40 ~ 50 m/s (131 ~ 164 ft/s)",
           stressLimit: "Exceptional Erosion-Corrosion Resistance (C = 175 ~ 200)",
           notes: "Standard material for offshore production flowlines, topside manifold piping, and seawater cooling loops.",
         },
@@ -2979,13 +3007,13 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
           materialGroup: "Two-Phase Wet Gas / Oil-Gas Mixtures",
           temperatureLimit: "Governed strictly by API RP 14E Mixture Density",
           stressLimit: "High Momentum Droplet Impingement Risk",
-          notes: "Mixture density is dominated by liquid slugs; velocity limits typically range between 8.0 and 18.0 m/s.",
+          notes: "Mixture density is dominated by liquid slugs; velocity limits typically range between 8.0 and 18.0 m/s (26 ~ 59 ft/s).",
         },
       ],
       codeRestrictions: [
         "Prohibition of RP 14E for Slurry / Sand Slugs: API RP 14E is an empirical screening model for clean hydrocarbons. Systems carrying abrasive particulate slurries (tailings, frac sand, catalyst fines) must use dedicated particulate erosion models (e.g. Tulsa University / DNV-RP-O501).",
-        "Minimum Velocity for Solids Transport: Lines carrying entrained sand or heavy waxy crudes require a minimum transport velocity (typically > 1.0 m/s) to prevent particle settling, bottom pitting, and wax deposition.",
-        "Noise and Vibration Limits: High-velocity gas lines (v > 20 m/s) must be evaluated for acoustic-induced vibration (AIV) and flow-induced vibration (FIV) per Energy Institute guidelines to prevent fatigue cracking at branch connections.",
+        "Minimum Velocity for Solids Transport: Lines carrying entrained sand or heavy waxy crudes require a minimum transport velocity (typically > 1.0 m/s / 3.3 ft/s) to prevent particle settling, bottom pitting, and wax deposition.",
+        "Noise and Vibration Limits: High-velocity gas lines (v > 20 m/s / 66 ft/s) must be evaluated for acoustic-induced vibration (AIV) and flow-induced vibration (FIV) per Energy Institute guidelines to prevent fatigue cracking at branch connections.",
       ],
     },
     workedExample: {
@@ -3028,32 +3056,32 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
           step: "Step 4",
           name: "Evaluate Velocity Ratio & Continuous Liquid Cap",
           formula: "\\text{Ratio} = \\frac{v}{v_e},\\quad \\text{Liquid Cap Check: } v \\le 3.5\\text{ m/s}",
-          calculation: "Ratio = 2.537 m/s / 4.184 m/s = 0.6063 (60.6%). Checking continuous liquid limit: actual v = 2.54 m/s < 3.50 m/s ceiling.",
-          result: "v / v_e = 60.6\\%\\text{ (Safe, } < 80\\%\\text{)},\\quad v < 3.5\\text{ m/s}",
+          calculation: "Ratio = 2.537 m/s / 4.184 m/s = 0.6063 (60.6%). Checking continuous liquid limit: actual v = 2.54 m/s (8.32 ft/s) < 3.50 m/s (11.5 ft/s) ceiling.",
+          result: "v / v_e = 60.6\\%\\text{ (Safe, } < 80\\%\\text{)},\\quad v < 3.5\\text{ m/s (11.5 ft/s)}",
           note: "Ample margin against both API erosional wear and hydraulic flow noise.",
         },
         {
           step: "Step 5",
           name: "Determine Operational Status and Recommendations",
-          calculation: "Since v/ve (60.6%) < 80% and v (2.54 m/s) < 3.5 m/s, the operating condition is classified as 'Safe'. No wall erosion or flow-induced vibration is expected throughout the 25-year design life.",
+          calculation: "Since v/ve (60.6%) < 80% and v (2.54 m/s / 8.32 ft/s) < 3.5 m/s (11.5 ft/s), the operating condition is classified as 'Safe'. No wall erosion or flow-induced vibration is expected throughout the 25-year design life.",
           result: "Status: SAFE (Optimal Operating Regime)",
-          note: "Ideal velocity band (1.5 ~ 3.0 m/s) for economic pipe sizing and low pumping power.",
+          note: "Ideal velocity band (1.5 ~ 3.0 m/s / 5 ~ 10 ft/s) for economic pipe sizing and low pumping power.",
         },
       ],
       conclusion:
-        "For an NPS 4 Sch 40 line carrying 75.0 m³/h of crude oil, the actual fluid velocity is 2.54 m/s, which represents 60.6% of the API RP 14E erosional velocity limit (4.18 m/s). The system operates within the Safe hydrodynamic band with zero erosion risk.",
+        "For an NPS 4 Sch 40 line carrying 75.0 m³/h (330.2 gpm) of crude oil, the actual fluid velocity is 2.54 m/s (8.32 ft/s), which represents 60.6% of the API RP 14E erosional velocity limit (4.18 m/s / 13.7 ft/s). The system operates within the Safe hydrodynamic band with zero erosion risk.",
     },
     ...howTo("How to check flow velocity and erosion", [
       { name: "1. Select NPS and schedule", text: "ID determines area. Sch 80 raises velocity for the same Q." },
-      { name: "2. Input flow and density", text: "m³/h or GPM; liquid ~998 kg/m³, gas much lower." },
+      { name: "2. Input flow and density", text: "{{pick:Flow in m³/h or GPM; liquid density ~998 kg/m³.|Flow in GPM or m³/h; liquid density ~62.3 lb/ft³.}} Gas is much lower." },
       { name: "3. Set RP 14E C factor", text: "100 is conservative continuous service." },
-      { name: "4. Verify output and export PDF", text: "If status is Warning or Erosion Risk, increase NPS or cut flow, then export." },
+      { name: "4. Verify output and export PDF", text: "If status is Warning or Erosion Risk, increase NPS or cut flow, then export. Liquid warning cap is {{pick:3.5 m/s (CS) / 5.0 m/s (SS)|11.5 ft/s (CS) / 16.4 ft/s (SS)}}." },
     ]),
     faq: [
       {
         question: "What is the physical basis of the API RP 14E erosional velocity formula?",
         answer:
-          "The **API RP 14E formula (\\(v_e = C / \\sqrt{\\rho}\\))** is an empirical equation based on kinetic energy and momentum transfer. It establishes the velocity threshold where fluid turbulence and boundary layer shear forces begin to **mechanically strip away protective corrosion product films (such as iron carbonate \\(\\text{FeCO}_3\\))** on the inner pipe wall. Once stripped, bare metal is continuously exposed to fresh corrosive attack, accelerating localized erosion-corrosion.",
+          "The **API RP 14E formula (v_e = C / √ρ)** is an empirical equation based on kinetic energy and momentum transfer. It establishes the velocity threshold where fluid turbulence and boundary layer shear forces begin to **mechanically strip away protective corrosion product films (such as iron carbonate FeCO₃)** on the inner pipe wall. Once stripped, bare metal is continuously exposed to fresh corrosive attack, accelerating localized erosion-corrosion.",
       },
       {
         question: "When should the empirical factor C be increased from 100 to 150 or 200?",
@@ -3061,9 +3089,9 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
           "**C = 100** is standard for continuous service in **carbon steel** with solid-free fluids. **C = 125 ~ 150** is used for **intermittent operations** (such as relief lines or blowdown systems). For **Corrosion Resistant Alloys (CRAs)** such as 316L Stainless Steel, Duplex 2205, or Inconel 625, **C can be safely increased to 150 ~ 200** per Norsok P-002 and ISO 13703 because their tough passive chromium oxide film does not suffer flow-induced stripping.",
       },
       {
-        question: "Why is there a practical 3.5 m/s velocity cap for liquids even if API RP 14E allows higher?",
+        question: "Why is there a practical 3.5 m/s (11.5 ft/s) velocity cap for liquids even if API RP 14E allows higher?",
         answer:
-          "While the API formula might calculate an erosional limit \\(v_e\\) of 4.0 to 5.0 m/s for heavy liquids, general process plant design guidelines (such as Shell DEP, ExxonMobil, and Norsok) impose a **practical cap of 3.0 ~ 3.5 m/s for continuous carbon steel liquid transfer**. Exceeding 3.5 m/s dramatically increases **frictional pressure drop (\\(\\Delta P \\propto v^2\\)), pumping electrical power consumption, water hammer surge pressures, and acoustic noise**.",
+          "While the API formula might calculate an erosional limit v_e of {{pick:4.0 to 5.0 m/s|13 to 16 ft/s}} for heavy liquids, general process plant design guidelines (such as Shell DEP, ExxonMobil, and Norsok) impose a **practical cap of {{pick:3.0 ~ 3.5 m/s|10 ~ 11.5 ft/s}} for continuous carbon steel liquid transfer**. Exceeding {{pick:3.5 m/s|11.5 ft/s}} dramatically increases **frictional pressure drop (ΔP ∝ v²), pumping electrical power consumption, water hammer surge pressures, and acoustic noise**. The live calculator follows the navbar **Imperial · Metric** toggle for input density ({{u:density}}) and velocity results ({{u:velocity}}).",
       },
       {
         question: "Does API RP 14E apply to slurry systems with high entrained sand content?",
