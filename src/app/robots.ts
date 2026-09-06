@@ -1,6 +1,11 @@
 import type { MetadataRoute } from "next";
 import { getSiteUrl } from "@/lib/site";
 
+/**
+ * Serves /robots.txt via App Router.
+ * Query-param and /calculation/ paths are intentionally crawlable so Googlebot
+ * can read Dynamic Canonical tags on calculator URLs with state query strings.
+ */
 export default function robots(): MetadataRoute.Robots {
   const siteUrl = getSiteUrl();
 
@@ -9,15 +14,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: ["/", "/ads.txt", "/calculator/", "/docs/", "/category/"],
-        disallow: [
-          "/api/",
-          "/admin",
-          "/admin/",
-          "/auth/",
-          "/calculation/",
-          "/*?*",
-          "/private/",
-        ],
+        disallow: ["/api/", "/admin/", "/auth/", "/private/"],
       },
       {
         userAgent: "AdsBot-Google",
