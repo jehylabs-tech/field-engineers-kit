@@ -1,0 +1,52 @@
+---
+description: Calculator shared UI/unit/symbol standards — prevent recurring review defects without mega-refactors
+globs: src/components/calculator/**/*.{ts,tsx},src/lib/calculators/**/*.{ts,tsx},src/components/layout/UnitSwitcher.tsx,src/components/units/**/*.{ts,tsx},src/lib/unitConverter.ts
+alwaysApply: false
+---
+
+# Calculator global standards (shared shell only)
+
+## Do NOT run “refactor entire codebase” prompts
+
+Fix defects in this order:
+1. Shared shell (`SummaryBar`, `UnitSwitcher`, `UnitContext`, `CalculatorBaseLayout`, `unitConverter`)
+2. One calculator engine + its UI
+3. Tests for that calculator
+
+Never recreate `UnitContext` at `src/context/…` — use `src/components/units/UnitContext.tsx` + `useUnitSystem()`.
+Never change `col-span-*` / `grid-cols-*` or calculator inner layouts (see `.cursorrules`).
+
+## Units
+
+- Navbar `UnitSwitcher` badge must bind to **active** `unitSystem` (not a fixed Imperial hover title).
+- Preview copy: Imperial `Length: in · Torque: ft·lb · Pressure: psi · Temp: °F`; Metric `… Pressure: MPa …` (stress/design tools). Domain tools that store **bar** keep bar in *their* labels/banners.
+- Material dropdowns: active system first (`20 ksi (138 MPa)` vs `138 MPa (20 ksi)`).
+- After convert: snap Table/preset integers (e.g. A106-B → `20000` psi); temp → integer; avoid `100.4 °F` / `20015 psi`.
+- Prefer `formatEngineeringValue` / existing `format*` helpers in `src/lib/unitConverter.ts` — do not invent per-file rounding.
+
+## Sticky / z-index
+
+- Site header: `z-50`. SummaryBar: `sticky top-12 md:top-14 z-40` + **solid** `bg-white` / `dark:bg-slate-900` + `isolate` (must clear header — **not** `top-0`; avoid `/95` bleed-through).
+- SummaryBar labels: **no CSS `uppercase`** (preserve `t_min`, `t + c`).
+- Main / calculator shell: `pb-28` so `#feedback` FAB does not cover actions.
+
+## ASME symbols (case-sensitive)
+
+| Symbol | Meaning | Where |
+|--------|---------|--------|
+| `t` | Pressure design thickness | B31.3 §304.1.2 |
+| `c` | Corrosion/mechanical allowance | not `A` |
+| `t_min` | `t + c` | B31.3 |
+| `t_nom_req` | `t_min / 0.875` | pipe mill tolerance only |
+| `t_actual` | Selected schedule/plate wall | never label as bare `t` |
+| `t_m`, `d` | Blind / UG-34 | do **not** rename to `t_nom_req` |
+
+**Safety margin is domain-specific:**
+- Pipe thickness: `(t_actual / t_nom_req - 1) × 100%`
+- Blind flange: vs `t_m` / plate recommendation — **never** force pipe mill formula globally
+
+## Section chrome
+
+- Base layout already owns `1. Input Parameters` / `2. Calculation Results` — remove duplicate inner `SectionBlock` “1 Input…” badges.
+- Do not rename Valve Cv / Bolt Torque custom section titles just to force `1–4` everywhere.
+- FAQ numbering stays in SEO content; don’t reshuffle calculator grids.

@@ -365,54 +365,74 @@ export function calculateThermalExpansion(
   const forceOut = formatForce(totalAnchorForceN, inputs.unitSystem);
   const g1Out = formatLengthMm(g1Mm, inputs.unitSystem);
   const g2Out = formatLengthMm(g2Mm, inputs.unitSystem);
+  const deltaLOut = formatLengthMm(absDelta, inputs.unitSystem);
+  const deltaLLegOut = formatLengthMm(deltaLLegMm, inputs.unitSystem);
+  const deltaLHero =
+    inputs.unitSystem === "imperial"
+      ? `${deltaLMm >= 0 ? "+" : "−"}${(absDelta / 25.4).toFixed(2)} in`
+      : `${deltaLMm >= 0 ? "+" : "−"}${absDelta.toFixed(1)} mm`;
+  const deltaTDisplay =
+    inputs.unitSystem === "imperial"
+      ? `${(deltaT * 1.8).toFixed(1)} °F`
+      : `${deltaT.toFixed(1)} °C`;
+  const eHotDisplay =
+    inputs.unitSystem === "imperial"
+      ? `${(eHotMpa / 6.894757).toFixed(0)} ksi`
+      : `${eHotMpa.toFixed(0)} MPa`;
 
   const level = absDelta < 10 ? "pass" : absDelta < 80 ? "warn" : "fail";
 
   return {
-    heroLabel: "Thermal expansion ΔL",
-    heroValue: `${deltaLMm >= 0 ? "+" : ""}${deltaLMm.toFixed(1)} mm`,
+    heroLabel: "Thermal Expansion (ΔL)",
+    heroValue: deltaLHero,
     heroStatus: `${mat.label} · α = ${(mat.alphaPerC * 1e6).toFixed(1)}×10⁻⁶ /°C · E_h = ${(eHotMpa / 1000).toFixed(1)} GPa`,
     heroStatusLevel: level === "fail" ? "warn" : level,
+    heroBadges: [
+      { label: "H", value: lengthOut },
+      { label: "W", value: widthOut },
+      { label: "F_anchor", value: forceOut },
+      { label: "ΔT", value: deltaTDisplay },
+    ],
     summary: [
-      { label: "L-shape min. leg H", value: lengthOut },
-      { label: "U-loop width W", value: widthOut },
-      { label: "Anchor force total", value: forceOut },
+      { label: "L-shape leg (H)", value: lengthOut },
+      { label: "U-loop width (W)", value: widthOut },
+      { label: "Anchor force (F_anchor)", value: forceOut },
     ],
     summaryStatus: {
       label:
-        "ASME B31.3 guided-cantilever screening — not a computer flexibility analysis",
+        "Guided-cantilever screening (ΔL_leg = ΔL/2, W = H/2) — not a CAESAR II analysis",
       level: "neutral",
     },
     rows: [
       { label: "Material", value: mat.label, section: "Line conditions" },
       {
-        label: "Install temperature T1",
+        label: "Install temperature (T1)",
         value: `${inputs.installTemp} ${tempUnit}`,
         section: "Line conditions",
       },
       {
-        label: "Operating temperature T2",
+        label: "Operating temperature (T2)",
         value: `${inputs.operatingTemp} ${tempUnit}`,
         section: "Line conditions",
       },
       {
-        label: "Straight length L",
+        label: "Straight length (L)",
         value: `${inputs.length} ${lengthUnit}`,
         section: "Line conditions",
       },
       {
-        label: "Temperature difference ΔT",
-        value: `${deltaT.toFixed(1)} °C`,
+        label: "Temperature difference (ΔT)",
+        value: deltaTDisplay,
         section: "Line conditions",
       },
       {
-        label: "Expansion coefficient α",
+        label: "Expansion coefficient (α)",
         value: `${(mat.alphaPerC * 1e6).toFixed(2)} µm/m·°C`,
         section: "Line conditions",
       },
       {
-        label: "Hot modulus E_h at T2",
-        value: `${eHotMpa.toFixed(0)} MPa`,
+        label: "Hot modulus (E_h) at T2",
+        value: eHotDisplay,
         section: "Line conditions",
       },
       {
@@ -421,30 +441,30 @@ export function calculateThermalExpansion(
         section: "Pipe section",
       },
       {
-        label: "Outside diameter OD",
+        label: "Outside diameter (OD)",
         value: formatLengthMm(section.odMm, inputs.unitSystem),
         section: "Pipe section",
         highlight: "od",
       },
       {
-        label: "Wall thickness t",
+        label: "Wall thickness (t)",
         value: formatLengthMm(section.tMm, inputs.unitSystem),
         section: "Pipe section",
-        highlight: "T",
+        highlight: "t",
       },
       {
-        label: "Inside diameter ID",
+        label: "Inside diameter (ID)",
         value: formatLengthMm(section.idMm, inputs.unitSystem),
         section: "Pipe section",
         highlight: "bore",
       },
       {
-        label: "Moment of inertia I",
+        label: "Moment of inertia (I)",
         value: formatEngineeringMm4(section.iMm4, inputs.unitSystem),
         section: "Pipe section",
       },
       {
-        label: "Pipe rack friction factor μ",
+        label: "Pipe rack friction factor (μ)",
         value: inputs.frictionFactor.toFixed(2),
         section: "Flexibility results",
       },
@@ -454,38 +474,38 @@ export function calculateThermalExpansion(
         section: "Flexibility results",
       },
       {
-        label: "Total expansion ΔL",
-        value: `${deltaLMm.toFixed(2)} mm`,
+        label: "Total expansion (ΔL)",
+        value: deltaLOut,
         section: "Flexibility results",
         emphasis: true,
       },
       {
         label: "ΔL per loop leg (ΔL/2)",
-        value: `${deltaLLegMm.toFixed(2)} mm`,
+        value: deltaLLegOut,
         section: "Flexibility results",
       },
       {
-        label: "Recommended L-shape leg H",
+        label: "Recommended L-shape leg (H)",
         value: lengthOut,
         section: "Flexibility results",
       },
       {
-        label: "Recommended U-loop width W",
+        label: "Recommended U-loop width (W = H/2)",
         value: widthOut,
         section: "Flexibility results",
       },
       {
-        label: "Anchor reaction F_bending",
+        label: "Anchor reaction (F_bending)",
         value: bendingForceOut,
         section: "Flexibility results",
       },
       {
-        label: "Support friction F_friction",
+        label: "Support friction (F_friction)",
         value: frictionForceOut,
         section: "Flexibility results",
       },
       {
-        label: "Total anchor force F_anchor,total",
+        label: "Total anchor force (F_anchor)",
         value: forceOut,
         section: "Flexibility results",
         emphasis: true,
@@ -502,42 +522,42 @@ export function calculateThermalExpansion(
       },
     ],
     exportRows: [
-      { label: "Standard", value: "ASME B31.3 Appendix P / guided-cantilever screening" },
+      { label: "Standard", value: "ASME B31.3 guided-cantilever screening" },
       { label: "Material", value: mat.label },
       {
-        label: "Install temperature T1",
+        label: "Install temperature (T1)",
         value: `${inputs.installTemp} ${tempUnit}`,
       },
       {
-        label: "Operating temperature T2",
+        label: "Operating temperature (T2)",
         value: `${inputs.operatingTemp} ${tempUnit}`,
       },
-      { label: "Straight length L", value: `${inputs.length} ${lengthUnit}` },
-      { label: "Temperature difference ΔT", value: `${deltaT.toFixed(1)} °C` },
+      { label: "Straight length (L)", value: `${inputs.length} ${lengthUnit}` },
+      { label: "Temperature difference (ΔT)", value: deltaTDisplay },
       {
-        label: "Expansion coefficient α",
+        label: "Expansion coefficient (α)",
         value: `${(mat.alphaPerC * 1e6).toFixed(2)} µm/m·°C`,
       },
-      { label: "Hot modulus E_h at T2", value: `${eHotMpa.toFixed(0)} MPa` },
+      { label: "Hot modulus (E_h) at T2", value: eHotDisplay },
       {
         label: "NPS / Schedule",
         value: `${section.npsLabel} · Sch ${section.scheduleLabel}`,
       },
-      { label: "Outside diameter OD", value: formatLengthMm(section.odMm, inputs.unitSystem) },
-      { label: "Wall thickness t", value: formatLengthMm(section.tMm, inputs.unitSystem) },
-      { label: "Inside diameter ID", value: formatLengthMm(section.idMm, inputs.unitSystem) },
+      { label: "Outside diameter (OD)", value: formatLengthMm(section.odMm, inputs.unitSystem) },
+      { label: "Wall thickness (t)", value: formatLengthMm(section.tMm, inputs.unitSystem) },
+      { label: "Inside diameter (ID)", value: formatLengthMm(section.idMm, inputs.unitSystem) },
       {
-        label: "Moment of inertia I",
+        label: "Moment of inertia (I)",
         value: formatEngineeringMm4(section.iMm4, inputs.unitSystem),
       },
-      { label: "Pipe rack friction factor μ", value: inputs.frictionFactor.toFixed(2) },
+      { label: "Pipe rack friction factor (μ)", value: inputs.frictionFactor.toFixed(2) },
       { label: "Allowable S_A used", value: `${saDisplay.toFixed(1)} ${stressUnit}` },
-      { label: "Total expansion ΔL", value: `${deltaLMm.toFixed(2)} mm` },
-      { label: "Recommended L-shape leg H", value: lengthOut },
-      { label: "Recommended U-loop width W", value: widthOut },
-      { label: "Anchor reaction F_bending", value: bendingForceOut },
-      { label: "Support friction F_friction", value: frictionForceOut },
-      { label: "Total anchor force F_anchor,total", value: forceOut },
+      { label: "Total expansion (ΔL)", value: deltaLOut },
+      { label: "Recommended L-shape leg (H)", value: lengthOut },
+      { label: "Recommended U-loop width (W)", value: widthOut },
+      { label: "Anchor reaction (F_bending)", value: bendingForceOut },
+      { label: "Support friction (F_friction)", value: frictionForceOut },
+      { label: "Total anchor force (F_anchor)", value: forceOut },
       { label: "First guide distance G1", value: g1Out },
       { label: "Second guide distance G2", value: g2Out },
     ],

@@ -224,7 +224,12 @@ export default function CalculatorSeoContent({
                   </p>
                   <p className="eng-eq m-0">
                     <i>t</i>
-                    <sub>m</sub> = <i>t</i> + <i>c</i>
+                    <sub>min</sub> = <i>t</i> + <i>c</i>
+                  </p>
+                  <p className="eng-eq m-0">
+                    <i>t</i>
+                    <sub>nom,req</sub> = <i>t</i>
+                    <sub>min</sub> / 0.875
                   </p>
                 </div>
               </div>

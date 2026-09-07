@@ -2,7 +2,13 @@
 
 import { useMemo, useState } from "react";
 import type { BlindDesignMode, BlindFlangeInputs } from "@/lib/calculators/engines/blind-flange";
-import { getRecommendedCommercialPlate } from "@/lib/calculators/engines/blind-flange";
+import {
+  flangeAmbientPressureMpa,
+  flangeHydroPressureMpa,
+  formatImperialPlateFraction,
+  getRecommendedCommercialPlate,
+  requiredBlindThicknessMm,
+} from "@/lib/calculators/engines/blind-flange";
 import { getFlangeDimensionEntry } from "@/lib/data/loaders";
 
 type BlindThicknessMatrixChartProps = {
@@ -10,25 +16,18 @@ type BlindThicknessMatrixChartProps = {
   onSelectCell?: (nps: string, pressureClass: string, pressureVal?: number) => void;
 };
 
-// Standard test pressures Pt = 1.5 × Ambient Rating (MPa)
-const HYDRO_PRESSURES: Record<string, number> = {
-  "150": 2.93,
-  "300": 7.71,
-  "600": 15.32,
-  "900": 23.01,
-  "1500": 38.31,
-  "2500": 63.85,
-};
+/** Classes shown in permanent rating matrix (ambient B16.5 Group 1.1). */
+const CLASSES = ["150", "300", "600", "900", "1500", "2500"] as const;
 
-// Design pressures P at ~150°C (MPa)
-const DESIGN_PRESSURES: Record<string, number> = {
-  "150": 1.58,
-  "300": 4.14,
-  "600": 8.27,
-  "900": 12.41,
-  "1500": 20.68,
-  "2500": 34.47,
-};
+/** Ambient class pressures (MPa) — derived from FLANGE_RATING_LIMITS.ambientBar. */
+const AMBIENT_PRESSURES_MPA: Record<string, number> = Object.fromEntries(
+  CLASSES.map((cls) => [cls, flangeAmbientPressureMpa(cls)]),
+);
+
+/** Hydro test pressures (MPa) — 1.5 × ambient from FLANGE_RATING_LIMITS. */
+const HYDRO_PRESSURES_MPA: Record<string, number> = Object.fromEntries(
+  CLASSES.map((cls) => [cls, flangeHydroPressureMpa(cls)]),
+);
 
 const MATRIX_NPS_LIST = [
   { nps: "2", label: "2\"" },
@@ -61,12 +60,48 @@ const FALLBACK_RF_DIAMETERS: Record<string, number> = {
   "24": 692.2,
 };
 
-const CLASSES = ["150", "300", "600", "900", "1500", "2500"] as const;
-
-// Common plate thicknesses (T in mm) used in hydrotest blind tables
-const HYDRO_PLATE_THICKNESSES = [
+// Metric hydrotest plate stocks (mm / T designation)
+const HYDRO_PLATES_METRIC = [
   6, 8, 10, 12, 16, 19, 22, 25, 28, 30, 32, 35, 38, 40, 45, 50, 60, 70, 80, 100,
-];
+].map((tMm) => ({
+  key: `m-${tMm}`,
+  tMm,
+  label: `${tMm} mm (${tMm}T)`,
+}));
+
+// Imperial hydrotest plate stocks (fractional inches)
+const HYDRO_PLATES_IMPERIAL = [
+  0.25, 0.3125, 0.375, 0.5, 0.625, 0.75, 0.875, 1.0, 1.25, 1.5, 1.75, 2.0, 2.5, 3.0,
+].map((tIn) => ({
+  key: `i-${tIn}`,
+  tMm: tIn * 25.4,
+  tIn,
+  label: `${formatImperialPlateFraction(tIn)} Plate`,
+}));
+
+const MPA_TO_PSI = 145.0377377;
+const BAR_TO_PSI = 14.5037738;
+
+function formatClassPressureLabel(
+  mpa: number,
+  unitSystem: "metric" | "imperial",
+): string {
+  if (unitSystem === "imperial") {
+    return `${Math.round(mpa * MPA_TO_PSI)} psi`;
+  }
+  return `${mpa.toFixed(2)} MPa`;
+}
+
+function formatPressureBarDual(
+  bar: number,
+  unitSystem: "metric" | "imperial",
+): string {
+  if (unitSystem === "imperial") {
+    const psi = bar * BAR_TO_PSI;
+    return `${psi >= 10 ? psi.toFixed(0) : psi.toFixed(1)} psi`;
+  }
+  return `${bar >= 100 ? bar.toFixed(0) : bar.toFixed(1)} bar`;
+}
 
 function computeCellData(
   dMm: number,
@@ -85,9 +120,12 @@ function computeCellData(
   return {
     ptMpa: pressureMpa,
     tm: Number(tmFinal.toFixed(2)),
-    plate: unitSystem === "imperial" ? `${rec.value}"` : `${rec.value}T`,
+    plate:
+      unitSystem === "imperial"
+        ? formatImperialPlateFraction(rec.value)
+        : `${rec.value}T`,
     plateNum: rec.value,
-    label: unitSystem === "imperial" ? `${rec.value} in` : `${rec.value} mm (${rec.value}T)`,
+    label: rec.label,
   };
 }
 
@@ -118,7 +156,20 @@ export default function BlindThicknessMatrixChart({
     inputs.mode === "hydrotest" ? "hydrotest" : "permanent";
   const currentNps = inputs.nps ?? "4";
   const currentClass = inputs.pressureClass ?? "150";
-  const currentPress = inputs.designPressure; // MPa or psi depending on unitSystem
+  const currentPress = inputs.designPressure;
+
+  const customRecommendation = useMemo(() => {
+    const tm = requiredBlindThicknessMm(inputs);
+    const plate = getRecommendedCommercialPlate(tm, inputs.unitSystem);
+    return {
+      tm,
+      plate,
+      tmLabel:
+        inputs.unitSystem === "imperial"
+          ? `${tm.toFixed(3)} in`
+          : `${tm.toFixed(2)} mm`,
+    };
+  }, [inputs]);
 
   // Current pressure converted to bar for hydrotest matrix comparison
   const currentPressBar = useMemo(() => {
@@ -145,7 +196,7 @@ export default function BlindThicknessMatrixChart({
         : 125.0; // Design A516-70
     const corrosion = activeMode === "hydrotest" ? 0.0 : 3.0;
     const pressTable =
-      activeMode === "hydrotest" ? HYDRO_PRESSURES : DESIGN_PRESSURES;
+      activeMode === "hydrotest" ? HYDRO_PRESSURES_MPA : AMBIENT_PRESSURES_MPA;
 
     return MATRIX_NPS_LIST.map(({ nps, label }) => {
       const entry = getFlangeDimensionEntry(nps, "150");
@@ -168,7 +219,7 @@ export default function BlindThicknessMatrixChart({
     });
   }, [activeMode, currentStressMpa, inputs.unitSystem]);
 
-  // Data for Mode 2: Hydrotest Pressure Capability Matrix (Plate Thickness T vs Pipe NPS -> Max Allowable Pressure in bar)
+  // Data for Mode 2: Hydrotest Pressure Capability Matrix
   const hydroPressureTableData = useMemo(() => {
     const npsColumns = MATRIX_NPS_LIST.map(({ nps, label }) => {
       const entry = getFlangeDimensionEntry(nps, "150");
@@ -179,31 +230,43 @@ export default function BlindThicknessMatrixChart({
       return { nps, label, rfDia };
     });
 
-    const rows = HYDRO_PLATE_THICKNESSES.map((t) => {
+    const plates =
+      inputs.unitSystem === "imperial"
+        ? HYDRO_PLATES_IMPERIAL
+        : HYDRO_PLATES_METRIC;
+
+    const rows = plates.map((plate) => {
       const pressByNps: Record<string, number> = {};
       npsColumns.forEach(({ nps, rfDia }) => {
-        const pBar = computeMaxTestPressureBar(t, rfDia, currentStressMpa, currentWeldEff);
+        const pBar = computeMaxTestPressureBar(
+          plate.tMm,
+          rfDia,
+          currentStressMpa,
+          currentWeldEff,
+        );
         pressByNps[nps] = pBar;
       });
       return {
-        t,
+        key: plate.key,
+        tMm: plate.tMm,
+        label: plate.label,
         pressByNps,
       };
     });
 
     return { npsColumns, rows };
-  }, [currentStressMpa, currentWeldEff]);
+  }, [currentStressMpa, currentWeldEff, inputs.unitSystem]);
 
   return (
     <div className="w-full">
       {/* Header & Controls */}
       <div className="mb-2 flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2 dark:border-slate-800">
         <div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <h3 className="text-xs font-bold text-slate-800 dark:text-slate-100 md:text-sm">
               {activeMode === "hydrotest"
-                ? "Hydrotest Pressure Rating by Plate Thickness (Testing Blind Table)"
-                : "Permanent Blind Thickness Matrix & Rating Chart"}
+                ? "Hydrotest Pressure Capability by Plate Thickness"
+                : "ASME B16.5 Ambient Class Rating Matrix"}
             </h3>
             <span
               className={`rounded px-1.5 py-0.5 text-[10px] font-semibold md:text-[11px] ${
@@ -213,14 +276,18 @@ export default function BlindThicknessMatrixChart({
               }`}
             >
               {activeMode === "hydrotest"
-                ? "Max Allowable Test (bar)"
-                : "Permanent Design (c=3.0mm)"}
+                ? inputs.unitSystem === "imperial"
+                  ? "Max Allowable Test (psi)"
+                  : "Max Allowable Test (bar)"
+                : inputs.unitSystem === "imperial"
+                  ? "Ambient −29…100 °F · c = 0.125 in"
+                  : "Ambient −29…38 °C · c = 3.0 mm"}
             </span>
           </div>
           <p className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">
             {activeMode === "hydrotest"
-              ? "Max allowable hydrotest pressure (bar) for each plate thickness. Green highlighted cells withstand your test pressure."
-              : "Click any cell to load NPS & Class. Active selection is highlighted in blue."}
+              ? "Max allowable hydrotest pressure for each plate thickness. Green = meets your entered test pressure."
+              : "Blue highlight = selected flange (NPS × Class) loaded into inputs — not your custom-P plate. Cell plates are sized at full Class ambient rating (Group 1.1). Your custom operating recommendation is shown above and in the note below."}
           </p>
         </div>
 
@@ -257,7 +324,16 @@ export default function BlindThicknessMatrixChart({
           <div className="w-full overflow-x-auto">
             <div className="mb-2 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-600 dark:text-slate-400">
               <span className="font-medium">
-                Current Input: <strong className="text-emerald-600 dark:text-emerald-400">{currentNps}&quot;</strong> | Test Pressure: <strong className="text-emerald-600 dark:text-emerald-400">{currentPressBar.toFixed(1)} bar</strong> ({inputs.designPressure} {inputs.unitSystem === "metric" ? "MPa" : "psi"})
+                Current Input:{" "}
+                <strong className="text-emerald-600 dark:text-emerald-400">
+                  {currentNps}&quot;
+                </strong>{" "}
+                | Test Pressure:{" "}
+                <strong className="text-emerald-600 dark:text-emerald-400">
+                  {formatPressureBarDual(currentPressBar, inputs.unitSystem)}
+                </strong>{" "}
+                ({inputs.designPressure}{" "}
+                {inputs.unitSystem === "metric" ? "MPa" : "psi"})
               </span>
               <div className="flex flex-wrap items-center gap-3">
                 <span className="flex items-center gap-1.5">
@@ -273,7 +349,7 @@ export default function BlindThicknessMatrixChart({
             <table className="w-full min-w-[650px] border-collapse text-center text-xs">
               <thead>
                 <tr className="border-b border-slate-200 bg-slate-100 dark:border-slate-700 dark:bg-slate-800">
-                  <th className="py-2 px-2.5 text-left font-bold text-slate-700 dark:text-slate-200">
+                  <th className="sticky left-0 z-20 bg-slate-100 py-2 px-2.5 text-left font-bold text-slate-700 dark:bg-slate-800 dark:text-slate-200">
                     Plate (T)
                   </th>
                   {hydroPressureTableData.npsColumns.map(({ nps, label }) => (
@@ -292,84 +368,156 @@ export default function BlindThicknessMatrixChart({
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
                 {(() => {
-                  // Find the minimum safe thickness t for the currently selected NPS
-                  const minSafeThickness = hydroPressureTableData.rows.find(
-                    ({ pressByNps }) => (pressByNps[currentNps] ?? 0) >= currentPressBar && currentPressBar > 0
-                  )?.t;
+                  const minSafeKey = hydroPressureTableData.rows.find(
+                    ({ pressByNps }) =>
+                      (pressByNps[currentNps] ?? 0) >= currentPressBar &&
+                      currentPressBar > 0,
+                  )?.key;
 
-                  return hydroPressureTableData.rows.map(({ t, pressByNps }) => {
-                    const isMinSafeRow = t === minSafeThickness;
+                  return hydroPressureTableData.rows.map(
+                    ({ key, tMm, label, pressByNps }) => {
+                      const isMinSafeRow = key === minSafeKey;
 
-                    return (
-                      <tr
-                        key={t}
-                        className={`hover:bg-slate-50/70 dark:hover:bg-slate-800/40 ${
-                          isMinSafeRow ? "bg-emerald-50/50 dark:bg-emerald-950/20" : ""
-                        }`}
-                      >
-                        <td
-                          className={`py-1.5 px-2.5 text-left font-bold transition-all ${
+                      return (
+                        <tr
+                          key={key}
+                          className={`hover:bg-slate-50/70 dark:hover:bg-slate-800/40 ${
                             isMinSafeRow
-                              ? "bg-emerald-100/90 text-emerald-950 border-l-4 border-emerald-600 dark:bg-emerald-900/60 dark:text-emerald-100 dark:border-emerald-400"
-                              : "text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-slate-800/40"
+                              ? "bg-emerald-50/50 dark:bg-emerald-950/20"
+                              : ""
                           }`}
                         >
-                          {inputs.unitSystem === "imperial"
-                            ? `${(t / 25.4).toFixed(3)}" (${t}T)`
-                            : `${t} mm (${t}T)`}
-                          {isMinSafeRow && (
-                            <span className="ml-1.5 rounded bg-emerald-600 px-1 py-0.5 text-[9px] font-extrabold text-white dark:bg-emerald-500">
-                              REC
-                            </span>
-                          )}
-                        </td>
-                        {hydroPressureTableData.npsColumns.map(({ nps }) => {
-                          const pBar = pressByNps[nps];
-                          const isColSelected = currentNps === nps;
-                          const isSafe = pBar >= currentPressBar && currentPressBar > 0;
-                          const isRecommendedCell = isColSelected && isMinSafeRow;
+                          <td
+                            className={`sticky left-0 z-10 py-1.5 px-2.5 text-left font-bold transition-all ${
+                              isMinSafeRow
+                                ? "border-l-4 border-emerald-600 bg-emerald-100/90 text-emerald-950 dark:border-emerald-400 dark:bg-emerald-900/60 dark:text-emerald-100"
+                                : "bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-200"
+                            }`}
+                          >
+                            {label}
+                            {isMinSafeRow && (
+                              <span className="ml-1.5 rounded bg-emerald-600 px-1 py-0.5 text-[9px] font-extrabold text-white dark:bg-emerald-500">
+                                REC
+                              </span>
+                            )}
+                          </td>
+                          {hydroPressureTableData.npsColumns.map(({ nps }) => {
+                            const pBar = pressByNps[nps];
+                            const isColSelected = currentNps === nps;
+                            const isSafe =
+                              pBar >= currentPressBar && currentPressBar > 0;
+                            const isRecommendedCell =
+                              isColSelected && isMinSafeRow;
+                            const displayP =
+                              inputs.unitSystem === "imperial"
+                                ? pBar * BAR_TO_PSI
+                                : pBar;
 
-                          return (
-                            <td
-                              key={nps}
-                              onClick={() => onSelectCell?.(nps, currentClass)}
-                              className={`cursor-pointer py-1.5 px-1.5 text-[11px] transition-all ${
-                                isRecommendedCell
-                                  ? "relative z-10 bg-emerald-200/90 font-black text-emerald-950 ring-2 ring-emerald-600 ring-inset shadow-xs dark:bg-emerald-800/90 dark:text-emerald-50 dark:ring-emerald-400"
-                                  : isColSelected
-                                    ? isSafe
-                                      ? "bg-emerald-100/70 font-semibold text-emerald-900 dark:bg-emerald-900/50 dark:text-emerald-200"
-                                      : "bg-slate-100/60 text-slate-400 dark:bg-slate-800/30 dark:text-slate-500"
-                                    : isSafe
-                                      ? "bg-slate-50/80 font-medium text-slate-800 dark:bg-slate-800/30 dark:text-slate-200"
-                                      : "text-slate-400 dark:text-slate-500"
-                              }`}
-                              title={`NPS ${nps}": Max Test Pressure ${pBar.toFixed(1)} bar for ${t}T plate${
-                                isRecommendedCell ? " (Recommended Minimum Safe Plate)" : ""
-                              }`}
-                            >
-                              {pBar >= 1000
-                                ? pBar.toFixed(0)
-                                : pBar >= 100
-                                  ? pBar.toFixed(1)
-                                  : pBar.toFixed(2)}
-                            </td>
-                          );
-                        })}
-                      </tr>
-                    );
-                  });
+                            return (
+                              <td
+                                key={nps}
+                                onClick={() =>
+                                  onSelectCell?.(nps, currentClass)
+                                }
+                                className={`cursor-pointer py-1.5 px-1.5 text-[11px] transition-all ${
+                                  isRecommendedCell
+                                    ? "relative z-10 bg-emerald-200/90 font-black text-emerald-950 shadow-xs ring-2 ring-inset ring-emerald-600 dark:bg-emerald-800/90 dark:text-emerald-50 dark:ring-emerald-400"
+                                    : isColSelected
+                                      ? isSafe
+                                        ? "bg-emerald-100/70 font-semibold text-emerald-900 dark:bg-emerald-900/50 dark:text-emerald-200"
+                                        : "bg-slate-100/60 text-slate-400 dark:bg-slate-800/30 dark:text-slate-500"
+                                      : isSafe
+                                        ? "bg-slate-50/80 font-medium text-slate-800 dark:bg-slate-800/30 dark:text-slate-200"
+                                        : "text-slate-400 dark:text-slate-500"
+                                }`}
+                                title={`NPS ${nps}": Max Test Pressure ${formatPressureBarDual(pBar, inputs.unitSystem)} for ${label}${
+                                  isRecommendedCell
+                                    ? " (Recommended Minimum Safe Plate)"
+                                    : ""
+                                }`}
+                              >
+                                {displayP >= 1000
+                                  ? displayP.toFixed(0)
+                                  : displayP >= 100
+                                    ? displayP.toFixed(1)
+                                    : displayP.toFixed(2)}
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      );
+                    },
+                  );
                 })()}
               </tbody>
             </table>
           </div>
         ) : (
           /* Permanent Design Matrix (NPS vs Class Rating) */
-          <div className="w-full overflow-x-auto">
+          <div className="w-full space-y-2">
+            {(() => {
+              const selectedRow = classMatrixData.find(
+                (row) => row.nps === currentNps,
+              );
+              const selectedKey = `class${currentClass}` as keyof NonNullable<
+                typeof selectedRow
+              >;
+              const selectedCell = selectedRow
+                ? (selectedRow[selectedKey] as
+                    | { plate: string; label: string; plateNum: number; tm: number }
+                    | undefined)
+                : undefined;
+              const customPlate = customRecommendation.plate.label;
+              const matrixPlate = selectedCell?.label;
+              const platesDiffer =
+                selectedCell != null &&
+                customPlate !== matrixPlate &&
+                Number.isFinite(customRecommendation.tm) &&
+                customRecommendation.tm > 0;
+
+              return (
+                <div className="rounded-lg border border-slate-200 bg-slate-50/80 px-3 py-2 text-[11px] leading-relaxed text-slate-600 dark:border-slate-700 dark:bg-slate-800/50 dark:text-slate-300">
+                  <p>
+                    <span className="font-semibold text-blue-700 dark:text-blue-300">
+                      Blue cell = selected flange
+                    </span>{" "}
+                    ({currentNps}&quot; #{currentClass}) — click loads NPS/Class into
+                    inputs. Plate in that cell is for{" "}
+                    <span className="font-medium">
+                      full Class ambient rating
+                    </span>
+                    {selectedCell
+                      ? ` → ${matrixPlate} (t_m ${selectedCell.tm} ${
+                          inputs.unitSystem === "imperial" ? "in" : "mm"
+                        })`
+                      : ""}
+                    .
+                  </p>
+                  <p className="mt-1">
+                    <span className="font-semibold text-emerald-700 dark:text-emerald-300">
+                      Custom operating recommendation
+                    </span>{" "}
+                    (your P above):{" "}
+                    <span className="font-mono font-bold text-slate-800 dark:text-slate-100">
+                      {customPlate}
+                    </span>{" "}
+                    at t_m = {customRecommendation.tmLabel}.
+                    {platesDiffer ? (
+                      <span className="mt-0.5 block text-amber-800 dark:text-amber-200">
+                        Differs from the selected matrix cell because custom P ≠
+                        Class ambient rating pressure — both values are correct
+                        for their purpose.
+                      </span>
+                    ) : null}
+                  </p>
+                </div>
+              );
+            })()}
+            <div className="w-full overflow-x-auto">
             <table className="w-full min-w-[580px] border-collapse text-left text-xs">
               <thead>
                 <tr className="border-b border-slate-200 bg-slate-50/80 dark:border-slate-800 dark:bg-slate-800/60">
-                  <th className="py-2.5 px-3 font-semibold text-slate-700 dark:text-slate-200">
+                  <th className="sticky left-0 z-20 bg-slate-50 py-2.5 px-3 font-semibold text-slate-700 dark:bg-slate-800 dark:text-slate-200">
                     NPS
                   </th>
                   <th className="py-2.5 px-2.5 font-semibold text-slate-600 dark:text-slate-300">
@@ -386,7 +534,10 @@ export default function BlindThicknessMatrixChart({
                     >
                       #{cls}
                       <span className="block text-[10px] font-normal text-slate-400 dark:text-slate-500">
-                        {DESIGN_PRESSURES[cls]} MPa
+                        {formatClassPressureLabel(
+                          AMBIENT_PRESSURES_MPA[cls],
+                          inputs.unitSystem,
+                        )}
                       </span>
                     </th>
                   ))}
@@ -400,11 +551,17 @@ export default function BlindThicknessMatrixChart({
                       key={row.nps}
                       className={`transition-colors hover:bg-slate-50/70 dark:hover:bg-slate-800/40 ${
                         isRowActive
-                          ? "bg-blue-50/40 dark:bg-blue-950/20 font-medium"
+                          ? "bg-blue-50/40 font-medium dark:bg-blue-950/20"
                           : ""
                       }`}
                     >
-                      <td className="py-2 px-3 font-bold text-slate-800 dark:text-slate-200">
+                      <td
+                        className={`sticky left-0 z-10 py-2 px-3 font-bold text-slate-800 dark:text-slate-200 ${
+                          isRowActive
+                            ? "bg-blue-50 dark:bg-blue-950/40"
+                            : "bg-white dark:bg-slate-900"
+                        }`}
+                      >
                         {row.npsLabel}
                       </td>
                       <td className="py-2 px-2.5 text-slate-500 dark:text-slate-400">
@@ -415,8 +572,13 @@ export default function BlindThicknessMatrixChart({
 
                       {CLASSES.map((cls) => {
                         const key = `class${cls}` as keyof typeof row;
-                        const cell = row[key] as { tm: number; plate: string };
-                        const isCellActive = isRowActive && currentClass === cls;
+                        const cell = row[key] as {
+                          tm: number;
+                          plate: string;
+                          label: string;
+                        };
+                        const isCellActive =
+                          isRowActive && currentClass === cls;
 
                         return (
                           <td
@@ -424,10 +586,10 @@ export default function BlindThicknessMatrixChart({
                             onClick={() => onSelectCell?.(row.nps, cls)}
                             className={`cursor-pointer py-1.5 px-2 text-center transition-all ${
                               isCellActive
-                                ? "bg-blue-600 text-white font-bold rounded shadow-sm dark:bg-blue-500"
-                                : "hover:bg-blue-100/60 dark:hover:bg-blue-900/40 text-slate-700 dark:text-slate-300"
+                                ? "rounded bg-blue-600 font-bold text-white shadow-sm dark:bg-blue-500"
+                                : "text-slate-700 hover:bg-blue-100/60 dark:text-slate-300 dark:hover:bg-blue-900/40"
                             }`}
-                            title={`Click to select NPS ${row.npsLabel} Class ${cls}# (Std tm = ${cell.tm} ${inputs.unitSystem === "imperial" ? "in" : "mm"})`}
+                            title={`Selected flange ${row.npsLabel} Class ${cls}# at ambient rating → ${cell.label} (t_m ${cell.tm} ${inputs.unitSystem === "imperial" ? "in" : "mm"}). Custom-P plate is listed above the table.`}
                           >
                             <div className="leading-tight">
                               <span
@@ -439,15 +601,19 @@ export default function BlindThicknessMatrixChart({
                               >
                                 {cell.plate}
                               </span>
-                              <span
-                                className={`block text-[10px] ${
-                                  isCellActive
-                                    ? "text-blue-100"
-                                    : "text-slate-400 dark:text-slate-500"
-                                }`}
-                              >
-                                ({cell.tm} {inputs.unitSystem === "imperial" ? "in" : "mm"})
-                              </span>
+                              {isCellActive ? (
+                                <span className="mt-0.5 block text-[9px] font-extrabold uppercase tracking-wide text-blue-100">
+                                  Selected
+                                </span>
+                              ) : (
+                                <span className="block text-[10px] text-slate-400 dark:text-slate-500">
+                                  ({cell.tm}{" "}
+                                  {inputs.unitSystem === "imperial"
+                                    ? "in"
+                                    : "mm"}
+                                  )
+                                </span>
+                              )}
                             </div>
                           </td>
                         );
@@ -457,6 +623,7 @@ export default function BlindThicknessMatrixChart({
                 })}
               </tbody>
             </table>
+            </div>
           </div>
         )
       ) : (

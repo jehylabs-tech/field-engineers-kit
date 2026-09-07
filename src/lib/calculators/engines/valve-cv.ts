@@ -132,11 +132,12 @@ export function calculateValveCv(inputs: ValveCvInputs): CalculatorOutput {
     calculatedCv = 0;
   }
 
-  const passes = calculatedCv <= inputs.requiredCv && calculatedCv > 0;
+  const catalogCv = inputs.requiredCv;
   const fillPercent =
-    inputs.requiredCv > 0
-      ? Math.min(100, (calculatedCv / inputs.requiredCv) * 100)
+    catalogCv > 0
+      ? Math.min(100, (calculatedCv / catalogCv) * 100)
       : 0;
+  const passes = calculatedCv > 0 && catalogCv > 0 && calculatedCv <= catalogCv;
 
   const imperial = inputs.unitSystem === "imperial";
   const flowUnit = imperial
@@ -155,20 +156,40 @@ export function calculateValveCv(inputs: ValveCvInputs): CalculatorOutput {
   const tempDisplay = imperial
     ? cToF(metric.tempC)
     : metric.tempC;
+  const cvLabel = calculatedCv > 0 ? calculatedCv.toFixed(2) : "—";
+  const fluidLabel = inputs.fluid === "liquid" ? "Liquid" : "Gas";
 
   return {
-    heroLabel: "Required Flow Coefficient (Cv)",
-    heroValue: calculatedCv > 0 ? calculatedCv.toFixed(2) : "—",
-    heroStatus: passes
-      ? "Selected valve Cv is adequate"
-      : calculatedCv <= 0
-        ? "Invalid pressure drop — check inputs"
-        : "Selected valve Cv is undersized",
+    heroLabel: "Required Cv (calculated)",
+    heroValue: cvLabel,
+    heroStatus: calculatedCv <= 0
+      ? "Invalid pressure drop — check P1 > P2 and flow"
+      : passes
+        ? "Catalog Cv is adequate (Cv ≤ Cv,sel)"
+        : catalogCv <= 0
+          ? "Enter catalog Cv,sel to check headroom"
+          : "Catalog Cv undersized — increase Cv,sel",
     heroStatusLevel:
-      calculatedCv <= 0 ? "warn" : passes ? "pass" : "fail",
+      calculatedCv <= 0 ? "warn" : passes ? "pass" : catalogCv <= 0 ? "warn" : "fail",
+    heroBadges: calculatedCv > 0
+      ? [
+          { label: "Fluid", value: fluidLabel },
+          {
+            label: "ΔP",
+            value: `${deltaPDisplay.toFixed(imperial ? 2 : 3)} ${deltaPUnit}`,
+          },
+          {
+            label: "Cv,sel",
+            value: catalogCv > 0 ? catalogCv.toFixed(2) : "—",
+          },
+        ]
+      : undefined,
     summary: [
-      { label: "Calculated Cv", value: calculatedCv > 0 ? calculatedCv.toFixed(2) : "—" },
-      { label: "Selected Cv", value: inputs.requiredCv.toFixed(2) },
+      { label: "Required Cv", value: cvLabel },
+      {
+        label: "Catalog Cv,sel",
+        value: catalogCv > 0 ? catalogCv.toFixed(2) : "—",
+      },
     ],
     summaryStatus: {
       label:
@@ -176,21 +197,30 @@ export function calculateValveCv(inputs: ValveCvInputs): CalculatorOutput {
           ? "Check input conditions"
           : passes
             ? "Valve sizing OK"
-            : "Undersized — increase Cv",
-      level: calculatedCv <= 0 ? "warn" : passes ? "pass" : "fail",
+            : catalogCv <= 0
+              ? "Set catalog Cv,sel for travel check"
+              : "Undersized — increase Cv,sel",
+      level:
+        calculatedCv <= 0
+          ? "warn"
+          : passes
+            ? "pass"
+            : catalogCv <= 0
+              ? "warn"
+              : "fail",
     },
     gauge:
-      calculatedCv > 0
+      calculatedCv > 0 && catalogCv > 0
         ? {
             fillPercent,
             limitPercent: 100,
             minLabel: "0",
-            limitLabel: `Selected ${inputs.requiredCv.toFixed(0)}`,
-            maxLabel: `${(inputs.requiredCv * 1.3).toFixed(0)}`,
+            limitLabel: `Cv,sel ${catalogCv.toFixed(0)}`,
+            maxLabel: `${(catalogCv * 1.3).toFixed(0)}`,
           }
         : undefined,
     rows: [
-      { label: "Fluid type", value: inputs.fluid === "liquid" ? "Liquid" : "Gas" },
+      { label: "Fluid type", value: fluidLabel },
       { label: "Flow rate (Q)", value: `${inputs.flowRate.toFixed(2)} ${flowUnit}` },
       {
         label: "Inlet pressure (P1, gauge)",
@@ -206,20 +236,50 @@ export function calculateValveCv(inputs: ValveCvInputs): CalculatorOutput {
         warn: deltaPBar <= 0,
       },
       { label: "Specific gravity (SG)", value: inputs.specificGravity.toFixed(3) },
-      { label: "Temperature", value: `${tempDisplay.toFixed(1)} ${tempUnit}` },
+      {
+        label: inputs.fluid === "gas" ? "Temperature (T)" : "Temperature (T, gas only)",
+        value: `${tempDisplay.toFixed(0)} ${tempUnit}`,
+      },
+      {
+        label: "Required Cv (calculated)",
+        value: cvLabel,
+        emphasis: true,
+      },
+      {
+        label: "Catalog Cv,sel",
+        value: catalogCv > 0 ? catalogCv.toFixed(2) : "—",
+      },
       {
         label: "Sizing result",
-        value: passes ? "Adequate" : "Undersized",
-        warn: !passes,
+        value:
+          calculatedCv <= 0
+            ? "—"
+            : passes
+              ? "Adequate"
+              : catalogCv <= 0
+                ? "Cv calculated — set Cv,sel"
+                : "Undersized",
+        warn: calculatedCv > 0 && catalogCv > 0 && !passes,
       },
     ],
     exportRows: [
+      { label: "Standard", value: "ISA-75.01 / IEC 60534 (US Cv screening)" },
       { label: "Fluid type", value: inputs.fluid },
-      { label: "Calculated Cv", value: calculatedCv.toFixed(2) },
-      { label: "Selected Cv", value: inputs.requiredCv.toFixed(2) },
+      { label: "Required Cv", value: cvLabel },
+      { label: "Catalog Cv,sel", value: catalogCv > 0 ? catalogCv.toFixed(2) : "—" },
       { label: "Flow rate", value: `${inputs.flowRate.toFixed(2)} ${flowUnit}` },
       { label: "Pressure drop", value: `${deltaPDisplay.toFixed(3)} ${deltaPUnit}` },
-      { label: "Result", value: passes ? "Adequate" : "Undersized" },
+      {
+        label: "Result",
+        value:
+          calculatedCv <= 0
+            ? "Invalid inputs"
+            : passes
+              ? "Adequate"
+              : catalogCv <= 0
+                ? "Cv only"
+                : "Undersized",
+      },
     ],
   };
 }
@@ -232,5 +292,6 @@ export const DEFAULT_VALVE_CV_INPUTS: ValveCvInputs = {
   outletPressure: 7,
   specificGravity: 1.0,
   temperature: 25,
-  requiredCv: 45,
+  /** Catalog headroom — default above calculated ~80 Cv at Q=120, ΔP=3 bar */
+  requiredCv: 100,
 };

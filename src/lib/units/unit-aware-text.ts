@@ -110,6 +110,19 @@ export function rewriteUnitLabels(
     const psi = bar * 14.5037738;
     return `ΔP ${psi >= 10 ? psi.toFixed(0) : psi.toFixed(1)} psi`;
   });
+  // Bare "12.7 mm" in captions/footnotes (headers already use "(mm)")
+  out = out.replace(/\b(\d+(?:\.\d+)?)\s*mm\b/gi, (_, n: string) => {
+    const mm = Number(n);
+    if (!Number.isFinite(mm)) return `${n} mm`;
+    const inches = mm / 25.4;
+    return `${inches.toFixed(inches >= 1 ? 2 : 3)} in`;
+  });
+  // Blind lookup headers: Pt≈2.93 MPa → psi
+  out = out.replace(/Pt≈(\d+(?:\.\d+)?)\s*MPa/g, (_, n: string) => {
+    const mpa = Number(n);
+    if (!Number.isFinite(mpa)) return `Pt≈${n} MPa`;
+    return `Pt≈${Math.round(mpa * 145.037738).toLocaleString("en-US")} psi`;
+  });
   return out;
 }
 
@@ -166,6 +179,7 @@ function convertSiValue(
 
 /**
  * Convert a SI-stored table cell for display. Preserves leading "~" approximations.
+ * Supports pure numbers (`157.2`) and composite cells (`12.7 mm (14T)`).
  */
 export function convertSeoTableCell(
   raw: string,
@@ -176,16 +190,49 @@ export function convertSeoTableCell(
   if (system !== "imperial") return raw;
   const trimmed = raw.trim();
   const approx = trimmed.startsWith("~");
-  const numericPart = approx ? trimmed.slice(1).trim() : trimmed;
-  // Skip non-numeric status cells
-  if (!/^-?\d/.test(numericPart) && !/^\d/.test(numericPart)) return raw;
-  const n = Number(numericPart.replace(/,/g, ""));
+  const body = approx ? trimmed.slice(1).trim() : trimmed;
+
+  const matched = body.match(
+    /^(-?\d+(?:\.\d+)?)(?:\s*(mm|in|MPa|bar|m|ft|°C|°F))?(.*)$/i,
+  );
+  if (!matched) return raw;
+
+  const n = Number(matched[1].replace(/,/g, ""));
   if (!Number.isFinite(n)) return raw;
+
+  const unitTok = (matched[2] ?? "").toLowerCase();
+  // Already imperial — leave alone
+  if (
+    (quantity === "length" && unitTok === "in") ||
+    (quantity === "lengthLarge" && unitTok === "ft") ||
+    (quantity === "pressure" && (unitTok === "psi" || unitTok === "ksi")) ||
+    (quantity === "temperature" && unitTok === "°f")
+  ) {
+    return raw;
+  }
+
   const converted = convertSiValue(n, quantity, system);
   const d = digits ?? defaultDigits(quantity);
   const rounded =
     quantity === "torque"
       ? String(Math.round(converted))
       : converted.toFixed(d);
-  return approx ? `~${rounded}` : rounded;
+
+  let midUnit = "";
+  if (matched[2]) {
+    midUnit =
+      quantity === "length"
+        ? " in"
+        : quantity === "lengthLarge"
+          ? " ft"
+          : quantity === "pressure"
+            ? " psi"
+            : quantity === "temperature"
+              ? " °F"
+              : ` ${matched[2]}`;
+  }
+
+  const rest = matched[3] ?? "";
+  const out = `${rounded}${midUnit}${rest}`;
+  return approx ? `~${out}` : out;
 }

@@ -204,6 +204,69 @@ export function formatPressureBar(
   return `${pressureBar.toFixed(digits)} bar`;
 }
 
+/** Display kinds for shared calculator formatting (values already in active system). */
+export type EngineeringValueKind =
+  | "pressureMpa" // design P / stress-adjacent MPa ↔ psi
+  | "pressureBar" // process ΔP / valve bar ↔ psi
+  | "temperature"
+  | "thickness" // wall / plate / allowance
+  | "stress" // allowable S
+  | "diameter"; // OD / ID / gasket d
+
+/**
+ * Canonical display formatter. Input `value` is already in the active unit system
+ * (do not double-convert). Prefer this over ad-hoc toFixed in new calculator UI.
+ */
+export function formatEngineeringValue(
+  value: number,
+  kind: EngineeringValueKind,
+  system: UnitSystem,
+): string {
+  if (!Number.isFinite(value)) return "—";
+
+  switch (kind) {
+    case "temperature": {
+      const unit = system === "imperial" ? "°F" : "°C";
+      return `${Math.round(value)} ${unit}`;
+    }
+    case "pressureMpa": {
+      if (system === "imperial") {
+        return `${Math.round(value).toLocaleString("en-US")} psi`;
+      }
+      return `${value.toFixed(2)} MPa`;
+    }
+    case "pressureBar": {
+      if (system === "imperial") {
+        const psi = Math.abs(value) >= 100 ? Math.round(value) : Number(value.toFixed(1));
+        return `${psi.toLocaleString("en-US")} psi`;
+      }
+      return `${value.toFixed(2)} bar`;
+    }
+    case "stress": {
+      if (system === "imperial") {
+        return `${Math.round(value).toLocaleString("en-US")} psi`;
+      }
+      return `${Math.round(value)} MPa`;
+    }
+    case "thickness": {
+      const unit = system === "imperial" ? "in" : "mm";
+      if (system === "metric") {
+        const digits = Math.abs(value) >= 1 ? 2 : 3;
+        return `${value.toFixed(digits)} ${unit}`;
+      }
+      return `${value.toFixed(3)} ${unit}`;
+    }
+    case "diameter": {
+      const unit = system === "imperial" ? "in" : "mm";
+      const digits = system === "imperial" ? 3 : 2;
+      return `${value.toFixed(digits)} ${unit}`;
+    }
+    default:
+      return String(value);
+  }
+}
+
+
 /**
  * When the global unit system flips, convert companion numeric fields that are
  * stored in the active display unit so inputs stay physically equivalent.
@@ -241,7 +304,7 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
     }
   }
 
-  // Temperatures: °C ↔ °F
+  // Temperatures: °C ↔ °F (integer display — avoid 100.4 °F from 38 °C)
   for (const key of [
     "temperature",
     "installTemp",
@@ -249,7 +312,7 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
     "designTemperature",
   ]) {
     if (typeof next[key] === "number" && Number.isFinite(next[key] as number)) {
-      convertNum(key, toImperial ? cToF : fToC, 2);
+      convertNum(key, toImperial ? cToF : fToC, 0);
     }
   }
 
@@ -303,13 +366,19 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
   // Stress / pressure in MPa ↔ psi (pipe thickness, hydro, blind)
   const mpaToPsi = (mpa: number) => mpa * UNIT_FACTORS.BAR_TO_PSI * 10;
   const psiToMpa = (psi: number) => psi / (UNIT_FACTORS.BAR_TO_PSI * 10);
-  for (const key of [
-    "designPressure",
-    "allowableStress",
-    "operatingPressure",
-  ]) {
+  for (const key of ["designPressure", "operatingPressure"]) {
     if (typeof next[key] === "number" && Number.isFinite(next[key] as number)) {
-      convertNum(key, toImperial ? mpaToPsi : psiToMpa, 3);
+      // Imperial: whole psi (290); metric: 2 dp MPa
+      convertNum(key, toImperial ? mpaToPsi : psiToMpa, toImperial ? 0 : 2);
+    }
+  }
+  // Allowable / hydro St & S: whole psi / MPa; snap Table A-1 20.0 ksi ↔ 138 MPa
+  for (const key of ["allowableStress", "designStress", "testStress"]) {
+    if (typeof next[key] === "number" && Number.isFinite(next[key] as number)) {
+      convertNum(key, toImperial ? mpaToPsi : psiToMpa, 0);
+      const s = next[key] as number;
+      if (toImperial && Math.abs(s - 20000) <= 20) next[key] = 20000;
+      else if (!toImperial && Math.abs(s - 138) <= 1) next[key] = 138;
     }
   }
 
@@ -329,7 +398,6 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
     "outerDiameter",
     "innerDiameter",
     "actualThickness",
-    "corrosionAllowance",
     "thickness",
     "width",
     "height",
@@ -341,6 +409,38 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
     if (typeof next[key] === "number" && Number.isFinite(next[key] as number)) {
       convertNum(key, toImperial ? mmToIn : inToMm, 4);
     }
+  }
+
+  // Corrosion allowance: 3 dp in / 1 dp mm; snap common screening values
+  if (
+    typeof next.corrosionAllowance === "number" &&
+    Number.isFinite(next.corrosionAllowance)
+  ) {
+    convertNum(
+      "corrosionAllowance",
+      toImperial ? mmToIn : inToMm,
+      toImperial ? 3 : 1,
+    );
+    const c = next.corrosionAllowance as number;
+    if (!toImperial) {
+      if (Math.abs(c) < 0.05) next.corrosionAllowance = 0;
+      else if (Math.abs(c - 3) < 0.08) next.corrosionAllowance = 3;
+      else if (Math.abs(c - 1.5) < 0.08) next.corrosionAllowance = 1.5;
+    } else if (Math.abs(c) < 0.0005) {
+      next.corrosionAllowance = 0;
+    }
+  }
+
+  // Blind gasket contact diameter: 3 dp inches / 1 dp mm (avoid 157.2006)
+  if (
+    typeof next.insideDiameter === "number" &&
+    Number.isFinite(next.insideDiameter)
+  ) {
+    convertNum(
+      "insideDiameter",
+      toImperial ? mmToIn : inToMm,
+      toImperial ? 3 : 1,
+    );
   }
 
   return next as T;

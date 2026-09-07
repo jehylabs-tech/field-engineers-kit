@@ -31,6 +31,8 @@ export type CalculatorDefinition = {
   standard?: string;
   subtitle?: string;
   formulaBasis?: string;
+  /** Inline KaTeX shown next to the page H1 when present. */
+  formulaLatex?: string;
   faq?: FaqItem[];
   related?: RelatedCalculator[];
   sponsor?: {
@@ -71,6 +73,8 @@ export type CalculatorOutput = {
   heroValue: string;
   heroStatus: string;
   heroStatusLevel: StatusLevel;
+  /** Optional chips under the hero value (e.g. selected vs recommended schedule). */
+  heroBadges?: SummaryItem[];
   summary: SummaryItem[];
   summaryStatus: {
     label: string;
@@ -111,6 +115,7 @@ export function parseCalculatorDefinition(
     standard: formulaJson.standard as string | undefined,
     subtitle: formulaJson.subtitle as string | undefined,
     formulaBasis: formulaJson.formulaBasis as string | undefined,
+    formulaLatex: formulaJson.formulaLatex as string | undefined,
     faq: formulaJson.faq as FaqItem[] | undefined,
     related: formulaJson.related as RelatedCalculator[] | undefined,
     sponsor: formulaJson.sponsor as CalculatorDefinition["sponsor"],

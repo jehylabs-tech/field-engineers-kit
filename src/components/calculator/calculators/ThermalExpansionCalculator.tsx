@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import CalculatorBaseLayout from "@/components/calculator/CalculatorBaseLayout";
 import FieldGroup, { FieldSelect } from "@/components/calculator/FieldGroup";
-import SectionBlock from "@/components/calculator/SectionBlock";
 import ThermalLoopSchematic from "@/components/calculator/schematics/ThermalLoopSchematic";
 import { usePublishCalculatorOutput } from "@/components/calculator/usePublishCalculatorOutput";
 import {
@@ -34,6 +33,7 @@ function toNumber(value: string, fallback: number) {
 }
 
 export default function ThermalExpansionCalculator({ title, standard }: Props) {
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const { inputs, setField, setInputs } = useCalculatorUrlSync<ThermalExpansionInputs>(
     DEFAULT_THERMAL_EXPANSION_INPUTS,
     THERMAL_EXPANSION_URL_CONFIG,
@@ -115,7 +115,7 @@ export default function ThermalExpansionCalculator({ title, standard }: Props) {
     output.rows.find((row) => row.label.includes("G₁"))?.value ?? "—";
   const g2Label =
     output.rows.find((row) => row.label.includes("G₂"))?.value ?? "—";
-  const deltaLLabel = output.heroValue.replace(/^\+/, "");
+  const deltaLLabel = output.heroValue.replace(/^[+−-]/, "");
 
   function onMaterialChange(value: ExpansionMaterial) {
     setInputs((current) => ({
@@ -137,7 +137,7 @@ export default function ThermalExpansionCalculator({ title, standard }: Props) {
           label: "T1 / T2",
           value: `${inputs.installTemp} / ${inputs.operatingTemp} ${tempUnit}`,
         },
-        { label: "Length", value: `${inputs.length} ${lengthUnit}` },
+        { label: "Length (L)", value: `${inputs.length} ${lengthUnit}` },
         {
           label: "NPS / Sch",
           value: `${inputs.nps}" · Sch ${section.scheduleLabel}`,
@@ -162,87 +162,124 @@ export default function ThermalExpansionCalculator({ title, standard }: Props) {
         />
       }
       inputPanel={
-        <div className="w-full min-w-0 [&_.calc-field]:max-w-none">
-          <SectionBlock number={1} title="Line and temperatures" twoColumn={false}>
-            <FieldSelect
-              label="Pipe material"
-              value={inputs.material}
-              options={materialOptions}
-              onChange={(value) => onMaterialChange(value as ExpansionMaterial)}
-            />
-            <FieldSelect
-              label="NPS"
-              labelNote="(for loop D)"
-              value={inputs.nps}
-              options={npsOptions}
-              onChange={(value) => setField("nps", value)}
-            />
-            <FieldSelect
-              label="Pipe schedule"
-              value={
-                scheduleOptions.some((o) => o.value === inputs.schedule)
-                  ? inputs.schedule
-                  : (scheduleOptions[0]?.value ?? inputs.schedule)
-              }
-              options={scheduleOptions}
-              chips={chipsInOptions(
-                EXPANSION_SCHEDULE_OPTIONS.map((o) => ({
-                  value: o.value,
-                  label: o.label,
-                })),
-                scheduleOptions,
-              )}
-              onChange={(value) =>
-                setField(
-                  "schedule",
-                  resolveScheduleOptionValue(inputs.nps, value),
-                )
-              }
-            />
-            <FieldGroup
-              label="Install temperature T1"
-              value={inputs.installTemp}
-              onChange={(value) =>
-                setField("installTemp", toNumber(value, inputs.installTemp))
-              }
-              unit={tempUnit}
-            />
-            <FieldGroup
-              label="Operating temperature T2"
-              value={inputs.operatingTemp}
-              onChange={(value) =>
-                setField("operatingTemp", toNumber(value, inputs.operatingTemp))
-              }
-              unit={tempUnit}
-            />
-            <FieldGroup
-              label="Straight run length L"
-              value={inputs.length}
-              onChange={(value) =>
-                setField("length", toNumber(value, inputs.length))
-              }
-              unit={lengthUnit}
-            />
-            <FieldGroup
-              label="Allowable displacement stress S_A"
-              value={inputs.allowableSa}
-              onChange={(value) =>
-                setField("allowableSa", toNumber(value, inputs.allowableSa))
-              }
-              unit={stressUnit}
-              hint="Default follows material screening S_A. Override for B31.3 Eq. 1a values."
-            />
-            <FieldGroup
-              label="Pipe rack friction factor μ"
-              value={inputs.frictionFactor}
-              onChange={(value) =>
-                setField("frictionFactor", toNumber(value, inputs.frictionFactor))
-              }
-              unit="—"
-              hint="Use 0.30 for steel-on-steel shoes or 0.10 for PTFE slide plates."
-              allowZero
-            />
-          </SectionBlock>
+        <div className="flex w-full min-w-0 flex-col gap-2.5 [&_.calc-field]:mb-0 [&_.calc-field]:max-w-none">
+          {/* Under 1. Input Parameters — no duplicate top-level section number */}
+          <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+            Line, pipe &amp; temperatures
+          </h3>
+          <FieldSelect
+            label="Pipe material"
+            value={inputs.material}
+            options={materialOptions}
+            onChange={(value) => onMaterialChange(value as ExpansionMaterial)}
+          />
+          <FieldSelect
+            label="NPS"
+            labelNote="(for loop D / I)"
+            value={inputs.nps}
+            options={npsOptions}
+            onChange={(value) => setField("nps", value)}
+          />
+          <FieldSelect
+            label="Pipe schedule"
+            value={
+              scheduleOptions.some((o) => o.value === inputs.schedule)
+                ? inputs.schedule
+                : (scheduleOptions[0]?.value ?? inputs.schedule)
+            }
+            options={scheduleOptions}
+            chips={chipsInOptions(
+              EXPANSION_SCHEDULE_OPTIONS.map((o) => ({
+                value: o.value,
+                label: o.label,
+              })),
+              scheduleOptions,
+            )}
+            onChange={(value) =>
+              setField(
+                "schedule",
+                resolveScheduleOptionValue(inputs.nps, value),
+              )
+            }
+          />
+          <FieldGroup
+            label="Install temperature (T1)"
+            value={inputs.installTemp}
+            onChange={(value) =>
+              setField("installTemp", toNumber(value, inputs.installTemp))
+            }
+            unit={tempUnit}
+          />
+          <FieldGroup
+            label="Operating temperature (T2)"
+            value={inputs.operatingTemp}
+            onChange={(value) =>
+              setField("operatingTemp", toNumber(value, inputs.operatingTemp))
+            }
+            unit={tempUnit}
+          />
+          <FieldGroup
+            label="Straight run length (L)"
+            value={inputs.length}
+            onChange={(value) =>
+              setField("length", toNumber(value, inputs.length))
+            }
+            unit={lengthUnit}
+            hint="Anchor-to-anchor free run. ΔL = α · L · ΔT. Loop uses ΔL_leg = ΔL/2."
+          />
+
+          <div className="overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-950/40">
+            <button
+              type="button"
+              onClick={() => setShowAdvanced((open) => !open)}
+              className="flex w-full items-center justify-between gap-2 px-3.5 py-2.5 text-left transition-colors hover:bg-slate-50 dark:hover:bg-slate-900/60"
+            >
+              <div className="flex min-w-0 items-center gap-2">
+                <span className="inline-flex h-5 min-w-5 items-center justify-center rounded bg-slate-100 px-1.5 text-[10px] font-bold tabular-nums text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+                  1.2
+                </span>
+                <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">
+                  S_A &amp; friction μ
+                </span>
+                {!showAdvanced ? (
+                  <span className="truncate font-mono text-[10px] text-slate-500 dark:text-slate-400">
+                    S_A {inputs.allowableSa} {stressUnit} · μ{" "}
+                    {inputs.frictionFactor.toFixed(2)}
+                  </span>
+                ) : null}
+              </div>
+              <span className="shrink-0 text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                {showAdvanced ? "▲ Hide" : "▼ Edit"}
+              </span>
+            </button>
+
+            {showAdvanced ? (
+              <div className="space-y-2.5 border-t border-slate-200/80 p-3.5 dark:border-slate-800">
+                <FieldGroup
+                  label="Allowable displacement stress (S_A)"
+                  value={inputs.allowableSa}
+                  onChange={(value) =>
+                    setField("allowableSa", toNumber(value, inputs.allowableSa))
+                  }
+                  unit={stressUnit}
+                  hint="Default is material screening S_A (138 MPa / 20 ksi). Override for B31.3 Eq. 1a."
+                />
+                <FieldGroup
+                  label="Pipe rack friction factor (μ)"
+                  value={inputs.frictionFactor}
+                  onChange={(value) =>
+                    setField(
+                      "frictionFactor",
+                      toNumber(value, inputs.frictionFactor),
+                    )
+                  }
+                  unit="—"
+                  hint="0.30 steel-on-steel shoes · 0.10 PTFE slide plates. F_anchor = F_bending + μ·W."
+                  allowZero
+                />
+              </div>
+            ) : null}
+          </div>
         </div>
       }
     />

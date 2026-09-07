@@ -1,19 +1,22 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import CalculatorBaseLayout from "@/components/calculator/CalculatorBaseLayout";
 import FieldGroup, {
   FIELD_LABEL_CLASS,
   FIELD_SELECT_CLASS,
 } from "@/components/calculator/FieldGroup";
-import SectionBlock from "@/components/calculator/SectionBlock";
 import BlindFlangeSchematic from "@/components/calculator/schematics/BlindFlangeSchematic";
 import BlindThicknessMatrixChart from "@/components/calculator/charts/BlindThicknessMatrixChart";
-import BlindFlangeResultPanel from "@/components/calculator/calculators/BlindFlangeResultPanel";
+import BlindFlangeResultPanel, {
+  BlindFlangeBreakdownPanel,
+} from "@/components/calculator/calculators/BlindFlangeResultPanel";
 import { usePublishCalculatorOutput } from "@/components/calculator/usePublishCalculatorOutput";
 import {
   calculateBlindFlange,
   DEFAULT_BLIND_FLANGE_INPUTS,
+  formatBlindLength,
+  formatBlindMaterialOption,
   getAllowableStressForMaterial,
   getStandardGasketContactDiameter,
   MATERIAL_STRESS_PRESETS,
@@ -81,6 +84,30 @@ export default function BlindFlangeCalculator({
   const pressureUnit = inputs.unitSystem === "metric" ? "MPa" : "psi";
   const stressUnit = inputs.unitSystem === "metric" ? "MPa" : "psi";
   const tRequired = requiredBlindThicknessMm(inputs);
+  const corrosionBadge =
+    inputs.unitSystem === "metric" ? "c ≥ 3.0 mm" : "c ≥ 0.125 in";
+  const hydroCorrosionBadge =
+    inputs.unitSystem === "metric" ? "c = 0.0 mm" : "c = 0.0 in";
+
+  // Recover from legacy bookmarks where mm d was stored under imperial units.
+  useEffect(() => {
+    if (inputs.unitSystem !== "imperial") return;
+    if (!(inputs.insideDiameter > 48)) return;
+    const mapped = getStandardGasketContactDiameter(
+      inputs.nps ?? "4",
+      inputs.pressureClass ?? "150",
+      "imperial",
+    );
+    if (mapped != null && mapped > 0) {
+      setField("insideDiameter", mapped);
+    }
+  }, [
+    inputs.unitSystem,
+    inputs.insideDiameter,
+    inputs.nps,
+    inputs.pressureClass,
+    setField,
+  ]);
 
   function handleModeChange(newMode: BlindDesignMode) {
     const currentMat = inputs.materialId ?? "a516_70";
@@ -142,7 +169,7 @@ export default function BlindFlangeCalculator({
     },
     {
       label: "Gasket Contact Dia (d)",
-      value: `${inputs.insideDiameter} ${unit}`,
+      value: `${formatBlindLength(inputs.insideDiameter, inputs.unitSystem)} ${unit}`,
     },
     {
       label: activeMode === "hydrotest" ? "Test Pressure (Pt)" : "Design Pressure (P)",
@@ -154,7 +181,7 @@ export default function BlindFlangeCalculator({
     },
     {
       label: "Corrosion Allowance (c)",
-      value: `${inputs.corrosionAllowance} ${unit}`,
+      value: `${formatBlindLength(inputs.corrosionAllowance, inputs.unitSystem, "corrosion")} ${unit}`,
     },
   ];
 
@@ -164,26 +191,32 @@ export default function BlindFlangeCalculator({
       exportTitle={title}
       standard={standard}
       inputRows={inputRows}
+      inputNaturalHeight
       visual={
         <BlindFlangeSchematic
-          diameterLabel={`${inputs.insideDiameter} ${unit}`}
-          thicknessLabel={`${tRequired.toFixed(2)} ${unit}`}
-          corrosionLabel={`${inputs.corrosionAllowance} ${unit}`}
+          diameterLabel={`${formatBlindLength(inputs.insideDiameter, inputs.unitSystem)} ${unit}`}
+          thicknessLabel={`${formatBlindLength(tRequired, inputs.unitSystem)} ${unit}`}
+          corrosionLabel={`${formatBlindLength(inputs.corrosionAllowance, inputs.unitSystem, "corrosion")} ${unit}`}
           pressureLabel={`${inputs.designPressure} ${pressureUnit}`}
         />
       }
       resultPanel={
         <BlindFlangeResultPanel
           output={output}
-          exportTitle={title}
-          standard={standard}
-          inputRows={inputRows}
           chart={
             <BlindThicknessMatrixChart
               inputs={inputs}
               onSelectCell={(nps, cls) => handleFlangeSelection(nps, cls)}
             />
           }
+        />
+      }
+      footerPanel={
+        <BlindFlangeBreakdownPanel
+          output={output}
+          exportTitle={title}
+          standard={standard}
+          inputRows={inputRows}
         />
       }
       inputPanel={
@@ -210,7 +243,7 @@ export default function BlindFlangeCalculator({
                   Permanent Design Blind
                 </span>
                 <span className="mt-0.5 text-[10px] text-slate-500 dark:text-slate-400">
-                  Operating Service (c ≥ 3.0 mm)
+                  Operating Service ({corrosionBadge})
                 </span>
               </button>
 
@@ -233,19 +266,17 @@ export default function BlindFlangeCalculator({
                   Temporary Test Blank
                 </span>
                 <span className="mt-0.5 text-[10px] text-slate-500 dark:text-slate-400">
-                  Hydrotest / Leak Test (c = 0.0 mm)
+                  Hydrotest / Leak Test ({hydroCorrosionBadge})
                 </span>
               </button>
             </div>
           </div>
 
-          {/* Section 1: Flange Size & Gasket Geometry */}
-          <SectionBlock
-            number={1}
-            title="Design Conditions"
-            twoColumn={false}
-            compact
-          >
+          {/* Design conditions (under 1. Input Parameters — no duplicate top-level number) */}
+          <div className="w-full min-w-0 space-y-2.5">
+            <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+              Design Conditions
+            </h3>
             <div className="grid grid-cols-2 gap-2">
               <div>
                 <label className={FIELD_LABEL_CLASS}>Flange Size (NPS)</label>
@@ -294,7 +325,11 @@ export default function BlindFlangeCalculator({
                   ? "Hydrotest Pressure (Pt)"
                   : "Design Pressure (P)"
               }
-              value={inputs.designPressure}
+              value={
+                inputs.unitSystem === "imperial"
+                  ? Number(inputs.designPressure.toFixed(1))
+                  : Number(inputs.designPressure.toFixed(2))
+              }
               onChange={(value) =>
                 setField(
                   "designPressure",
@@ -316,15 +351,19 @@ export default function BlindFlangeCalculator({
               >
                 {Object.entries(MATERIAL_STRESS_PRESETS).map(([id, preset]) => (
                   <option key={id} value={id}>
-                    {preset.label}
+                    {formatBlindMaterialOption(
+                      preset,
+                      inputs.unitSystem,
+                      activeMode,
+                    )}
                   </option>
                 ))}
                 <option value="custom">Custom Allowable Stress</option>
               </select>
             </div>
-          </SectionBlock>
+          </div>
 
-          {/* Section 2: Advanced Engineering Parameters (Collapsible) */}
+          {/* 1.2 Advanced Engineering Parameters (Collapsible) */}
           <div className="rounded-xl border border-slate-200/90 bg-slate-50/50 dark:border-slate-800/90 dark:bg-slate-900/30">
             <button
               type="button"
@@ -332,8 +371,8 @@ export default function BlindFlangeCalculator({
               className="flex w-full items-center justify-between px-3.5 py-2.5 text-left transition-colors hover:bg-slate-100/60 dark:hover:bg-slate-800/40"
             >
               <div className="flex items-center gap-2">
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-200/80 text-[11px] font-bold text-slate-700 dark:bg-slate-800 dark:text-slate-300">
-                  2
+                <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-slate-200/80 px-1 text-[10px] font-bold text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                  1.2
                 </span>
                 <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">
                   Advanced Engineering Parameters
@@ -351,7 +390,9 @@ export default function BlindFlangeCalculator({
               <div className="space-y-3 border-t border-slate-200/80 p-3.5 dark:border-slate-800">
                 <FieldGroup
                   label="Gasket contact diameter (d) [B16.20 SWG/RF]"
-                  value={inputs.insideDiameter}
+                  value={Number(
+                    formatBlindLength(inputs.insideDiameter, inputs.unitSystem),
+                  )}
                   onChange={(value) =>
                     setField(
                       "insideDiameter",
@@ -363,8 +404,8 @@ export default function BlindFlangeCalculator({
                 />
 
                 <FieldGroup
-                  label={`Allowable stress S (${activeMode === "hydrotest" ? "Ambient" : "Design"})`}
-                  value={inputs.allowableStress}
+                  label={`Allowable stress (S) (${activeMode === "hydrotest" ? "Ambient" : "Design"})`}
+                  value={Math.round(inputs.allowableStress)}
                   onChange={(value) =>
                     setField(
                       "allowableStress",
@@ -372,13 +413,24 @@ export default function BlindFlangeCalculator({
                     )
                   }
                   unit={stressUnit}
-                  highlight="t"
+                  highlight="S"
+                  hint={
+                    activeMode === "hydrotest"
+                      ? "Default uses ASME II-D ambient allowable stress. B31.3 Ch. VI may permit higher temporary limits up to ~0.9 Sy — confirm owner/test procedure before raising S."
+                      : "Design-temperature allowable stress from ASME II-D (or project basis)."
+                  }
                 />
 
                 <div className="grid grid-cols-2 gap-2">
                   <FieldGroup
                     label="Corrosion allowance (c)"
-                    value={inputs.corrosionAllowance}
+                    value={Number(
+                      formatBlindLength(
+                        inputs.corrosionAllowance,
+                        inputs.unitSystem,
+                        "corrosion",
+                      ),
+                    )}
                     onChange={(value) =>
                       setField(
                         "corrosionAllowance",
@@ -387,6 +439,11 @@ export default function BlindFlangeCalculator({
                     }
                     unit={unit}
                     highlight="c"
+                    hint={
+                      activeMode === "hydrotest"
+                        ? "Temporary blanks use c = 0. Permanent design typically 3.0 mm / 0.125 in."
+                        : "Permanent blinds typically use c ≥ 3.0 mm (0.125 in)."
+                    }
                   />
 
                   <FieldGroup
@@ -398,7 +455,7 @@ export default function BlindFlangeCalculator({
                         toNumber(value, inputs.weldEfficiency),
                       )
                     }
-                    highlight="t"
+                    highlight="E"
                   />
                 </div>
               </div>

@@ -72,23 +72,45 @@ export function useCalculatorUrlSync<T extends Record<string, unknown>>(
   const readFromUrl = useCallback((): T => {
     const source = mergedSearch();
     const next = { ...defaultsRef.current };
+    const explicitParams = new Set<string>();
+
     for (const key of Object.keys(config) as Array<keyof T>) {
       const { param, deserialize } = config[key];
-      next[key] = deserialize(source.get(param), defaultsRef.current[key]);
+      const raw = source.get(param);
+      if (raw != null && raw !== "") {
+        explicitParams.add(String(key));
+      }
+      next[key] = deserialize(raw, defaultsRef.current[key]);
     }
 
     // Prefer explicit ?units=, else localStorage preference.
+    // Defaults are stored in the default unitSystem (usually metric). When the
+    // preferred system differs, convert fields that still hold default values.
+    // Fields present in the URL are already in the preferred system.
     if ("unitSystem" in next) {
       const fromUrl = source.get("units");
       const preferred =
         fromUrl === "metric" || fromUrl === "imperial"
           ? fromUrl
           : readPreferredUnitSystem();
-      const currentSystem = (next as { unitSystem?: UnitSystem }).unitSystem;
-      if (preferred && currentSystem && preferred !== currentSystem) {
-        Object.assign(next, syncCompanionUnits(next, preferred));
+      const defaultSystem =
+        (defaultsRef.current as { unitSystem?: UnitSystem }).unitSystem ??
+        "metric";
+
+      if (preferred && preferred !== defaultSystem) {
+        const converted = syncCompanionUnits(
+          { ...defaultsRef.current },
+          preferred,
+        ) as T;
+        for (const key of Object.keys(config) as Array<keyof T>) {
+          if (key === "unitSystem") continue;
+          if (!explicitParams.has(String(key))) {
+            next[key] = converted[key];
+          }
+        }
+        (next as { unitSystem: UnitSystem }).unitSystem = preferred;
       } else if (preferred) {
-        (next as Record<string, unknown>).unitSystem = preferred;
+        (next as { unitSystem: UnitSystem }).unitSystem = preferred;
       }
     }
 

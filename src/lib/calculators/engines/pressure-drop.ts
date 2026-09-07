@@ -120,7 +120,6 @@ function haalandFriction(reynolds: number, relRough: number): number {
 const ELBOW_L_OVER_D = 30;
 const GATE_L_OVER_D = 8;
 const GLOBE_L_OVER_D = 340;
-const STEEL_ROUGHNESS_M = 4.5e-5;
 
 export type PressureDropResult = {
   velocity: number;
@@ -216,15 +215,18 @@ export function calculatePressureDrop(inputs: PressureDropInputs): CalculatorOut
   const fluidLabel = PRESSURE_DROP_FLUIDS.find(f => f.value === inputs.fluid)?.label || inputs.fluid;
   const computed = computePressureDrop(inputs);
 
+  const per100Label =
+    inputs.unitSystem === "imperial" ? "ΔP / 100 ft" : "ΔP / 100 m";
+
   if (!computed) {
     return {
-      heroLabel: "Pressure drop",
+      heroLabel: "Pressure Drop (ΔP)",
       heroValue: "—",
       heroStatus: "Enter flow, a valid NPS/schedule, and length",
       heroStatusLevel: "warn",
       summary: [
-        { label: "ΔP", value: "—" },
-        { label: "Velocity", value: "—" },
+        { label: per100Label, value: "—" },
+        { label: "Velocity (v)", value: "—" },
         { label: "Re", value: "—" },
       ],
       summaryStatus: { label: "Waiting for valid inputs", level: "warn" },
@@ -245,14 +247,14 @@ export function calculatePressureDrop(inputs: PressureDropInputs): CalculatorOut
     inputs.unitSystem === "imperial"
       ? `${barToPsi(dpBar).toFixed(2)} psi`
       : `${dpBar.toFixed(3)} bar`;
-  // Sticky bar + result grid share these exact strings (no separate formatting path).
+  // dp100Bar is ΔP for 100 m of straight pipe; imperial shows psi per 100 ft.
   const per100 =
     inputs.unitSystem === "imperial"
-      ? `${barToPsi(dp100Bar).toFixed(2)} psi/100m`
-      : `${dp100Bar.toFixed(3)} bar/100m`;
+      ? `${barToPsi(dp100Bar * 0.3048).toFixed(2)} psi/100 ft`
+      : `${dp100Bar.toFixed(3)} bar/100 m`;
   const per100Row =
     inputs.unitSystem === "imperial"
-      ? `${barToPsi(dp100Bar).toFixed(2)} psi / 100 m`
+      ? `${barToPsi(dp100Bar * 0.3048).toFixed(2)} psi / 100 ft`
       : `${dp100Bar.toFixed(3)} bar / 100 m`;
   const densityOut = formatDensity(fluid.densityKgM3, inputs.unitSystem);
   const idOut = formatLengthMm(idMm, inputs.unitSystem);
@@ -262,59 +264,109 @@ export function calculatePressureDrop(inputs: PressureDropInputs): CalculatorOut
   );
   const fittingOut = formatLengthM(fittingLeqM, inputs.unitSystem);
   const leqOut = formatLengthM(leqM, inputs.unitSystem);
+  const roughnessLabel =
+    PIPE_ROUGHNESS_OPTIONS.find((row) => row.value === inputs.roughness)?.label ??
+    `ε = ${inputs.roughness} mm`;
 
   return {
-    heroLabel: "Total pressure loss",
+    heroLabel: "Pressure Drop (ΔP)",
     heroValue: total,
-    heroStatus: `${fluidLabel} · Darcy–Weisbach · commercial steel`,
+    heroStatus: `${fluidLabel} · Darcy–Weisbach / Haaland · ε ${inputs.roughness} mm`,
     heroStatusLevel: dpBar > 1 ? "warn" : "pass",
+    heroBadges: [
+      { label: "v", value: velocityStr },
+      { label: "Re", value: reynoldsStr },
+      { label: "f", value: f.toFixed(4) },
+      { label: "ΔP/100", value: per100 },
+    ],
     summary: [
-      { label: "ΔP", value: per100 },
-      { label: "Velocity", value: velocityStr },
+      { label: per100Label, value: per100 },
+      { label: "Velocity (v)", value: velocityStr },
       { label: "Re", value: reynoldsStr },
     ],
     summaryStatus: {
-      label: `f = ${f.toFixed(4)} · Haaland`,
+      label: `f = ${f.toFixed(4)} · Haaland · ${roughnessLabel.split(" - ")[0] ?? "ε"}`,
       level: "neutral",
     },
     rows: [
-      { label: "Fluid", value: fluidLabel },
-      { label: "Density ρ", value: densityOut },
-      { label: "Inside diameter (ID)", value: idOut },
-      { label: "Velocity", value: velocityStr },
-      { label: "Reynolds number (Re)", value: reynoldsStr },
-      { label: "Friction factor (f)", value: f.toFixed(5) },
+      { label: "Fluid", value: fluidLabel, section: "Flow conditions" },
+      { label: "Density (ρ)", value: densityOut, section: "Flow conditions" },
+      {
+        label: "Inside diameter (ID / D)",
+        value: idOut,
+        section: "Flow conditions",
+        highlight: "bore",
+      },
+      {
+        label: "Velocity (v)",
+        value: velocityStr,
+        section: "Flow conditions",
+        highlight: "v",
+      },
+      {
+        label: "Reynolds number (Re)",
+        value: reynoldsStr,
+        section: "Flow conditions",
+      },
+      {
+        label: "Friction factor (f)",
+        value: f.toFixed(5),
+        section: "Flow conditions",
+      },
       {
         label: "Straight length (L)",
         value: straightOut,
+        section: "Equivalent length",
       },
       {
-        label: "Equivalent length (fittings)",
+        label: "Fitting equivalent length (Σ L_eq)",
         value: fittingOut,
+        section: "Equivalent length",
       },
-      { label: "Total equivalent L", value: leqOut },
-      { label: "ΔP per 100 m", value: per100Row },
-      { label: "Total ΔP (bar)", value: `${dpBar.toFixed(3)} bar` },
-      { label: "Total ΔP (psi)", value: `${barToPsi(dpBar).toFixed(2)} psi` },
+      {
+        label: "Total equivalent length (L + Σ L_eq)",
+        value: leqOut,
+        section: "Equivalent length",
+      },
+      {
+        label:
+          inputs.unitSystem === "imperial"
+            ? "ΔP per 100 ft (straight)"
+            : "ΔP per 100 m (straight)",
+        value: per100Row,
+        section: "Pressure drop",
+      },
+      {
+        label: "Total ΔP (bar)",
+        value: `${dpBar.toFixed(3)} bar`,
+        section: "Pressure drop",
+        emphasis: true,
+      },
+      {
+        label: "Total ΔP (psi)",
+        value: `${barToPsi(dpBar).toFixed(2)} psi`,
+        section: "Pressure drop",
+      },
     ],
     exportRows: [
-      { label: "Standard", value: "Darcy–Weisbach / Haaland f" },
+      { label: "Standard", value: "Darcy–Weisbach / Haaland f · Crane TP-410 L/D" },
       { label: "Fluid", value: fluidLabel },
-      { label: "Density ρ", value: densityOut },
+      { label: "Density (ρ)", value: densityOut },
+      { label: "Absolute roughness (ε)", value: `${inputs.roughness} mm` },
       { label: "Inside diameter (ID)", value: idOut },
-      { label: "Velocity", value: velocityStr },
+      { label: "Velocity (v)", value: velocityStr },
       { label: "Reynolds number (Re)", value: reynoldsStr },
       { label: "Friction factor (f)", value: f.toFixed(5) },
+      { label: "Straight length (L)", value: straightOut },
+      { label: "Fitting equivalent length (Σ L_eq)", value: fittingOut },
+      { label: "Total equivalent length (L + Σ L_eq)", value: leqOut },
       {
-        label: "Straight length (L)",
-        value: straightOut,
+        label:
+          inputs.unitSystem === "imperial"
+            ? "ΔP per 100 ft (straight)"
+            : "ΔP per 100 m (straight)",
+        value: per100Row,
       },
-      {
-        label: "Equivalent length (fittings)",
-        value: fittingOut,
-      },
-      { label: "Total equivalent L", value: leqOut },
-      { label: "ΔP per 100 m", value: per100Row },
       { label: "Total ΔP (bar)", value: `${dpBar.toFixed(3)} bar` },
       { label: "Total ΔP (psi)", value: `${barToPsi(dpBar).toFixed(2)} psi` },
     ],

@@ -193,6 +193,7 @@ function CalculatorMain({
           <PageTitleRow
             title={title}
             subtitle={definition.subtitle}
+            formulaLatex={definition.formulaLatex}
             standard={definition.standard}
             actions={
               <Suspense fallback={null}>

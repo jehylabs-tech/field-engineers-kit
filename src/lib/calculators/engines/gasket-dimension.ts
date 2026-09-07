@@ -71,17 +71,23 @@ export function calculateGasketDimension(
     );
 
     return {
-      heroLabel: "ID × Sealing OD × Outer Ring OD",
+      heroLabel: "ID × SE_OD × OR_OD",
       heroValue,
       heroStatus: `${gasketType.label} · ${size.npsLabel} · Class ${rating.class}`,
       heroStatusLevel: "neutral",
+      heroBadges: [
+        { label: "ID", value: innerDia },
+        { label: "SE_OD", value: sealing },
+        { label: "OR_OD", value: outerRing },
+        { label: "IR_OD", value: innerRing },
+      ],
       summary: [
-        { label: "Inner ID", value: innerDia },
-        { label: "Sealing OD", value: sealing },
-        { label: "Outer OD", value: outerRing },
+        { label: "Inner ID (ID)", value: innerDia },
+        { label: "Sealing OD (SE_OD)", value: sealing },
+        { label: "Outer ring OD (OR_OD)", value: outerRing },
       ],
       summaryStatus: {
-        label: "ASME B16.20 table lookup — verify for procurement",
+        label: "ASME B16.20 spiral-wound lookup — verify OEM datasheet before PO",
         level: "neutral",
       },
       rows: [
@@ -99,24 +105,28 @@ export function calculateGasketDimension(
           section: "Selection",
         },
         {
-          label: "Inner ring / ID",
+          label: "Inner diameter (ID)",
           value: innerDia,
-          section: "Spiral wound dimensions",
+          section: "Spiral-wound dimensions",
+          highlight: "bore",
+          emphasis: true,
         },
         {
-          label: "Inner ring OD",
+          label: "Inner ring OD (IR_OD)",
           value: innerRing,
-          section: "Spiral wound dimensions",
+          section: "Spiral-wound dimensions",
         },
         {
-          label: "Sealing element OD",
+          label: "Sealing element OD (SE_OD)",
           value: sealing,
-          section: "Spiral wound dimensions",
+          section: "Spiral-wound dimensions",
+          highlight: "od",
         },
         {
-          label: "Outer ring OD",
+          label: "Outer ring OD (OR_OD)",
           value: outerRing,
-          section: "Spiral wound dimensions",
+          section: "Spiral-wound dimensions",
+          emphasis: true,
         },
       ],
       exportRows: [
@@ -124,11 +134,11 @@ export function calculateGasketDimension(
         { label: "Gasket type", value: gasketType.label },
         { label: "NPS", value: size.npsLabel },
         { label: "Class", value: rating.class },
-        { label: "ID × SE OD × OR OD", value: heroValue },
-        { label: "Inner diameter", value: innerDia },
-        { label: "Inner ring OD", value: innerRing },
-        { label: "Sealing element OD", value: sealing },
-        { label: "Outer ring OD", value: outerRing },
+        { label: "ID × SE_OD × OR_OD", value: heroValue },
+        { label: "Inner diameter (ID)", value: innerDia },
+        { label: "Inner ring OD (IR_OD)", value: innerRing },
+        { label: "Sealing element OD (SE_OD)", value: sealing },
+        { label: "Outer ring OD (OR_OD)", value: outerRing },
       ],
     };
   }
@@ -152,17 +162,23 @@ export function calculateGasketDimension(
   const heroValue = `${rtj.ringNumber} · ⌀${pitchConv.value.toFixed(3)} · ${section.value.toFixed(3)}×${heightConv.value.toFixed(3)} ${section.unit} (${style})`;
 
   return {
-    heroLabel: "Ring No. × Pitch Dia × Section",
+    heroLabel: "Ring No. · Pitch (P) · Section (w×h)",
     heroValue,
     heroStatus: `${gasketType.label} · ${size.npsLabel} · Class ${rating.class}`,
     heroStatusLevel: "neutral",
+    heroBadges: [
+      { label: "Ring", value: rtj.ringNumber },
+      { label: "P", value: pitch },
+      { label: "w×h", value: `${width} × ${height}` },
+      { label: "ID", value: innerDia },
+    ],
     summary: [
       { label: "Ring number", value: rtj.ringNumber },
-      { label: "Pitch dia", value: pitch },
-      { label: "Section", value: `${width} × ${height}` },
+      { label: "Pitch diameter (P)", value: pitch },
+      { label: "Section (w × h)", value: `${width} × ${height}` },
     ],
     summaryStatus: {
-      label: `ASME B16.20 ${style} RTJ — verify for procurement`,
+      label: `ASME B16.20 ${style} RTJ lookup — verify OEM datasheet before PO`,
       level: "neutral",
     },
     rows: [
@@ -179,15 +195,30 @@ export function calculateGasketDimension(
         value: `Class ${rating.class}`,
         section: "Selection",
       },
-      { label: "Ring number", value: rtj.ringNumber, section: "RTJ dimensions" },
-      { label: "Ring style", value: style, section: "RTJ dimensions" },
-      { label: "Pitch diameter", value: pitch, section: "RTJ dimensions" },
       {
-        label: "Ring width × height",
+        label: "Ring number",
+        value: rtj.ringNumber,
+        section: "RTJ dimensions",
+        emphasis: true,
+      },
+      { label: "Ring style", value: style, section: "RTJ dimensions" },
+      {
+        label: "Pitch diameter (P)",
+        value: pitch,
+        section: "RTJ dimensions",
+        highlight: "pcd",
+      },
+      {
+        label: "Ring width × height (w × h)",
         value: `${width} × ${height}`,
         section: "RTJ dimensions",
       },
-      { label: "Inner diameter (ID)", value: innerDia, section: "RTJ dimensions" },
+      {
+        label: "Inner diameter (ID)",
+        value: innerDia,
+        section: "RTJ dimensions",
+        highlight: "bore",
+      },
     ],
     exportRows: [
       { label: "Standard", value: gasketType.standard },
@@ -196,9 +227,10 @@ export function calculateGasketDimension(
       { label: "Class", value: rating.class },
       { label: "Ring number", value: rtj.ringNumber },
       { label: "Ring style", value: style },
-      { label: "Pitch diameter", value: pitch },
-      { label: "Ring width", value: width },
-      { label: "Ring height", value: height },
+      { label: "Pitch diameter (P)", value: pitch },
+      { label: "Ring width (w)", value: width },
+      { label: "Ring height (h)", value: height },
+      { label: "Inner diameter (ID)", value: innerDia },
       { label: "Summary", value: heroValue },
     ],
   };

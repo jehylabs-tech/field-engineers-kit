@@ -18,11 +18,11 @@
     "category": "piping",
     "title": "Pipe Schedule & Dimension",
     "slug": "pipe-schedule-dimension",
-    "meta_description": "Look up ASME B36.10M pipe outside diameter, inside diameter, wall thickness, and unit weight by NPS and schedule.",
+    "meta_description": "ASME B36.10M / B36.19M pipe OD, ID, wall t, unit mass W_m, and MTO total W_tot = W_m × L × n by NPS and schedule.",
     "formula_json": {
       "type": "pipe-schedule",
-      "standard": "ASME B36.10M",
-      "formulaBasis": "OD, ID, wall, and unit weight from ASME B36.10M by NPS and schedule."
+      "standard": "ASME B36.10M / B36.19M",
+      "formulaBasis": "Lookup OD, t, ID, W_m from B36.10M / B36.19M. Hero = t. W_tot = W_m × L × n."
     },
     "is_published": true,
     "created_at": "2026-08-12T00:00:01.000Z"
@@ -32,11 +32,11 @@
     "category": "piping",
     "title": "Flange Dimension & Weight",
     "slug": "flange-dimension-weight",
-    "meta_description": "Look up ASME B16.5 weld neck RF flange dimensions, bolt circle, and approximate weight for Class 150, 300, and 600.",
+    "meta_description": "ASME B16.5 flange OD, T, PCD, bolting, and mated-pair weight W_pair for NPS ½–24. WN hub bore uses Sch 40/STD ID.",
     "formula_json": {
       "type": "flange-dimension",
       "standard": "ASME B16.5",
-      "formulaBasis": "WN RF dimensions and mass from ASME B16.5. Hub bore follows ASME B36.10M pipe ID. RF stud length is a two-nut screening value."
+      "formulaBasis": "W_pair = 2 W_f + W_g + n(W_stud + 2 W_nut). WN RF table lookup with type/facing factors; WN hub bore = Sch 40/STD ID (B36.10M)."
     },
     "is_published": true,
     "created_at": "2026-08-12T00:00:02.000Z"
@@ -74,11 +74,11 @@
     "category": "piping",
     "title": "Gasket Dimension & Selection",
     "slug": "gasket-dimension-selection",
-    "meta_description": "Look up ASME B16.20 spiral wound and RTJ ring gasket dimensions by NPS and pressure class.",
+    "meta_description": "ASME B16.20 spiral-wound (ID × SE_OD × OR_OD) and RTJ (Ring No. · P · w×h) dimension lookup by NPS and class.",
     "formula_json": {
       "type": "gasket-dimension",
       "standard": "ASME B16.20",
-      "formulaBasis": "Spiral-wound and RTJ ring dimensions from ASME B16.20, matched to the B16.5 flange class."
+      "formulaBasis": "Spiral-wound: ID, IR_OD, SE_OD, OR_OD. RTJ: ring number, pitch P, section w×h. Lookup only — Wm/torque via PCC-1 tool."
     },
     "is_published": true,
     "created_at": "2026-08-12T00:00:04.000Z"
@@ -88,11 +88,12 @@
     "category": "mechanical",
     "title": "Valve Cv Sizing Calculator",
     "slug": "valve-cv-sizing",
-    "meta_description": "Size control valves for liquid and gas service by calculating required flow coefficient (Cv) from process conditions.",
+    "meta_description": "ISA/IEC US Cv screening for liquid and gas: Q, P1/P2 gauge, SG, and catalog Cv,sel headroom check.",
     "formula_json": {
       "type": "valve-cv",
       "standard": "ISA / IEC 60534",
-      "formulaBasis": "US Cv per ISA / IEC 60534. Liquid Cv = Q_gpm √(SG / ΔP_psi) after converting m³/h and bar."
+      "subtitle": "US Cv screening · liquid gpm/psi path · gas absolute P · Cv ≤ Cv,sel",
+      "formulaBasis": "Liquid: convert m³/h & bar to gpm/psi, Cv = Q_gpm √(SG/ΔP_psi). Gas: gauge→absolute (+1 atm), simplified non-choked screening. Adequate when calculated Cv ≤ catalog Cv,sel. Choked FL/xT not solved in-app."
     },
     "is_published": true,
     "created_at": "2026-08-12T00:00:05.000Z"
@@ -102,12 +103,12 @@
     "category": "mechanical",
     "title": "Bolt Torque & Tensioning",
     "slug": "bolt-torque-tensioning",
-    "meta_description": "Look up ASME PCC-1 recommended flange joint assembly torque, stud size, bolt count, and star tightening sequence.",
+    "meta_description": "ASME PCC-1 flange bolt torque lookup: B16.5 studs, moly T_table (K=0.13), K/grade scaling, and Round 1–4 star sequence.",
     "formula_json": {
       "type": "bolt-torque",
       "standard": "ASME PCC-1",
-      "subtitle": "ASME PCC-1 Guidelines for Pressure Boundary Bolted Flange Joint Assembly.",
-      "formulaBasis": "Assembly torque, stud size, and star-pattern tightening follow ASME PCC-1 for pressure-boundary bolted flange joints. NPS and class nominators come from the ASME B16.5 flange geometry used with the joint."
+      "subtitle": "PCC-1 screening torque · B16.5 studs · K & grade rescale · Round 1–4",
+      "formulaBasis": "Lookup ASME B16.5 stud size/count and PCC-1-style moly T_table (K_ref = 0.13, A193 B7). Scale T = T_table × (K/0.13) × f_grade (B8/B8M Class 2 = 0.85). Four-round targets: 30% / 60% / 100% / circular 100%. Confirm against the owner’s PCC-1 appendix."
     },
     "is_published": true,
     "created_at": "2026-08-12T00:00:06.000Z"
@@ -121,7 +122,8 @@
     "formula_json": {
       "type": "blind-flange",
       "standard": "ASME B31.3",
-      "subtitle": "t = d × √(0.3P / SE) + c using attachment factor C = 0.30 (B31.3 304.4.1 / VIII-1 UG-34).",
+      "subtitle": "Attachment factor C = 0.30 (B31.3 304.4.1 / VIII-1 UG-34).",
+      "formulaLatex": "t_m = d \\times \\sqrt{\\frac{0.30 P}{S E}} + c \\quad (\\text{hydro: omit } c,\\; P \\to P_t)",
       "formulaBasis": "Required thickness uses t = d × √(0.3P / SE) + c. C = 0.30 is the ASME Section VIII Division 1 UG-34 / B31.3 para. 304.4.1 bolted flat-cover factor. d is inside or gasket contact diameter; P and S share stress units; c is corrosion allowance."
     },
     "is_published": true,
@@ -151,7 +153,7 @@
       "type": "hydro-test",
       "standard": "ASME B31.3",
       "subtitle": "ASME B31.3 St/S stress ratio & yield limit check",
-      "formulaBasis": "Hydrostatic test pressure Pt = 1.5 × P × (St/S). Pneumatic Pt = 1.1 × P × (St/S) per ASME B31.3 para. 345.4.2. St is allowable stress at the test temperature and S is allowable at the design temperature. Default St/S = 1.0; field guide cap is 6.5. Confirm that test hoop stress stays below yield."
+      "formulaBasis": "Hydrostatic Pt = 1.5 × P × (St/S). Pneumatic Pt = 1.1 × P × (St/S) per ASME B31.3 para. 345.4.2. St is allowable at test temperature; S at design temperature. Default St/S = 1.0; field guide cap 6.5. Ambient CS binding 138 MPa / 20,000 psi. NPS holding-time guide: ≤2\" → 10 min, 2½\"–4\" → 30 min, ≥6\" → 60 min. Hoop vs 0.90 Sy is a site check — not computed in-app."
     },
     "is_published": true,
     "created_at": "2026-08-12T00:00:09.000Z"
@@ -161,12 +163,12 @@
     "category": "piping",
     "title": "Thermal Expansion & Loop Sizing",
     "slug": "thermal-expansion-loop",
-    "meta_description": "Calculate ASME B31.3 thermal growth and screen L-shape / U-loop leg length from material, T1/T2, and straight-run length.",
+    "meta_description": "ASME B31.3 thermal growth ΔL = α L ΔT with guided-cantilever loop H, W = H/2, guides G₁/G₂, and F_anchor screening.",
     "formula_json": {
       "type": "thermal-expansion",
-      "standard": "ASME B31.3 (2022 Edition) · Appendix C",
-      "subtitle": "ΔL = α L ΔT with guided-cantilever loop screening. Not a CAESAR II / Appendix P computer analysis.",
-      "formulaBasis": "Thermal expansion ΔL = α × L × (T2 − T1) using mean coefficients typical of ASME B31.3 Appendix C. L-shape min. guided length L = √(3 E D Δ / (4 Sa)). U-loop width taken as 0.65 L. Screening only.",
+      "standard": "ASME B31.3 · Appendix C (screening)",
+      "subtitle": "ΔL = α L ΔT · H = √(3 E_h D · ΔL/2 / S_A) · W = H/2 · F_anchor = F_bending + μ W_pipe. Not CAESAR II.",
+      "formulaBasis": "ΔL = α × L × (T2 − T1). Guided-cantilever H = √(3 E_h D · (ΔL/2) / S_A); U-loop W = H/2; F_anchor = 12 E_h I ΔL / H³ + μ W_pipe. Screening only.",
       "faq": [
         {
           "q": "Does this replace a flexibility analysis?",
@@ -186,12 +188,12 @@
     "category": "piping",
     "title": "Pressure Drop & Friction Loss",
     "slug": "pressure-drop-friction",
-    "meta_description": "Darcy–Weisbach pressure drop with NPS/schedule ID, fittings as equivalent length, and ΔP in bar and psi.",
+    "meta_description": "Darcy–Weisbach ΔP with Haaland f, B36 ID, Crane L/D fittings, and ΔP/100 gradient. Hero includes L + Σ L_eq.",
     "formula_json": {
       "type": "pressure-drop",
-      "standard": "Darcy–Weisbach",
-      "subtitle": "ΔP = f (L/D) (ρ v² / 2) with Haaland friction factor for commercial steel pipe.",
-      "formulaBasis": "Darcy–Weisbach equation. Friction factor by the Haaland approximation to Colebrook. Elbow / gate / globe equivalent lengths use Crane TP-410 typical L/D values.",
+      "standard": "Darcy–Weisbach / Haaland · Crane TP-410",
+      "subtitle": "ΔP = f ((L+ΣL_eq)/D) (½ρv²). Haaland f. Elbow 30 / gate 8 / globe 340 L/D.",
+      "formulaBasis": "Darcy–Weisbach with Haaland friction factor. Fitting equivalent lengths use Crane TP-410 L/D (elbow 30, gate 8, globe 340). ΔP/100 is straight-only; hero ΔP includes fittings.",
       "faq": [
         {
           "q": "Are steam and air densities fixed?",
@@ -211,16 +213,16 @@
     "category": "piping",
     "title": "Flow Rate & Velocity",
     "slug": "flow-velocity-erosion",
-    "meta_description": "Compute pipe velocity v = Q/A and flag API RP 14E erosion velocity limit vc = c / √ρ.",
+    "meta_description": "Pipe velocity v = Q/A vs API RP 14E vc = C/√ρ. CS/SS liquid caps and Safe / Warning / Erosion Risk screening.",
     "formula_json": {
       "type": "flow-velocity",
       "standard": "API RP 14E",
-      "subtitle": "Mean velocity versus API RP 14E erosion velocity. Safe / Warning / Erosion Risk.",
-      "formulaBasis": "v = Q / A using ASME B36.10M inside diameter. Erosion limit vc = c / √ρ with ρ in lb/ft³ per API RP 14E. Default c = 100 for continuous service.",
+      "subtitle": "v = Q/A vs vc = C/√ρ. Safe / Warning / Erosion Risk. CS cap 3.5 m/s · SS cap 5.0 m/s.",
+      "formulaBasis": "v = Q/A from schedule ID (B36.10M CS / B36.19M SS). vc = C/√ρ with ρ in lb/ft³ per API RP 14E. Default C = 100 (CS) or 150 (SS). Warning if v ≥ 0.8·vc or liquid v exceeds material cap.",
       "faq": [
         {
-          "q": "What c factor should I use?",
-          "a": "c = 100 is conservative continuous service. 125–150 is common for intermittent two-phase; site standards prevail."
+          "q": "What C factor should I use?",
+          "a": "C = 100 is the CS continuous default; C = 150 is the SS/CRA default. 125–150 is common for intermittent service — site standards prevail."
         }
       ],
       "related": [

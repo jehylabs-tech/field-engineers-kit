@@ -3,7 +3,6 @@
 import { useMemo, useState } from "react";
 import CalculatorBaseLayout from "@/components/calculator/CalculatorBaseLayout";
 import FieldGroup from "@/components/calculator/FieldGroup";
-import SectionBlock from "@/components/calculator/SectionBlock";
 import { usePublishCalculatorOutput } from "@/components/calculator/usePublishCalculatorOutput";
 import {
   calculateValveCv,
@@ -60,12 +59,18 @@ export default function ValveCvCalculator({
 
   const inputRows = [
     { label: "Fluid type", value: inputs.fluid },
-    { label: "Flow rate", value: `${inputs.flowRate} ${flowUnit}` },
-    { label: "Inlet pressure", value: `${inputs.inletPressure} ${pressureUnit}` },
-    { label: "Outlet pressure", value: `${inputs.outletPressure} ${pressureUnit}` },
-    { label: "Specific gravity", value: String(inputs.specificGravity) },
-    { label: "Temperature", value: `${inputs.temperature} ${tempUnit}` },
-    { label: "Selected Cv", value: String(inputs.requiredCv) },
+    { label: "Flow rate (Q)", value: `${inputs.flowRate} ${flowUnit}` },
+    {
+      label: "Inlet pressure (P1)",
+      value: `${inputs.inletPressure} ${pressureUnit}`,
+    },
+    {
+      label: "Outlet pressure (P2)",
+      value: `${inputs.outletPressure} ${pressureUnit}`,
+    },
+    { label: "Specific gravity (SG)", value: String(inputs.specificGravity) },
+    { label: "Temperature (T)", value: `${inputs.temperature} ${tempUnit}` },
+    { label: "Catalog Cv,sel", value: String(inputs.requiredCv) },
   ];
 
   return (
@@ -76,7 +81,6 @@ export default function ValveCvCalculator({
       inputRows={inputRows}
       inputPanel={
         <div className="flex w-full min-w-0 flex-1 flex-col gap-3 [&_.calc-field]:max-w-none">
-          {/* Fluid Phase Toggle */}
           <div className="rounded-xl border border-slate-200 bg-slate-50/80 p-1.5 dark:border-slate-800 dark:bg-slate-900/60">
             <div className="grid grid-cols-2 gap-1.5">
               {(["liquid", "gas"] as ValveCvFluid[]).map((fluid) => (
@@ -97,25 +101,38 @@ export default function ValveCvCalculator({
                         : "text-slate-700 dark:text-slate-300"
                     }`}
                   >
-                    {fluid === "liquid" ? "Incompressible (Liquid)" : "Compressible (Gas / Vapor)"}
+                    {fluid === "liquid"
+                      ? "Incompressible (Liquid)"
+                      : "Compressible (Gas / Vapor)"}
                   </span>
                   <span className="mt-0.5 text-[10px] text-slate-500 dark:text-slate-400">
-                    {fluid === "liquid" ? "Water, Oil, Chemicals" : "Air, Steam, Natural Gas"}
+                    {fluid === "liquid"
+                      ? "Water, Oil, Chemicals"
+                      : "Air, Steam, Natural Gas"}
                   </span>
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Section 1: Process Flow & Pressure */}
-          <SectionBlock number={1} title="Operating Process Conditions" twoColumn={false} compact>
+          {/* Under 1. Input Parameters — no duplicate top-level section number */}
+          <div className="w-full min-w-0 space-y-2.5">
+            <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+              Operating process conditions
+            </h3>
             <FieldGroup
               label="Volumetric flow rate (Q)"
-              value={inputs.flowRate}
+              value={
+                imperial
+                  ? Number(inputs.flowRate.toFixed(2))
+                  : inputs.flowRate
+              }
               onChange={(value) =>
                 updateField("flowRate", toNumber(value, inputs.flowRate))
               }
               unit={flowUnit}
+              highlight="Q"
+              autoFocus
             />
 
             <div className="grid grid-cols-2 gap-2">
@@ -123,87 +140,125 @@ export default function ValveCvCalculator({
                 label="Inlet pressure (P1, gauge)"
                 hint={
                   inputs.fluid === "gas"
-                    ? "Enter gauge pressure. Gas Cv converts to absolute using +1 atm (1.01325 bar / 14.696 psi)."
-                    : "Enter gauge pressure. Liquid ΔP sizing uses the gauge differential directly."
+                    ? "Gauge pressure. Gas Cv converts to absolute with +1 atm (1.01325 bar / 14.696 psi)."
+                    : "Gauge pressure. Liquid ΔP uses the gauge differential directly."
                 }
-                value={inputs.inletPressure}
+                value={
+                  imperial
+                    ? Number(inputs.inletPressure.toFixed(1))
+                    : inputs.inletPressure
+                }
                 onChange={(value) =>
-                  updateField("inletPressure", toNumber(value, inputs.inletPressure))
+                  updateField(
+                    "inletPressure",
+                    toNumber(value, inputs.inletPressure),
+                  )
                 }
                 unit={pressureUnit}
+                highlight="P1"
               />
               <FieldGroup
                 label="Outlet pressure (P2, gauge)"
                 hint={
                   inputs.fluid === "gas"
-                    ? "Enter gauge pressure. Converted to absolute for gas sizing with the same +1 atm offset."
-                    : "Enter gauge pressure. Units follow the metric / imperial toggle."
+                    ? "Gauge pressure. Converted to absolute with the same +1 atm offset."
+                    : "Gauge pressure. Units follow the metric / imperial toggle."
                 }
-                value={inputs.outletPressure}
+                value={
+                  imperial
+                    ? Number(inputs.outletPressure.toFixed(1))
+                    : inputs.outletPressure
+                }
                 onChange={(value) =>
-                  updateField("outletPressure", toNumber(value, inputs.outletPressure))
+                  updateField(
+                    "outletPressure",
+                    toNumber(value, inputs.outletPressure),
+                  )
                 }
                 unit={pressureUnit}
+                highlight="P2"
               />
             </div>
-          </SectionBlock>
+          </div>
 
-          {/* Section 2: Fluid Properties & Catalog Sizing (Collapsible) */}
           <div className="rounded-xl border border-slate-200/90 bg-slate-50/50 dark:border-slate-800/90 dark:bg-slate-900/30">
             <button
               type="button"
               onClick={() => setShowAdvanced(!showAdvanced)}
               className="flex w-full items-center justify-between px-3.5 py-2.5 text-left transition-colors hover:bg-slate-100/60 dark:hover:bg-slate-800/40"
             >
-              <div className="flex items-center gap-2">
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-200/80 text-[11px] font-bold text-slate-700 dark:bg-slate-800 dark:text-slate-300">
-                  2
+              <div className="flex min-w-0 items-center gap-2">
+                <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-slate-200/80 px-1 text-[10px] font-bold text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                  1.2
                 </span>
                 <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">
-                  Fluid Properties &amp; Trim Headroom
+                  Fluid properties &amp; catalog Cv,sel
                 </span>
-                <span className="rounded bg-slate-200/60 px-1.5 py-0.5 text-[10px] text-slate-500 dark:bg-slate-800 dark:text-slate-400">
-                  Defaults Applied
-                </span>
+                {!showAdvanced ? (
+                  <span className="truncate font-mono text-[11px] text-slate-500 dark:text-slate-400">
+                    SG={inputs.specificGravity} · Cv,sel=
+                    {inputs.requiredCv}
+                  </span>
+                ) : null}
               </div>
-              <span className="text-xs font-bold text-slate-400 dark:text-slate-500">
+              <span className="shrink-0 text-[11px] font-medium text-slate-500 dark:text-slate-400">
                 {showAdvanced ? "▲ Hide" : "▼ Edit"}
               </span>
             </button>
 
-            {showAdvanced && (
+            {showAdvanced ? (
               <div className="space-y-3 border-t border-slate-200/80 p-3.5 dark:border-slate-800">
                 <div className="grid grid-cols-2 gap-2">
                   <FieldGroup
                     label="Specific gravity (SG)"
-                    hint="Dimensionless. Water = 1.0, Air = 1.0 (relative to base reference)."
+                    hint="Dimensionless. Water = 1.0; air ≈ 1.0 relative to air."
                     value={inputs.specificGravity}
                     onChange={(value) =>
-                      updateField("specificGravity", toNumber(value, inputs.specificGravity))
+                      updateField(
+                        "specificGravity",
+                        toNumber(value, inputs.specificGravity),
+                      )
                     }
                     unit="dim."
+                    highlight="SG"
                   />
                   <FieldGroup
                     label="Temperature (T)"
-                    hint="Process fluid temperature."
-                    value={inputs.temperature}
+                    hint={
+                      inputs.fluid === "gas"
+                        ? "Used in the gas Cv equation."
+                        : "Not used for liquid US Cv screening (shown for documentation)."
+                    }
+                    value={
+                      imperial
+                        ? Math.round(inputs.temperature)
+                        : inputs.temperature
+                    }
                     onChange={(value) =>
-                      updateField("temperature", toNumber(value, inputs.temperature))
+                      updateField(
+                        "temperature",
+                        toNumber(value, inputs.temperature),
+                      )
                     }
                     unit={tempUnit}
+                    highlight="T"
                   />
                 </div>
                 <FieldGroup
-                  label="Rated Catalog Valve Cv (for Travel % Check)"
-                  hint="Optional: Enter manufacturer full-open rated Cv to calculate valve opening travel percentage."
+                  label="Catalog valve Cv,sel (headroom check)"
+                  hint="Manufacturer full-open rated Cv. Adequate when calculated Cv ≤ Cv,sel. Gauge shows calculated / Cv,sel."
                   value={inputs.requiredCv}
                   onChange={(value) =>
-                    updateField("requiredCv", toNumber(value, inputs.requiredCv))
+                    updateField(
+                      "requiredCv",
+                      toNumber(value, inputs.requiredCv),
+                    )
                   }
                   unit="Cv"
+                  highlight="Cv,sel"
                 />
               </div>
-            )}
+            ) : null}
           </div>
         </div>
       }

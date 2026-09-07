@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import CalculatorBaseLayout from "@/components/calculator/CalculatorBaseLayout";
-import SectionBlock from "@/components/calculator/SectionBlock";
 import CopyValueButton from "@/components/calculator/CopyValueButton";
 import ExportButtons from "@/components/calculator/ExportButtons";
 import { usePublishCalculatorOutput } from "@/components/calculator/usePublishCalculatorOutput";
@@ -29,6 +28,7 @@ import {
   listBoltTorqueNps,
 } from "@/lib/data/loaders";
 import type { CalculatorOutput, ResultRow } from "@/lib/calculators/definitions";
+import { RESULT_HERO_ID } from "@/components/calculator/SummaryBar";
 
 type BoltTorqueCalculatorProps = {
   title: string;
@@ -250,7 +250,10 @@ function BoltTorqueResultTabs({
       id: "torque",
       node: (
         <div className="space-y-2">
-          <div className="rounded-md border border-spec-border bg-spec-panel px-2.5 py-2">
+          <div
+            id={RESULT_HERO_ID}
+            className="rounded-md border border-l-4 border-spec-border border-l-blue-600 bg-blue-50/50 px-2.5 py-2 dark:border-l-blue-500 dark:bg-blue-950/20"
+          >
             <div className="mb-1 flex flex-wrap items-center justify-between gap-2">
               <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">
                 {output.heroLabel}
@@ -273,9 +276,24 @@ function BoltTorqueResultTabs({
                 />
               </div>
             </div>
-            <div className="font-mono text-3xl font-bold leading-tight tracking-tight text-slate-900 dark:text-slate-50">
+            <div className="font-mono text-3xl font-bold leading-tight tracking-tight text-blue-800 dark:text-blue-200">
               {output.heroValue}
             </div>
+            {output.heroBadges && output.heroBadges.length > 0 ? (
+              <div className="mt-1.5 flex flex-wrap gap-1.5">
+                {output.heroBadges.map((badge) => (
+                  <span
+                    key={`${badge.label}-${badge.value}`}
+                    className="inline-flex items-center gap-1 rounded-md border border-blue-200/80 bg-white/80 px-2 py-0.5 text-[11px] font-medium text-slate-700 dark:border-blue-500/30 dark:bg-blue-950/40 dark:text-slate-200"
+                  >
+                    <span className="text-slate-500 dark:text-slate-400">
+                      {badge.label}:
+                    </span>
+                    <span className="font-semibold tabular-nums">{badge.value}</span>
+                  </span>
+                ))}
+              </div>
+            ) : null}
             <p className="mt-1 truncate text-xs text-slate-500 dark:text-slate-400">
               {output.heroStatus}
             </p>
@@ -380,6 +398,7 @@ export default function BoltTorqueCalculator({
   title,
   standard,
 }: BoltTorqueCalculatorProps) {
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const { inputs, setField } = useCalculatorUrlSync<BoltTorqueInputs>(
     DEFAULT_BOLT_TORQUE_INPUTS,
     BOLT_TORQUE_URL_CONFIG,
@@ -420,6 +439,10 @@ export default function BoltTorqueCalculator({
     resolvedInputs.pressureClass,
   );
 
+  const gradeLabel =
+    BOLT_GRADE_OPTIONS.find((o) => o.value === resolvedInputs.boltGrade)
+      ?.label ?? "A193 B7";
+
   const inputRows = [
     { label: "NPS", value: entry?.size.npsLabel ?? resolvedInputs.nps },
     { label: "Class", value: `Class ${resolvedInputs.pressureClass}` },
@@ -432,9 +455,7 @@ export default function BoltTorqueCalculator({
     },
     {
       label: "Bolt grade",
-      value:
-        BOLT_GRADE_OPTIONS.find((o) => o.value === resolvedInputs.boltGrade)
-          ?.label ?? "A193 B7",
+      value: gradeLabel,
     },
   ];
 
@@ -456,12 +477,11 @@ export default function BoltTorqueCalculator({
       }
       inputPanel={
         <div className="flex w-full min-w-0 flex-1 flex-col gap-2.5 [&_.calc-field]:max-w-none">
-          <SectionBlock
-            number={1}
-            title="Flange selection"
-            twoColumn={false}
-            compact
-          >
+          {/* Under 1. Input Parameters — no duplicate top-level section number */}
+          <div className="w-full min-w-0 space-y-2.5">
+            <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+              Flange selection
+            </h3>
             <SelectField
               label="Nominal pipe size (NPS)"
               value={resolvedInputs.nps}
@@ -484,29 +504,68 @@ export default function BoltTorqueCalculator({
               chips={COMMON_CLASS_CHIPS}
               onChange={(value) => setField("pressureClass", value)}
             />
-            <SelectField
-              label="Lubricant / Nut Factor (K)"
-              value={resolvedInputs.lubricant}
-              options={BOLT_LUBRICANT_OPTIONS.map((item) => ({
-                value: item.value,
-                label: item.label,
-              }))}
-              onChange={(value) =>
-                setField("lubricant", value as BoltLubricantId)
-              }
-            />
-            <SelectField
-              label="Bolt Grade / Material"
-              value={resolvedInputs.boltGrade}
-              options={BOLT_GRADE_OPTIONS.map((item) => ({
-                value: item.value,
-                label: item.label,
-              }))}
-              onChange={(value) =>
-                setField("boltGrade", value as BoltGradeId)
-              }
-            />
-          </SectionBlock>
+          </div>
+
+          <div className="rounded-xl border border-slate-200/90 bg-slate-50/50 dark:border-slate-800/90 dark:bg-slate-900/30">
+            <button
+              type="button"
+              onClick={() => setShowAdvanced(!showAdvanced)}
+              className="flex w-full items-center justify-between px-3.5 py-2.5 text-left transition-colors hover:bg-slate-100/60 dark:hover:bg-slate-800/40"
+            >
+              <div className="flex min-w-0 items-center gap-2">
+                <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-slate-200/80 px-1 text-[10px] font-bold text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                  1.2
+                </span>
+                <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">
+                  Lubricant K &amp; bolt grade
+                </span>
+                {!showAdvanced ? (
+                  <span className="truncate font-mono text-[11px] text-slate-500 dark:text-slate-400">
+                    K=
+                    {
+                      BOLT_LUBRICANT_OPTIONS.find(
+                        (o) => o.value === resolvedInputs.lubricant,
+                      )?.k
+                    }{" "}
+                    · {gradeLabel}
+                  </span>
+                ) : null}
+              </div>
+              <span className="shrink-0 text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                {showAdvanced ? "▲ Hide" : "▼ Edit"}
+              </span>
+            </button>
+            {showAdvanced ? (
+              <div className="space-y-2.5 border-t border-slate-200/80 px-3.5 py-3 dark:border-slate-800/80">
+                <SelectField
+                  label="Lubricant / Nut Factor (K)"
+                  value={resolvedInputs.lubricant}
+                  options={BOLT_LUBRICANT_OPTIONS.map((item) => ({
+                    value: item.value,
+                    label: item.label,
+                  }))}
+                  onChange={(value) =>
+                    setField("lubricant", value as BoltLubricantId)
+                  }
+                />
+                <SelectField
+                  label="Bolt Grade / Material"
+                  value={resolvedInputs.boltGrade}
+                  options={BOLT_GRADE_OPTIONS.map((item) => ({
+                    value: item.value,
+                    label: item.label,
+                  }))}
+                  onChange={(value) =>
+                    setField("boltGrade", value as BoltGradeId)
+                  }
+                />
+                <p className="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">
+                  Table torques assume moly K = 0.13 and A193 B7. Other lubricants
+                  scale T ∝ K/0.13; B8 / B8M Class 2 apply a 0.85 preload factor.
+                </p>
+              </div>
+            ) : null}
+          </div>
         </div>
       }
     />

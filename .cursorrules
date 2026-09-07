@@ -1,3 +1,5 @@
 # Project Rules
 - NEVER modify existing grid ratio (e.g. col-span-*, grid-cols-*) or layout structure of individual calculator pages.
 - Keep all calculator-specific component inner layouts preserved 100%.
+- Do NOT run single-prompt “refactor all calculators” jobs. Shared shell first, then one calculator at a time (see `.cursor/rules/calculator-global-standards.mdc`).
+- ASME symbols and safety-margin formulas are domain-specific (pipe `t_nom_req` ≠ blind `t_m`).

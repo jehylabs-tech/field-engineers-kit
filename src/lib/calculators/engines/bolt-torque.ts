@@ -91,7 +91,7 @@ export function calculateBoltTorque(inputs: BoltTorqueInputs): CalculatorOutput 
 
   if (!entry) {
     return {
-      heroLabel: "Recommended Torque",
+      heroLabel: "Target Assembly Torque (T)",
       heroValue: "—",
       heroStatus: "Select a valid NPS and pressure class combination",
       heroStatusLevel: "warn",
@@ -123,12 +123,20 @@ export function calculateBoltTorque(inputs: BoltTorqueInputs): CalculatorOutput 
   }));
 
   return {
-    heroLabel: "Recommended Assembly Torque",
+    heroLabel: "Target Assembly Torque (T)",
     heroValue: torque,
     heroStatus: `${size.npsLabel} · Class ${rating.class} · ${rating.studSize} · K = ${lubricant.k.toFixed(2)}`,
     heroStatusLevel: "neutral",
+    heroBadges: [
+      { label: "Nut factor K", value: lubricant.k.toFixed(2) },
+      { label: "Bolt grade", value: grade.label },
+      {
+        label: "Studs",
+        value: `${rating.boltCount} × ${rating.studSize}`,
+      },
+    ],
     summary: [
-      { label: "Final torque", value: torque },
+      { label: "Target torque (T)", value: torque },
       { label: "Studs", value: `${rating.boltCount} × ${rating.studSize}` },
     ],
     summaryStatus: {
@@ -163,14 +171,15 @@ export function calculateBoltTorque(inputs: BoltTorqueInputs): CalculatorOutput 
         section: "Joint selection",
       },
       {
-        label: "Lubricant / nut factor K",
+        label: "Lubricant / nut factor (K)",
         value: `K = ${lubricant.k.toFixed(2)} (${lubricant.label.split(" (")[0]})`,
         section: "Joint selection",
       },
       {
-        label: "Final assembly torque",
+        label: "Target assembly torque (T)",
         value: torque,
         section: "Joint selection",
+        emphasis: true,
       },
       {
         label: "Tightening sequence",
@@ -187,7 +196,7 @@ export function calculateBoltTorque(inputs: BoltTorqueInputs): CalculatorOutput 
       { label: "Bolt count", value: String(rating.boltCount) },
       { label: "Bolt grade", value: grade.label },
       { label: "Nut factor K", value: String(lubricant.k) },
-      { label: "Final torque", value: torque },
+      { label: "Target torque (T)", value: torque },
       ...PASS_PLAN.map((pass) => ({
         label: pass.label,
         value: formatTorque(finalNm * pass.fraction, inputs.unitSystem),

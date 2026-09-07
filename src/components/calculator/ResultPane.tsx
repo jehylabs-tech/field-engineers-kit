@@ -427,6 +427,23 @@ export default function ResultPane({
         />
         {output.heroStatus}
       </div>
+      {output.heroBadges && output.heroBadges.length > 0 ? (
+        <div className="mt-2.5 flex flex-wrap gap-1.5">
+          {output.heroBadges.map((badge) => (
+            <span
+              key={badge.label}
+              className="inline-flex max-w-full items-center gap-1 rounded-md border border-slate-200 bg-white px-2 py-1 text-[11px] text-slate-700 dark:border-slate-700 dark:bg-slate-900/80 dark:text-slate-200"
+            >
+              <span className="shrink-0 font-medium text-slate-500 dark:text-slate-400">
+                {badge.label}:
+              </span>
+              <span className="truncate font-mono font-semibold tabular-nums">
+                {badge.value}
+              </span>
+            </span>
+          ))}
+        </div>
+      ) : null}
       {!compact && basisLine ? (
         <p className="mt-2 text-sm leading-relaxed text-slate-500">{basisLine}</p>
       ) : null}

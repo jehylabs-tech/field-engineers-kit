@@ -49,7 +49,7 @@ export const MATERIAL_STRESS_PRESETS: Record<string, MaterialStressPreset> = {
     id: "ss304",
     label: "ASTM A240 Gr. 304 (Austenitic SS)",
     description: "Corrosion resistant, cryogenic to elevated temp",
-    ambientStressMpa: 137.9,
+    ambientStressMpa: 138.0,
     ambientStressPsi: 20000,
     designStressMpa: 104.0,
     designStressPsi: 15100,
@@ -58,7 +58,7 @@ export const MATERIAL_STRESS_PRESETS: Record<string, MaterialStressPreset> = {
     id: "ss316",
     label: "ASTM A240 Gr. 316 (Moly SS)",
     description: "Marine & chemical resistance",
-    ambientStressMpa: 137.9,
+    ambientStressMpa: 138.0,
     ambientStressPsi: 20000,
     designStressMpa: 110.0,
     designStressPsi: 16000,
@@ -74,12 +74,43 @@ export const MATERIAL_STRESS_PRESETS: Record<string, MaterialStressPreset> = {
   },
 };
 
+/** Dropdown label with active unit system stress first. */
+export function formatBlindMaterialOption(
+  preset: MaterialStressPreset,
+  unitSystem: UnitSystem,
+  mode: BlindDesignMode,
+): string {
+  const mpa =
+    mode === "hydrotest" ? preset.ambientStressMpa : preset.designStressMpa;
+  const psi =
+    mode === "hydrotest" ? preset.ambientStressPsi : preset.designStressPsi;
+  const ksi = Number((psi / 1000).toFixed(1));
+  if (unitSystem === "imperial") {
+    return `${preset.label} — ${ksi} ksi (${Math.round(mpa)} MPa)`;
+  }
+  return `${preset.label} — ${Math.round(mpa)} MPa (${ksi} ksi)`;
+}
+
 /** ASME VIII-1 UG-34 / B31.3 304.4.1 attachment factor for bolted flat covers. */
 export const BLIND_FLANGE_C = 0.3;
 
+/** Format length/corrosion for blind UI — keep imperial values to 3 dp (e.g. 0.125 in). */
+export function formatBlindLength(
+  value: number,
+  unitSystem: UnitSystem,
+  kind: "length" | "corrosion" = "length",
+): string {
+  if (!Number.isFinite(value)) return "—";
+  if (unitSystem === "imperial") {
+    return value.toFixed(3).replace(/(\.\d*?[1-9])0+$/, "$1").replace(/\.0+$/, "");
+  }
+  return kind === "corrosion" ? value.toFixed(1) : value.toFixed(2);
+}
+
 /**
- * ASME B16.5 Table 2-1.1 (Group 1.1 Carbon Steel e.g. A105 / A516-70) Max Working Pressure (bar / MPa).
- * Ambient (up to 38°C) and Elevated Temp (~150°C).
+ * ASME B16.5 Table 2-1.1 (Group 1.1 Carbon Steel e.g. A105 / A516-70) Max Working Pressure (bar).
+ * Ambient (−29 to 38 °C) and elevated (~150 °C) for reference; hydro = 1.5 × ambient.
+ * Single source of truth for warnings, matrix headers, and over-pressure checks.
  */
 export const FLANGE_RATING_LIMITS: Record<
   string,
@@ -93,6 +124,31 @@ export const FLANGE_RATING_LIMITS: Record<
   "2500": { ambientBar: 425.5, design150cBar: 344.7, hydroTestBar: 638.5 },
 };
 
+const BAR_TO_PSI = 14.5037738;
+
+/** Ambient working pressure (MPa) for permanent matrix / screening. */
+export function flangeAmbientPressureMpa(pressureClass: string): number {
+  const bar = FLANGE_RATING_LIMITS[pressureClass]?.ambientBar;
+  return bar != null ? bar / 10 : 0;
+}
+
+/** Hydrostatic leak-test pressure (MPa) = 1.5 × ambient. */
+export function flangeHydroPressureMpa(pressureClass: string): number {
+  const bar = FLANGE_RATING_LIMITS[pressureClass]?.hydroTestBar;
+  return bar != null ? bar / 10 : 0;
+}
+
+/** Format flange limit for warning banners (follows unitSystem). */
+export function formatFlangeRatingLimit(
+  bar: number,
+  unitSystem: UnitSystem,
+): string {
+  if (unitSystem === "imperial") {
+    return `${Math.round(bar * BAR_TO_PSI).toLocaleString("en-US")} psi`;
+  }
+  return `${bar.toFixed(1)} bar (${(bar / 10).toFixed(2)} MPa)`;
+}
+
 /** Standard commercial steel plate thicknesses (mm). */
 export const COMMERCIAL_PLATE_THICKNESSES_MM = [
   6, 8, 9, 10, 12, 14, 16, 18, 20, 22, 25, 28, 30, 32, 35, 38, 40, 45, 50, 55, 60, 65, 70, 75, 80, 90, 100, 110, 120,
@@ -102,6 +158,42 @@ export const COMMERCIAL_PLATE_THICKNESSES_MM = [
 export const COMMERCIAL_PLATE_THICKNESSES_IN = [
   0.25, 0.3125, 0.375, 0.5, 0.625, 0.75, 0.875, 1.0, 1.125, 1.25, 1.375, 1.5, 1.75, 2.0, 2.25, 2.5, 2.75, 3.0, 3.25, 3.5, 3.75, 4.0, 4.5, 5.0,
 ];
+
+/** US customary fractional plate labels (ASTM A6 / mill stock). */
+const IMPERIAL_PLATE_FRACTIONS: Record<string, string> = {
+  "0.25": '1/4"',
+  "0.3125": '5/16"',
+  "0.375": '3/8"',
+  "0.5": '1/2"',
+  "0.625": '5/8"',
+  "0.75": '3/4"',
+  "0.875": '7/8"',
+  "1": '1"',
+  "1.0": '1"',
+  "1.125": '1-1/8"',
+  "1.25": '1-1/4"',
+  "1.375": '1-3/8"',
+  "1.5": '1-1/2"',
+  "1.75": '1-3/4"',
+  "2": '2"',
+  "2.0": '2"',
+  "2.25": '2-1/4"',
+  "2.5": '2-1/2"',
+  "2.75": '2-3/4"',
+  "3": '3"',
+  "3.0": '3"',
+};
+
+export function formatImperialPlateFraction(thicknessIn: number): string {
+  const key = String(thicknessIn);
+  if (IMPERIAL_PLATE_FRACTIONS[key]) return IMPERIAL_PLATE_FRACTIONS[key];
+  const rounded = Number(thicknessIn.toFixed(4));
+  return (
+    IMPERIAL_PLATE_FRACTIONS[String(rounded)] ??
+    IMPERIAL_PLATE_FRACTIONS[rounded.toFixed(4)] ??
+    `${thicknessIn}"`
+  );
+}
 
 export function getRecommendedCommercialPlate(
   tRequired: number,
@@ -122,11 +214,12 @@ export function getRecommendedCommercialPlate(
     const tIn = Math.max(0, tRequired);
     const match =
       COMMERCIAL_PLATE_THICKNESSES_IN.find((size) => size >= tIn) ??
-      Number((Math.ceil(tIn * 8) / 8).toFixed(3));
+      Number((Math.ceil(tIn * 8) / 8).toFixed(4));
+    const frac = formatImperialPlateFraction(match);
     return {
       value: match,
       unit: "in",
-      label: `${match} in Plate`,
+      label: `${frac} Plate`,
       excess: Number(Math.max(0, match - tIn).toFixed(3)),
     };
   }
@@ -143,7 +236,9 @@ export function getStandardGasketContactDiameter(
   const entry = getFlangeDimensionEntry(nps, pressureClass);
   if (entry && entry.rating.raisedFaceDiameterMm > 0) {
     const dMm = entry.rating.raisedFaceDiameterMm;
-    return unitSystem === "metric" ? dMm : Number((dMm / 25.4).toFixed(3));
+    return unitSystem === "metric"
+      ? Number(dMm.toFixed(1))
+      : Number((dMm / 25.4).toFixed(3));
   }
   return null;
 }
@@ -202,17 +297,32 @@ export function calculateBlindFlange(inputs: BlindFlangeInputs): CalculatorOutpu
 
   const pressureLabel = invalid
     ? "—"
-    : `${designPressure.toFixed(2)} ${pressureUnit}`;
+    : inputs.unitSystem === "imperial"
+      ? `${designPressure.toFixed(1)} ${pressureUnit}`
+      : `${designPressure.toFixed(2)} ${pressureUnit}`;
 
   const dShow = Number.isFinite(insideDiameter) ? insideDiameter : 0;
   const sShow = Number.isFinite(allowableStress) ? allowableStress : 0;
   const eShow = Number.isFinite(weldEfficiency) ? weldEfficiency : 0;
   const cShow = Number.isFinite(corrosionAllowance) ? corrosionAllowance : 0;
+  const dLabel = formatBlindLength(dShow, inputs.unitSystem);
+  const cLabel = formatBlindLength(cShow, inputs.unitSystem, "corrosion");
+  const sLabel =
+    inputs.unitSystem === "imperial"
+      ? `${Math.round(sShow).toLocaleString("en-US")} ${stressUnit}`
+      : `${Math.round(sShow)} ${stressUnit}`;
+  const tLabel = invalid
+    ? "—"
+    : `${formatBlindLength(requiredThickness, inputs.unitSystem)} ${unit}`;
 
   const recommendedPlate = getRecommendedCommercialPlate(
     requiredThickness,
     inputs.unitSystem,
   );
+  const marginPercent =
+    !invalid && requiredThickness > 0
+      ? ((recommendedPlate.value / requiredThickness) - 1) * 100
+      : 0;
 
   // Pressure Rating Over-pressure Check per ASME B16.5
   const pressBar =
@@ -236,9 +346,11 @@ export function calculateBlindFlange(inputs: BlindFlangeInputs): CalculatorOutpu
     mode === "hydrotest"
       ? "Hydrotest Temporary Blank"
       : "Permanent Operating Blind";
+  const hydroCNote =
+    inputs.unitSystem === "imperial" ? "c = 0 in" : "c = 0 mm";
   const standardBasis =
     mode === "hydrotest"
-      ? "ASME B31.3 Ch. VI / Temporary Test Blank (c = 0 mm)"
+      ? `ASME B31.3 Ch. VI / Temporary Test Blank (${hydroCNote})`
       : "ASME B31.3 Para. 304.4.1 / ASME VIII-1 UG-34";
 
   const heroLabel =
@@ -246,13 +358,15 @@ export function calculateBlindFlange(inputs: BlindFlangeInputs): CalculatorOutpu
       ? "Required Hydrotest Blank Thickness (t_m)"
       : "Required Blind Flange Thickness (t_m)";
 
+  const ratingKind = mode === "hydrotest" ? "hydrotest" : "ambient";
+
   const heroStatus = invalid
     ? "Enter positive d, pressure, and allowable stress"
     : isOverPressure
-      ? `⚠️ WARNING: Pressure exceeds ASME B16.5 #${pressureClass} Flange Rating limit (${maxAllowableFlangeBar.toFixed(1)} bar)!`
+      ? `⚠️ WARNING: Pressure exceeds ASME B16.5 #${pressureClass} ${ratingKind} rating (${formatFlangeRatingLimit(maxAllowableFlangeBar!, inputs.unitSystem)})!`
       : mode === "hydrotest"
         ? `Temporary Test Blank · Recommended: ${recommendedPlate.label}`
-        : `Permanent Design (c = ${cShow.toFixed(1)} ${unit}) · Recommended: ${recommendedPlate.label}`;
+        : `Permanent Design (c = ${cLabel} ${unit}) · Recommended: ${recommendedPlate.label}`;
 
   const heroStatusLevel = invalid ? "warn" : isOverPressure ? "fail" : "pass";
 
@@ -264,7 +378,7 @@ export function calculateBlindFlange(inputs: BlindFlangeInputs): CalculatorOutpu
     },
     {
       label: "Gasket Contact Dia (d)",
-      value: `${dShow.toFixed(2)} ${unit}`,
+      value: `${dLabel} ${unit}`,
     },
     {
       label: mode === "hydrotest" ? "Test Pressure (Pt)" : "Design Pressure (P)",
@@ -281,13 +395,25 @@ export function calculateBlindFlange(inputs: BlindFlangeInputs): CalculatorOutpu
 
   return {
     heroLabel,
-    heroValue: invalid ? "—" : `${requiredThickness.toFixed(2)} ${unit}`,
+    heroValue: tLabel,
     heroStatus,
     heroStatusLevel,
+    heroBadges: invalid
+      ? undefined
+      : [
+          {
+            label: "Recommended plate",
+            value: recommendedPlate.label,
+          },
+          {
+            label: "Safety margin vs t_m",
+            value: `+${formatBlindLength(recommendedPlate.excess, inputs.unitSystem)} ${unit} (${marginPercent.toFixed(0)}%)`,
+          },
+        ],
     summary,
     summaryStatus: {
       label: isOverPressure
-        ? `⚠️ Exceeds ASME B16.5 #${pressureClass} Limit (${maxAllowableFlangeBar?.toFixed(1)} bar)`
+        ? `⚠️ Exceeds ASME B16.5 #${pressureClass} ${ratingKind} limit (${formatFlangeRatingLimit(maxAllowableFlangeBar!, inputs.unitSystem)})`
         : standardBasis,
       level: isOverPressure ? "fail" : invalid ? "warn" : "neutral",
     },
@@ -295,16 +421,24 @@ export function calculateBlindFlange(inputs: BlindFlangeInputs): CalculatorOutpu
       { label: "Operating Mode", value: modeTitle },
       { label: "Standard Basis", value: standardBasis },
       {
+        label: "Calculation Scope",
+        value: invalid
+          ? "—"
+          : mode === "hydrotest"
+            ? `Custom hydrotest condition (Pt = ${pressureLabel})`
+            : `Custom operating condition (P = ${pressureLabel})`,
+      },
+      {
         label: "Formula",
         value:
           mode === "hydrotest"
-            ? "t_m = d × √(0.30 Pt / SE) (c = 0 mm)"
-            : "t_m = d × √(0.30 P / SE) + c",
+            ? String.raw`t_m = d \cdot \sqrt{\frac{0.30 \cdot P_t}{S \cdot E}}`
+            : String.raw`t_m = d \cdot \sqrt{\frac{0.30 \cdot P}{S \cdot E}} + c`,
       },
       { label: "Attachment Factor (C)", value: BLIND_FLANGE_C.toFixed(2) },
       {
         label: "Gasket Contact Diameter (d)",
-        value: `${dShow.toFixed(2)} ${unit}`,
+        value: `${dLabel} ${unit}`,
         highlight: "d",
       },
       {
@@ -314,17 +448,17 @@ export function calculateBlindFlange(inputs: BlindFlangeInputs): CalculatorOutpu
       },
       {
         label: "Allowable Stress (S)",
-        value: `${sShow.toFixed(1)} ${stressUnit}`,
+        value: sLabel,
       },
       { label: "Joint Efficiency (E)", value: eShow.toFixed(2) },
       {
         label: "Corrosion Allowance (c)",
-        value: `${cShow.toFixed(2)} ${unit}`,
+        value: `${cLabel} ${unit}`,
         highlight: "c",
       },
       {
         label: "Minimum Required Thickness (t_m)",
-        value: invalid ? "—" : `${requiredThickness.toFixed(2)} ${unit}`,
+        value: tLabel,
         highlight: "t",
       },
       {
@@ -332,8 +466,10 @@ export function calculateBlindFlange(inputs: BlindFlangeInputs): CalculatorOutpu
         value: invalid ? "—" : recommendedPlate.label,
       },
       {
-        label: "Safety Excess Margin",
-        value: invalid ? "—" : `+${recommendedPlate.excess.toFixed(2)} ${unit}`,
+        label: "Safety Margin vs t_m",
+        value: invalid
+          ? "—"
+          : `+${formatBlindLength(recommendedPlate.excess, inputs.unitSystem)} ${unit} (${marginPercent.toFixed(0)}%) — (t_plate / t_m − 1) × 100%`,
       },
     ],
     exportRows: [
@@ -346,26 +482,32 @@ export function calculateBlindFlange(inputs: BlindFlangeInputs): CalculatorOutpu
             ? "t_m = d × √(0.30 Pt / SE)"
             : "t_m = d × √(0.30 P / SE) + c",
       },
-      { label: "Diameter (d)", value: `${dShow.toFixed(2)} ${unit}` },
+      { label: "Diameter (d)", value: `${dLabel} ${unit}` },
       {
         label: mode === "hydrotest" ? "Test Pressure (Pt)" : "Design Pressure (P)",
         value: pressureLabel,
       },
       {
         label: "Allowable Stress (S)",
-        value: `${sShow.toFixed(1)} ${stressUnit}`,
+        value: sLabel,
       },
       {
         label: "Corrosion Allowance (c)",
-        value: `${cShow.toFixed(2)} ${unit}`,
+        value: `${cLabel} ${unit}`,
       },
       {
         label: "Calculated Minimum Thickness (t_m)",
-        value: invalid ? "—" : `${requiredThickness.toFixed(2)} ${unit}`,
+        value: tLabel,
       },
       {
         label: "Recommended Plate Size",
         value: invalid ? "—" : recommendedPlate.label,
+      },
+      {
+        label: "Safety Margin vs t_m",
+        value: invalid
+          ? "—"
+          : `+${formatBlindLength(recommendedPlate.excess, inputs.unitSystem)} ${unit} (${marginPercent.toFixed(0)}%)`,
       },
     ],
   };

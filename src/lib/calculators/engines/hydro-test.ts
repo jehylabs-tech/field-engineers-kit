@@ -129,6 +129,9 @@ export function calculateHydroTest(inputs: HydroTestInputs): CalculatorOutput {
   const safetyNotes = getSafetyNotes(inputs.testFluid);
   const holdingTime = getHoldingTimeGuide(inputs.nps);
 
+  const fluidLabel =
+    inputs.testFluid === "hydrostatic" ? "Hydrostatic" : "Pneumatic";
+
   return {
     heroLabel: "Required Test Pressure (Pt)",
     heroValue: testPressure,
@@ -136,9 +139,24 @@ export function calculateHydroTest(inputs: HydroTestInputs): CalculatorOutput {
       ? "Enter a positive design pressure"
       : "ASME B31.3 St/S stress ratio & yield limit check",
     heroStatusLevel: invalid || capped ? "warn" : "neutral",
+    heroBadges: invalid
+      ? undefined
+      : [
+          { label: "Test fluid", value: fluidLabel },
+          {
+            label: "Multiplier",
+            value: `${multiplier.toFixed(1)} × P × (St/S)`,
+          },
+          {
+            label: "St/S",
+            value: capped
+              ? `${stressRatio.toFixed(3)} (capped)`
+              : stressRatio.toFixed(3),
+          },
+        ],
     summary: [
-      { label: "Design pressure", value: designPressure },
-      { label: "Stress ratio St/S", value: stressRatio.toFixed(3) },
+      { label: "Design pressure (P)", value: designPressure },
+      { label: "Stress ratio (St/S)", value: stressRatio.toFixed(3) },
     ],
     summaryStatus: {
       label: capped
@@ -149,7 +167,7 @@ export function calculateHydroTest(inputs: HydroTestInputs): CalculatorOutput {
     rows: [
       {
         label: "Test fluid",
-        value: inputs.testFluid === "hydrostatic" ? "Hydrostatic" : "Pneumatic",
+        value: fluidLabel,
       },
       { label: "Design pressure (P)", value: designPressure },
       { label: "Formula", value: formula },

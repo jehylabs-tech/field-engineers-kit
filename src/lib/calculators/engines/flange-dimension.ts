@@ -62,7 +62,7 @@ export function calculateFlangeDimension(
 
   if (!entry) {
     return {
-      heroLabel: "Flange Weight",
+      heroLabel: "Mated Pair Weight (W_pair)",
       heroValue: "—",
       heroStatus: "Select a valid NPS and pressure class combination",
       heroStatusLevel: "warn",
@@ -140,7 +140,7 @@ export function calculateFlangeDimension(
     { label: "Pressure class", value: `Class ${rating.class}`, section: "Flange dimensions" },
     { label: "Flange type", value: flangeTypeLabel(flangeType), section: "Flange dimensions" },
     { label: "Facing", value: facingLabel(facing), section: "Flange dimensions" },
-    { label: "Flange OD", value: od, section: "Flange dimensions", highlight: "od" },
+    { label: "Flange OD (OD)", value: od, section: "Flange dimensions", highlight: "od" },
     { label: "Flange thickness (T)", value: thickness, section: "Flange dimensions", highlight: "T" },
     {
       label: flangeType === "bl" ? "Bore" : "Flange hub bore diameter",
@@ -191,22 +191,22 @@ export function calculateFlangeDimension(
 
   const procurement: ResultRow[] = [
     {
-      label: "Single flange weight",
+      label: "Single flange weight (W_f)",
       value: singleWeight,
       section: "Procurement & rigging weight",
     },
     {
-      label: "Gasket weight (screening)",
+      label: "Gasket weight (W_g, screening)",
       value: gasketWeight,
       section: "Procurement & rigging weight",
     },
     {
-      label: "Stud bolts & nuts set",
+      label: "Stud bolts & nuts set (n × set)",
       value: hardwareWeight,
       section: "Procurement & rigging weight",
     },
     {
-      label: "Mated pair assembly weight",
+      label: "Mated pair assembly weight (W_pair)",
       value: assemblyWeight,
       section: "Procurement & rigging weight",
       emphasis: true,
@@ -214,17 +214,23 @@ export function calculateFlangeDimension(
   ];
 
   return {
-    heroLabel: "Total Mated Pair Weight",
+    heroLabel: "Mated Pair Weight (W_pair)",
     heroValue: assemblyWeight,
-    heroStatus: `${flange.npsLabel} · Class ${rating.class} · ${style} · single flange ${singleWeight}`,
+    heroStatus: `${flange.npsLabel} · Class ${rating.class} · ${style} · W_f ${singleWeight}`,
     heroStatusLevel: "neutral",
+    heroBadges: [
+      { label: "OD", value: od },
+      { label: "T", value: thickness },
+      { label: "Bolts", value: `${rating.boltHoleCount} × ${rating.studDiameterIn}"` },
+      { label: "W_f", value: singleWeight },
+    ],
     summary: [
       {
         label: "Rating & type",
         value: `Class ${rating.class} · ${flangeType.toUpperCase()} ${facing.toUpperCase()}`,
       },
-      { label: "Single flange weight", value: singleWeight },
-      { label: "Flange OD", value: od },
+      { label: "Single flange (W_f)", value: singleWeight },
+      { label: "Flange OD (OD)", value: od },
       { label: flangeType === "bl" ? "Bore" : "Hub bore (ID)", value: hubBore },
     ],
     summaryStatus: {
@@ -240,17 +246,17 @@ export function calculateFlangeDimension(
       { label: "Facing", value: facingLabel(facing) },
       ...(ringNumber ? [{ label: "RTJ ring number", value: ringNumber }] : []),
       { label: "Flange OD", value: od },
-      { label: "Flange thickness", value: thickness },
+      { label: "Flange thickness (T)", value: thickness },
       { label: "Flange hub bore diameter", value: hubBore },
       { label: "Stud bolt diameter & length", value: studSpec },
       { label: "Heavy hex nut wrench / spanner size", value: wrench },
       { label: "Bolt circle diameter (PCD)", value: boltCircle },
       { label: "Number of bolts", value: String(rating.boltHoleCount) },
       { label: "Bolt hole size", value: boltHole },
-      { label: "Single flange weight", value: singleWeight },
-      { label: "Gasket weight (screening)", value: gasketWeight },
+      { label: "Single flange weight (W_f)", value: singleWeight },
+      { label: "Gasket weight (W_g)", value: gasketWeight },
       { label: "Stud bolts & nuts set", value: hardwareWeight },
-      { label: "Mated pair assembly weight", value: assemblyWeight },
+      { label: "Mated pair assembly weight (W_pair)", value: assemblyWeight },
     ],
   };
 }

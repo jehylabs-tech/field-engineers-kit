@@ -13,7 +13,6 @@ import CalculatorBaseLayout from "@/components/calculator/CalculatorBaseLayout";
 import CopyValueButton from "@/components/calculator/CopyValueButton";
 import ExportButtons from "@/components/calculator/ExportButtons";
 import FieldGroup, { FieldSelect } from "@/components/calculator/FieldGroup";
-import SectionBlock from "@/components/calculator/SectionBlock";
 import { usePublishCalculatorOutput } from "@/components/calculator/usePublishCalculatorOutput";
 import type { CalculatorOutput, ResultRow } from "@/lib/calculators/definitions";
 import {
@@ -293,6 +292,21 @@ function HydroResultTabs({
             <div className="font-mono text-2xl font-extrabold leading-tight tracking-tight text-blue-800 dark:text-blue-200 md:text-3xl">
               <ValueCell value={output.heroValue} emphasis align="left" />
             </div>
+            {output.heroBadges && output.heroBadges.length > 0 ? (
+              <div className="mt-1.5 flex flex-wrap gap-1.5">
+                {output.heroBadges.map((badge) => (
+                  <span
+                    key={`${badge.label}-${badge.value}`}
+                    className="inline-flex items-center gap-1 rounded-md border border-blue-200/80 bg-white/80 px-2 py-0.5 text-[11px] font-medium text-slate-700 dark:border-blue-500/30 dark:bg-blue-950/40 dark:text-slate-200"
+                  >
+                    <span className="text-slate-500 dark:text-slate-400">
+                      {badge.label}:
+                    </span>
+                    <span className="font-semibold tabular-nums">{badge.value}</span>
+                  </span>
+                ))}
+              </div>
+            ) : null}
             <p className="mt-1 truncate text-xs text-slate-500 dark:text-slate-400">
               {output.heroStatus}
             </p>
@@ -400,6 +414,7 @@ export default function HydroTestCalculator({
   title,
   standard,
 }: HydroTestCalculatorProps) {
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const { inputs, setField, setInputs } = useCalculatorUrlSync<HydroTestInputs>(
     DEFAULT_HYDRO_TEST_INPUTS,
     HYDRO_TEST_URL_CONFIG,
@@ -422,9 +437,12 @@ export default function HydroTestCalculator({
       label: "Test fluid",
       value: inputs.testFluid === "hydrostatic" ? "Hydrostatic" : "Pneumatic",
     },
-    { label: "Design pressure", value: `${inputs.designPressure} ${pressureUnit}` },
     {
-      label: "Stress ratio St/S",
+      label: "Design pressure (P)",
+      value: `${inputs.designPressure} ${pressureUnit}`,
+    },
+    {
+      label: "Stress ratio (St/S)",
       value: clampStressRatio(inputs.stressRatio).toFixed(3),
     },
     {
@@ -455,7 +473,11 @@ export default function HydroTestCalculator({
       }
       inputPanel={
         <div className="flex w-full min-w-0 flex-col gap-3 [&_.calc-field]:mb-0">
-          <SectionBlock number={1} title="Test Conditions" compact twoColumn={false}>
+          {/* Under 1. Input Parameters — no duplicate top-level section numbers */}
+          <div className="w-full min-w-0 space-y-2.5">
+            <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+              Test Conditions
+            </h3>
             <FieldSelect
               label="Test fluid type"
               value={inputs.testFluid}
@@ -467,11 +489,16 @@ export default function HydroTestCalculator({
 
             <FieldGroup
               label="Design pressure (P)"
-              value={inputs.designPressure}
+              value={
+                inputs.unitSystem === "imperial"
+                  ? Math.round(inputs.designPressure)
+                  : inputs.designPressure
+              }
               onChange={(value) =>
                 setField("designPressure", toNumber(value, inputs.designPressure))
               }
               unit={pressureUnit}
+              highlight="P"
               hint="Enter gauge design pressure. Units follow the metric / imperial toggle."
             />
 
@@ -487,66 +514,92 @@ export default function HydroTestCalculator({
                 </option>
               ))}
             </FieldSelect>
-          </SectionBlock>
+          </div>
 
-          <SectionBlock
-            number={2}
-            title="ASME B31.3 St/S stress ratio & yield limit check"
-            compact
-            twoColumn={false}
-            headerExtra={<FormulaInfoButton text={FORMULA_HINT} />}
-          >
-            <FieldGroup
-              label="Stress Ratio (St/S)"
-              value={inputs.stressRatio}
-              onChange={(value) =>
-                setField("stressRatio", toNumber(value, inputs.stressRatio))
-              }
-              hint={undefined}
-              error={
-                Number.isFinite(inputs.stressRatio) &&
-                inputs.stressRatio > STRESS_RATIO_MAX
-                  ? `Maximum guide limit is ${STRESS_RATIO_MAX}. Calculation uses ${STRESS_RATIO_MAX}.`
-                  : undefined
-              }
-            />
-            <FieldGroup
-              label="Allowable stress at design temp (S)"
-              value={inputs.designStress}
-              onChange={(value) => {
-                const designStress = toNumber(value, inputs.designStress);
-                const nextRatio =
-                  designStress > 0
-                    ? clampStressRatio(inputs.testStress / designStress)
-                    : inputs.stressRatio;
-                setInputs((current) => ({
-                  ...current,
-                  designStress,
-                  stressRatio: nextRatio,
-                  applyTempCorrection: true,
-                }));
-              }}
-              unit={stressUnit}
-            />
-            <FieldGroup
-              label="Allowable stress at test temp (St)"
-              value={inputs.testStress}
-              onChange={(value) => {
-                const testStress = toNumber(value, inputs.testStress);
-                const nextRatio =
-                  inputs.designStress > 0
-                    ? clampStressRatio(testStress / inputs.designStress)
-                    : inputs.stressRatio;
-                setInputs((current) => ({
-                  ...current,
-                  testStress,
-                  stressRatio: nextRatio,
-                  applyTempCorrection: true,
-                }));
-              }}
-              unit={stressUnit}
-            />
-          </SectionBlock>
+          {/* 1.2 Advanced — St/S temperature correction */}
+          <div className="rounded-xl border border-slate-200/90 bg-slate-50/50 dark:border-slate-800/90 dark:bg-slate-900/30">
+            <div className="flex w-full items-center gap-1 px-3.5 py-2.5">
+              <button
+                type="button"
+                onClick={() => setShowAdvanced(!showAdvanced)}
+                className="flex min-w-0 flex-1 items-center justify-between text-left transition-colors hover:opacity-90"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-slate-200/80 px-1 text-[10px] font-bold text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                    1.2
+                  </span>
+                  <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">
+                    St/S stress ratio &amp; yield limit
+                  </span>
+                  {!showAdvanced ? (
+                    <span className="font-mono text-[11px] tabular-nums text-slate-500 dark:text-slate-400">
+                      {clampStressRatio(inputs.stressRatio).toFixed(3)}
+                    </span>
+                  ) : null}
+                </div>
+                <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                  {showAdvanced ? "▲ Hide" : "▼ Edit"}
+                </span>
+              </button>
+              <FormulaInfoButton text={FORMULA_HINT} />
+            </div>
+            {showAdvanced ? (
+              <div className="space-y-2.5 border-t border-slate-200/80 px-3.5 py-3 dark:border-slate-800/80">
+                <FieldGroup
+                  label="Stress ratio (St/S)"
+                  value={inputs.stressRatio}
+                  onChange={(value) =>
+                    setField("stressRatio", toNumber(value, inputs.stressRatio))
+                  }
+                  highlight="St/S"
+                  error={
+                    Number.isFinite(inputs.stressRatio) &&
+                    inputs.stressRatio > STRESS_RATIO_MAX
+                      ? `Maximum guide limit is ${STRESS_RATIO_MAX}. Calculation uses ${STRESS_RATIO_MAX}.`
+                      : undefined
+                  }
+                />
+                <FieldGroup
+                  label="Allowable stress at design temp (S)"
+                  value={inputs.designStress}
+                  onChange={(value) => {
+                    const designStress = toNumber(value, inputs.designStress);
+                    const nextRatio =
+                      designStress > 0
+                        ? clampStressRatio(inputs.testStress / designStress)
+                        : inputs.stressRatio;
+                    setInputs((current) => ({
+                      ...current,
+                      designStress,
+                      stressRatio: nextRatio,
+                      applyTempCorrection: true,
+                    }));
+                  }}
+                  unit={stressUnit}
+                  highlight="S"
+                />
+                <FieldGroup
+                  label="Allowable stress at test temp (St)"
+                  value={inputs.testStress}
+                  onChange={(value) => {
+                    const testStress = toNumber(value, inputs.testStress);
+                    const nextRatio =
+                      inputs.designStress > 0
+                        ? clampStressRatio(testStress / inputs.designStress)
+                        : inputs.stressRatio;
+                    setInputs((current) => ({
+                      ...current,
+                      testStress,
+                      stressRatio: nextRatio,
+                      applyTempCorrection: true,
+                    }));
+                  }}
+                  unit={stressUnit}
+                  highlight="St"
+                />
+              </div>
+            ) : null}
+          </div>
         </div>
       }
     />

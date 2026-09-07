@@ -25,7 +25,7 @@ export function calculatePipeSchedule(
 
   if (!entry) {
     return {
-      heroLabel: "Pipe Dimensions",
+      heroLabel: "Wall Thickness (t)",
       heroValue: "—",
       heroStatus: "Select a valid NPS and schedule combination",
       heroStatusLevel: "warn",
@@ -63,17 +63,23 @@ export function calculatePipeSchedule(
   const totalWeight = formatWeight(totalKg, inputs.unitSystem);
 
   return {
-    heroLabel: "Nominal Wall Thickness",
+    heroLabel: "Wall Thickness (t)",
     heroValue: wall,
     heroStatus: `${pipe.npsLabel} · Sch ${row.schedule} · ${standard}`,
     heroStatusLevel: "neutral",
+    heroBadges: [
+      { label: "OD", value: od },
+      { label: "ID", value: id },
+      { label: "W_m", value: weight },
+      { label: "W_tot", value: totalWeight },
+    ],
     summary: [
-      { label: "Outside diameter", value: od },
-      { label: "Inside diameter", value: id },
-      { label: "Total weight", value: totalWeight },
+      { label: "Outside diameter (OD)", value: od },
+      { label: "Inside diameter (ID)", value: id },
+      { label: "Total weight (W_tot)", value: totalWeight },
     ],
     summaryStatus: {
-      label: "Reference table lookup — verify for procurement",
+      label: "W_tot = W_m × L × n — table lookup; verify for procurement",
       level: "neutral",
     },
     rows: [
@@ -83,22 +89,22 @@ export function calculatePipeSchedule(
       { label: "Outside diameter (OD)", value: od, highlight: "od" },
       { label: "Inside diameter (ID)", value: id, highlight: "id" },
       { label: "Wall thickness (t)", value: wall, highlight: "t" },
-      { label: "Unit weight", value: weight },
-      { label: "Pipe length", value: lengthLabel },
-      { label: "Quantity (pcs)", value: String(quantity) },
-      { label: "Total weight", value: totalWeight },
+      { label: "Unit weight (W_m)", value: weight },
+      { label: "Pipe length (L)", value: lengthLabel },
+      { label: "Quantity (n, pcs)", value: String(quantity) },
+      { label: "Total weight (W_tot)", value: totalWeight, emphasis: true },
     ],
     exportRows: [
       { label: "Standard", value: standard },
       { label: "NPS", value: pipe.npsLabel },
       { label: "Schedule", value: row.schedule },
-      { label: "Outside diameter", value: od },
-      { label: "Inside diameter", value: id },
-      { label: "Wall thickness", value: wall },
-      { label: "Unit weight", value: weight },
-      { label: "Pipe length", value: lengthLabel },
-      { label: "Quantity (pcs)", value: String(quantity) },
-      { label: "Total weight", value: totalWeight },
+      { label: "Outside diameter (OD)", value: od },
+      { label: "Inside diameter (ID)", value: id },
+      { label: "Wall thickness (t)", value: wall },
+      { label: "Unit weight (W_m)", value: weight },
+      { label: "Pipe length (L)", value: lengthLabel },
+      { label: "Quantity (n, pcs)", value: String(quantity) },
+      { label: "Total weight (W_tot)", value: totalWeight },
     ],
   };
 }

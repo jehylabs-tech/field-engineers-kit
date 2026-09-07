@@ -191,14 +191,14 @@ export function calculateFlowVelocity(
 
   if (!computed || !entry) {
     return {
-      heroLabel: "Flow velocity",
+      heroLabel: "Mean Velocity (v)",
       heroValue: "—",
       heroStatus: "Enter flow and a valid NPS/schedule",
       heroStatusLevel: "warn",
       summary: [
         { label: "Material", value: materialBadge },
-        { label: "v", value: "—" },
-        { label: "API RP 14E vc", value: "—" },
+        { label: "Erosion limit (vc)", value: "—" },
+        { label: "v / vc", value: "—" },
       ],
       summaryStatus: { label: "Waiting for valid inputs", level: "warn" },
       rows: [],
@@ -210,6 +210,7 @@ export function calculateFlowVelocity(
   const isLiquid = densityKgM3 >= 400;
   const level: StatusLevel =
     status === "Erosion Risk" ? "fail" : status === "Warning" ? "warn" : "pass";
+  const ratioPct = vc > 0 ? (velocity / vc) * 100 : 0;
 
   const liquidCapDisplay =
     inputs.unitSystem === "imperial"
@@ -218,26 +219,34 @@ export function calculateFlowVelocity(
 
   const typical = isLiquid
     ? inputs.unitSystem === "imperial"
-      ? `Liquid service typical 3–10 ft/s · warning cap ${liquidCapDisplay}`
-      : `Liquid service typical 1–3 m/s · warning cap ${liquidCapDisplay}`
+      ? `Liquid typical 3–10 ft/s · warning cap ${liquidCapDisplay}`
+      : `Liquid typical 1–3 m/s · warning cap ${liquidCapDisplay}`
     : inputs.unitSystem === "imperial"
-      ? "Gas service typical 33–82 ft/s"
-      : "Gas service typical 10–25 m/s";
+      ? "Gas typical 33–82 ft/s"
+      : "Gas typical 10–25 m/s";
 
   const vOut = formatVelocity(velocity, inputs.unitSystem);
   const vcOut = formatVelocity(vc, inputs.unitSystem);
+  const standardLabel =
+    material === "ss" ? "ASME B36.19M" : "ASME B36.10M";
 
   return {
-    heroLabel: "Mean velocity v = Q / A",
+    heroLabel: "Mean Velocity (v)",
     heroValue: vOut,
     heroStatus: `${status} · ${materialBadge} · vc = ${vcOut}`,
     heroStatusLevel: level,
+    heroBadges: [
+      { label: "vc", value: vcOut },
+      { label: "v / vc", value: vc > 0 ? `${ratioPct.toFixed(0)}%` : "—" },
+      { label: "C", value: String(c) },
+      { label: "Cap", value: liquidCapDisplay },
+    ],
     summary: [
       { label: "Material", value: materialBadge },
-      { label: "Erosion limit vc", value: vcOut },
+      { label: "Erosion limit (vc)", value: vcOut },
       {
         label: "v / vc",
-        value: vc > 0 ? `${((velocity / vc) * 100).toFixed(0)}%` : "—",
+        value: vc > 0 ? `${ratioPct.toFixed(0)}%` : "—",
       },
     ],
     summaryStatus: {
@@ -257,12 +266,83 @@ export function calculateFlowVelocity(
         value:
           FLOW_VELOCITY_MATERIALS.find((item) => item.value === material)
             ?.label ?? matLabel,
+        section: "Pipe & flow",
       },
       {
         label: "Pipe standard",
-        value:
-          material === "ss" ? "ASME B36.19M" : "ASME B36.10M",
+        value: standardLabel,
+        section: "Pipe & flow",
       },
+      {
+        label: "NPS / Schedule",
+        value: `${entry.pipe.npsLabel} · Sch ${entry.row.schedule}`,
+        section: "Pipe & flow",
+      },
+      {
+        label: "Inside diameter (ID)",
+        value: formatLengthMm(entry.row.insideDiameterMm, inputs.unitSystem),
+        section: "Pipe & flow",
+        highlight: "bore",
+      },
+      {
+        label: "Flow area (A)",
+        value: formatAreaMm2(area * 1e6, inputs.unitSystem),
+        section: "Pipe & flow",
+      },
+      {
+        label: "Flow rate (Q)",
+        value:
+          inputs.flowUnit === "gpm"
+            ? `${inputs.flow} GPM`
+            : `${inputs.flow} m³/h`,
+        section: "Pipe & flow",
+        highlight: "Q",
+      },
+      {
+        label: "Density (ρ)",
+        value: formatDensity(densityKgM3, inputs.unitSystem),
+        section: "Erosion screening",
+      },
+      {
+        label: "API RP 14E factor (C)",
+        value: String(c),
+        section: "Erosion screening",
+        highlight: "c",
+      },
+      {
+        label: "Liquid velocity warning cap",
+        value: liquidCapDisplay,
+        section: "Erosion screening",
+      },
+      {
+        label: "Mean velocity (v)",
+        value: formatVelocity(velocity, inputs.unitSystem, 3),
+        section: "Erosion screening",
+        emphasis: true,
+      },
+      {
+        label: "Erosion velocity (vc)",
+        value: formatVelocity(vc, inputs.unitSystem, 3),
+        section: "Erosion screening",
+      },
+      {
+        label: "Ratio (v / vc)",
+        value: vc > 0 ? `${ratioPct.toFixed(1)}%` : "—",
+        section: "Erosion screening",
+      },
+      {
+        label: "Status",
+        value: status,
+        warn: status !== "Safe",
+        section: "Erosion screening",
+        emphasis: true,
+      },
+      { label: "Note", value: typical, section: "Erosion screening" },
+    ],
+    exportRows: [
+      { label: "Standard", value: "API RP 14E · liquid warning cap (this app)" },
+      { label: "Material", value: materialBadge },
+      { label: "Pipe standard", value: standardLabel },
       {
         label: "NPS / Schedule",
         value: `${entry.pipe.npsLabel} · Sch ${entry.row.schedule}`,
@@ -272,35 +352,25 @@ export function calculateFlowVelocity(
         value: formatLengthMm(entry.row.insideDiameterMm, inputs.unitSystem),
       },
       {
-        label: "Flow area",
+        label: "Flow area (A)",
         value: formatAreaMm2(area * 1e6, inputs.unitSystem),
       },
       {
-        label: "Flow rate Q",
+        label: "Flow rate (Q)",
         value:
           inputs.flowUnit === "gpm"
             ? `${inputs.flow} GPM`
             : `${inputs.flow} m³/h`,
       },
+      { label: "Density (ρ)", value: formatDensity(densityKgM3, inputs.unitSystem) },
+      { label: "API RP 14E factor (C)", value: String(c) },
+      { label: "Mean velocity (v)", value: formatVelocity(velocity, inputs.unitSystem, 3) },
+      { label: "Erosion velocity (vc)", value: formatVelocity(vc, inputs.unitSystem, 3) },
       {
-        label: "Density ρ",
-        value: formatDensity(densityKgM3, inputs.unitSystem),
+        label: "Ratio (v / vc)",
+        value: vc > 0 ? `${ratioPct.toFixed(1)}%` : "—",
       },
-      { label: "API RP 14E c", value: String(c) },
-      {
-        label: "Liquid velocity warning cap",
-        value: liquidCapDisplay,
-      },
-      { label: "Velocity v", value: formatVelocity(velocity, inputs.unitSystem, 3) },
-      { label: "Erosion velocity vc", value: formatVelocity(vc, inputs.unitSystem, 3) },
-      { label: "Status", value: status, warn: status !== "Safe" },
-      { label: "Note", value: typical },
-    ],
-    exportRows: [
-      { label: "Standard", value: "API RP 14E" },
-      { label: "Material", value: materialBadge },
-      { label: "Velocity", value: formatVelocity(velocity, inputs.unitSystem, 3) },
-      { label: "vc", value: formatVelocity(vc, inputs.unitSystem, 3) },
+      { label: "Liquid velocity warning cap", value: liquidCapDisplay },
       { label: "Status", value: status },
     ],
   };

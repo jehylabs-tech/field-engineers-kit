@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo } from "react";
 import CalculatorBaseLayout from "@/components/calculator/CalculatorBaseLayout";
-import SectionBlock from "@/components/calculator/SectionBlock";
 import { usePublishCalculatorOutput } from "@/components/calculator/usePublishCalculatorOutput";
 import {
   calculateGasketDimension,
@@ -111,13 +110,13 @@ export default function GasketDimensionCalculator({
   );
   usePublishCalculatorOutput(output);
 
+  const typeLabel =
+    listGasketTypes().find((type) => type.id === resolvedInputs.gasketTypeId)
+      ?.label ?? resolvedInputs.gasketTypeId;
+  const isSpiral = resolvedInputs.gasketTypeId === "spiral_wound";
+
   const inputRows = [
-    {
-      label: "Gasket type",
-      value:
-        listGasketTypes().find((type) => type.id === resolvedInputs.gasketTypeId)
-          ?.label ?? resolvedInputs.gasketTypeId,
-    },
+    { label: "Gasket type", value: typeLabel },
     { label: "NPS", value: `${resolvedInputs.nps}"` },
     { label: "Class", value: `Class ${resolvedInputs.pressureClass}` },
     { label: "Unit system", value: resolvedInputs.unitSystem },
@@ -131,73 +130,93 @@ export default function GasketDimensionCalculator({
       standard={standard}
       inputRows={inputRows}
       inputPanel={
-        <div className="flex w-full min-w-0 flex-1 flex-col gap-3 [&_.calc-field]:max-w-none">
-          <SectionBlock
-            number={1}
-            title="Gasket Selection"
-            twoColumn={false}
-            compact
-          >
-            <SelectField
-              label="Gasket type"
-              value={resolvedInputs.gasketTypeId}
-              options={listGasketTypes().map((type) => ({
-                value: type.id,
-                label: type.label,
-              }))}
-              onChange={(value) => setField("gasketTypeId", value)}
-            />
-            <SelectField
-              label="Nominal pipe size (NPS)"
-              value={resolvedInputs.nps}
-              options={listGasketNps(resolvedInputs.gasketTypeId).map((size) => ({
-                value: size.nps,
-                label: `${size.npsLabel} (DN ${size.dn})`,
-              }))}
-              chips={GASKET_NPS_CHIPS}
-              onChange={(value) => setField("nps", value)}
-            />
-            <SelectField
-              label="Pressure class"
-              value={resolvedInputs.pressureClass}
-              options={listGasketClassesForNps(
-                resolvedInputs.gasketTypeId,
-                resolvedInputs.nps,
-              ).map((row) => ({
-                value: row.class,
-                label: `Class ${row.class}`,
-              }))}
-              chips={COMMON_CLASS_CHIPS}
-              onChange={(value) => setField("pressureClass", value)}
-            />
-          </SectionBlock>
+        <div className="flex w-full min-w-0 flex-1 flex-col gap-2.5 [&_.calc-field]:mb-0 [&_.calc-field]:max-w-none">
+          {/* Under 1. Input Parameters — no duplicate top-level section number */}
+          <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+            Gasket selection
+          </h3>
+          <SelectField
+            label="Gasket type"
+            value={resolvedInputs.gasketTypeId}
+            options={listGasketTypes().map((type) => ({
+              value: type.id,
+              label: type.label,
+            }))}
+            onChange={(value) => setField("gasketTypeId", value)}
+          />
+          <SelectField
+            label="Nominal pipe size (NPS)"
+            value={resolvedInputs.nps}
+            options={listGasketNps(resolvedInputs.gasketTypeId).map((size) => ({
+              value: size.nps,
+              label: `${size.npsLabel} (DN ${size.dn})`,
+            }))}
+            chips={GASKET_NPS_CHIPS}
+            onChange={(value) => setField("nps", value)}
+          />
+          <SelectField
+            label="Pressure class"
+            value={resolvedInputs.pressureClass}
+            options={listGasketClassesForNps(
+              resolvedInputs.gasketTypeId,
+              resolvedInputs.nps,
+            ).map((row) => ({
+              value: row.class,
+              label: `Class ${row.class}`,
+            }))}
+            chips={COMMON_CLASS_CHIPS}
+            onChange={(value) => setField("pressureClass", value)}
+          />
 
-          <details className="group mt-auto w-full min-w-0 rounded-lg border border-slate-200 bg-slate-50 open:bg-white dark:border-spec-border dark:bg-spec-bg dark:open:bg-spec-panel">
-            <summary className="cursor-pointer list-none px-3 py-2.5 text-sm font-semibold text-slate-700 marker:content-none dark:text-slate-300 [&::-webkit-details-marker]:hidden">
+          <div className="rounded-md border border-spec-border bg-spec-panel px-2.5 py-1.5 text-xs leading-snug text-spec-text2">
+            {isSpiral ? (
+              <>
+                Hero is{" "}
+                <span className="font-mono text-spec-text">
+                  ID × SE_OD × OR_OD
+                </span>
+                . Outer ring (OR_OD) centers on the B16.5 bolt circle.
+              </>
+            ) : (
+              <>
+                Hero is{" "}
+                <span className="font-mono text-spec-text">
+                  Ring No. · P · w×h
+                </span>
+                . Ring number must match both mating RTJ flanges.
+              </>
+            )}
+          </div>
+
+          <details className="group mt-auto w-full min-w-0 overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-950/40">
+            <summary className="cursor-pointer list-none px-3.5 py-2.5 text-left marker:content-none [&::-webkit-details-marker]:hidden">
               <span className="flex items-center justify-between gap-2">
-                <span className="flex items-center gap-1.5">
-                  <span className="flex h-5 w-5 items-center justify-center rounded border border-spec-border bg-spec-panel text-sm font-semibold text-slate-500">
-                    2
+                <span className="flex min-w-0 items-center gap-2">
+                  <span className="inline-flex h-5 min-w-5 items-center justify-center rounded bg-slate-100 px-1.5 text-[10px] font-bold tabular-nums text-slate-600 dark:bg-slate-800 dark:text-slate-300">
+                    1.2
                   </span>
-                  Reference Data
+                  <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">
+                    Reference notes
+                  </span>
                 </span>
                 <span
                   aria-hidden
-                  className="text-slate-400 transition-transform duration-150 group-open:rotate-180"
+                  className="text-[11px] font-medium text-slate-500 transition-transform duration-150 group-open:rotate-180 dark:text-slate-400"
                 >
                   ▾
                 </span>
               </span>
             </summary>
-            <div className="border-t border-slate-200 px-3 py-2.5 text-sm leading-relaxed text-spec-text2 dark:border-spec-border">
+            <div className="space-y-1.5 border-t border-slate-200/80 px-3.5 py-2.5 text-xs leading-relaxed text-spec-text2 dark:border-slate-800">
               <p>
                 <span className="font-medium text-spec-text">Standard:</span>{" "}
-                ASME B16.20 Compliant
+                ASME B16.20 screening table (this app).
               </p>
-              <p className="mt-1.5 text-spec-text3">
-                Spiral wound (inner ring / sealing element / outer ring) and RTJ
-                (R / RX / BX) dimensions for NPS ½″–24″ × Class 150–1500.
-                Confirm against the manufacturer datasheet before procurement.
+              <p>
+                Spiral-wound: ID / IR_OD / SE_OD / OR_OD for NPS ½–24 × Class
+                150–1500. RTJ: R-series octagonal ring No., pitch P, and section
+                w×h. Confirm OEM datasheet before procurement. Seating load /
+                torque → PCC-1 bolt torque tool.
               </p>
             </div>
           </details>

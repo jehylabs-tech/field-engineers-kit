@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo } from "react";
 import CalculatorBaseLayout from "@/components/calculator/CalculatorBaseLayout";
-import SectionBlock from "@/components/calculator/SectionBlock";
 import { usePublishCalculatorOutput } from "@/components/calculator/usePublishCalculatorOutput";
 import {
   calculateFlangeDimension,
@@ -236,14 +235,17 @@ export default function FlangeDimensionCalculator({
         />
       }
       inputPanel={
-        <SectionBlock number={1} title="Flange Selection" twoColumn={false} compact>
+        <div className="flex w-full min-w-0 flex-col gap-2.5 [&_.calc-field]:mb-0">
+          {/* Under 1. Input Parameters — no duplicate top-level section number */}
+          <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+            Flange selection
+          </h3>
           <FieldChipRadio
             wide
             label="Flange type"
             value={flangeType}
             options={[...FLANGE_TYPE_CHIPS]}
             onChange={(value) => setField("flangeType", value)}
-            highlight="T"
           />
           <FieldChipRadio
             wide
@@ -267,21 +269,22 @@ export default function FlangeDimensionCalculator({
             value={resolvedInputs.pressureClass}
             options={classOptions}
             onChange={(value) => setField("pressureClass", value)}
-            highlight="T"
           />
-        </SectionBlock>
+        </div>
       }
       footerPanel={
         <>
           <div className={`${CARD_SHELL} px-4 py-5`}>
-            <SectionBlock number={3} title="Live Joint Preview" twoColumn={false} compact>
-              {jointPreview}
-            </SectionBlock>
+            <h3 className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
+              Live joint preview
+            </h3>
+            <div className="space-y-2.5">{jointPreview}</div>
           </div>
           <div className={`${CARD_SHELL} px-4 py-5`}>
-            <SectionBlock number={4} title="Engineering Reference" twoColumn={false} compact>
-              <FlangeReferenceNotes />
-            </SectionBlock>
+            <h3 className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
+              Engineering reference
+            </h3>
+            <FlangeReferenceNotes />
           </div>
         </>
       }

@@ -115,7 +115,11 @@ export function pipeThicknessStressForMaterial(
 
 export function formatMaterialPresetOption(
   preset: (typeof PIPE_THICKNESS_MATERIAL_PRESETS)[number],
+  unitSystem: UnitSystem = "metric",
 ): string {
+  if (unitSystem === "imperial") {
+    return `${preset.label} — ${preset.stressKsi} ksi (${preset.stressMpa} MPa)`;
+  }
   return `${preset.label} — ${preset.stressMpa} MPa (${preset.stressKsi} ksi)`;
 }
 
@@ -213,7 +217,7 @@ export function pressureDesignThickness(inputs: {
 
 /**
  * Minimum required thickness with mechanical / corrosion allowance.
- * t_min = t + A
+ * t_min = t + c   (ASME B31.3 Para. 304.1.1 — allowance symbol c)
  */
 export function minimumRequiredThickness(inputs: {
   designPressure: number;
@@ -242,6 +246,24 @@ export function nominalRequiredThickness(inputs: {
   const tMin = minimumRequiredThickness(inputs);
   if (tMin <= 0) return 0;
   return tMin / B31_3_MILL_TOLERANCE_FACTOR;
+}
+
+/**
+ * Metric: 2 decimals at/above 1 mm (1.50 mm), 3 decimals below (0.823 mm).
+ * Imperial: 3 decimals for wall thickness in inches.
+ * Prefer `formatEngineeringValue(..., "thickness", system)` from `@/lib/unitConverter` for new code.
+ */
+export function formatPipeThickness(
+  value: number,
+  unitSystem: UnitSystem,
+): string {
+  const unit = unitSystem === "metric" ? "mm" : "in";
+  if (!Number.isFinite(value)) return `— ${unit}`;
+  if (unitSystem === "metric") {
+    const digits = Math.abs(value) >= 1 ? 2 : 3;
+    return `${value.toFixed(digits)} ${unit}`;
+  }
+  return `${value.toFixed(3)} ${unit}`;
 }
 
 /**
@@ -370,9 +392,10 @@ export function calculatePipeThickness(
     schedulePassesNominalRequirement(scheduleEntry.wallMm, tNomReqMm);
 
   const actualThickness = scheduleWall;
-  const marginVsTm = actualThickness - tMin;
-  const marginPercentTm =
-    tMin > 0 ? (marginVsTm / tMin) * 100 : 0;
+  // Margin vs ordered wall requirement (includes 12.5% mill under-tolerance)
+  const marginVsNom = actualThickness - tNomReq;
+  const marginPercentNom =
+    tNomReq > 0 ? (actualThickness / tNomReq - 1) * 100 : 0;
   const fillPercent = actualThickness > 0 ? 100 : 0;
   const limitPercent =
     actualThickness > 0
@@ -394,7 +417,7 @@ export function calculatePipeThickness(
 
   return {
     heroLabel: "Required Nominal Thickness (t_nom_req)",
-    heroValue: invalid ? "—" : `${tNomReq.toFixed(3)} ${unit}`,
+    heroValue: invalid ? "—" : formatPipeThickness(tNomReq, inputs.unitSystem),
     heroStatus: invalid
       ? "Enter positive P, D, and S — check inputs"
       : scheduleEntry
@@ -405,24 +428,37 @@ export function calculatePipeThickness(
           ? "Within ASME B31.3 allowable thickness"
           : "Below required nominal thickness — review schedule",
     heroStatusLevel: invalid ? "warn" : passesSchedule ? "pass" : "fail",
+    heroBadges: invalid
+      ? undefined
+      : [
+          {
+            label: "Selected schedule",
+            value: scheduleLabel,
+          },
+          {
+            label: "Recommended min. schedule",
+            value: recommendedLabel,
+          },
+        ],
     summary: [
       {
         label: "Pressure design t",
-        value: invalid ? "—" : `${tPressure.toFixed(3)} ${unit}`,
+        value: invalid ? "—" : formatPipeThickness(tPressure, inputs.unitSystem),
       },
       {
-        label: "Required t_min (with A)",
-        value: invalid ? "—" : `${tMin.toFixed(3)} ${unit}`,
+        label: "Required t_min (t + c)",
+        value: invalid ? "—" : formatPipeThickness(tMin, inputs.unitSystem),
       },
       {
         label: "Required t_nom_req",
-        value: invalid ? "—" : `${tNomReq.toFixed(3)} ${unit}`,
+        value: invalid ? "—" : formatPipeThickness(tNomReq, inputs.unitSystem),
       },
       {
         label: "Selected schedule wall",
-        value: scheduleEntry
-          ? `${scheduleWall.toFixed(3)} ${unit}`
-          : `${finite(inputs.actualThickness).toFixed(3)} ${unit}`,
+        value: formatPipeThickness(
+          scheduleEntry ? scheduleWall : finite(inputs.actualThickness),
+          inputs.unitSystem,
+        ),
       },
       {
         label: "Recommended minimum schedule",
@@ -447,14 +483,14 @@ export function calculatePipeThickness(
           tActual: actualThickness,
           unit,
           minLabel: `0 ${unit}`,
-          limitLabel: `${tNomReq.toFixed(2)} ${unit}`,
-          maxLabel: `${actualThickness.toFixed(2)} ${unit}`,
+          limitLabel: formatPipeThickness(tNomReq, inputs.unitSystem),
+          maxLabel: formatPipeThickness(actualThickness, inputs.unitSystem),
           markerLabel: "t_nom_req",
           caption: passesSchedule
-            ? `Safety margin: ${marginVsTm.toFixed(2)} ${unit} (${marginPercentTm.toFixed(0)}%)`
-            : `Shortfall: ${Math.abs(marginVsTm).toFixed(2)} ${unit} — below t_m`,
+            ? `Safety margin: ${formatPipeThickness(marginVsNom, inputs.unitSystem)} (${marginPercentNom.toFixed(0)}%)`
+            : `Shortfall: ${formatPipeThickness(Math.abs(marginVsNom), inputs.unitSystem)} — below t_nom_req`,
           captionInfo:
-            "Safety margin shows total excess wall thickness over minimum required thickness (t_m). Percentage is calculated relative to t_m.",
+            "Safety margin = (t_actual / t_nom_req − 1) × 100%. t_nom_req = t_min / 0.875 includes the 12.5% mill under-tolerance.",
         },
     rows: [
       {
@@ -465,21 +501,30 @@ export function calculatePipeThickness(
       },
       {
         label: "Design pressure (P)",
-        value: `${finite(inputs.designPressure).toFixed(2)} ${pressureUnit}`,
+        value:
+          inputs.unitSystem === "imperial"
+            ? `${Math.round(finite(inputs.designPressure)).toLocaleString("en-US")} ${pressureUnit}`
+            : `${finite(inputs.designPressure).toFixed(2)} ${pressureUnit}`,
         highlight: "P",
       },
       {
         label: "Outside diameter (D)",
-        value: `${finite(inputs.outsideDiameter).toFixed(2)} ${unit}`,
+        value: formatPipeThickness(
+          finite(inputs.outsideDiameter),
+          inputs.unitSystem,
+        ),
         highlight: "D",
       },
       {
         label: "Design temperature (T)",
-        value: `${finite(inputs.designTemperature).toFixed(0)} ${tempUnit}`,
+        value: `${Math.round(finite(inputs.designTemperature))} ${tempUnit}`,
       },
       {
         label: "Allowable stress (S)",
-        value: `${finite(inputs.allowableStress).toFixed(1)} ${pressureUnit}`,
+        value:
+          inputs.unitSystem === "imperial"
+            ? `${Math.round(finite(inputs.allowableStress)).toLocaleString("en-US")} ${pressureUnit}`
+            : `${Math.round(finite(inputs.allowableStress))} ${pressureUnit}`,
       },
       {
         label: "Joint quality factor (E)",
@@ -490,22 +535,29 @@ export function calculatePipeThickness(
         value: yCoeff.toFixed(2),
       },
       {
-        label: "Mechanical / corrosion allowance (A)",
-        value: `${finite(inputs.corrosionAllowance).toFixed(3)} ${unit}`,
-        highlight: "A",
+        label: "Mechanical & corrosion allowance (c)",
+        value: formatPipeThickness(
+          finite(inputs.corrosionAllowance),
+          inputs.unitSystem,
+        ),
+        highlight: "c",
       },
       {
         label: "Pressure design thickness (t)",
-        value: invalid ? "—" : `${tPressure.toFixed(3)} ${unit}`,
+        value: invalid
+          ? "—"
+          : formatPipeThickness(tPressure, inputs.unitSystem),
         highlight: "t",
       },
       {
-        label: "Required t_min (t + A)",
-        value: invalid ? "—" : `${tMin.toFixed(3)} ${unit}`,
+        label: "Required t_min (t + c)",
+        value: invalid ? "—" : formatPipeThickness(tMin, inputs.unitSystem),
       },
       {
         label: "Required t_nom_req (t_min / 0.875)",
-        value: invalid ? "—" : `${tNomReq.toFixed(3)} ${unit}`,
+        value: invalid
+          ? "—"
+          : formatPipeThickness(tNomReq, inputs.unitSystem),
       },
       {
         label: "Schedule vs t_nom_req",
@@ -521,9 +573,18 @@ export function calculatePipeThickness(
     ],
     exportRows: [
       { label: "Standard", value: "ASME B31.3 §304.1.2" },
-      { label: "Pressure design t", value: `${tPressure.toFixed(3)} ${unit}` },
-      { label: "Required t_min", value: `${tMin.toFixed(3)} ${unit}` },
-      { label: "Required t_nom_req", value: `${tNomReq.toFixed(3)} ${unit}` },
+      {
+        label: "Pressure design t",
+        value: formatPipeThickness(tPressure, inputs.unitSystem),
+      },
+      {
+        label: "Required t_min",
+        value: formatPipeThickness(tMin, inputs.unitSystem),
+      },
+      {
+        label: "Required t_nom_req",
+        value: formatPipeThickness(tNomReq, inputs.unitSystem),
+      },
       { label: "Selected schedule", value: scheduleLabel },
       { label: "Recommended schedule", value: recommendedLabel },
       {
@@ -532,7 +593,10 @@ export function calculatePipeThickness(
       },
       {
         label: "Outside diameter",
-        value: `${finite(inputs.outsideDiameter).toFixed(2)} ${unit}`,
+        value: formatPipeThickness(
+          finite(inputs.outsideDiameter),
+          inputs.unitSystem,
+        ),
       },
       {
         label: "Schedule compliance",

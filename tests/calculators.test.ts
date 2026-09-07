@@ -2,11 +2,14 @@ import { describe, expect, it } from "vitest";
 import type { CalculatorOutput } from "@/lib/calculators/definitions";
 import {
   calculateBlindFlange,
+  FLANGE_RATING_LIMITS,
+  flangeAmbientPressureMpa,
   getAllowableStressForMaterial,
   getRecommendedCommercialPlate,
   getStandardGasketContactDiameter,
   requiredBlindThicknessMm,
 } from "@/lib/calculators/engines/blind-flange";
+import { syncCompanionUnits } from "@/lib/unitConverter";
 import { calculateBoltTorque } from "@/lib/calculators/engines/bolt-torque";
 import {
   calculateFittingValveDimension,
@@ -41,8 +44,11 @@ import {
   DEFAULT_PIPE_INPUTS,
   pipeThicknessStressForMaterial,
 } from "@/lib/calculators/engines/pipe-thickness";
-import { computePressureDrop } from "@/lib/calculators/engines/pressure-drop";
-import { thermalExpansionDeltaLMm } from "@/lib/calculators/engines/thermal-expansion";
+import { computePressureDrop, calculatePressureDrop } from "@/lib/calculators/engines/pressure-drop";
+import {
+  calculateThermalExpansion,
+  thermalExpansionDeltaLMm,
+} from "@/lib/calculators/engines/thermal-expansion";
 import {
   calculateUnitConverter,
 } from "@/lib/calculators/engines/unit-converter";
@@ -149,6 +155,33 @@ describe("01 ASME B31.3 Pipe Thickness", () => {
     expectNoPoison(out);
   });
 
+  it("reports safety margin against t_nom_req (includes 12.5% mill tolerance)", () => {
+    const out = calculatePipeThickness({
+      ...DEFAULT_PIPE_INPUTS,
+      unitSystem: "imperial",
+      nps: "4",
+      schedule: "40",
+      outsideDiameter: 4.5,
+      designPressure: 290,
+      designTemperature: 100,
+      allowableStress: 20000,
+      weldEfficiency: 1,
+      jointType: "seamless",
+      corrosionAllowance: 0.063,
+      actualThickness: 0.237,
+      material: "a106-b",
+    });
+    expect(out.gauge?.caption).toMatch(/Safety margin:/);
+    expect(out.gauge?.captionInfo).toContain("t_nom_req");
+    // Against t_nom_req (not t_min) — previously ~159% vs t_min; now ~118% vs t_nom_req
+    const pct = Number(out.gauge?.caption?.match(/\((\d+)%\)/)?.[1]);
+    expect(pct).toBeGreaterThan(100);
+    expect(pct).toBeLessThan(140);
+    expect(pct).toBeLessThan(150); // must not be the old t_min-based ~159%
+    expect(out.rows.some((r) => r.label.includes("allowance (c)"))).toBe(true);
+    expect(out.rows.every((r) => !r.label.includes("allowance (A)"))).toBe(true);
+  });
+
   it("maps Table A-1 ambient S values for material presets", () => {
     expect(pipeThicknessStressForMaterial("a106-b", "metric")).toBe(138);
     expect(pipeThicknessStressForMaterial("a106-b", "imperial")).toBe(20000);
@@ -165,13 +198,17 @@ describe("02 Pipe Schedule & Dimension (ASME B36.10M)", () => {
     expect(entry?.row.wallThicknessMm).toBe(6.02);
     expect(entry?.row.insideDiameterMm).toBe(102.26);
     const out = calculatePipeSchedule({ unitSystem: "metric", nps: "4", schedule: "40" });
+    expect(out.heroLabel).toBe("Wall Thickness (t)");
     expect(out.heroValue).toContain("6.020");
+    expect(out.heroBadges?.find((b) => b.label === "OD")?.value).toContain("114.300");
+    expect(out.heroBadges?.find((b) => b.label === "ID")?.value).toContain("102.260");
     expectNoPoison(out);
   });
 
   it("falls back for unknown NPS/schedule", () => {
     const out = calculatePipeSchedule({ unitSystem: "metric", nps: "99", schedule: "xx" });
     expect(out.heroValue).toBe("—");
+    expect(out.heroLabel).toBe("Wall Thickness (t)");
     expectNoPoison(out);
   });
 
@@ -192,7 +229,9 @@ describe("02 Pipe Schedule & Dimension (ASME B36.10M)", () => {
       schedule: "40",
       length: 6,
     });
-    expect(out.rows.find((row) => row.label === "Total weight")?.value).toContain("96.42");
+    expect(out.rows.find((row) => row.label === "Total weight (W_tot)")?.value).toContain("96.42");
+    expect(out.rows.find((row) => row.label === "Unit weight (W_m)")?.value).toContain("16.07");
+    expect(out.summary.find((row) => row.label === "Total weight (W_tot)")?.value).toContain("96.42");
     expect(out.heroStatus).toContain("B36.10M");
     const doubled = calculatePipeSchedule({
       unitSystem: "metric",
@@ -201,7 +240,8 @@ describe("02 Pipe Schedule & Dimension (ASME B36.10M)", () => {
       length: 6,
       quantity: 2,
     });
-    expect(doubled.rows.find((row) => row.label === "Total weight")?.value).toContain("192.84");
+    expect(doubled.rows.find((row) => row.label === "Total weight (W_tot)")?.value).toContain("192.84");
+    expect(doubled.heroBadges?.find((b) => b.label === "W_tot")?.value).toContain("192.84");
     const ss = calculatePipeSchedule({
       unitSystem: "metric",
       nps: "4",
@@ -212,6 +252,22 @@ describe("02 Pipe Schedule & Dimension (ASME B36.10M)", () => {
     expectNoPoison(out);
     expectNoPoison(ss);
   });
+
+  it("matches NPS 8 Sch 80 envelope from pipeSchedule.json", () => {
+    const out = calculatePipeSchedule({
+      unitSystem: "metric",
+      nps: "8",
+      schedule: "80",
+      length: 1,
+      quantity: 1,
+    });
+    expect(out.heroValue).toContain("12.700");
+    expect(out.rows.find((row) => row.label.includes("Outside diameter"))?.value).toContain("219.100");
+    expect(out.rows.find((row) => row.label.includes("Inside diameter"))?.value).toContain("193.700");
+    expect(out.rows.find((row) => row.label === "Unit weight (W_m)")?.value).toContain("64.64");
+    expect(out.rows.find((row) => row.label === "Total weight (W_tot)")?.value).toContain("64.64");
+    expectNoPoison(out);
+  });
 });
 
 describe("03 Flange Dimension (ASME B16.5)", () => {
@@ -221,8 +277,10 @@ describe("03 Flange Dimension (ASME B16.5)", () => {
       nps: "4",
       pressureClass: "150",
     });
+    expect(out.heroLabel).toBe("Mated Pair Weight (W_pair)");
     expect(out.heroValue).toContain("22.50");
-    expect(out.summary.find((row) => row.label === "Single flange weight")?.value).toContain(
+    expect(out.heroBadges?.find((b) => b.label === "W_f")?.value).toContain("10.00");
+    expect(out.summary.find((row) => row.label === "Single flange (W_f)")?.value).toContain(
       "10.00",
     );
     expect(out.rows.find((row) => row.label.includes("Flange OD"))?.value).toContain("228.600");
@@ -231,6 +289,25 @@ describe("03 Flange Dimension (ASME B16.5)", () => {
     expect(out.rows.find((row) => row.label.includes("Stud bolt"))?.value).toBe("5/8 in × 90 mm");
     expect(out.rows.find((row) => row.label.includes("wrench"))?.value).toBe("1-1/16 in (27 mm)");
     expect(out.rows.find((row) => row.label.includes("Mated pair"))?.value).toContain("22.50");
+    expectNoPoison(out);
+  });
+
+  it("matches NPS 6 Class 300 WN RF envelope and W_pair from flangeDimension.json", () => {
+    const out = calculateFlangeDimension({
+      unitSystem: "metric",
+      nps: "6",
+      pressureClass: "300",
+    });
+    expect(out.heroValue).toContain("44.56");
+    expect(out.summary.find((row) => row.label === "Single flange (W_f)")?.value).toContain(
+      "19.10",
+    );
+    expect(out.rows.find((row) => row.label.includes("Flange OD"))?.value).toContain("320");
+    expect(out.rows.find((row) => row.label.includes("Flange thickness"))?.value).toContain("35");
+    expect(out.rows.find((row) => row.label.includes("Bolt circle"))?.value).toContain("269.900");
+    expect(out.rows.find((row) => row.label.includes("Number of bolts"))?.value).toBe("12");
+    expect(out.rows.find((row) => row.label.includes("Stud bolt"))?.value).toBe("3/4 in × 120 mm");
+    expect(out.heroBadges?.find((b) => b.label === "Bolts")?.value).toBe('12 × 3/4"');
     expectNoPoison(out);
   });
 
@@ -263,7 +340,7 @@ describe("03 Flange Dimension (ASME B16.5)", () => {
       facing: "rf",
     });
     expect(so.heroValue).toContain("16.50");
-    expect(so.summary.find((row) => row.label === "Single flange weight")?.value).toContain(
+    expect(so.summary.find((row) => row.label === "Single flange (W_f)")?.value).toContain(
       "7.00",
     );
     expect(so.rows.find((row) => row.label.includes("hub bore"))?.value).toContain("114.300");
@@ -532,7 +609,46 @@ describe("05 Gasket Dimension (ASME B16.20)", () => {
       nps: "4",
       pressureClass: "150",
     });
+    expect(out.heroLabel).toBe("ID × SE_OD × OR_OD");
+    expect(out.heroValue).toContain("78.000");
+    expect(out.heroValue).toContain("117.500");
     expect(out.heroValue).toContain("190.500");
+    expect(out.heroBadges?.find((b) => b.label === "OR_OD")?.value).toContain(
+      "190.500",
+    );
+    expect(out.summary.find((row) => row.label.includes("Outer ring"))?.value).toContain(
+      "190.500",
+    );
+    expectNoPoison(out);
+  });
+
+  it("looks up NPS 4 Class 300 RTJ ring R-37", () => {
+    const out = calculateGasketDimension({
+      unitSystem: "metric",
+      gasketTypeId: "rtj_ring",
+      nps: "4",
+      pressureClass: "300",
+    });
+    expect(out.heroLabel).toContain("Ring No.");
+    expect(out.heroValue).toContain("R-37");
+    expect(out.heroBadges?.find((b) => b.label === "Ring")?.value).toBe("R-37");
+    expect(out.rows.find((row) => row.label.includes("Pitch"))?.value).toContain(
+      "123.800",
+    );
+    expect(out.rows.find((row) => row.label.includes("width × height"))?.value).toContain(
+      "11.100",
+    );
+    expectNoPoison(out);
+  });
+
+  it("falls back for unknown combination", () => {
+    const out = calculateGasketDimension({
+      unitSystem: "metric",
+      gasketTypeId: "spiral_wound",
+      nps: "99",
+      pressureClass: "999",
+    });
+    expect(out.heroValue).toBe("—");
     expectNoPoison(out);
   });
 });
@@ -561,7 +677,37 @@ describe("06 Valve Cv (ISA / IEC 60534 US Cv)", () => {
       requiredCv: 40,
     });
     expect(out.heroValue).toBe("—");
+    expect(out.rows.find((r) => r.label === "Sizing result")?.value).toBe("—");
     expectNoPoison(out);
+  });
+
+  it("matches default liquid case (~80.1 Cv) and Cv ≤ Cv,sel headroom", () => {
+    const out = calculateValveCv({
+      unitSystem: "metric",
+      fluid: "liquid",
+      flowRate: 120,
+      inletPressure: 10,
+      outletPressure: 7,
+      specificGravity: 1,
+      temperature: 25,
+      requiredCv: 100,
+    });
+    nearly(Number(out.heroValue), 80.1, 0.15);
+    expect(out.heroLabel).toContain("Required Cv");
+    expect(out.heroStatusLevel).toBe("pass");
+    expect(out.heroBadges?.some((b) => b.label === "Cv,sel")).toBe(true);
+
+    const undersized = calculateValveCv({
+      unitSystem: "metric",
+      fluid: "liquid",
+      flowRate: 120,
+      inletPressure: 10,
+      outletPressure: 7,
+      specificGravity: 1,
+      temperature: 25,
+      requiredCv: 45,
+    });
+    expect(undersized.heroStatusLevel).toBe("fail");
   });
 });
 
@@ -575,6 +721,7 @@ describe("07 Bolt Torque (ASME PCC-1)", () => {
       boltGrade: "b7",
     });
     expect(out.heroValue).toContain("190");
+    expect(out.heroLabel).toContain("(T)");
     expect(out.summary.find((row) => row.label === "Studs")?.value).toContain("8");
     expect(out.summary.find((row) => row.label === "Studs")?.value).toContain("5/8");
     expect(out.rows.some((row) => row.label.startsWith("Round 1"))).toBe(true);
@@ -602,6 +749,31 @@ describe("07 Bolt Torque (ASME PCC-1)", () => {
     const molyNm = Number(moly.heroValue.replace(/[^\d.]/g, ""));
     const dryNm = Number(dry.heroValue.replace(/[^\d.]/g, ""));
     nearly(dryNm, molyNm * (0.2 / 0.13), 0.5);
+  });
+
+  it("matches NPS 6 Class 300 table (366 N·m) and exposes hero badges", () => {
+    const out = calculateBoltTorque({
+      unitSystem: "metric",
+      nps: "6",
+      pressureClass: "300",
+      lubricant: "moly",
+      boltGrade: "b7",
+    });
+    expect(out.heroValue).toBe("366 N·m");
+    expect(out.heroBadges?.some((b) => b.label === "Nut factor K" && b.value === "0.13")).toBe(
+      true,
+    );
+    expect(out.rows.find((r) => r.label.startsWith("Round 1"))?.value).toBe("110 N·m");
+    expect(out.rows.find((r) => r.label.startsWith("Round 2"))?.value).toBe("220 N·m");
+
+    const b8 = calculateBoltTorque({
+      unitSystem: "metric",
+      nps: "6",
+      pressureClass: "300",
+      lubricant: "moly",
+      boltGrade: "b8",
+    });
+    nearly(Number(b8.heroValue.replace(/[^\d.]/g, "")), 366 * 0.85, 0.6);
   });
 });
 
@@ -671,7 +843,7 @@ describe("08 Blind Flange Thickness (ASME B31.3 / VIII-1 UG-34)", () => {
   });
 
   it("detects over-pressure against ASME B16.5 rating limits", () => {
-    // 4" 150# with 10.0 MPa (100 bar) -> exceeds 150# limit (~19.6 bar)
+    // 4" 150# with 10.0 MPa (100 bar) -> exceeds 150# ambient limit (~19.6 bar)
     const overPressure = calculateBlindFlange({
       unitSystem: "metric",
       mode: "permanent",
@@ -685,7 +857,53 @@ describe("08 Blind Flange Thickness (ASME B31.3 / VIII-1 UG-34)", () => {
       materialId: "a516_70",
     });
     expect(overPressure.heroStatusLevel).toBe("fail");
-    expect(overPressure.heroStatus).toContain("WARNING: Pressure exceeds ASME B16.5 #150 Flange Rating limit");
+    expect(overPressure.heroStatus).toContain("WARNING: Pressure exceeds ASME B16.5 #150 ambient rating");
+    expect(overPressure.heroStatus).toContain("19.6 bar");
+  });
+
+  it("formats over-pressure warning in psi when imperial", () => {
+    const overPressure = calculateBlindFlange({
+      unitSystem: "imperial",
+      mode: "permanent",
+      nps: "4",
+      pressureClass: "150",
+      insideDiameter: 6.189,
+      designPressure: 500, // exceeds ~284 psi ambient
+      allowableStress: 18100,
+      weldEfficiency: 1.0,
+      corrosionAllowance: 0.125,
+      materialId: "a516_70",
+    });
+    expect(overPressure.heroStatusLevel).toBe("fail");
+    expect(overPressure.heroStatus).toMatch(/\d{3} psi/);
+    expect(overPressure.heroStatus).not.toContain(" bar)");
+  });
+
+  it("exposes ambient Class 150 as 1.96 MPa matching warning 19.6 bar", () => {
+    expect(FLANGE_RATING_LIMITS["150"].ambientBar).toBe(19.6);
+    expect(flangeAmbientPressureMpa("150")).toBeCloseTo(1.96, 5);
+    expect(flangeAmbientPressureMpa("300")).toBeCloseTo(5.11, 5);
+  });
+
+  it("reports safety margin percent against t_m (not pipe t_nom_req)", () => {
+    const output = calculateBlindFlange({
+      unitSystem: "metric",
+      mode: "hydrotest",
+      nps: "6",
+      pressureClass: "300",
+      insideDiameter: 215.9,
+      designPressure: 7.71,
+      allowableStress: 138,
+      weldEfficiency: 1.0,
+      corrosionAllowance: 0.0,
+      materialId: "a516_70",
+    });
+    const marginRow = output.rows.find((r) => r.label.includes("Safety Margin"));
+    expect(marginRow?.value).toMatch(/%/);
+    expect(marginRow?.value).toContain("t_m");
+    expect(output.heroBadges?.some((b) => b.label.includes("Safety margin"))).toBe(
+      true,
+    );
   });
 
   it("recommends correct commercial plate in metric and imperial", () => {
@@ -697,6 +915,26 @@ describe("08 Blind Flange Thickness (ASME B31.3 / VIII-1 UG-34)", () => {
     const imperialRec = getRecommendedCommercialPlate(0.55, "imperial");
     expect(imperialRec.value).toBe(0.625);
     expect(imperialRec.unit).toBe("in");
+    expect(imperialRec.label).toBe('5/8" Plate');
+  });
+
+  it("round-trips corrosion and stress without float junk", () => {
+    const toImp = syncCompanionUnits(
+      {
+        unitSystem: "metric" as const,
+        corrosionAllowance: 3.0,
+        allowableStress: 138,
+        designPressure: 1.0,
+      },
+      "imperial",
+    );
+    expect(toImp.corrosionAllowance).toBeCloseTo(0.118, 3);
+    expect(toImp.allowableStress).toBe(20000);
+    expect(Number.isInteger(toImp.allowableStress)).toBe(true);
+
+    const toMet = syncCompanionUnits(toImp, "metric");
+    expect(toMet.corrosionAllowance).toBe(3);
+    expect(toMet.allowableStress).toBe(138);
   });
 
   it("maps ASME B16.5 RF gasket contact diameter", () => {
@@ -705,6 +943,46 @@ describe("08 Blind Flange Thickness (ASME B31.3 / VIII-1 UG-34)", () => {
 
     const dNps2 = getStandardGasketContactDiameter("2", "150", "metric");
     expect(dNps2).toBeCloseTo(92, 0);
+
+    const dNps4In = getStandardGasketContactDiameter("4", "150", "imperial");
+    expect(dNps4In).toBeCloseTo(6.189, 2);
+  });
+
+  it("converts insideDiameter when switching metric → imperial", () => {
+    const next = syncCompanionUnits(
+      {
+        unitSystem: "metric" as const,
+        insideDiameter: 157.2,
+        designPressure: 2.5,
+        corrosionAllowance: 3.0,
+        allowableStress: 125.0,
+      },
+      "imperial",
+    );
+    expect(next.insideDiameter).toBeCloseTo(157.2 / 25.4, 3);
+    expect(next.corrosionAllowance).toBeCloseTo(3 / 25.4, 3);
+  });
+
+  it("round-trips insideDiameter without float junk like 157.2006", () => {
+    const imperial = syncCompanionUnits(
+      { unitSystem: "metric" as const, insideDiameter: 157.2 },
+      "imperial",
+    );
+    const metric = syncCompanionUnits(imperial, "metric");
+    expect(metric.insideDiameter).toBe(157.2);
+  });
+
+  it("computes imperial custom P with correct inch d (~0.17 in, not ~1.14 in)", () => {
+    const t = requiredBlindThicknessMm({
+      insideDiameter: 6.189,
+      designPressure: 2.5,
+      allowableStress: 18100,
+      weldEfficiency: 1,
+      corrosionAllowance: 0.125,
+    });
+    expect(t).toBeCloseTo(0.165, 2);
+    expect(t).toBeLessThan(0.25);
+    expect(t).toBeGreaterThan(0.14);
   });
 });
 
@@ -866,6 +1144,32 @@ describe("10 Hydro Test Pressure (ASME B31.3)", () => {
       "30 minutes",
     );
   });
+
+  it("exposes Pt hero badges and snaps St/S stresses on unit toggle", () => {
+    const out = calculateHydroTest({ ...base, testFluid: "hydrostatic" });
+    expect(out.heroValue).toBe("3.75 MPa");
+    expect(out.heroBadges?.some((b) => b.label === "Test fluid" && b.value === "Hydrostatic")).toBe(
+      true,
+    );
+    expect(out.heroBadges?.some((b) => b.label === "St/S")).toBe(true);
+
+    const imperial = syncCompanionUnits(
+      {
+        unitSystem: "metric" as const,
+        designPressure: 2.5,
+        designStress: 138,
+        testStress: 138,
+      },
+      "imperial",
+    );
+    expect(imperial.designStress).toBe(20000);
+    expect(imperial.testStress).toBe(20000);
+    expect(imperial.designPressure).toBe(363);
+
+    const metric = syncCompanionUnits(imperial, "metric");
+    expect(metric.designStress).toBe(138);
+    expect(metric.testStress).toBe(138);
+  });
 });
 
 describe("11 Thermal Expansion", () => {
@@ -910,6 +1214,47 @@ describe("11 Thermal Expansion", () => {
       frictionFactor: 0.3,
     });
     expect(Number.isFinite(dL)).toBe(true);
+  });
+
+  it("matches default CS NPS 4 Sch 40 screening H / W / F_anchor", () => {
+    const out = calculateThermalExpansion({
+      unitSystem: "metric",
+      material: "cs",
+      installTemp: 21,
+      operatingTemp: 150,
+      length: 20,
+      nps: "4",
+      schedule: "40",
+      allowableSa: 138,
+      frictionFactor: 0.3,
+    });
+    expect(out.heroLabel).toBe("Thermal Expansion (ΔL)");
+    expect(out.heroValue).toContain("31.2");
+    expect(out.heroBadges?.find((b) => b.label === "H")?.value).toContain("2.75");
+    expect(out.heroBadges?.find((b) => b.label === "W")?.value).toContain("1.37");
+    expect(out.summary.find((row) => row.label.includes("F_anchor"))?.value).toContain(
+      "11.53",
+    );
+    expect(out.rows.find((row) => row.label.includes("G₁"))?.value).toContain("457.2");
+    expect(out.rows.find((row) => row.label.includes("G₂"))?.value).toContain("1600.2");
+    expectNoPoison(out);
+  });
+
+  it("shows imperial ΔL in inches", () => {
+    const out = calculateThermalExpansion({
+      unitSystem: "imperial",
+      material: "cs",
+      installTemp: 70,
+      operatingTemp: 302,
+      length: 65.62,
+      nps: "4",
+      schedule: "40",
+      allowableSa: 20,
+      frictionFactor: 0.3,
+    });
+    expect(out.heroValue).toMatch(/in/);
+    expect(out.heroValue).not.toMatch(/mm/);
+    expectNoPoison(out);
   });
 });
 
@@ -999,6 +1344,55 @@ describe("12 Darcy–Weisbach Pressure Drop", () => {
       }),
     ).toBeNull();
   });
+
+  it("matches default water NPS 4 Sch 40 with fittings in calculatePressureDrop", () => {
+    const out = calculatePressureDrop({
+      unitSystem: "metric",
+      fluid: "water",
+      temperature: 20,
+      roughness: 0.045,
+      flow: 40,
+      flowUnit: "m3h",
+      nps: "4",
+      schedule: "40",
+      length: 100,
+      elbowCount: 4,
+      gateCount: 2,
+      globeCount: 0,
+    });
+    expect(out.heroLabel).toBe("Pressure Drop (ΔP)");
+    expect(out.heroValue).toContain("0.194");
+    expect(out.heroBadges?.find((b) => b.label === "f")?.value).toContain("0.0190");
+    expect(out.summary.find((row) => row.label === "ΔP / 100 m")?.value).toContain(
+      "0.170",
+    );
+    expect(
+      out.rows.find((row) => row.label.includes("Total equivalent length"))?.value,
+    ).toContain("113.9");
+    expectNoPoison(out);
+  });
+
+  it("reports imperial ΔP/100 as psi per 100 ft", () => {
+    const out = calculatePressureDrop({
+      unitSystem: "imperial",
+      fluid: "water",
+      temperature: 68,
+      roughness: 0.045,
+      flow: 176.11,
+      flowUnit: "gpm",
+      nps: "4",
+      schedule: "40",
+      length: 328.08,
+      elbowCount: 0,
+      gateCount: 0,
+      globeCount: 0,
+    });
+    expect(out.summary.find((row) => row.label === "ΔP / 100 ft")?.value).toMatch(
+      /psi\/100 ft/,
+    );
+    expect(out.heroValue).toMatch(/psi/);
+    expectNoPoison(out);
+  });
 });
 
 describe("13 Flow Velocity & API RP 14E", () => {
@@ -1066,6 +1460,27 @@ describe("13 Flow Velocity & API RP 14E", () => {
     expect(ss).not.toBeNull();
     expect(ss!.liquidCapMs).toBe(5);
     expect(ss!.status).not.toBe("Erosion Risk");
+  });
+
+  it("matches default CS NPS 4 Sch 40 water case in calculateFlowVelocity", () => {
+    const out = calculateFlowVelocity({
+      unitSystem: "metric",
+      materialFamily: "cs",
+      nps: "4",
+      schedule: "40",
+      flow: 40,
+      flowUnit: "m3h",
+      density: 998,
+      erosionC: 100,
+    });
+    expect(out.heroLabel).toBe("Mean Velocity (v)");
+    expect(out.heroValue).toMatch(/1\.35/);
+    expect(out.heroBadges?.find((b) => b.label === "v / vc")?.value).toBe("35%");
+    expect(out.summary.find((row) => row.label === "Erosion limit (vc)")?.value).toMatch(
+      /3\.86/,
+    );
+    expect(out.rows.find((row) => row.label === "Status")?.value).toBe("Safe");
+    expectNoPoison(out);
   });
 });
 

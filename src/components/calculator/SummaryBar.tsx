@@ -68,9 +68,9 @@ export default function SummaryBar({
   return (
     <div
       aria-hidden={!pinned}
-      className={`sticky top-12 z-30 w-full md:top-14 ${
+      className={`sticky top-12 z-40 w-full isolate md:top-14 ${
         pinned
-          ? "border-b border-slate-200/80 bg-white shadow-[0_1px_0_0_rgba(15,23,42,0.06)] dark:border-slate-800 dark:bg-slate-900 dark:shadow-[0_1px_0_0_rgba(0,0,0,0.35)]"
+          ? "border-b border-slate-200 bg-white shadow-sm backdrop-blur-md dark:border-slate-800 dark:bg-slate-900 dark:shadow-[0_1px_0_0_rgba(0,0,0,0.35)]"
           : "pointer-events-none invisible max-h-0 overflow-hidden border-b-0 bg-transparent shadow-none"
       }`}
     >
@@ -80,7 +80,7 @@ export default function SummaryBar({
             key={item.label}
             className="flex min-w-0 flex-col justify-center self-center max-md:max-w-[46%]"
           >
-            <div className="mb-0.5 truncate text-[10px] font-medium uppercase tracking-wide text-slate-500 dark:text-spec-text3 md:text-[11px]">
+            <div className="mb-0.5 truncate text-[10px] font-medium tracking-wide text-slate-500 dark:text-spec-text3 md:text-[11px]">
               {item.label}
             </div>
             <div className="font-mono text-sm font-bold tabular-nums text-slate-900 dark:text-spec-text md:text-[15px]">

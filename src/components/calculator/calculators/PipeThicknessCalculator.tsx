@@ -7,7 +7,6 @@ import FieldGroup, {
   FIELD_SELECT_CLASS,
   FieldSelect,
 } from "@/components/calculator/FieldGroup";
-import SectionBlock from "@/components/calculator/SectionBlock";
 import { usePublishCalculatorOutput } from "@/components/calculator/usePublishCalculatorOutput";
 import {
   DEFAULT_PIPE_INPUTS,
@@ -17,6 +16,7 @@ import {
   defaultDesignTemperature,
   defaultMechanicalAllowance,
   formatMaterialPresetOption,
+  formatPipeThickness,
   jointEfficiencyForType,
   mapJointTypeFromEfficiency,
   minimumRequiredThickness,
@@ -282,6 +282,24 @@ export default function PipeThicknessCalculator({
     });
   }, [inputs.unitSystem, setInputs]);
 
+  // After URL hydrate / conversion drift, snap Table A-1 S back to exact preset.
+  useEffect(() => {
+    if (!presetSelected) return;
+    const presetStress = pipeThicknessStressForMaterial(
+      materialValue,
+      inputs.unitSystem,
+    );
+    if (presetStress == null) return;
+    if (Math.abs(inputs.allowableStress - presetStress) < 0.5) return;
+    setField("allowableStress", presetStress);
+  }, [
+    inputs.allowableStress,
+    inputs.unitSystem,
+    materialValue,
+    presetSelected,
+    setField,
+  ]);
+
   useEffect(() => {
     const nextSchedule = defaultScheduleForNps(inputs.nps, inputs.schedule);
     if (nextSchedule && nextSchedule !== inputs.schedule) {
@@ -316,10 +334,13 @@ export default function PipeThicknessCalculator({
     { label: "Allowable stress", value: `${inputs.allowableStress} ${pressureUnit}` },
     { label: "Joint quality (E)", value: String(inputs.weldEfficiency) },
     {
-      label: "Mechanical / corrosion allowance",
-      value: `${inputs.corrosionAllowance} ${unit}`,
+      label: "Mechanical & corrosion allowance (c)",
+      value: formatPipeThickness(inputs.corrosionAllowance, inputs.unitSystem),
     },
-    { label: "Schedule wall", value: `${inputs.actualThickness} ${unit}` },
+    {
+      label: "Schedule wall (t_actual)",
+      value: formatPipeThickness(inputs.actualThickness, inputs.unitSystem),
+    },
   ];
 
   return (
@@ -339,7 +360,6 @@ export default function PipeThicknessCalculator({
       }
       inputPanel={
         <div className="flex w-full min-w-0 flex-1 flex-col gap-3 [&_.calc-field]:max-w-none">
-          <SectionBlock number={1} title="Input Parameters" twoColumn={false} compact>
             <FieldSelect
               label="Nominal pipe size (NPS)"
               value={inputs.nps}
@@ -359,7 +379,11 @@ export default function PipeThicknessCalculator({
             <FieldGroup
               label="Design pressure (P)"
               hint="Internal design gauge pressure P — ASME B31.3 Para. 304.1.2(a)."
-              value={inputs.designPressure}
+              value={
+                inputs.unitSystem === "imperial"
+                  ? Math.round(inputs.designPressure)
+                  : inputs.designPressure
+              }
               onChange={(value) =>
                 updateField("designPressure", toNumber(value, inputs.designPressure))
               }
@@ -381,7 +405,11 @@ export default function PipeThicknessCalculator({
 
             <FieldGroup
               label="Corrosion / mechanical allowance (c)"
-              hint="Primary design allowance c in t_m = t + c — default 1.5 mm (0.063 in), step 0.1."
+              hint={
+                inputs.unitSystem === "metric"
+                  ? "Default 1.50 mm. Unit switch reseeds Imperial to 0.063 in (1/16″ commercial), not exact 1.5÷25.4 ≈ 0.059 in — margin % will differ slightly."
+                  : "Default 0.063 in (1/16″ ≈ 1.588 mm commercial). Exact 1.50 mm = 0.059 in — unit switch uses commercial defaults, not pure conversion."
+              }
               value={inputs.corrosionAllowance}
               onChange={(value) =>
                 updateField(
@@ -405,7 +433,7 @@ export default function PipeThicknessCalculator({
               >
                 {PIPE_THICKNESS_MATERIAL_PRESETS.map((preset) => (
                   <option key={preset.id} value={preset.id}>
-                    {formatMaterialPresetOption(preset)}
+                    {formatMaterialPresetOption(preset, inputs.unitSystem)}
                   </option>
                 ))}
                 <option value="custom">Custom (enter S manually)</option>
@@ -415,7 +443,7 @@ export default function PipeThicknessCalculator({
             <FieldGroup
               label="Design temperature (T)"
               hint="Auto-adjusts coefficient Y per ASME B31.3 Table 304.1.1-1 (ferritic ≤482 °C / 900 °F → Y = 0.4)."
-              value={inputs.designTemperature}
+              value={Math.round(inputs.designTemperature)}
               onChange={(value) => {
                 const nextTemp = toNumber(value, inputs.designTemperature);
                 setInputs((current) => ({
@@ -446,7 +474,6 @@ export default function PipeThicknessCalculator({
                 <option value="custom">Custom (enter E manually)</option>
               </select>
             </div>
-          </SectionBlock>
 
           <div className="rounded-xl border border-slate-200/90 bg-slate-50/50 dark:border-slate-800/90 dark:bg-slate-900/30">
             <button
@@ -455,8 +482,8 @@ export default function PipeThicknessCalculator({
               className="flex w-full items-center justify-between px-3.5 py-2.5 text-left transition-colors hover:bg-slate-100/60 dark:hover:bg-slate-800/40"
             >
               <div className="flex items-center gap-2">
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-slate-200/80 text-[11px] font-bold text-slate-700 dark:bg-slate-800 dark:text-slate-300">
-                  2
+                <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-slate-200/80 px-1 text-[10px] font-bold text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                  1.2
                 </span>
                 <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">
                   Advanced Engineering Parameters
@@ -473,8 +500,8 @@ export default function PipeThicknessCalculator({
             {showAdvanced && (
               <div className="space-y-3 border-t border-slate-200/80 p-3.5 dark:border-slate-800">
                 <FieldGroup
-                  label="Schedule nominal wall (t)"
-                  hint="From selected schedule — compared against t_nom_req for PASS/FAIL."
+                  label="Schedule nominal wall thickness (t_actual)"
+                  hint="From selected schedule — compared against t_nom_req for PASS/FAIL. Distinct from pressure design thickness t."
                   value={inputs.actualThickness}
                   onChange={(value) =>
                     updateField(
@@ -489,7 +516,7 @@ export default function PipeThicknessCalculator({
                 <FieldGroup
                   label="Allowable stress (S)"
                   hint="Table A-1 S at design temperature — manual edits switch material to Custom."
-                  value={inputs.allowableStress}
+                  value={Math.round(inputs.allowableStress)}
                   onChange={changeAllowableStress}
                   unit={pressureUnit}
                   highlight="S"
@@ -511,16 +538,16 @@ export default function PipeThicknessCalculator({
                 />
                 <div className="rounded-lg border border-slate-200/80 bg-white/80 px-3 py-2 text-[11px] text-slate-600 dark:border-slate-700 dark:bg-slate-900/50 dark:text-slate-300">
                   <p>
-                    <span className="font-semibold">t</span> (pressure design) ={" "}
-                    {tPressure.toFixed(3)} {unit}
+                    Pressure design thickness (t) ={" "}
+                    {formatPipeThickness(tPressure, inputs.unitSystem)}
                   </p>
                   <p>
-                    <span className="font-semibold">t_m</span> (t + c) ={" "}
-                    {tMin.toFixed(3)} {unit}
+                    Required t_min (t + c) ={" "}
+                    {formatPipeThickness(tMin, inputs.unitSystem)}
                   </p>
                   <p>
-                    <span className="font-semibold">t_nom_req</span> (t_min / 0.875) ={" "}
-                    {tNomReq.toFixed(3)} {unit}
+                    Required t_nom_req (t_min / 0.875) ={" "}
+                    {formatPipeThickness(tNomReq, inputs.unitSystem)}
                   </p>
                 </div>
               </div>
