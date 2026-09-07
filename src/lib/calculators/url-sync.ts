@@ -108,9 +108,9 @@ export function useCalculatorUrlSync<T extends Record<string, unknown>>(
             next[key] = converted[key];
           }
         }
-        (next as { unitSystem: UnitSystem }).unitSystem = preferred;
+        (next as unknown as { unitSystem: UnitSystem }).unitSystem = preferred;
       } else if (preferred) {
-        (next as { unitSystem: UnitSystem }).unitSystem = preferred;
+        (next as unknown as { unitSystem: UnitSystem }).unitSystem = preferred;
       }
     }
 
