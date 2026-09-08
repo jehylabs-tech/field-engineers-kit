@@ -455,6 +455,8 @@ export default function ResultPane({
           tMin={output.gauge.tMin ?? 0}
           tActual={output.gauge.tActual ?? 0}
           unit={output.gauge.unit ?? "mm"}
+          tMinLabel={output.gauge.limitLabel}
+          tActualLabel={output.gauge.maxLabel}
           caption={output.gauge.caption}
           captionInfo={output.gauge.captionInfo}
           markerLabel={output.gauge.markerLabel}

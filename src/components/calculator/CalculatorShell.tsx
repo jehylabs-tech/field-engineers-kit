@@ -96,6 +96,9 @@ const CALCULATOR_VIEWS: Record<
     () => import("./calculators/UnitConverterCalculator"),
     { loading: loadingFallback },
   ),
+  "link-seal": dynamic(() => import("./calculators/LinkSealCalculator"), {
+    loading: loadingFallback,
+  }),
 };
 
 type CalculatorShellProps = {
@@ -208,7 +211,7 @@ function CalculatorMain({
         </main>
       </div>
 
-      <div className="w-full px-6 pb-10 pt-3">
+      <div className="w-full px-6 pb-28 pt-3 md:pb-32">
         <AdSlot slot="calculator" />
         {children}
         <InFeedAd />

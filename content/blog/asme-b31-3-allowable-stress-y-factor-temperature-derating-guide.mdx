@@ -1,0 +1,275 @@
+---
+title: "ASME B31.3 Allowable Stress (S) & Y-Factor Temperature Derating Guide"
+description: "Engineering guide to ASME B31.3 Table A-1 allowable stress derating for CS, SS, and Cr–Mo alloys, Table 304.1.1 Y-Factor transitions, and a verified high-temperature wall-thickness worked example."
+date: "2026-09-09"
+category: "Piping Engineering"
+tags:
+  - ASME B31.3
+  - Allowable Stress
+  - Y-Factor
+  - Temperature Derating
+  - High-Temp Piping
+relatedCalculatorUrl: "/calculator/pipe-wall-thickness"
+relatedCalculatorName: "ASME B31.3 Pipe Thickness Calculator"
+---
+
+Under ASME B31.3 internal-pressure design, required wall thickness depends not only on pressure $P$ and outside diameter $D$, but also on **Allowable Stress ($S$) at metal design temperature** and the **coefficient $Y$ (Y-Factor)**. As temperature rises, Table A-1 $S$ falls sharply; for ferritic steels above $482^\circ\text{C}$ ($900^\circ\text{F}$), Table 304.1.1 $Y$ also increases. Together, those shifts can move schedule selection by one or more steps.
+
+$$
+t = \frac{P \cdot D}{2(S \cdot E \cdot W + P \cdot Y)}
+$$
+
+$$
+t_m = t + c,\qquad t_{\text{nom,req}} = \frac{t_m}{0.875}
+$$
+
+<Callout title="Screening vs. code book" variant="info">
+$S$ values in this guide are **engineering screening** figures drawn from ASME B31.3 Appendix A **Table A-1** (representative edition). Final PMS and calculations must use the project edition of Table A-1 and its Notes. Weld Joint Strength Reduction Factor $W$ is typically $1.0$ for seamless pipe outside the creep range; welded joints in creep service require separate evaluation.
+</Callout>
+
+## Quick Summary (TL;DR)
+
+| Item | Field takeaway |
+| :--- | :--- |
+| **$S$ (Table A-1)** | Ambient / low temperature: elastic limits from $S_t/3$ and $R_y$. High temperature: Creep / Stress Rupture limits dominate → rapid $S$ drop. |
+| **Carbon Steel** | Creep influence grows near $371^\circ\text{C}$. **Long-term service above $427^\circ\text{C}$ ($800^\circ\text{F}$) risks Graphitization** — switch to alloy steel. |
+| **Stainless (L vs Standard)** | L-Grades improve weldability / sensitization resistance but carry **lower high-temperature $S$**. For $t \gtrsim 150^\circ\text{C}$ strength-driven lines, consider TP304/316 (or H). |
+| **Cr–Mo Alloy** | P11 / P22 / P91 retain usable $S$ above $500^\circ\text{C}$ — standard choice for hot / high-pressure steam and process lines. |
+| **$Y$ (Table 304.1.1)** | Ferritic: $Y=0.4$ up to $482^\circ\text{C}$, then $0.5\to0.7$. Austenitic rises later. Cast iron $Y=0$. |
+| **Thickness effect** | Falling $S$ increases $t$; rising $Y$ slightly reduces $t$ via $P\cdot Y$. **$S$ derating dominates schedule selection.** |
+
+---
+
+## 1. Basis of ASME B31.3 Allowable Stress ($S$)
+
+### 1.1 Elastic-range basic allowable
+
+Basic Allowable Stress $S$ in Table A-1 is the **minimum** of tensile- and yield-based limits with code safety factors. For ferritic / carbon steel:
+
+$$
+S = \min\left(\frac{S_t}{3},\ \frac{2}{3}R_y\right)
+$$
+
+Example — ASTM A106 Gr.B: $S_t = 60\text{ ksi}$, $R_y = 35\text{ ksi}$
+
+$$
+\frac{S_t}{3} = 20.0\text{ ksi},\quad \frac{2}{3}R_y = 23.3\text{ ksi} \implies S = 20.0\text{ ksi}\ (138\text{ MPa})
+$$
+
+For austenitic stainless steels, a higher fraction of yield is often permitted:
+
+$$
+S = \min\left(\frac{S_t}{3},\ \frac{90\%\,R_y}{1.5}\right) = \min\left(\frac{S_t}{3},\ 0.9\cdot\frac{2}{3}R_y\right)
+$$
+
+That is why TP304 can show ambient $S$ near carbon-steel levels ($\sim 20\text{ ksi}$), while L-Grades (lower $S_t$ / $R_y$) start lower.
+
+### 1.2 High temperature: transition to Creep & Stress Rupture
+
+At elevated metal temperature, time-dependent **Creep and Stress Rupture** govern $S$ instead of static yield alone.
+
+| Regime | Approx. temperature (CS) | Controlling basis for $S$ |
+| :--- | :---: | :--- |
+| **Elastic / yield** | $\lesssim 370^\circ\text{C}$ ($700^\circ\text{F}$) | $S_t/3$, $2/3\,R_y$ (temperature-adjusted) |
+| **Transition** | $\sim 370$–$427^\circ\text{C}$ | Competition between hot yield and creep limits |
+| **Creep-controlled** | $\gtrsim 427^\circ\text{C}$ ($800^\circ\text{F}$) | Long-term rupture / creep-rate criteria → **steep $S$ drop** |
+
+Carbon steel also faces **Graphitization** under long exposure above $427^\circ\text{C}$ (cementite → graphite). Even when Table A-1 still lists an $S$, process practice usually **replaces CS with Cr–Mo alloy** for continuous hot service.
+
+### 1.3 Quality Factor $E$ and Weld Strength Reduction $W$
+
+$$
+t = \frac{P \cdot D}{2(S \cdot E \cdot W + P \cdot Y)}
+$$
+
+| Factor | Meaning | Typical field value |
+| :--- | :--- | :--- |
+| **$E$** | Longitudinal Weld Joint Quality Factor (Table 302.3.4) | Seamless $E=1.00$; ERW often $0.85$ |
+| **$W$** | Weld Joint Strength Reduction Factor (creep regime) | $W=1.00$ for seamless / low temperature; may be $<1$ for welded creep service |
+
+The FieldEngineersKit [Pipe Thickness Calculator](/calculator/pipe-wall-thickness) uses the seamless screening form $S\cdot E + P\cdot Y$ (equivalent to $W=1$) with user-entered $S$ and $Y$.
+
+---
+
+## 2. Material-Group Derating (CS vs SS vs Low Alloy)
+
+Values below are **rounded screening** conversions from representative Table A-1 figures ($1\text{ ksi}=6.895\text{ MPa}$). Confirm the project edition and Notes before issue.
+
+### 2.1 Comparison — Basic Allowable Stress $S$ ($\text{MPa}$)
+
+| Metal Temp. | A106 / A53 Gr.B | A335 P11 | A335 P22 | A335 P91 ($\le 3"$) |
+| :---: | ---: | ---: | ---: | ---: |
+| **$38^\circ\text{C}$ ($100^\circ\text{F}$)** | $138$ | $138$ | $138$ | $195$ |
+| **$93^\circ\text{C}$ ($200^\circ\text{F}$)** | $138$ | $128$ | $129$ | $195$ |
+| **$204^\circ\text{C}$ ($400^\circ\text{F}$)** | $137$ | $121$ | $125$ | $194$ |
+| **$260^\circ\text{C}$ ($500^\circ\text{F}$)** | $131$ | $116$ | $124$ | $191$ |
+| **$371^\circ\text{C}$ ($700^\circ\text{F}$)** | $115$ | $106$ | $123$ | $179$ |
+| **$427^\circ\text{C}$ ($800^\circ\text{F}$)** | $79$ | $102$ | $122$ | $172$ |
+| **$482^\circ\text{C}$ ($900^\circ\text{F}$)** | $41$ | $97$ | $118$ | $154$ |
+| **$538^\circ\text{C}$ ($1000^\circ\text{F}$)** | $17$ | $64$ | $74$ | $124$ |
+| **$593^\circ\text{C}$ ($1100^\circ\text{F}$)** | $7$ | $29$ | $39$ | $71$ |
+
+### 2.2 Carbon Steel — A106 Gr.B / A53 Gr.B
+
+- Near $371^\circ\text{C}$ ($700^\circ\text{F}$), creep begins to dominate and the $S$ curve steepens.
+- At $427^\circ\text{C}$ ($800^\circ\text{F}$), $S \approx 79\text{ MPa}$ ($11.4\text{ ksi}$) — about **43% of ambient $138\text{ MPa}$**.
+- At $482^\circ\text{C}$, $S \approx 41\text{ MPa}$ ($5.9\text{ ksi}$). For continuous hot service, CS is **unfavorable on both creep and Graphitization**. Steam / hot-oil headers typically move to P11 or higher.
+
+### 2.3 Austenitic SS — TP304/316 vs TP304L/316L
+
+| Grade family | Ambient $S$ (typical) | High-temperature behavior | Practical selection |
+| :--- | :---: | :--- | :--- |
+| **TP304 / TP316** | $\approx 138\text{ MPa}$ ($20\text{ ksi}$) | Higher mid- / high-temperature $S$ than L | Strength- or creep-driven hot lines |
+| **TP304L / TP316L** | $\approx 115\text{ MPa}$ ($16.7\text{ ksi}$) | Lower carbon → lower strength and high-$T$ $S$ | Corrosion / sensitization priority at low–moderate $T$ |
+
+Above about $150^\circ\text{C}$, defaulting to “L only” can **inflate wall thickness and flange rating** without benefit. Dual-certified (304/304L) stock still requires a **declared design grade** in Table A-1. Prefer Standard or H grades when hot strength governs; prefer L when weld-zone corrosion / sensitization governs.
+
+### 2.4 Low Alloy — A335 P11 / P22 / P91
+
+- **P11 (1¼Cr–½Mo):** $\approx 97\text{ MPa}$ at $482^\circ\text{C}$ — more than **double** CS at the same temperature ($41\text{ MPa}$).
+- **P22 (2¼Cr–1Mo):** Extra high-temperature margin for $500$–$550^\circ\text{C}$ steam / process service.
+- **P91 (9Cr–1Mo–V):** High ambient and elevated $S$ ($\approx 124\text{ MPa}$ at $538^\circ\text{C}$) — core creep-resistant alloy for USC / severe hot piping. Welding, PWHT, and hardness control are mandatory.
+
+---
+
+## 3. Y-Factor Mechanics & Table 304.1.1 Thresholds
+
+### 3.1 Physical meaning of $Y$
+
+In Eq. (3a), $Y$ approximates the effect of circumferential stress distribution and plastic strain, including **neutral-axis shift** in thicker walls.
+
+- $Y = 0$: Thin-membrane extreme — no plastic redistribution (cast / ductile iron).
+- $Y = 0.4$: Default for ductile steel at ambient / moderate temperature.
+- $Y \to 0.5$: Approaches an idealized thin-wall plastic limit state.
+- $Y > 0.5$ (typically $0.7$): Accounts for **stress redistribution under thick-wall creep** → larger $P\cdot Y$ term → **slightly smaller calculated $t$**.
+
+In practice, the $S$ drop increases $t$ far more than any $Y$ increase can reduce it.
+
+### 3.2 Table 304.1.1 — $Y$ values
+
+| Material class | $\le 482^\circ\text{C}$ ($900^\circ\text{F}$) | $510^\circ\text{C}$ ($950^\circ\text{F}$) | $538^\circ\text{C}$ ($1000^\circ\text{F}$) | $566^\circ\text{C}$ ($1050^\circ\text{F}$) | $\ge 593^\circ\text{C}$ ($1100^\circ\text{F}$) |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **Ferritic (CS / Alloy)** | $0.4$ | $0.5$ | $0.7$ | $0.7$ | $0.7$ |
+| **Austenitic (SS)** | $0.4$ | $0.4$ | $0.4$ | $0.5$ | $0.7$ |
+| **Cast / Ductile Iron** | $0.0$ | — | — | — | — |
+
+Interpolate between tabulated temperatures. Example — ferritic at $485^\circ\text{C}$ ($905^\circ\text{F}$):
+
+$$
+Y = 0.4 + \frac{905 - 900}{950 - 900}\,(0.5 - 0.4) = 0.41
+$$
+
+Austenitic steels keep $Y=0.4$ through $1000^\circ\text{F}$, so their $Y$ rise lags ferritic / alloy steels.
+
+---
+
+## 4. Worked Example — $200^\circ\text{C}$ vs $485^\circ\text{C}$ Derating
+
+### Common design data
+
+| Item | Value |
+| :--- | :--- |
+| **Design Pressure $P$** | $4.0\text{ MPa}$ |
+| **NPS / OD $D$** | NPS 8 · $D = 219.1\text{ mm}$ (B36.10M) |
+| **Corrosion Allowance $c$** | $1.5\text{ mm}$ |
+| **Mill under-tolerance** | $12.5\%$ → $t_{\text{nom,req}} = t_m / 0.875$ |
+| **Joint factors** | Seamless $E = 1.00$, $W = 1.00$ |
+
+NPS 8 commercial walls (B36.10M): Sch 40 $= 8.18\text{ mm}$, Sch 80 $= 12.70\text{ mm}$, Sch 160 $= 18.23\text{ mm}$.
+
+### Case A — $200^\circ\text{C}$, ASTM A106 Gr.B
+
+- Table A-1 interpolation: $S \approx 19.91\text{ ksi} = 137.3\text{ MPa}$
+- Ferritic $Y = 0.4$ ($\le 482^\circ\text{C}$)
+
+$$
+t = \frac{4.0 \times 219.1}{2\bigl(137.3 \times 1 \times 1 + 4.0 \times 0.4\bigr)} = \frac{876.4}{2(137.3 + 1.6)} = \frac{876.4}{277.8} = 3.16\text{ mm}
+$$
+
+$$
+t_m = 3.16 + 1.5 = 4.66\text{ mm},\qquad t_{\text{nom,req}} = \frac{4.66}{0.875} = 5.32\text{ mm}
+$$
+
+**Select Sch 40** ($8.18\text{ mm} \ge 5.32\text{ mm}$) with comfortable margin.
+
+### Case B — $485^\circ\text{C}$, A106 Gr.B vs A335 P11
+
+$485^\circ\text{C} = 905^\circ\text{F}$ → $Y = 0.41$ (interpolated).
+
+| Item | A106 Gr.B | A335 P11 |
+| :--- | ---: | ---: |
+| **$S$ (interpolated)** | $5.71\text{ ksi}$ ($39.4\text{ MPa}$) | $13.96\text{ ksi}$ ($96.3\text{ MPa}$) |
+| **$Y$** | $0.41$ | $0.41$ |
+| **$t$** | $10.69\text{ mm}$ | $4.48\text{ mm}$ |
+| **$t_m$** | $12.19\text{ mm}$ | $5.98\text{ mm}$ |
+| **$t_{\text{nom,req}}$** | $13.93\text{ mm}$ | $6.83\text{ mm}$ |
+| **Schedule** | **Sch 160** (Sch 80 $12.70 < 13.93$) | **Sch 40** ($8.18 \ge 6.83$) |
+
+A106 Gr.B:
+
+$$
+t = \frac{876.4}{2(39.4 + 4.0\times 0.41)} = \frac{876.4}{2(39.4 + 1.64)} = \frac{876.4}{82.08} = 10.69\text{ mm}
+$$
+
+P11:
+
+$$
+t = \frac{876.4}{2(96.3 + 1.64)} = \frac{876.4}{195.88} = 4.48\text{ mm}
+$$
+
+**Interpretation**
+
+1. Raising temperature from $200$ to $485^\circ\text{C}$ drops A106 $S$ from $137$ to $39\text{ MPa}$ and drives **$t_{\text{nom,req}}$ from $5.3$ to $13.9\text{ mm}$** — Sch 40 → Sch 160.
+2. $Y$ only moves $0.40\to0.41$; it does **not** reverse the schedule jump.
+3. At the same $485^\circ\text{C}$, P11 still passes on **Sch 40** — material upgrade cuts schedule, weight, and often flange class together.
+4. Leaving A106 at $485^\circ\text{C}$ retains Graphitization and creep-rupture risk. A listed $S$ does **not** make continuous CS service acceptable.
+
+<Callout title="Does raising Y alone thin the wall?" variant="tip">
+Changing only $Y: 0.4\to0.5$ at fixed $S=39.4\text{ MPa}$ reduces $t$ from about $10.69$ to $10.58\text{ mm}$ — roughly **$0.1\text{ mm}$**. High-temperature thickness growth is driven by **Table A-1 $S$ derating**, not by $Y$.
+</Callout>
+
+---
+
+## 5. Field Checklist & Calculator
+
+### High-temperature line-spec checklist
+
+| Check | Action |
+| :--- | :--- |
+| **1. Metal design temperature** | Read Table A-1 at **metal** design $T$ (including heat tracing / insulation effects), not fluid $T$ alone. |
+| **2. $S$ edition / Notes** | Confirm B31.3 edition, dual-cert notes, H-Grade, and thickness limits (e.g. P91). |
+| **3. Creep / Graphitization** | Ban long-term CS above $427^\circ\text{C}$ unless owner standard explicitly allows; prefer alloy PMS. |
+| **4. $Y$ interpolation** | Ferritic above $482^\circ\text{C}$: interpolate $0.4/0.5/0.7$. Austenitic thresholds are higher. |
+| **5. $E$ and $W$** | ERW → $E<1$. Creep-range welds → evaluate $W$. |
+| **6. Mill tolerance** | Apply $t_m/0.875$, then pick B36 schedule. Use measured ID when available. |
+| **7. Flange / valve rating** | Co-derate **B16.5 / B16.34** $P$–$T$ ratings with the pipe wall. |
+| **8. Thermal fatigue / flexibility** | Hot $\Delta T$ needs expansion loops, supports, and SIF checks — thickness alone is insufficient. |
+| **9. Creep rupture life** | Critical lines may need remaining-life / advanced creep assessment beyond hoop screening. |
+
+### Interactive calculator
+
+<Callout title="Run the thickness screen" variant="tip">
+Reproduce $P$, $D$, $c$, $S$, and $Y$ instantly in the  
+**[ASME B31.3 Pipe Wall Thickness Calculator](/calculator/pipe-wall-thickness)**.  
+Default $Y=0.4$ for ferritic metal temperature $\le 482^\circ\text{C}$; for hotter cases enter Table A-1 $S$ and Table 304.1.1 $Y$ manually to match Cases A and B.
+</Callout>
+
+---
+
+## FAQ
+
+### Q1. Why does schedule jump so hard at high temperature?
+
+Because $t \propto 1/(S\cdot E\cdot W + P\cdot Y)$. When $S$ falls by half or more, $t$ nearly doubles. The modest rise in $Y$ only slightly offsets that. Case B (A106) is the textbook illustration.
+
+### Q2. Is L-Grade stainless forbidden on hot lines?
+
+Not forbidden — often **inefficient**. L-Grades help corrosion / sensitization but carry lower Table A-1 $S$, so the same $P$ needs a thicker wall and possibly a higher flange class. When hot strength governs, specify TP304/316 or H as the design grade.
+
+### Q3. If $Y=0.7$, can I safely thin the wall?
+
+$Y$ is only a **stress-distribution coefficient** in Eq. (3a). It does not replace creep-rupture, oxidation, or Graphitization limits. Even when $Y$ rises and $t$ dips slightly, **low $S$ and material degradation still control design**.
+
+### Q4. When is the calculator’s $S=138\text{ MPa}$ valid?
+
+It matches A106 Gr.B **ambient / low–moderate temperature** Table A-1 binding ($20.0\text{ ksi}$). Near $200^\circ\text{C}$ the value is still close, but above roughly $400^\circ\text{C}$ you **must** enter the temperature-specific $S$. Using ambient $S$ on a hot line produces **non-conservative (dangerously thin) walls**.

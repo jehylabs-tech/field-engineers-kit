@@ -58,7 +58,9 @@ export default function EngineeringFaqAccordion({ items }: { items: FaqItem[] })
               hidden={!open}
               className="border-t border-slate-100 px-4 py-3 text-sm leading-relaxed text-slate-700 dark:border-spec-border dark:text-slate-200"
             >
-              {open ? <UnitAwareCopy text={item.answer} /> : null}
+              <p className="m-0">
+                <UnitAwareCopy text={item.answer} />
+              </p>
             </div>
           </div>
         );

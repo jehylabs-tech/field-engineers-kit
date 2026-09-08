@@ -8,7 +8,8 @@
     "studLength": "RF facing, two ASME B18.2.2 heavy hex nuts. Screening lengths — confirm B16.5 Table D / vendor list.",
     "wrench": "Heavy hex nut across-flats (ASME B18.2.2).",
     "assemblyWeight": "Mated pair = 2 × WN RF + spiral-wound gasket + full stud & nut set (CS 7850 kg/m³ screening).",
-    "hubBore": "WN bore follows ASME B36.10M pipe ID for the selected schedule."
+    "hubBore": "WN bore follows ASME B36.10M pipe ID for the selected schedule (default Sch 40 / STD).",
+    "blindMass": "Blind W_f uses solid-disc screening (ρ·π/4·OD²·T) unless weightKgBl override is present. SO/SW use type factors vs WN unless overrides exist."
   },
   "flanges": [
     {

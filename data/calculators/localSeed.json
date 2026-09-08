@@ -253,5 +253,31 @@
     },
     "is_published": true,
     "created_at": "2026-08-15T00:00:14.000Z"
+  },
+  {
+    "id": "local-link-seal-penetration-sleeve",
+    "category": "piping",
+    "title": "Link-Seal & Penetration Sleeve Sizing",
+    "slug": "link-seal-penetration-sleeve",
+    "meta_description": "Link-Seal modular seal sizing calculator: annular clearance C, LS model (LS-300–LS-575), link count N, and sleeve / core-drill ID from pipe OD.",
+    "formula_json": {
+      "type": "link-seal",
+      "standard": "GPT Link-Seal / Modular Mechanical Seal",
+      "subtitle": "C = (Sleeve ID − Pipe OD)/2 · Model by free thickness · N = round(π·Dp / belt)",
+      "formulaBasis": "Annular clearance C = (Sleeve ID − Pipe OD)/2. Select Link-Seal model whose free thickness seals C. Pitch diameter Dp = OD + 2·FT (bolt centerline for N). Ideal min sleeve ID = OD + 2·FT. Link count N = round(π·Dp / belt width). Screening ≈ 0.14 MPa / 20 psig. Independent tool — verify GPT chart; not affiliated with GPT Industries.",
+      "formulaLatex": "C = \\frac{ID_{sleeve} - OD_{pipe}}{2},\\quad D_p = OD + 2 t_{free},\\quad N = \\mathrm{round}\\!\\left(\\frac{\\pi D_p}{w_{belt}}\\right)",
+      "faq": [
+        {
+          "q": "How tight should Link-Seal bolts be?",
+          "a": "Tighten in a star pattern until the rubber links bulge slightly and contact the pipe and sleeve — do not over-torque to metal-to-metal. Follow the GPT installation sheet for the model."
+        }
+      ],
+      "related": [
+        { "slug": "pipe-schedule-dimension", "title": "Pipe Schedule", "carry": "Same NPS / OD" },
+        { "slug": "pipe-wall-thickness", "title": "Pipe Thickness", "carry": "Same NPS" }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-08T00:00:00.000Z"
   }
 ]

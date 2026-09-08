@@ -202,38 +202,6 @@ export default function CalculatorSeoContent({
                 />
               )}
             </div>
-            {data.slug === "pipe-wall-thickness" && data.formulaLatex ? (
-              <div
-                className="mb-3 mt-3 rounded-lg border border-slate-200 bg-white/70 px-4 py-3 dark:border-slate-700 dark:bg-slate-900/40"
-                aria-label="ASME B31.3 LaTeX formula reference"
-              >
-                <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                  LaTeX (Para. 304.1.2)
-                </p>
-                <div className="eng-formula-html space-y-2 text-lg text-slate-900 dark:text-slate-100">
-                  <p className="eng-eq m-0">
-                    <i>t</i> ={" "}
-                    <span className="eng-frac">
-                      <span className="eng-num">
-                        <i>P</i> · <i>D</i>
-                      </span>
-                      <span className="eng-den">
-                        2(<i>S</i> · <i>E</i> + <i>P</i> · <i>Y</i>)
-                      </span>
-                    </span>
-                  </p>
-                  <p className="eng-eq m-0">
-                    <i>t</i>
-                    <sub>min</sub> = <i>t</i> + <i>c</i>
-                  </p>
-                  <p className="eng-eq m-0">
-                    <i>t</i>
-                    <sub>nom,req</sub> = <i>t</i>
-                    <sub>min</sub> / 0.875
-                  </p>
-                </div>
-              </div>
-            ) : null}
             {data.formulaBadges && data.formulaBadges.length > 0 ? (
               <div className="mb-3 mt-3 flex flex-wrap items-center justify-center gap-2">
                 {data.formulaBadges.map((badge) => (
@@ -247,7 +215,7 @@ export default function CalculatorSeoContent({
               </div>
             ) : null}
             <p className="mb-3 text-sm leading-relaxed text-slate-700 dark:text-slate-300">
-              {data.formulaNotes}
+              <UnitAwareCopy text={data.formulaNotes} />
             </p>
             <ul className="list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-slate-700 dark:text-slate-300">
               {data.variables.map((item) => (
@@ -264,7 +232,7 @@ export default function CalculatorSeoContent({
                     </>
                   ) : null}
                   {" — "}
-                  {item.definition}
+                  <UnitAwareCopy text={item.definition} />
                 </li>
               ))}
             </ul>
@@ -300,21 +268,29 @@ export default function CalculatorSeoContent({
                 </div>
               ))}
             </div>
-            <div className="border-t border-slate-100 pt-4 dark:border-slate-800">
-              <h3 className="mb-2 text-sm font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                Quick Reference Lookup Table
-              </h3>
-              <SeoLookupTable
-                caption={data.tableCaption}
-                headers={data.tableHeaders}
-                rows={data.tableRows}
-                footnote={data.tableFootnote}
-                allNumeric={data.tableAllNumeric}
-                torqueNmColumns={data.tableTorqueNmColumns}
-                columnUnits={data.tableColumnUnits}
-                boldColumns={data.tableBoldColumns}
-              />
-            </div>
+            {!data.omitLookupTable ? (
+              <div className="border-t border-slate-100 pt-4 dark:border-slate-800">
+                <h3 className="mb-2 text-sm font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                  Quick Reference Lookup Table
+                </h3>
+                <SeoLookupTable
+                  caption={data.tableCaption}
+                  headers={data.tableHeaders}
+                  rows={data.tableRows}
+                  footnote={data.tableFootnote}
+                  allNumeric={data.tableAllNumeric}
+                  torqueNmColumns={data.tableTorqueNmColumns}
+                  columnUnits={data.tableColumnUnits}
+                  boldColumns={data.tableBoldColumns}
+                />
+              </div>
+            ) : (
+              <p className="border-t border-slate-100 pt-4 text-sm leading-relaxed text-slate-600 dark:border-slate-800 dark:text-slate-400">
+                Model free-thickness / belt chart is shown once under Calculation
+                Results (Link-Seal model chart). Confirm values on the current GPT
+                catalog before purchase.
+              </p>
+            )}
           </section>
 
           {/* Section 3: Material & Code Limitations */}
@@ -370,16 +346,25 @@ export default function CalculatorSeoContent({
             ) : null}
           </section>
 
-          {/* Section 4: Step-by-Step Worked Example */}
+          {/* Section 4: Step-by-Step Worked Example (collapsed by default for field tablets) */}
           <section className={GUIDE_CARD} aria-labelledby="section-4-heading">
-            <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3 dark:border-slate-800">
-              <h2 id="section-4-heading" className="text-lg font-semibold text-slate-800 dark:text-slate-100">
-                4. Step-by-Step Worked Example
-              </h2>
-              <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-700 dark:bg-blue-950/60 dark:text-blue-300">
-                Field Verification
-              </span>
-            </div>
+            <details className="group">
+              <summary className="mb-0 flex cursor-pointer list-none flex-wrap items-center justify-between gap-2 border-b border-transparent pb-0 marker:content-none group-open:mb-3 group-open:border-slate-100 group-open:pb-3 dark:group-open:border-slate-800 [&::-webkit-details-marker]:hidden">
+                <h2 id="section-4-heading" className="text-lg font-semibold text-slate-800 dark:text-slate-100">
+                  4. Step-by-Step Worked Example
+                </h2>
+                <span className="inline-flex items-center gap-2">
+                  <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-700 dark:bg-blue-950/60 dark:text-blue-300">
+                    Field Verification
+                  </span>
+                  <span className="text-xs font-medium text-slate-500 group-open:hidden dark:text-slate-400">
+                    Show
+                  </span>
+                  <span className="hidden text-xs font-medium text-slate-500 group-open:inline dark:text-slate-400">
+                    Hide
+                  </span>
+                </span>
+              </summary>
             <p className="mb-3 text-sm font-medium text-slate-800 dark:text-slate-200">
               {data.workedExample.scenario}
             </p>
@@ -428,17 +413,17 @@ export default function CalculatorSeoContent({
                     </div>
                   ) : null}
                   {step.result ? (
-                    <div className="mt-2 flex min-w-0 flex-col gap-1.5 text-xs sm:flex-row sm:items-start sm:justify-between">
+                    <div className="mt-2 flex min-w-0 flex-col gap-1.5 text-xs sm:flex-row sm:items-start sm:justify-between sm:gap-3">
                       <span className="shrink-0 font-medium text-slate-500 dark:text-slate-400">
                         Result:
                       </span>
                       {renderMaybeKatex(step.result, false) ? (
                         <span
-                          className="max-w-full break-words rounded bg-emerald-50 px-2 py-1 font-bold text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 sm:text-right"
+                          className="min-w-0 max-w-full break-words rounded bg-emerald-50 px-2 py-1 font-bold leading-snug text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 sm:text-right"
                           dangerouslySetInnerHTML={renderMaybeKatex(step.result, false)!}
                         />
                       ) : (
-                        <span className="max-w-full break-words rounded bg-emerald-50 px-2 py-0.5 font-mono font-bold text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 sm:text-right">
+                        <span className="min-w-0 max-w-full break-words rounded bg-emerald-50 px-2 py-1 font-mono font-bold leading-snug text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-300 sm:text-right">
                           {step.result}
                         </span>
                       )}
@@ -446,7 +431,7 @@ export default function CalculatorSeoContent({
                   ) : null}
                   {step.note ? (
                     <p className="mt-1.5 text-xs text-slate-500 dark:text-slate-400">
-                      {step.note}
+                      <UnitAwareCopy text={step.note} />
                     </p>
                   ) : null}
                 </div>
@@ -457,17 +442,28 @@ export default function CalculatorSeoContent({
                 <strong>Conclusion: </strong> {data.workedExample.conclusion}
               </div>
             ) : null}
+            </details>
           </section>
 
           {/* Section 5: FAQ */}
           <section className={GUIDE_CARD} id="faq" aria-labelledby="section-5-heading">
-            <h2
-              id="section-5-heading"
-              className="mb-4 text-xl font-bold text-slate-900 dark:text-slate-100"
-            >
-              5. Frequently Asked Questions &amp; Technical References
-            </h2>
-            <EngineeringFaqAccordion items={data.faq} />
+            <details className="group" open>
+              <summary className="mb-0 flex cursor-pointer list-none flex-wrap items-center justify-between gap-2 border-b border-transparent pb-0 marker:content-none group-open:mb-4 group-open:border-slate-100 group-open:pb-3 dark:group-open:border-slate-800 [&::-webkit-details-marker]:hidden">
+                <h2
+                  id="section-5-heading"
+                  className="text-xl font-bold text-slate-900 dark:text-slate-100"
+                >
+                  5. Frequently Asked Questions &amp; Technical References
+                </h2>
+                <span className="text-xs font-medium text-slate-500 group-open:hidden dark:text-slate-400">
+                  Show
+                </span>
+                <span className="hidden text-xs font-medium text-slate-500 group-open:inline dark:text-slate-400">
+                  Hide
+                </span>
+              </summary>
+              <EngineeringFaqAccordion items={data.faq} />
+            </details>
           </section>
         </>
       ) : (

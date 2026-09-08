@@ -405,6 +405,8 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
     "id",
     "wall",
     "diameter",
+    "pipeOd",
+    "sleeveId",
   ]) {
     if (typeof next[key] === "number" && Number.isFinite(next[key] as number)) {
       convertNum(key, toImperial ? mmToIn : inToMm, 4);
@@ -423,11 +425,16 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
     );
     const c = next.corrosionAllowance as number;
     if (!toImperial) {
+      // 0.063 in → ~1.60 mm; snap commercial screening defaults.
       if (Math.abs(c) < 0.05) next.corrosionAllowance = 0;
       else if (Math.abs(c - 3) < 0.08) next.corrosionAllowance = 3;
-      else if (Math.abs(c - 1.5) < 0.08) next.corrosionAllowance = 1.5;
+      else if (Math.abs(c - 1.5) < 0.12 || Math.abs(c - 1.6) < 0.08)
+        next.corrosionAllowance = 1.5;
     } else if (Math.abs(c) < 0.0005) {
       next.corrosionAllowance = 0;
+    } else if (Math.abs(c - 0.059) < 0.005 || Math.abs(c - 0.063) < 0.005) {
+      // 1.50 mm → 0.059 in exact; use 0.063 in (1/16″) commercial default.
+      next.corrosionAllowance = 0.063;
     }
   }
 

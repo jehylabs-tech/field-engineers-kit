@@ -141,6 +141,26 @@ export const WORKSTATION_DOMAINS: WorkstationDomain[] = [
         href: "/calculator/flow-velocity-erosion",
         keywords: ["velocity", "erosion", "api 14e"],
       },
+      {
+        id: "link-seal-penetration-sleeve",
+        title: "Link-Seal & Penetration Sleeve",
+        seoLabel:
+          "Link-Seal Modular Seal Sizing Calculator — Annular Clearance, Model & Link Count",
+        standard: "GPT Link-Seal",
+        href: buildCalculatorHref("link-seal-penetration-sleeve", {
+          size: DEMO.size,
+        }),
+        keywords: [
+          "link seal",
+          "link-seal",
+          "penetration",
+          "sleeve",
+          "modular seal",
+          "annular",
+          "wall sleeve",
+          "century-line",
+        ],
+      },
     ],
   },
   {
@@ -194,6 +214,25 @@ export const WORKSTATION_DOMAINS: WorkstationDomain[] = [
           class_rating: DEMO.class_rating,
         }),
         keywords: ["b16.20", "gasket", "spiral", "rtj", "ring"],
+      },
+      {
+        id: "link-seal-penetration-sleeve",
+        title: "Link-Seal & Penetration Sleeve",
+        seoLabel:
+          "Link-Seal Modular Seal & Pipe Penetration Sleeve Sizing Calculator",
+        standard: "GPT Link-Seal",
+        href: buildCalculatorHref("link-seal-penetration-sleeve", {
+          size: DEMO.size,
+        }),
+        keywords: [
+          "link seal",
+          "link-seal",
+          "penetration",
+          "sleeve",
+          "modular seal",
+          "annular",
+          "wall sleeve",
+        ],
       },
     ],
   },

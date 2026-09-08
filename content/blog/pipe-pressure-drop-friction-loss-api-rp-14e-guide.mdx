@@ -1,22 +1,42 @@
 ---
-title: "Pipe Pressure Drop, Friction Loss & Erosion Velocity Limits: Darcy–Weisbach & API RP 14E Analysis"
-description: "Master pipe pressure drop, friction loss, and erosion velocity limits using Darcy-Weisbach, Haaland equations, Crane TP-410 factors, and API RP 14E guidelines."
+title: "Pipe Pressure Drop, Friction Loss & Erosion Velocity Limits: Darcy–Weisbach & API RP 14E"
+description: "Field guide to Darcy–Weisbach ΔP, Haaland friction factor, Crane TP-410 fitting L/D, and API RP 14E erosion velocity — with a verified NPS 6 Sch 40 worked example aligned to the interactive calculator."
 date: "2026-09-06"
 category: "Piping Engineering"
-tags: ["Pressure Drop Calculator", "Darcy-Weisbach", "Haaland Equation", "Crane TP-410", "API RP 14E", "Erosion Velocity"]
+tags:
+  - Pressure Drop Calculator
+  - Darcy-Weisbach
+  - Haaland Equation
+  - Crane TP-410
+  - API RP 14E
+  - Erosion Velocity
 relatedCalculatorUrl: "/calculator/pressure-drop-friction"
 relatedCalculatorName: "Pipe Pressure Drop & Friction Loss Calculator"
 ---
 
-Friction-induced pressure drop ($\Delta P$) and fluid velocity limits are the foundational parameters governing process piping hydraulic design, line sizing, and pump head evaluation. When a fluid flows through a closed conduit, viscous shear stresses and internal surface roughness cause continuous energy dissipation.
+Friction pressure drop ($\Delta P$) and line velocity govern pump head, control-valve $\Delta P$ budget, and erosion-corrosion risk on process piping. Viscous shear plus wall roughness dissipate mechanical energy along every meter of pipe and every fitting; under-predicting that loss undersizes pumps, while oversizing velocity strips protective scale and shortens carbon-steel life.
 
-Failing to accurately model pressure drop and line velocity leads to undersized pumps, excessive electrical power consumption, destructive water hammer, or rapid pipe wall thinning caused by flow-induced erosion-corrosion. To instantly simulate hydraulics for various pipe schedules and fluids, explore our interactive [Pipe Pressure Drop & Friction Loss Calculator](/calculator/pressure-drop-friction).
+Use the interactive [Pipe Pressure Drop & Friction Loss Calculator](/calculator/pressure-drop-friction) for schedule ID, Haaland $f$, Crane equivalents, and total $\Delta P$. Pair it with the [Flow Velocity & Erosion Limit Calculator](/calculator/flow-velocity-erosion) when you need an explicit API RP 14E $v_c$ screen.
+
+<Callout title="Screening vs. formal hydraulics" variant="info">
+This article and the linked tools provide **single-phase Newtonian screening** (Darcy–Weisbach + Haaland + Crane TP-410 $L/D$). They do not replace multiphase, compressible, or transient (water-hammer) analysis, nor a licensed PE sign-off for critical systems.
+</Callout>
+
+## Quick Summary (TL;DR)
+
+| Item | Rule of thumb |
+| :--- | :--- |
+| **Mean velocity** | $v = Q / A$ with $A = \pi D^2 / 4$ and **inside** diameter $D$ from ASME B36.10M / B36.19M (not NPS OD). |
+| **Friction factor** | Turbulent: Haaland explicit $f$. Laminar ($Re < 2300$): $f = 64 / Re$. |
+| **Total $\Delta P$** | Darcy–Weisbach on $L_{\text{total}} = L + \sum L_{\text{eq}}$ (straight + Crane fitting equivalents). |
+| **$\Delta P / 100\,\text{m}$** | Straight-pipe gradient only — useful for comparing line sizes; **does not** include fittings. |
+| **Erosion screen** | API RP 14E: $v_c = C / \sqrt{\rho}$ ($\rho$ in $\text{lb/ft}^3$, $v_c$ in $\text{ft/s}$). Typical continuous CS $C = 100$. |
 
 ---
 
 ## 1. Core Engineering Formulas & Parameter Definitions
 
-The calculation of fluid friction loss and fluid velocity in industrial process piping adheres strictly to standard fluid mechanics principles established by the **Darcy–Weisbach** equation, the **Haaland** explicit friction factor formulation, **Crane Technical Paper No. 410** fitting equivalents, and **API RP 14E** erosion velocity thresholds.
+Hydraulic friction loss for incompressible single-phase flow follows the **Darcy–Weisbach** equation. The Darcy friction factor $f$ is obtained from the **Haaland** explicit approximation to Colebrook–White. Fitting losses enter as **Crane TP-410** equivalent lengths. Erosion screening uses **API RP 14E**. Pipe bore $D$ must be the schedule **inside diameter** (ASME B36.10M / B36.19M).
 
 $$
 \Delta P = f \cdot \left( \frac{L_{\text{total}}}{D} \right) \cdot \left( \frac{1}{2} \cdot \rho \cdot v^2 \right)
@@ -28,201 +48,208 @@ $$
 
 $$
 \frac{1}{\sqrt{f}} = -1.8 \cdot \log_{10} \left[ \left( \frac{\varepsilon / D}{3.7} \right)^{1.11} + \frac{6.9}{Re} \right]
+\quad (Re \ge 2300)
 $$
 
 $$
-v_{\text{e}} = \frac{C}{\sqrt{\rho}}
+L_{\text{total}} = L + \sum L_{\text{eq}} = L + \sum \left[ \left( \frac{L}{D} \right)_{\text{fitting}} \cdot D \right]
 $$
 
 $$
-L_{\text{total}} = L_{\text{straight}} + \sum L_{\text{eq}} = L_{\text{straight}} + \sum \left[ \left( \frac{L}{D} \right)_{\text{fitting}} \cdot D \right]
+v_c = \frac{C}{\sqrt{\rho}}
+\quad (\rho\ \text{in}\ \text{lb/ft}^3,\ v_c\ \text{in}\ \text{ft/s};\ \text{convert to SI as needed})
 $$
 
 ### Parameter Definitions
 
 | Parameter | Symbol | Engineering Unit | Description |
 | :--- | :---: | :---: | :--- |
-| **Friction Pressure Drop** | $\Delta P$ | $\text{bar}$, $\text{Pa}$, $\text{psi}$ | Total static pressure loss across the piping run. |
-| **Frictional Head Loss** | $h_f$ | $\text{m}$, $\text{ft}$ | Pressure drop expressed as equivalent fluid column height. |
-| **Darcy Friction Factor** | $f$ | Dimensionless | Flow resistance coefficient ($f_{\text{Darcy}} = 4 \cdot f_{\text{Fanning}}$). |
-| **Erosion Velocity Limit** | $v_{\text{e}}$ | $\text{m/s}$, $\text{ft/s}$ | Maximum velocity threshold per API RP 14E. |
-| **Empirical Erosion Constant** | $C$ | Dimensionless | Service factor ($C = 100 - 125$ continuous; $150 - 200$ intermittent). |
-| **Total Hydraulic Length** | $L_{\text{total}}$ | $\text{m}$, $\text{ft}$ | Straight pipe length plus total equivalent fitting lengths. |
-| **Pipe Inside Diameter** | $D$ | $\text{m}$, $\text{mm}$ | Actual internal bore diameter per ASME B36.10M / B36.19M. |
-| **Fluid Density** | $\rho$ | $\text{kg/m}^3$, $\text{lb/ft}^3$ | Density evaluated at operating temperature and pressure. |
-| **Mean Flow Velocity** | $v$ | $\text{m/s}$, $\text{ft/s}$ | Average velocity across flow area ($v = Q / A$). |
-| **Absolute Roughness** | $\varepsilon$ | $\text{mm}$, $\text{in}$ | Internal pipe surface peak-to-valley roughness. |
-| **Reynolds Number** | $Re$ | Dimensionless | Ratio of inertial to viscous forces ($Re = \rho v D / \mu$). |
+| **Friction pressure drop** | $\Delta P$ | $\text{bar}$, $\text{Pa}$, $\text{psi}$ | Static pressure loss over $L_{\text{total}}$ (straight + fittings). |
+| **Frictional head loss** | $h_f$ | $\text{m}$, $\text{ft}$ | $\Delta P$ expressed as fluid column height. |
+| **Darcy friction factor** | $f$ | — | Pipe resistance ($f_{\text{Darcy}} = 4 \cdot f_{\text{Fanning}}$). |
+| **Mean velocity** | $v$ | $\text{m/s}$, $\text{ft/s}$ | $v = Q / A$ based on inside diameter. |
+| **Inside diameter** | $D$ | $\text{m}$, $\text{mm}$ | Actual bore from B36 schedule tables. |
+| **Absolute roughness** | $\varepsilon$ | $\text{mm}$, $\text{in}$ | Internal surface roughness. |
+| **Reynolds number** | $Re$ | — | $Re = \rho v D / \mu$. |
+| **Fluid density** | $\rho$ | $\text{kg/m}^3$, $\text{lb/ft}^3$ | At operating $T$ and $P$. |
+| **Dynamic viscosity** | $\mu$ | $\text{Pa}\cdot\text{s}$, $\text{cP}$ | At operating temperature. |
+| **Straight length** | $L$ | $\text{m}$, $\text{ft}$ | Centerline length of straight pipe only. |
+| **Fitting $L/D$** | $(L/D)$ | — | Crane TP-410 equivalent-length factor. |
+| **Erosion velocity limit** | $v_c$ | $\text{m/s}$, $\text{ft/s}$ | API RP 14E continuous / intermittent threshold. |
+| **Empirical $C$-factor** | $C$ | — | Typically $100$–$125$ continuous CS; $150$–$200$ intermittent / SS. |
 
 ---
 
-## 2. Standard Tolerances, Roughness Specs & Fitting Equivalents
+## 2. Standard Roughness, Crane $L/D$ & Velocity Guidelines
 
-Accurate hydraulic modeling requires selecting realistic pipe wall roughness values based on material aging, integrating standard fitting resistance metrics, and taking mill manufacturing tolerances into account.
+### Absolute Roughness ($\varepsilon$) — Screening Defaults
 
-### Absolute Pipe Roughness ($\varepsilon$) Standards
-* **New Commercial Carbon Steel (ASTM A106 / A53)**: $\varepsilon = 0.045\text{ mm}$ ($45\text{ }\mu\text{m}$ / $0.0018\text{ in}$). Baseline for clean hydrocarbon and treated water lines.
-* **Stainless Steel / Duplex (ASME B36.19M)**: $\varepsilon = 0.015\text{ mm}$ ($15\text{ }\mu\text{m}$ / $0.0006\text{ in}$). Smooth internal surface reduces turbulent friction.
-* **Aged / Corroded Carbon Steel**: $\varepsilon = 0.15\text{ mm}$ to $0.30\text{ mm}$ ($150 - 300\text{ }\mu\text{m}$). Internal pitting and scaling increase long-term friction pressure drop by up to $30\%$.
+| Material / Condition | $\varepsilon$ | Notes |
+| :--- | :---: | :--- |
+| **Stainless / PVC (smooth)** | $0.015\text{ mm}$ ($0.0006\text{ in}$) | Matches calculator “SS / PVC” preset. |
+| **New commercial carbon steel** | $0.045\text{ mm}$ ($0.0018\text{ in}$) | ASTM A53 / A106 baseline. |
+| **Corroded commercial steel** | $0.15\text{ mm}$ ($0.006\text{ in}$) | Aged plant water / untreated service. |
+| **Heavily corroded / scaled** | $0.30\text{ mm}$ ($0.012\text{ in}$) | Conservative long-term friction screen. |
 
 ### Crane TP-410 Fitting Equivalent Length Factors ($L/D$)
-* **$90^\circ$ Long Radius (LR) Elbow**: $L/D = 30$
-* **$90^\circ$ Short Radius (SR) Elbow**: $L/D = 60$
-* **$45^\circ$ Standard Elbow**: $L/D = 16$
-* **Full-Port Gate Valve (Fully Open)**: $L/D = 8$
-* **Globe Valve (Fully Open)**: $L/D = 340$
-* **Swing Check Valve (Fully Open)**: $L/D = 100$
 
-### Mill Wall Thickness Tolerance Effect on Internal Diameter
-Under ASTM A106/A53 standards, seamless steel pipe carries a manufacturing mill tolerance of **$-12.5\%$** on nominal wall thickness. Under-thickness increases actual internal diameter ($D$), slightly reducing fluid velocity and decreasing overall pressure drop ($\Delta P \propto 1/D^5$).
+| Fitting (fully open / installed) | $(L/D)$ | Calculator mapping |
+| :--- | ---: | :--- |
+| **$90^\circ$ long-radius (LR) elbow** | $30$ | Elbow count × $30$ |
+| **$90^\circ$ short-radius (SR) elbow** | $60$ | Not in default UI — apply manually if SR. |
+| **$45^\circ$ elbow** | $16$ | Manual add if present. |
+| **Full-port gate valve** | $8$ | Gate count × $8$ |
+| **Globe valve** | $340$ | Globe count × $340$ |
+| **Swing check valve** | $100$ | Manual add if present. |
 
-### Quick Reference Table: Water Friction Loss at $20^\circ\text{C}$
-*(Water Density $\rho = 998\text{ kg/m}^3$, Viscosity $\mu = 1.002 \times 10^{-3}\text{ Pa}\cdot\text{s}$, NPS 4 Sch 40 Steel, $\text{ID} = 102.26\text{ mm}$, $100\text{ m}$ Straight Length)*
+$$
+\sum L_{\text{eq}} = D \cdot \big( 30\,N_{\text{elbow}} + 8\,N_{\text{gate}} + 340\,N_{\text{globe}} + \cdots \big)
+$$
 
-| Flow Rate $Q$ ($\text{m}^3\text{/h}$) | Velocity $v$ ($\text{m/s}$) | Reynolds No. $Re$ | Friction Factor $f$ | $\Delta P / 100\text{m}$ ($\text{bar}$) | $\Delta P / 100\text{m}$ ($\text{psi}$) |
-| ---: | ---: | ---: | ---: | ---: | ---: |
-| **20.0** | $0.68$ | $68{,}900$ | $0.0215$ | $0.051$ | $0.74$ |
-| **40.0** | $1.35$ | $137{,}800$ | $0.0190$ | $0.168$ | $2.44$ |
-| **50.0** | $1.69$ | $172{,}300$ | $0.0183$ | $0.259$ | $3.76$ |
-| **80.0** | $2.71$ | $275{,}600$ | $0.0173$ | $0.630$ | $9.14$ |
-| **100.0** | $3.38$ | $344{,}500$ | $0.0169$ | $0.960$ | $13.92$ |
-| **150.0** | $5.07$ | $516{,}800$ | $0.0163$ | $2.080$ | $30.17$ |
+### Mill Tolerance Note (ID Sensitivity)
 
----
+Seamless pipe often carries **$-12.5\%$** mill under-tolerance on wall thickness (e.g. ASTM A106). A thinner wall increases actual ID, which **lowers** $v$ and $\Delta P$ ($\Delta P$ scales roughly as $1/D^5$ in fully rough turbulent flow). Catalog B36 IDs remain the correct **screening** basis unless measured ID is available.
 
-## 3. Material & Code Limitations
+### Recommended Liquid Velocity & Gradient Windows
 
-Hydraulic systems must be sized within recommended velocity windows to balance capital expenditure against operating pumping costs while preventing fluid erosion.
-
-| Application / Service Category | Velocity Limits | Design Pressure Drop Guideline | Engineering & Code Notes |
+| Service | Typical velocity | Typical $\Delta P / 100\text{ m}$ | Engineering note |
 | :--- | :---: | :---: | :--- |
-| **Liquid Pump Suction** | $0.6$–$1.5\text{ m/s}$ ($2$–$5\text{ ft/s}$) | $\le 0.05\text{ bar}/100\text{ m}$ ($0.7\text{ psi}/100\text{ ft}$) | Maintains $\text{NPSHa} > \text{NPSHr}$ to prevent pump cavitation. |
-| **Pump Discharge Lines** | $1.5$–$3.0\text{ m/s}$ ($5$–$10\text{ ft/s}$) | $0.10$–$0.20\text{ bar}/100\text{ m}$ | Balances pipe CAPEX with pumping OPEX. |
-| **High-Pressure Steam / Gas** | $15.0$–$35.0\text{ m/s}$ ($50$–$115\text{ ft/s}$) | $0.20$–$0.50\text{ bar}/100\text{ m}$ | Elevated velocities allowable in dry clean gas service. |
-| **Carbon Steel Liquid Cap** | $3.5\text{ m/s}$ ($11.5\text{ ft/s}$) | Erosion-Corrosion Boundary | Exceeding $3.5\text{ m/s}$ strips protective passive oxide scale. |
+| **Pump suction** | $0.6$–$1.5\text{ m/s}$ ($2$–$5\text{ ft/s}$) | $\le 0.05\text{ bar}/100\text{ m}$ | Preserve NPSHa margin. |
+| **Pump discharge / process liquid** | $1.5$–$3.0\text{ m/s}$ ($5$–$10\text{ ft/s}$) | $0.10$–$0.20\text{ bar}/100\text{ m}$ | CAPEX vs pumping OPEX balance. |
+| **CS liquid erosion caution** | $\gtrsim 3.5\text{ m/s}$ ($11.5\text{ ft/s}$) | — | Oxide-film stripping risk rises; check API RP 14E $v_c$. |
+| **Clean dry gas / HP steam** | $15$–$35\text{ m/s}$ ($50$–$115\text{ ft/s}$) | Case-specific | Compressible methods may be required. |
 
-### Code Applicability & Safety Boundaries
-* **API RP 14E Erosion Limits**: For continuous liquid flow without solids, maximum velocity should not exceed $v_{\text{e}} = C / \sqrt{\rho}$. Operating above this threshold strips protective passive oxide scale films, rapidly accelerating erosion-corrosion rates.
-* **Water Hammer Surge Pressure**: Rapid valve closure generates transient pressure surges per the Joukowsky equation ($\Delta P_{\text{surge}} = \rho \cdot c_{\text{sound}} \cdot \Delta v$). Keeping operating velocities within recommended limits minimizes transient surge shock.
-* **Non-Newtonian Fluid Limitation**: Standard Darcy–Haaland formulas apply strictly to single-phase Newtonian fluids. Slurries and polymer solutions require non-Newtonian models (e.g., Bingham-Plastic).
+### Quick Reference — Water at $20^\circ\text{C}$, NPS 4 Sch 40, $100\text{ m}$ Straight
 
----
+Water: $\rho = 998\text{ kg/m}^3$, $\mu = 1.002\times 10^{-3}\text{ Pa}\cdot\text{s}$. Pipe: $\text{ID} = 102.26\text{ mm}$, $\varepsilon = 0.045\text{ mm}$. Values are **straight-only** $\Delta P / 100\text{ m}$ (Haaland $f$).
 
-## 4. Step-by-Step Worked Example
+| Flow $Q$ ($\text{m}^3\text{/h}$) | Velocity $v$ ($\text{m/s}$) | $Re$ | $f$ | $\Delta P / 100\text{ m}$ ($\text{bar}$) | $\Delta P / 100\text{ m}$ ($\text{psi}$) |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| **20** | $0.68$ | $68{,}900$ | $0.0209$ | $0.047$ | $0.68$ |
+| **40** | $1.35$ | $137{,}800$ | $0.0190$ | $0.170$ | $2.47$ |
+| **50** | $1.69$ | $172{,}200$ | $0.0186$ | $0.259$ | $3.76$ |
+| **80** | $2.71$ | $275{,}600$ | $0.0178$ | $0.637$ | $9.24$ |
+| **100** | $3.38$ | $344{,}500$ | $0.0176$ | $0.980$ | $14.21$ |
+| **150** | $5.07$ | $516{,}700$ | $0.0172$ | $2.155$ | $31.25$ |
 
-### Field Scenario & Input Parameters
-A senior piping engineer needs to calculate velocity, total pressure drop, frictional head loss, and verify the API RP 14E erosion limit for an NPS 6 Schedule 40 carbon steel cooling water line.
-
-* **Fluid**: Water at $20^\circ\text{C}$ ($\rho = 998\text{ kg/m}^3$, viscosity $\mu = 1.002 \times 10^{-3}\text{ Pa}\cdot\text{s}$)
-* **Nominal Pipe Size**: NPS 6 (DN 150) Schedule 40 Commercial Carbon Steel
-* **Internal Diameter ($D$)**: $154.06\text{ mm}$ ($0.15406\text{ m}$)
-* **Volumetric Flow Rate ($Q$)**: $120.0\text{ m}^3\text{/h}$ ($0.03333\text{ m}^3\text{/s}$ / $528.3\text{ GPM}$)
-* **Straight Pipe Length ($L_{\text{straight}}$)**: $150.0\text{ m}$ ($492.1\text{ ft}$)
-* **In-Line Fittings**: Six $90^\circ$ LR Butt-Weld Elbows ($L/D = 30$) + Two Full-Port Gate Valves ($L/D = 8$)
-* **Absolute Roughness ($\varepsilon$)**: $0.045\text{ mm}$ ($0.000045\text{ m}$)
-* **API RP 14E $C$-factor**: $100$ (Continuous solids-free service)
+<Callout title="Applicability limits" variant="warning">
+Darcy–Haaland applies to **single-phase Newtonian** fluids. Slurries, multiphase oil/gas, flashing condensate, and sonic gas flow need specialized methods. API RP 14E $v_c$ is an **empirical erosion screen**, not a code-allowable stress limit.
+</Callout>
 
 ---
 
-### Step 1: Calculate Cross-Sectional Area ($A$) and Flow Velocity ($v$)
+## 3. Step-by-Step Worked Example
+
+### Field Scenario
+
+Size hydraulics for an **NPS 6 Schedule 40** carbon-steel cooling-water run and confirm API RP 14E continuous-service erosion margin.
+
+| Input | Value |
+| :--- | :--- |
+| **Fluid** | Water at $20^\circ\text{C}$ ($\rho = 998\text{ kg/m}^3$, $\mu = 1.002\times 10^{-3}\text{ Pa}\cdot\text{s}$) |
+| **Pipe** | NPS 6 (DN 150) Sch 40 CS — $\text{ID}\,D = 154.06\text{ mm}$ ($0.15406\text{ m}$) per B36.10M |
+| **Flow** | $Q = 120.0\text{ m}^3\text{/h}$ ($0.033333\text{ m}^3\text{/s}$) |
+| **Straight length** | $L = 150.0\text{ m}$ |
+| **Fittings** | Six $90^\circ$ LR elbows ($L/D = 30$) + two full-port gate valves ($L/D = 8$) |
+| **Roughness** | $\varepsilon = 0.045\text{ mm}$ (new commercial steel) |
+| **API RP 14E $C$** | $100$ (continuous, solids-free CS) |
+
+### Step 1 — Area and Velocity
 
 $$
-A = \frac{\pi}{4} \cdot D^2 = \frac{\pi}{4} \cdot (0.15406\text{ m})^2 = 0.018641\text{ m}^2
+A = \frac{\pi}{4} D^2 = \frac{\pi}{4} (0.15406)^2 = 0.018641\text{ m}^2
 $$
 
 $$
-v = \frac{Q}{A} = \frac{0.033333\text{ m}^3\text{/s}}{0.018641\text{ m}^2} = 1.788\text{ m/s} \quad (5.87\text{ ft/s})
+v = \frac{Q}{A} = \frac{0.033333}{0.018641} = 1.788\text{ m/s}\quad (5.87\text{ ft/s})
 $$
+
+### Step 2 — API RP 14E Erosion Limit
+
+Convert density to $\text{lb/ft}^3$: $\rho = 998 \times 0.062428 = 62.30\text{ lb/ft}^3$.
+
+$$
+v_c = \frac{100}{\sqrt{62.30}} = 12.67\text{ ft/s} = 3.86\text{ m/s}
+$$
+
+Operating $v / v_c = 1.788 / 3.86 \approx 0.46$ — **Safe** under continuous $C = 100$ screening (well below the $0.8\,v_c$ warning band).
+
+### Step 3 — Reynolds Number
+
+$$
+Re = \frac{\rho v D}{\mu} = \frac{998 \times 1.788 \times 0.15406}{1.002\times 10^{-3}} = 2.74\times 10^{5}
+$$
+
+Fully turbulent ($Re \gg 4000$).
+
+### Step 4 — Haaland Friction Factor
+
+Relative roughness $\varepsilon / D = 0.045 / 154.06 = 2.921\times 10^{-4}$.
+
+$$
+\frac{1}{\sqrt{f}} = -1.8\log_{10}\!\left[\left(\frac{2.921\times 10^{-4}}{3.7}\right)^{1.11} + \frac{6.9}{2.74\times 10^{5}}\right] = 7.696
+$$
+
+$$
+f = (1/7.696)^2 = 0.01689
+$$
+
+### Step 5 — Equivalent and Total Length
+
+| Fitting group | Calculation | $L_{\text{eq}}$ |
+| :--- | :--- | ---: |
+| **6 × LR $90^\circ$ elbows** | $6 \times 30 \times 0.15406$ | $27.73\text{ m}$ |
+| **2 × gate valves** | $2 \times 8 \times 0.15406$ | $2.47\text{ m}$ |
+| **$\sum L_{\text{eq}}$** | | **$30.20\text{ m}$** |
+
+$$
+L_{\text{total}} = 150.0 + 30.20 = 180.20\text{ m}
+$$
+
+### Step 6 — Total $\Delta P$ and Head Loss
+
+$$
+\frac{1}{2}\rho v^2 = 0.5 \times 998 \times (1.788)^2 = 1{,}595\text{ Pa}
+$$
+
+$$
+\Delta P = 0.01689 \times \left(\frac{180.20}{0.15406}\right) \times 1{,}595 = 31{,}520\text{ Pa} = 0.315\text{ bar}\quad (4.57\text{ psi})
+$$
+
+$$
+h_f = \frac{31{,}520}{998 \times 9.81} = 3.22\text{ m of fluid}
+$$
+
+**Conclusion:** NPS 6 Sch 40 at $120\text{ m}^3\text{/h}$ yields **$v = 1.79\text{ m/s}$**, **$f = 0.0169$**, and **$\Delta P = 0.315\text{ bar}$** including fittings — comfortably inside API RP 14E continuous limits. Straight-only $\Delta P / 100\text{ m}$ would be lower than the total $\Delta P$ scaled to $100\text{ m}$; always keep that distinction clear when reading calculator outputs.
 
 ---
 
-### Step 2: Compute API RP 14E Erosion Velocity Threshold ($v_{\text{e}}$)
+## 4. Interactive Engineering Tool
 
-Using $C = 100$ (SI conversion factor $122$):
+Reproduce the example (or swap fluid, schedule, roughness, and fitting counts) in the live tool:
 
-$$
-v_{\text{e}} = \frac{122}{\sqrt{998\text{ kg/m}^3}} = \frac{122}{31.591} = 3.86\text{ m/s} \quad (12.66\text{ ft/s})
-$$
+<Callout title="Open the calculator" variant="tip">
+**[Pipe Pressure Drop & Friction Loss Calculator](/calculator/pressure-drop-friction)** — Darcy–Weisbach $\Delta P$ with Haaland $f$, B36 ID, and Crane $L/D$ elbows / gate / globe. Hero $\Delta P$ uses $L + \sum L_{\text{eq}}$; the $\Delta P/100$ badge is **straight pipe only**.
 
-*The operating velocity ($1.788\text{ m/s}$) is below the erosion limit ($3.86\text{ m/s}$), confirming safe operation.*
-
----
-
-### Step 3: Compute Reynolds Number ($Re$) & Identify Flow Regime
-
-$$
-Re = \frac{\rho \cdot v \cdot D}{\mu} = \frac{998\times 1.788 \times 0.15406}{1.002 \times 10^{-3}} = 274,370
-$$
-
-*Flow regime is fully turbulent ($Re > 4,000$).*
+For dedicated API RP 14E $v$ vs $v_c$ status (Safe / Warning / Erosion Risk), use **[Flow Velocity & Erosion Limit](/calculator/flow-velocity-erosion)**.
+</Callout>
 
 ---
 
-### Step 4: Compute Darcy Friction Factor ($f$) via Haaland Formula
+## 5. Frequently Asked Questions (FAQ)
 
-Relative roughness $\varepsilon / D = 0.045 / 154.06 = 0.0002921$.
+### Q1. Why use Haaland instead of Colebrook–White?
 
-$$
-\frac{1}{\sqrt{f}} = -1.8 \cdot \log_{10} \left[ \left( \frac{0.0002921}{3.7} \right)^{1.11} + \frac{6.9}{274,370} \right] = 7.6923
-$$
+Colebrook–White is implicit and needs iteration. Haaland is explicit and typically stays within about **$1$–$1.5\%$** of Colebrook $f$ — usually smaller than the uncertainty in field roughness ($\varepsilon$). The FieldEngineersKit pressure-drop engine uses Haaland for turbulent flow and $f = 64/Re$ for laminar.
 
-$$
-f = \left( \frac{1}{7.6923} \right)^2 = 0.01690
-$$
+### Q2. Darcy vs Fanning friction factor — which does this article use?
 
----
+**Darcy** ($f$). Chemical-engineering texts often quote Fanning $f_F$ where $f = 4\,f_F$. Using Fanning numbers in a Darcy equation under-predicts $\Delta P$ by a factor of four.
 
-### Step 5: Calculate Equivalent Length ($\sum L_{\text{eq}}$) & Total Length ($L_{\text{total}}$)
+### Q3. Does $\Delta P / 100\text{ m}$ include elbows and valves?
 
-* **Six $90^\circ$ LR Elbows**: $6 \times (30 \times 0.15406\text{ m}) = 27.73\text{ m}$
-* **Two Gate Valves**: $2 \times (8 \times 0.15406\text{ m}) = 2.46\text{ m}$
+**No.** In the calculator, $\Delta P / 100\text{ m}$ (or $/100\text{ ft}$) is the **straight-pipe** unit gradient. Total (hero) $\Delta P$ adds Crane equivalent lengths. Comparing two NPS options on $\Delta P/100$ is fine; pump head must use **total** $\Delta P$ including fittings, elevation, and control-valve allowance.
 
-$$
-\sum L_{\text{eq}} = 27.73\text{ m} + 2.46\text{ m} = 30.19\text{ m}
-$$
+### Q4. How should API RP 14E $C$ be selected?
 
-$$
-L_{\text{total}} = 150.0\text{ m} + 30.19\text{ m} = 180.19\text{ m}
-$$
-
----
-
-### Step 6: Compute Total Pressure Drop ($\Delta P$) & Head Loss ($h_f$)
-
-$$
-q = \frac{1}{2} \cdot \rho \cdot v^2 = 0.5 \times 998 \times (1.788)^2 = 1,595.3\text{ Pa}
-$$
-
-$$
-\Delta P = 0.01690 \times \left( \frac{180.19}{0.15406} \right) \times 1,595.3\text{ Pa} = 31,533\text{ Pa} = 0.315\text{ bar} \quad (4.57\text{ psi})
-$$
-
-$$
-h_f = \frac{31,533}{998 \times 9.81} = 3.22\text{ m of water}
-$$
-
-**Conclusion**: The NPS 6 Sch 40 line handles $120\text{ m}^3\text{/h}$ with a velocity of **$1.788\text{ m/s}$** and total pressure drop of **$0.315\text{ bar}$**, operating safely within API RP 14E velocity limits.
-
----
-
-## 5. Interactive Engineering Tool
-
-Simulate fluid pressure drops, friction factors, and velocity limits using our interactive web calculator:
-
-> 🛠️ **[Try Live Tool: Pipe Pressure Drop & Friction Loss Calculator](/calculator/pressure-drop-friction)**
-
----
-
-## 6. Frequently Asked Questions (FAQ)
-
-### Q1. Why is the Haaland equation used instead of Colebrook–White?
-The Colebrook–White equation is implicit and requires iterative solver routines. The explicit Haaland equation predicts the Darcy friction factor $f$ within $1.5\%$ of Colebrook–White, which is well within the natural physical uncertainty ($\pm 10\%$) of commercial pipe roughness.
-
-### Q2. What is the difference between Darcy and Fanning friction factors?
-The Darcy friction factor ($f$, standard in mechanical/piping engineering) is four times larger than the Fanning friction factor ($f_F$, standard in chemical engineering): $f_{\text{Darcy}} = 4 \cdot f_{\text{Fanning}}$. Mixing these up leads to a $400\%$ error in calculated pressure drop.
-
-### Q3. How does API RP 14E protect piping against erosion-corrosion?
-API RP 14E sets an upper velocity cap ($v_{\text{e}} = C / \sqrt{\rho}$). Exceeding this velocity strips the thin protective iron oxide layer from carbon steel pipe walls, exposing raw metal to rapid erosion-corrosion.
-
-### Q4. How do Crane TP-410 equivalent length factors ($L/D$) work?
-The $L/D$ ratio converts fitting turbulence into an equivalent length of straight pipe ($L_{\text{eq}} = (L/D) \cdot D$). This length is added directly to the straight pipe run, allowing simple single-pass Darcy–Weisbach calculations.
+For **continuous** solids-free liquid service on carbon steel, $C = 100$ is the usual screen; intermittent or stainless systems often use $C = 150$–$200$. The formula is empirical — sand, two-phase flow, or corrosive chemistry can require lower allowable velocities than $v_c$. Always confirm against the current API RP 14E text and owner standards.

@@ -23,6 +23,7 @@ export const CALCULATOR_TYPE_SLUG: Record<CalculatorType, string> = {
   "pressure-drop": "pressure-drop-friction",
   "flow-velocity": "flow-velocity-erosion",
   "unit-converter": "unit-converter",
+  "link-seal": "link-seal-penetration-sleeve",
 };
 
 export const SLUG_TO_CALCULATOR_TYPE: Record<string, CalculatorType> =
@@ -96,6 +97,10 @@ export const CALCULATOR_PLANT_TAGS: Record<CalculatorType, CalculatorPlantTags> 
     "unit-converter": {
       consumes: [],
       produces: [],
+    },
+    "link-seal": {
+      consumes: ["size"],
+      produces: ["size"],
     },
   };
 

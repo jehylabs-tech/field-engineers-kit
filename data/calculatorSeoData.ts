@@ -81,6 +81,11 @@ export type CalculatorSeoEntry = {
   }[];
   /** Column indexes to render in bold for field scanning (e.g. required thickness). */
   tableBoldColumns?: number[];
+  /**
+   * When true, Section 2 hides the Quick Reference Lookup Table
+   * (use when the live calculator already shows the same chart).
+   */
+  omitLookupTable?: boolean;
   variables: SeoVariable[];
   standards: string[];
   tableCaption: string;
@@ -516,22 +521,22 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
       {
         question: "Is ASME B31.3 t_min the same as ASME B31.1 Power Piping?",
         answer:
-          "No. ASME B31.3 uses **t = PD / [2(SE + PY)]** where Y = 0.4 for ferritic steels. ASME B31.1 power piping formulas use different stress basis factors and weld strength reduction factors (W). Applying B31.1 equations to chemical process piping or vice versa without code verification can lead to non-compliant wall sizing.",
+          "No. ASME B31.3 Process Piping uses **t = P·D / [2(S·E + P·Y)]** (Para. 304.1.2(a)), with Y typically 0.4 for ferritic steels at T ≤ 482 °C, then **t_min = t + c**. ASME B31.1 Power Piping uses a different pressure-design basis and weld strength reduction factor (W). Do not interchange B31.1 and B31.3 wall equations without verifying the governing code for the system.",
       },
       {
         question: "Why must mill under-tolerance (12.5%) be applied to nominal schedule selection?",
         answer:
-          "ASTM manufacturing specifications (ASTM A106, A53, API 5L) permit seamless and ERW pipe to be fabricated up to **12.5% thinner** than nominal catalog wall. If you purchase pipe matching **t_min** exactly without dividing by 0.875, the delivered pipe wall could legally be thinner than code-required minimum wall. Always select schedule against **t_nom_req = t_min / 0.875**.",
+          "ASTM product specs for seamless and ERW pipe (e.g. ASTM A106, A53, API 5L) allow the finished wall to be up to **12.5% below** the ordered nominal thickness. Code compliance requires the wall after mill under-tolerance to remain ≥ **t_min**. Therefore select schedule so **t_actual ≥ t_nom_req = t_min / 0.875**. Ordering nominal wall equal to t_min alone can leave a legally thin pipe below code minimum.",
       },
       {
         question: "Can this formula be used for vacuum lines or jacketed piping under external pressure?",
         answer:
-          "**No**. Internal pressure failure is governed by tensile plastic yielding (hoop stress), whereas vacuum or external pressure piping fails by **elastic/plastic buckling (instability)** at much lower stresses. External pressure sizing must be performed using the strain-chart methodology in **ASME BPVC Section VIII, Division 1, Paragraph UG-28**.",
+          "**No.** Para. 304.1.2(a) addresses **internal** pressure (tensile hoop yielding). Vacuum, buried external pressure, and jacketed annuli are governed by **buckling / instability**, not the thin-wall hoop formula. Size those cases with the charts and rules in **ASME BPVC Section VIII, Division 1, Paragraph UG-28** (and applicable B31.3 external-pressure references), not this calculator.",
       },
       {
         question: "When does pipe transition from thin-wall to thick-wall Lamé equations in B31.3?",
         answer:
-          "Per ASME B31.3 paragraph 304.1.2, this equation is valid when **t < D/6** and **P/SE ≤ 0.385**. When design pressure exceeds 0.385 × SE or thickness exceeds one-sixth of the outside diameter, stress distribution across the pipe wall becomes non-linear and thick-wall Lamé equations (Para. 304.1.2(b)) must be used.",
+          "ASME B31.3 Para. 304.1.2 limits Eq. (3a) to **t < D/6** and **P/(S·E) ≤ 0.385**. Above those limits the through-wall stress distribution is no longer adequately represented by the thin-wall assumption; use the thick-wall / Lamé form in **Para. 304.1.2(b)** (or an equivalent qualified analysis) instead of this tool’s Eq. (3a) result.",
       },
     ],
   },
@@ -745,23 +750,23 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
     formulaTitle: "Core Formula & Variable Definitions",
     formulaHtml:
       '<p class="eng-eq"><i>W</i><sub>pair</sub> = 2 · <i>W</i><sub>f</sub> + <i>W</i><sub>g</sub> + <i>n</i> · (<i>W</i><sub>stud</sub> + 2 · <i>W</i><sub>nut</sub>)</p>' +
-      '<p class="eng-eq">Lookup: OD, <i>T</i>, PCD, bolt holes · WN hub bore = Sch 40 / STD pipe ID (B36.10M)</p>' +
+      '<p class="eng-plain">Lookup: OD, T, PCD, bolt holes · WN hub bore = selected pipe schedule ID (B36.10M) · Blind W_f = solid-disc screening estimate</p>' +
       '<p class="eng-plain">ASME B16.5 flange envelope &amp; mated-pair screening mass (this app)</p>',
     formulaLatex: "W_{pair} = 2W_f + W_g + n(W_{stud}+2W_{nut})",
     formulaNotes:
-      "This calculator looks up ASME B16.5 dimensions and screening masses for NPS ½–24 (Classes 150–1500; Class 2500 through NPS 12). Select flange type (WN / SO / SW / BL) and facing (RF / FF / RTJ≥300). WN hub bore uses Sch 40 / STD pipe ID; SO/SW use pipe OD as slip bore. Type factors scale W_f (WN=1, SO=0.7, SW=0.75, BL=0.85). Facing adjusts gasket mass and stud length. Hero W_pair = 2 flanges + gasket + full stud/nut set. Stud lengths are screening — confirm B16.5 / vendor lists before PO. Large diameters NPS 26–60 are B16.47 (not in this table).",
+      "This calculator looks up ASME B16.5 dimensions and screening masses for NPS ½–24 (Classes 150–1500; Class 2500 through NPS 12). Select flange type (WN / SO / SW / BL), facing (RF / FF / RTJ≥300), and pipe schedule for WN hub bore. Blind W_f uses a solid-disc estimate (ρ·π/4·OD²·T); SO/SW scale the WN RF catalog mass by type factors unless a type override is stored. Facing adjusts gasket mass and stud length. Hero W_pair = 2 flanges + gasket + full stud/nut set. Stud lengths are screening — confirm B16.5 / vendor lists before PO. Large diameters NPS 26–60 are B16.47 (not in this table).",
     formulaBadges: [
       { label: "Scope", value: "B16.5 NPS ½–24" },
       { label: "W_pair", value: "2 W_f + W_g + hardware" },
-      { label: "WN bore", value: "Sch 40 / STD ID" },
-      { label: "Type factors", value: "SO 0.7 · SW 0.75 · BL 0.85" },
+      { label: "WN bore", value: "Selected schedule ID" },
+      { label: "Blind W_f", value: "Solid-disc estimate" },
     ],
     variables: [
       { symbol: "OD", name: "Flange Outside Diameter", definition: "Circular flange forging OD from the B16.5 row (mm or in)." },
       { symbol: "T", name: "Flange Thickness", definition: "Minimum flange ring thickness from the table (mm or in)." },
       { symbol: "PCD", name: "Bolt Circle / Pitch Circle Diameter", definition: "Circle through bolt-hole centers (mm or in)." },
       { symbol: "n", name: "Bolt Hole Count", definition: "Number of studs / bolt holes on the flange." },
-      { symbol: "W_f", name: "Single Flange Mass", definition: "Catalog WN RF mass × type factor (kg or lb)." },
+      { symbol: "W_f", name: "Single Flange Mass", definition: "WN: B16.5 catalog screening mass. Blind: solid-disc estimate (ρ·π/4·OD²·T). SO/SW: WN mass × type factor (0.70 / 0.75) unless a type override exists (kg or lb)." },
       { symbol: "W_g", name: "Gasket Mass (screening)", definition: "Spiral-wound RF / FF / RTJ screening mass with facing factor." },
       { symbol: "W_pair", name: "Mated Pair Assembly Mass", definition: "Hero output: 2×W_f + W_g + n×(W_stud + 2×W_nut)." },
     ],
@@ -784,9 +789,9 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
         },
         {
           label: "Hub Bore Mapping",
-          value: "WN → pipe ID · SO/SW → pipe OD · BL → solid",
+          value: "WN → selected schedule ID · SO/SW → pipe OD · BL → solid",
           description:
-            "WN uses default Sch 40 / STD inside diameter. Slip-on / socket-weld use pipe OD. Blind has no bore. SW above NPS 2 is flagged as screening-only in the UI.",
+            "WN hub bore follows the pipe schedule selected in Input Parameters (default Sch 40 / STD). Slip-on / socket-weld use pipe OD. Blind has no bore. SW above NPS 2 is flagged as screening-only in the UI.",
         },
         {
           label: "Stud Length Screening",
@@ -843,14 +848,14 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
           notes: "Do not mate cast-iron FF to steel RF without full-face gasket / face machining — bending can crack CI.",
         },
         {
-          materialGroup: "Type Weight Factors (this app)",
+          materialGroup: "Type Mass Basis (this app)",
           temperatureLimit: "N/A",
-          stressLimit: "WN 1.00 · SO 0.70 · SW 0.75 · BL 0.85",
-          notes: "Applied to the WN RF catalog mass to estimate other types. Confirm vendor weights for PO.",
+          stressLimit: "WN catalog · BL solid-disc · SO 0.70 · SW 0.75",
+          notes: "Blind no longer uses 0.85×WN. Optional weightKgBl/So/Sw overrides in the data table take precedence when present. Confirm vendor weights for PO.",
         },
       ],
       codeRestrictions: [
-        "Calculator scope: B16.5 OD/T/PCD/bolting lookup, type/facing mass scaling, WN Sch 40 bore, and W_pair. It does not compute MAWP or B16.47 large flanges.",
+        "Calculator scope: B16.5 OD/T/PCD/bolting lookup, WN schedule bore, Blind solid-disc / SO·SW type-factor mass screening, and W_pair. It does not compute MAWP or B16.47 large flanges.",
         "Always use W_pair (not W_f alone) for spool rigging and rack deadload estimates.",
         "RTJ ring numbers are B16.20 screening IDs — confirm the gasket OEM chart.",
       ],
@@ -863,8 +868,8 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
         { label: "Nominal Size", value: "NPS 6 (DN 150)" },
         { label: "Pressure Class", value: "Class 300" },
         { label: "Type & Facing", value: "Weld Neck RF (default)" },
-        { label: "Hub Bore Basis", value: "Sch 40 / STD pipe ID (B36.10M)" },
-        { label: "Mass Basis", value: "CS screening densities in the app table" },
+        { label: "Hub Bore Basis", value: "Selected pipe schedule ID (default Sch 40 / STD)" },
+        { label: "Mass Basis", value: "WN catalog / Blind solid-disc / SO·SW type factor" },
       ],
       steps: [
         {
@@ -889,7 +894,7 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
           formula: "W_f = W_{table} \\cdot f_{type}",
           calculation: "WN factor = 1.00. W_f = 19.1 kg (table).",
           result: "W_f = 19.1 kg",
-          note: "SO would use 0.7 × 19.1 ≈ 13.4 kg.",
+          note: "SO would use 0.7 × 19.1 ≈ 13.4 kg. Blind uses a solid-disc estimate instead of 0.85×WN.",
         },
         {
           step: "Step 4",
@@ -913,9 +918,9 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
         "NPS 6 Class 300 WN RF in this app: OD 320 mm, T 35 mm, PCD 269.9 mm, 12 × 3/4\" × 120 mm studs, W_f = 19.1 kg, W_pair = 44.56 kg. Use W_pair for rigging — not the single-flange catalog mass alone.",
     },
     ...howTo("How to look up flange dimensions", [
-      { name: "1. Select type and facing", text: "WN / SO / SW / BL and RF / FF / RTJ (RTJ from Class 300)." },
-      { name: "2. Select NPS and class", text: "Use pipe NPS, not flange OD. Classes follow the B16.5 row set in this app." },
-      { name: "3. Read OD, T, PCD, bore, studs, W_pair", text: "Hero is mated-pair weight. WN bore follows Sch 40 / STD ID." },
+      { name: "1. Select type and facing", text: "WN / SO / SW / BL and RF / FF / RTJ (RTJ from Class 300; Class 150 disables RTJ)." },
+      { name: "2. Select NPS, class, and WN schedule", text: "Use pipe NPS, not flange OD. For WN, pick the mating pipe schedule for hub bore (default Sch 40 / STD)." },
+      { name: "3. Read OD, T, PCD, bore, studs, W_pair", text: "Hero is mated-pair weight. Blind W_f is a solid-disc screening estimate — confirm vendor mass for rigging." },
       { name: "4. Export / carry over", text: "Confirm stud length and RTJ ring on vendor charts; carry NPS/class into gasket and bolt-torque tools." },
     ]),
     faq: [
@@ -932,12 +937,12 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
       {
         question: "How is WN hub bore chosen?",
         answer:
-          "Weld-neck bore uses the **default Sch 40 / STD pipe ID** from the pipe-schedule table (B36.10M). Slip-on / socket-weld use **pipe OD**. Blind is solid.",
+          "Weld-neck bore uses the **selected pipe schedule ID** from the pipe-schedule table (B36.10M), defaulting to **Sch 40 / STD**. Slip-on / socket-weld use **pipe OD**. Blind is solid.",
       },
       {
-        question: "Why do SO / SW / BL weights differ from WN?",
+        question: "How are Blind / SO / SW masses calculated?",
         answer:
-          "The table stores **WN RF** masses. This app applies type factors **SO 0.70, SW 0.75, BL 0.85** (WN = 1.00). Confirm vendor weights for purchasing.",
+          "**WN** uses the stored B16.5 WN RF catalog mass. **Blind** uses a **solid-disc screening estimate** (7850 kg/m³ × π/4 × OD² × T) — not 0.85×WN — because high-class / large blinds are often heavier than WN. **SO / SW** apply type factors **0.70 / 0.75** unless a type-specific override is stored. Always confirm vendor weights for purchasing and rigging.",
       },
       {
         question: "When is ASME B16.47 required?",
@@ -3188,6 +3193,220 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
         question: "Does this cover sand slurry erosion?",
         answer:
           "**No.** RP 14E assumes relatively clean fluids. High sand loadings need dedicated particulate erosion models — not this screening tool.",
+      },
+    ],
+  },
+
+  "link-seal-penetration-sleeve": {
+    slug: "link-seal-penetration-sleeve",
+    formulaTitle: "Core Formula & Variable Definitions",
+    formulaHtml:
+      '<p class="eng-eq"><i>C</i> = <span class="eng-frac"><span class="eng-num">Sleeve ID − Pipe OD</span><span class="eng-den">2</span></span></p>' +
+      '<p class="eng-eq"><i>D</i><sub>p</sub> = OD + 2 · <i>t</i><sub>free</sub> &nbsp;·&nbsp; <i>N</i> = round(π · <i>D</i><sub>p</sub> / <i>w</i><sub>belt</sub>)</p>' +
+      '<p class="eng-plain">GPT Link-Seal modular mechanical seal screening · Century-Line sleeve pairing</p>',
+    formulaLatex:
+      "C = \\frac{ID_{sleeve}-OD_{pipe}}{2},\\quad D_p = OD + 2 t_{free},\\quad N = \\mathrm{round}(\\pi D_p / w_{belt})",
+    formulaNotes:
+      "Select a Link-Seal model whose free (unexpanded) thickness is slightly less than the annular clearance C and whose screening envelope covers C. Pitch diameter Dp is the link-bolt / belt centerline (OD + 2·t_free) used only to compute N. Ideal minimum sleeve ID uses the same geometry to seat free thickness (C ≈ t_free) — do not confuse Dp with a procurement sleeve catalog size when the entered hole differs. Hardware suffixes: C (zinc CS), S316, T (silicone HT). Continuous service screening ≈ 0.14 MPa (1.38 bar) / 12.2 m H₂O · 20 psig / 40 ft head — confirm the current GPT catalog. Link-Seal® is a registered trademark of GPT Industries; this app is an independent screening tool.",
+    formulaBadges: [
+      { label: "Models", value: "LS-200 … LS-575" },
+      { label: "C warn", value: "<12 mm / >85 mm" },
+      { label: "Rating", value: "0.14 MPa · 20 psig" },
+      { label: "N min", value: "3 links" },
+    ],
+    formulaHighlight: true,
+    omitLookupTable: true,
+    variables: [
+      { symbol: "C", name: "Annular clearance", definition: "Radial gap between pipe OD and sleeve/hole ID: C = (ID − OD)/2 (mm or in)." },
+      { symbol: "t_free", name: "Free thickness", definition: "Unexpanded Link-Seal rubber thickness for the selected model (mm or in)." },
+      { symbol: "w_belt", name: "Belt width / link pitch", definition: "Center-to-center pitch used for link count (mm or in)." },
+      { symbol: "D_p", name: "Pitch diameter (bolt centerline)", definition: "Dp = OD + 2·t_free — diameter through link-bolt / belt centers used to compute N. Not a substitute label for the entered sleeve ID." },
+      { symbol: "ID_ideal", name: "Ideal minimum sleeve ID", definition: "OD + 2·t_free — minimum sleeve/hole bore that seats free thickness when C ≈ t_free. Compare to the entered sleeve ID." },
+      { symbol: "N", name: "Number of links", definition: "N = round(π·Dp / w_belt), minimum 3 for a closed belt." },
+      { symbol: "OD", name: "Pipe outside diameter", definition: "Carrier pipe OD (from NPS Sch 40/STD or manual override)." },
+      { symbol: "ID", name: "Sleeve / hole ID (entered)", definition: "Steel sleeve inside diameter or finished core-drilled hole diameter as entered." },
+    ],
+    standards: [
+      "GPT Industries Link-Seal Modular Sealing System (manufacturer catalog)",
+      "Century-Line / wall sleeve pairing practice",
+      "ASME B36.10M — pipe OD reference",
+    ],
+    allowancesAndTolerances: {
+      title: "Annular Space & Model Matching",
+      summary:
+        "Model matching uses screening envelopes ≈ 0.80–1.20 × free thickness. Outside ~12–85 mm annular space, resize the sleeve or consider Century-Line oversized sleeves.",
+      items: [
+        {
+          label: "Annular clearance C",
+          value: "(ID − OD) / 2",
+          description:
+            "Must be positive. Free thickness should be slightly less than C so expansion seals the annulus.",
+        },
+        {
+          label: "Out-of-range warning",
+          value: "C < 12 mm or C > 85 mm",
+          description:
+            "UI warns when annular space is outside the standard Link-Seal chart. Resize sleeve or use Century-Line.",
+        },
+        {
+          label: "Link count rounding",
+          value: "Nearest integer (≥ 3)",
+          description:
+            "Screening N = round(π·Dp / belt width). Confirm even-count or chart counts on the GPT sheet when required.",
+        },
+        {
+          label: "Pressure rating",
+          value: "0.14 MPa / 20 psig",
+          description:
+            "Typical continuous modular-seal screening (≈ 1.38 bar · 12.2 m H₂O · 40 ft head). Higher heads need manufacturer confirmation. Live results follow the Metric/Imperial navbar toggle.",
+        },
+        {
+          label: "Dp vs Ideal sleeve ID",
+          value: "Same formula, different meaning",
+          description:
+            "Dp = link-bolt centerline for N. Ideal minimum sleeve ID = OD + 2·t_free seats free thickness. Entered sleeve ID may differ; always compare both.",
+        },
+      ],
+    },
+    tableCaption: "Link-Seal model free thickness & belt width (SEO / JSON-LD; live chart under results)",
+    tableHeaders: ["Model", "Free t (mm)", "Belt (mm)", "Annular C min–max (mm)"],
+    tableRows: [
+      ["LS-200", "12.7", "31.8", "10.2–15.2"],
+      ["LS-300", "18.0", "38.1", "14.4–21.6"],
+      ["LS-315", "21.1", "38.1", "16.9–25.3"],
+      ["LS-400", "36.3", "63.5", "29.0–43.6"],
+      ["LS-425", "28.4", "73.0", "22.7–34.1"],
+      ["LS-475", "41.3", "68.6", "33.0–49.6"],
+      ["LS-500", "60.3", "98.4", "48.2–72.4"],
+      ["LS-525", "55.6", "98.4", "44.5–66.7"],
+      ["LS-575", "80.0", "98.4", "64.0–96.0"],
+    ],
+    tableColumnUnits: [
+      { index: 1, quantity: "length", digits: 1 },
+      { index: 2, quantity: "length", digits: 1 },
+    ],
+    tableFootnote:
+      "Annular ranges are screening (0.80–1.20 × free t). Confirm the current GPT Link-Seal sizing chart before purchase.",
+    tableAllNumeric: false,
+    materialLimitations: {
+      title: "Hardware, Temperature & Service Limits",
+      summary:
+        "Hardware suffix and elastomer compound set corrosion and temperature capability. This calculator does not derate for fire, hydrocarbons, or vacuum.",
+      items: [
+        {
+          materialGroup: "C — Carbon steel zinc hardware",
+          temperatureLimit: "EPDM / standard compound (typical ≤ ~121 °C / 250 °F)",
+          stressLimit: "0.14 MPa / 20 psig screening",
+          notes: "Default plant hardware for buried / wet walls when stainless is not specified.",
+        },
+        {
+          materialGroup: "S316 — Stainless 316 hardware",
+          temperatureLimit: "Same elastomer family unless specified",
+          stressLimit: "0.14 MPa / 20 psig screening",
+          notes: "Use in corrosive or coastal atmospheres where zinc CS is inadequate.",
+        },
+        {
+          materialGroup: "T — Silicone high-temperature",
+          temperatureLimit: "Silicone service (confirm GPT sheet; often > standard EPDM)",
+          stressLimit: "Confirm catalog",
+          notes: "Not a substitute for fire-stop listed assemblies. Check chemical compatibility.",
+        },
+        {
+          materialGroup: "Century-Line / oversized sleeves",
+          temperatureLimit: "N/A",
+          stressLimit: "When C out of chart",
+          notes: "If annular space is too large/small for LS-200–LS-575, resize the sleeve or use manufacturer Century-Line guidance.",
+        },
+      ],
+      codeRestrictions: [
+        "Screening Purpose Only: preliminary sizing from published reference data — not a substitute for official engineering calculations, design review, or manufacturer certification.",
+        "Verification Required: always confirm model, link count, and clearances against the current official GPT Industries Link-Seal® sizing chart and installation manual before procurement or installation.",
+        "No Warranty: this tool is provided AS IS. FieldEngineersKit assumes no liability for errors, omissions, or damages arising from use of these results.",
+        "Trademark Notice: Link-Seal® and Century-Line® are registered trademarks of GPT Industries. This application is an independent utility and is not affiliated with, sponsored, or endorsed by GPT Industries.",
+        "Do not use above manufacturer temperature / chemical limits (e.g. continuous > 250 °F / 121 °C without the correct compound).",
+      ],
+    },
+    workedExample: {
+      title: "Step-by-Step Worked Example: NPS 4 Steel Sleeve",
+      scenario:
+        "Size a Link-Seal for NPS 4 Sch 40 carrier pipe (OD = 114.3 mm) through a steel wall sleeve with ID = 190 mm, carbon-steel zinc hardware.",
+      designConditions: [
+        { label: "Pipe", value: "NPS 4 Sch 40 · OD 114.3 mm" },
+        { label: "Sleeve ID", value: "190 mm" },
+        { label: "Opening", value: "Steel pipe sleeve" },
+        { label: "Hardware", value: "C — CS zinc" },
+      ],
+      steps: [
+        {
+          step: "Step 1",
+          name: "Compute annular clearance",
+          formula: "C = (ID - OD) / 2",
+          calculation: "C = (190 − 114.3) / 2 = 75.7 / 2",
+          result: "C = 37.85 mm",
+          note: "Within the {{pick:12–85 mm|0.47–3.35 in}} screening window.",
+        },
+        {
+          step: "Step 2",
+          name: "Match Link-Seal model",
+          calculation:
+            "LS-400 free thickness = 36.3 mm (envelope 29.0–43.6 mm). Free t is slightly under C.",
+          result: "Select LS-400",
+          note: "LS-425 free t = 28.4 mm is farther from C; LS-400 is the closest valid match.",
+        },
+        {
+          step: "Step 3",
+          name: "Pitch diameter (bolt centerline)",
+          formula: "D_p = OD + 2 t_free",
+          calculation: "Dp = 114.3 + 2 × 36.3 = 114.3 + 72.6",
+          result: "Dp = 186.9 mm (link-bolt centerline)",
+          note: "Dp drives N only — it is not the entered sleeve catalog ID.",
+        },
+        {
+          step: "Step 4",
+          name: "Number of links",
+          formula: "N = round(π D_p / w_belt)",
+          calculation: "N = round(π × 186.9 / 63.5) = round(9.25)",
+          result: "N = 9 links",
+          note: "Hero shows LS-400-C × 9 Links.",
+        },
+        {
+          step: "Step 5",
+          name: "Ideal minimum sleeve ID vs entered ID",
+          calculation:
+            "Ideal ID = OD + 2·t_free = 186.9 mm (seats free thickness). Entered sleeve ID = 190 mm.",
+          result: "Entered 190 mm ≥ ideal 186.9 mm — acceptable",
+          note: "Screening rating {{pick:0.14 MPa (1.38 bar) · 12.2 m H₂O|20 psig · 40 ft head}} — confirm GPT sheet.",
+        },
+      ],
+      conclusion:
+        "For NPS 4 × 190 mm sleeve: LS-400-C with 9 links, C ≈ 37.9 mm. Confirm the GPT chart and tighten bolts in a star pattern until rubber bulges lightly.",
+    },
+    ...howTo("How to size a Link-Seal penetration", [
+      { name: "1. Set pipe OD", text: "Pick NPS (Sch 40/STD OD autofill) or enter coated / special OD manually." },
+      { name: "2. Enter sleeve or hole ID", text: "Use finished steel-sleeve ID or core-drilled hole diameter." },
+      { name: "3. Choose hardware", text: "C for standard zinc CS, S316 for stainless, T for silicone high-temp links." },
+      { name: "4. Read model × N", text: "Hero shows LS-xxx-Hw × link count. Check the warning if C is out of range, then export / share URL." },
+    ]),
+    faq: [
+      {
+        question: "How tight should Link-Seal bolts be?",
+        answer:
+          "Tighten in a **star / criss-cross pattern** until the rubber links **bulge slightly** and seal against both the pipe and the sleeve. Do **not** drive bolts to metal-to-metal crush. Follow the GPT installation sheet for the model.",
+      },
+      {
+        question: "Can Link-Seal be used above 250 °F (121 °C)?",
+        answer:
+          "**Standard EPDM compounds are typically limited near 250 °F (121 °C).** For higher temperatures, select the **T (Silicone)** hardware/elastomer option and **confirm** the GPT chemical/temperature chart — this tool does not replace manufacturer limits.",
+      },
+      {
+        question: "What if annular space is too large or too small?",
+        answer:
+          "If **C < 12 mm** or **C > 85 mm** (≈ **0.47–3.35 in**), the UI warns that the gap is outside the standard Link-Seal chart. **Resize the sleeve**, change the core-drill diameter, or use a **Century-Line** / manufacturer oversized sleeve solution.",
+      },
+      {
+        question: "Does this replace the GPT sizing chart?",
+        answer:
+          "**No.** This is a **field screening** calculator using published free thickness / belt width. Always verify model and link count on the **current GPT Link-Seal sizing chart** before procurement. Link-Seal® is a registered trademark of GPT Industries — this app is **not affiliated with or endorsed by** GPT Industries.",
       },
     ],
   },

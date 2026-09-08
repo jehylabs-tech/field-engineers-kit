@@ -1,12 +1,14 @@
 "use client";
 
-import EngineeringFaqAccordion from "@/components/calculator/EngineeringFaqAccordion";
 import {
-  FLANGE_INLINE_FAQ,
   FLANGE_MATERIAL_GROUPS,
   FLANGE_TOLERANCE_NOTES,
 } from "@/lib/calculators/flange-reference";
 
+/**
+ * Compact mid-page engineering notes (tolerances + MAWP).
+ * FAQ lives only in CalculatorSeoContent Section 5 — do not duplicate here.
+ */
 export default function FlangeReferenceNotes() {
   return (
     <div className="space-y-3">
@@ -59,15 +61,8 @@ export default function FlangeReferenceNotes() {
         </div>
       </div>
 
-      <div>
-        <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-          Field FAQ
-        </p>
-        <EngineeringFaqAccordion items={[...FLANGE_INLINE_FAQ]} />
-      </div>
-
       <p className="text-[11px] leading-snug text-spec-text2">
-        Full code basis, lookup table, and worked example:{" "}
+        Full code basis, lookup table, worked example, and FAQ:{" "}
         <a
           href="#engineering-reference"
           className="font-medium text-spec-accent underline-offset-2 hover:underline"

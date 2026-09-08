@@ -13,7 +13,8 @@ export type CalculatorType =
   | "thermal-expansion"
   | "pressure-drop"
   | "flow-velocity"
-  | "unit-converter";
+  | "unit-converter"
+  | "link-seal";
 
 export type FaqItem = {
   q: string;

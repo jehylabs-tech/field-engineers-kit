@@ -33,10 +33,13 @@ import {
 } from "@/components/calculator/presets";
 import {
   defaultScheduleForNps,
+  formatPipeScheduleLabel,
   getFlangeDimensionEntry,
   getPipeScheduleEntry,
   listFlangeClassesForNps,
   listFlangeNps,
+  listScheduleOptionsForNps,
+  resolveScheduleOptionValue,
 } from "@/lib/data/loaders";
 
 type FlangeDimensionCalculatorProps = {
@@ -46,6 +49,9 @@ type FlangeDimensionCalculatorProps = {
 
 const CARD_SHELL =
   "w-full min-w-0 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm dark:border-spec-border dark:bg-spec-panel";
+
+const RTJ_DISABLED_HINT =
+  "RTJ facing is available for Class 300 and above per ASME B16.5";
 
 export default function FlangeDimensionCalculator({
   title,
@@ -70,6 +76,13 @@ export default function FlangeDimensionCalculator({
     }
   }, [inputs.nps, inputs.pressureClass, inputs.facing, setField]);
 
+  useEffect(() => {
+    const resolved = defaultScheduleForNps(inputs.nps, inputs.pipeSchedule);
+    if (resolved && resolved !== inputs.pipeSchedule) {
+      setField("pipeSchedule", resolved);
+    }
+  }, [inputs.nps, inputs.pipeSchedule, setField]);
+
   const npsOptions = useMemo(
     () =>
       listFlangeNps().map((flange) => ({
@@ -86,9 +99,20 @@ export default function FlangeDimensionCalculator({
     }));
   }, [inputs.nps]);
 
+  const scheduleOptions = useMemo(() => {
+    return listScheduleOptionsForNps(inputs.nps).map((option) => ({
+      value: option.value,
+      label: option.label,
+    }));
+  }, [inputs.nps]);
+
   const resolvedInputs = useMemo(() => {
     const classes = listFlangeClassesForNps(inputs.nps);
     const classExists = classes.some((row) => row.class === inputs.pressureClass);
+    const pipeSchedule = defaultScheduleForNps(
+      inputs.nps,
+      inputs.pipeSchedule,
+    );
     return {
       ...inputs,
       flangeType: resolveFlangeType(inputs.flangeType),
@@ -99,6 +123,7 @@ export default function FlangeDimensionCalculator({
       pressureClass: classExists
         ? inputs.pressureClass
         : (classes[0]?.class ?? ""),
+      pipeSchedule,
     };
   }, [inputs]);
 
@@ -116,16 +141,25 @@ export default function FlangeDimensionCalculator({
     resolvedInputs.nps,
     resolvedInputs.pressureClass,
   );
-  const defaultSchedule = defaultScheduleForNps(resolvedInputs.nps);
-  const pipe = getPipeScheduleEntry(resolvedInputs.nps, defaultSchedule);
+  const schedule = resolveScheduleOptionValue(
+    resolvedInputs.nps,
+    resolvedInputs.pipeSchedule ?? "40",
+  );
+  const pipe = getPipeScheduleEntry(resolvedInputs.nps, schedule);
   const flangeType = resolveFlangeType(resolvedInputs.flangeType);
   const facing = resolveFacing(
     resolvedInputs.facing,
     resolvedInputs.pressureClass,
   );
   const rtjEnabled = isRtjClass(resolvedInputs.pressureClass);
-  const facingChips = FACING_CHIPS.filter(
-    (item) => item.value !== "rtj" || rtjEnabled,
+  const facingChips = FACING_CHIPS.map((item) =>
+    item.value === "rtj" && !rtjEnabled
+      ? {
+          ...item,
+          disabled: true,
+          title: RTJ_DISABLED_HINT,
+        }
+      : item,
   );
   const ringNumber =
     facing === "rtj"
@@ -151,14 +185,23 @@ export default function FlangeDimensionCalculator({
       label: "Pressure class",
       value: `Class ${resolvedInputs.pressureClass}`,
     },
+    ...(flangeType === "wn"
+      ? [
+          {
+            label: "Pipe schedule",
+            value: formatPipeScheduleLabel(schedule),
+          },
+        ]
+      : []),
     { label: "Unit system", value: resolvedInputs.unitSystem },
   ];
 
   const jointPreview = (
     <>
       <p className="text-xs leading-snug text-spec-text2">
-        OD, thickness, and bolting follow ASME B16.5. WN hub bore uses Sch 40 / STD
-        pipe ID. Mated-pair mass = 2 flanges + gasket + full stud/nut set.
+        OD, thickness, and bolting follow ASME B16.5. WN hub bore uses the selected
+        pipe schedule ID (default Sch 40 / STD). Mated-pair mass = 2 flanges + gasket
+        + full stud/nut set.
       </p>
       {Number(resolvedInputs.nps) > 2 && flangeType === "sw" ? (
         <p className="text-xs leading-snug text-spec-sponText">
@@ -234,9 +277,16 @@ export default function FlangeDimensionCalculator({
           facing={facing}
         />
       }
+      chart={
+        <div className="mt-3 border-t border-slate-100 pt-3 dark:border-spec-border">
+          <h3 className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
+            Live joint preview
+          </h3>
+          <div className="space-y-2.5">{jointPreview}</div>
+        </div>
+      }
       inputPanel={
         <div className="flex w-full min-w-0 flex-col gap-2.5 [&_.calc-field]:mb-0">
-          {/* Under 1. Input Parameters — no duplicate top-level section number */}
           <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">
             Flange selection
           </h3>
@@ -250,6 +300,11 @@ export default function FlangeDimensionCalculator({
           <FieldChipRadio
             wide
             label="Facing"
+            hint={
+              rtjEnabled
+                ? "RF / FF / RTJ. RTJ enabled for Class 300 and above."
+                : RTJ_DISABLED_HINT
+            }
             value={facing}
             options={facingChips}
             onChange={(value) => setField("facing", value)}
@@ -270,23 +325,25 @@ export default function FlangeDimensionCalculator({
             options={classOptions}
             onChange={(value) => setField("pressureClass", value)}
           />
+          {flangeType === "wn" ? (
+            <FieldSelect
+              label="Pipe schedule (WN hub bore)"
+              value={schedule}
+              options={scheduleOptions}
+              onChange={(value) => setField("pipeSchedule", value)}
+              highlight="bore"
+              hint="WN hub bore follows ASME B36.10M pipe ID for the selected schedule (default Sch 40 / STD)."
+            />
+          ) : null}
         </div>
       }
       footerPanel={
-        <>
-          <div className={`${CARD_SHELL} px-4 py-5`}>
-            <h3 className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
-              Live joint preview
-            </h3>
-            <div className="space-y-2.5">{jointPreview}</div>
-          </div>
-          <div className={`${CARD_SHELL} px-4 py-5`}>
-            <h3 className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
-              Engineering reference
-            </h3>
-            <FlangeReferenceNotes />
-          </div>
-        </>
+        <div className={`${CARD_SHELL} px-4 py-5`}>
+          <h3 className="mb-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
+            Engineering reference
+          </h3>
+          <FlangeReferenceNotes />
+        </div>
       }
     />
   );

@@ -407,8 +407,8 @@ export default function PipeThicknessCalculator({
               label="Corrosion / mechanical allowance (c)"
               hint={
                 inputs.unitSystem === "metric"
-                  ? "Default 1.50 mm. Unit switch reseeds Imperial to 0.063 in (1/16″ commercial), not exact 1.5÷25.4 ≈ 0.059 in — margin % will differ slightly."
-                  : "Default 0.063 in (1/16″ ≈ 1.588 mm commercial). Exact 1.50 mm = 0.059 in — unit switch uses commercial defaults, not pure conversion."
+                  ? "Default 1.50 mm. Switching to Imperial reseeds 0.063 in (1/16″ commercial), not 1.50÷25.4 ≈ 0.059 in."
+                  : "Default 0.063 in (1/16″ ≈ 1.59 mm commercial). Exact 1.50 mm converts to 0.059 in before commercial snap."
               }
               value={inputs.corrosionAllowance}
               onChange={(value) =>

@@ -34,6 +34,12 @@ export const FLANGE_DIMENSION_URL_CONFIG: ParamConfig<FlangeDimensionInputs> = {
     deserialize: (value: string | null, fallback: string | undefined) =>
       value || fallback || "rf",
   },
+  pipeSchedule: {
+    param: "sch",
+    serialize: (value: string | undefined) => value ?? "40",
+    deserialize: (value: string | null, fallback: string | undefined) =>
+      value || fallback || "40",
+  },
 };
 
 export { DEFAULT_FLANGE_DIMENSION_INPUTS };

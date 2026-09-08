@@ -70,7 +70,7 @@ export default function SummaryBar({
       aria-hidden={!pinned}
       className={`sticky top-12 z-40 w-full isolate md:top-14 ${
         pinned
-          ? "border-b border-slate-200 bg-white shadow-sm backdrop-blur-md dark:border-slate-800 dark:bg-slate-900 dark:shadow-[0_1px_0_0_rgba(0,0,0,0.35)]"
+          ? "border-b border-slate-200 bg-white shadow-md dark:border-slate-800 dark:bg-slate-900 dark:shadow-[0_4px_12px_-2px_rgba(0,0,0,0.45)]"
           : "pointer-events-none invisible max-h-0 overflow-hidden border-b-0 bg-transparent shadow-none"
       }`}
     >

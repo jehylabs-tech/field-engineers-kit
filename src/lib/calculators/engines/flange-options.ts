@@ -16,12 +16,91 @@ export const FACING_OPTIONS = [
 export type FlangeTypeId = (typeof FLANGE_TYPE_OPTIONS)[number]["value"];
 export type FacingId = (typeof FACING_OPTIONS)[number]["value"];
 
-const TYPE_WEIGHT: Record<FlangeTypeId, number> = {
+/** Screening factors vs WN RF catalog mass (SO / SW only — not used for Blind). */
+const TYPE_WEIGHT_FACTOR: Record<Exclude<FlangeTypeId, "bl">, number> = {
   wn: 1,
   so: 0.7,
   sw: 0.75,
-  bl: 0.85,
 };
+
+const STEEL_DENSITY_KG_M3 = 7850;
+
+export type FlangeMassBasis =
+  | "catalog-wn"
+  | "catalog-override"
+  | "solid-disc-estimate"
+  | "type-factor-estimate";
+
+export type FlangeMassResult = {
+  kg: number;
+  basis: FlangeMassBasis;
+};
+
+/**
+ * Solid-disc screening mass for Blind flanges (ρ × π/4 × OD² × T).
+ * Prefer this over a flat 0.85×WN factor — high-class / large BL discs are often heavier than WN.
+ */
+export function estimateBlindFlangeKg(
+  outsideDiameterMm: number,
+  thicknessMm: number,
+): number {
+  const odM = Math.max(0, outsideDiameterMm) / 1000;
+  const tM = Math.max(0, thicknessMm) / 1000;
+  return STEEL_DENSITY_KG_M3 * Math.PI * 0.25 * odM * odM * tM;
+}
+
+export type FlangeWeightSource = {
+  weightKg: number;
+  outsideDiameterMm: number;
+  thicknessMm: number;
+  /** Optional B16.5 / vendor catalog overrides when available. */
+  weightKgBl?: number;
+  weightKgSo?: number;
+  weightKgSw?: number;
+};
+
+/** Resolve single-flange screening mass with explicit catalog vs estimate basis. */
+export function resolveFlangeMassKg(
+  type: FlangeTypeId,
+  rating: FlangeWeightSource,
+): FlangeMassResult {
+  if (type === "wn") {
+    return { kg: rating.weightKg, basis: "catalog-wn" };
+  }
+  if (type === "bl") {
+    if (
+      typeof rating.weightKgBl === "number" &&
+      Number.isFinite(rating.weightKgBl)
+    ) {
+      return { kg: rating.weightKgBl, basis: "catalog-override" };
+    }
+    return {
+      kg: estimateBlindFlangeKg(
+        rating.outsideDiameterMm,
+        rating.thicknessMm,
+      ),
+      basis: "solid-disc-estimate",
+    };
+  }
+  if (
+    type === "so" &&
+    typeof rating.weightKgSo === "number" &&
+    Number.isFinite(rating.weightKgSo)
+  ) {
+    return { kg: rating.weightKgSo, basis: "catalog-override" };
+  }
+  if (
+    type === "sw" &&
+    typeof rating.weightKgSw === "number" &&
+    Number.isFinite(rating.weightKgSw)
+  ) {
+    return { kg: rating.weightKgSw, basis: "catalog-override" };
+  }
+  return {
+    kg: rating.weightKg * TYPE_WEIGHT_FACTOR[type],
+    basis: "type-factor-estimate",
+  };
+}
 
 const RING_BY_NPS: Record<string, { low: string; mid: string; high: string; extra: string }> =
   {
@@ -86,7 +165,16 @@ export function raisedFaceHeightMm(pressureClass: string): number {
 }
 
 export function typeWeightFactor(type: FlangeTypeId): number {
-  return TYPE_WEIGHT[type];
+  if (type === "bl") return 1;
+  return TYPE_WEIGHT_FACTOR[type];
+}
+
+export function flangeMassBasisLabel(basis: FlangeMassBasis): string {
+  if (basis === "catalog-wn") return "B16.5 WN RF catalog";
+  if (basis === "catalog-override") return "type catalog override";
+  if (basis === "solid-disc-estimate")
+    return "solid-disc screening (ρ·π/4·OD²·T)";
+  return "type-factor estimate vs WN RF";
 }
 
 export function facingGasketFactor(facing: FacingId): number {

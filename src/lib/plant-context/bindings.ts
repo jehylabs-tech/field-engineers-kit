@@ -219,6 +219,25 @@ export function applyPlantContext<T extends Record<string, unknown>>(
       return applySchedule(applyNps(inputs, ctx), ctx) as T;
     case "unit-converter":
       return inputs;
+    case "link-seal": {
+      const next = { ...applyNps(inputs, ctx) } as T & {
+        nps: string;
+        pipeOd: number;
+        unitSystem: string;
+      };
+      const nps = normalizeNps(ctx.size);
+      if (nps) {
+        next.nps = nps;
+        const pipe = getPipeScheduleSize(nps);
+        if (pipe) {
+          next.pipeOd =
+            next.unitSystem === "imperial"
+              ? Number((pipe.outsideDiameterMm / 25.4).toFixed(3))
+              : pipe.outsideDiameterMm;
+        }
+      }
+      return next as T;
+    }
     default:
       return inputs;
   }

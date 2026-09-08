@@ -325,14 +325,20 @@ export function FieldChipRadio({
       >
         {options.map((option) => {
           const active = option.value === safeValue;
+          const disabled = Boolean(option.disabled);
           return (
             <button
               key={`${label}-${option.value}`}
               type="button"
               role="radio"
               aria-checked={active}
-              tabIndex={0}
-              onClick={() => onChange(option.value)}
+              aria-disabled={disabled || undefined}
+              disabled={disabled}
+              title={option.title}
+              tabIndex={disabled ? -1 : 0}
+              onClick={() => {
+                if (!disabled) onChange(option.value);
+              }}
               onFocus={() => {
                 if (highlight) schematic?.setActive(highlight);
               }}
@@ -340,9 +346,11 @@ export function FieldChipRadio({
                 if (highlight) schematic?.setActive(null);
               }}
               className={`min-h-9 rounded-lg border px-3 text-sm font-medium transition-colors ${
-                active
-                  ? "border-spec-accent bg-spec-accentBg text-spec-accentText shadow-sm"
-                  : "border-slate-300 bg-white text-slate-700 hover:border-spec-accent/50 dark:border-slate-600 dark:bg-spec-bg dark:text-slate-200"
+                disabled
+                  ? "cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400 dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-500"
+                  : active
+                    ? "border-spec-accent bg-spec-accentBg text-spec-accentText shadow-sm"
+                    : "border-slate-300 bg-white text-slate-700 hover:border-spec-accent/50 dark:border-slate-600 dark:bg-spec-bg dark:text-slate-200"
               }`}
             >
               {option.label}

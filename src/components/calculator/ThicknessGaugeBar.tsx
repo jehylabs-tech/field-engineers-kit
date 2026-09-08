@@ -6,13 +6,20 @@ export type ThicknessGaugeBarProps = {
   tMin: number;
   tActual: number;
   unit: string;
+  /** Prefer engine-formatted labels (e.g. formatPipeThickness) so UI matches hero/table. */
+  tMinLabel?: string;
+  tActualLabel?: string;
   caption?: string;
   captionInfo?: string;
   markerLabel?: string;
 };
 
+/** Match formatPipeThickness: imperial 3 dp; metric 2 dp (≥1) / 3 dp (<1). */
 function formatThickness(value: number, unit: string): string {
-  return `${value.toFixed(2)} ${unit}`;
+  if (!Number.isFinite(value)) return `— ${unit}`;
+  if (unit === "in") return `${value.toFixed(3)} ${unit}`;
+  const digits = Math.abs(value) >= 1 ? 2 : 3;
+  return `${value.toFixed(digits)} ${unit}`;
 }
 
 /**
@@ -23,6 +30,8 @@ export default function ThicknessGaugeBar({
   tMin,
   tActual,
   unit,
+  tMinLabel,
+  tActualLabel,
   caption,
   captionInfo,
   markerLabel = "t_min",
@@ -31,8 +40,8 @@ export default function ThicknessGaugeBar({
   const markerPosition =
     tActual > 0 ? Math.min(100, Math.max(0, (tMin / tActual) * 100)) : 0;
 
-  const tMinText = formatThickness(tMin, unit);
-  const tActualText = formatThickness(tActual, unit);
+  const tMinText = tMinLabel ?? formatThickness(tMin, unit);
+  const tActualText = tActualLabel ?? formatThickness(tActual, unit);
   const fillClass = isPass ? "bg-emerald-500" : "bg-slate-400";
 
   return (

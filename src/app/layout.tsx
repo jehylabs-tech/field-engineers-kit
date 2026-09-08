@@ -43,7 +43,7 @@ export default async function RootLayout({
         <AppProviders calculators={calculators}>
           <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 min-h-screen flex flex-col bg-slate-50 dark:bg-spec-bg">
             <Header />
-            <main className="flex-1 bg-slate-50 pb-28 dark:bg-spec-bg md:pb-28">{children}</main>
+            <main className="flex-1 bg-slate-50 pb-36 dark:bg-spec-bg md:pb-36">{children}</main>
             <Footer />
           </div>
         </AppProviders>

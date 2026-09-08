@@ -1,6 +1,8 @@
 export type PresetOption = {
   value: string;
   label: string;
+  disabled?: boolean;
+  title?: string;
 };
 
 export const FITTING_VALVE_NPS_CHIPS: PresetOption[] = [

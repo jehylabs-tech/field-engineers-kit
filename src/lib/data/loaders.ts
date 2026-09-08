@@ -38,7 +38,14 @@ export type FlangeRatingRow = {
   boltHoleCount: number;
   boltHoleDiameterMm: number;
   hubLengthMm: number;
+  /** WN RF catalog screening mass (kg). */
   weightKg: number;
+  /** Optional Blind catalog mass when available (kg). */
+  weightKgBl?: number;
+  /** Optional Slip-On catalog mass when available (kg). */
+  weightKgSo?: number;
+  /** Optional Socket-Weld catalog mass when available (kg). */
+  weightKgSw?: number;
   studDiameterIn: string;
   studLengthMm: number;
   wrenchAfIn: string;

@@ -86,6 +86,8 @@ export const CATALOG_SEO_BLURBS: Record<string, string> = {
     "Pipe flow velocity v = Q/A and API RP 14E erosion velocity limit vc.",
   "unit-converter":
     "Free engineering unit converter for pressure, dimension, temperature, flow, torque, weight, and velocity.",
+  "link-seal-penetration-sleeve":
+    "Link-Seal modular seal sizing: annular C, LS model, link count N, and sleeve / core-drill ID from pipe OD.",
 };
 
 export function catalogSeoBlurb(slug: string): string {

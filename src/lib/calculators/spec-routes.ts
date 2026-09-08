@@ -200,6 +200,7 @@ export function listSpecRoutesForSlug(slug: string): SpecRoute[] {
       );
     case "pipe-thickness":
     case "hydro-test":
+    case "link-seal":
       return npsOnlyRoutes(slug);
     case "valve-cv":
       return [

@@ -23,6 +23,10 @@ import {
 } from "@/lib/calculators/engines/butt-weld-fitting";
 import { calculateFlangeDimension } from "@/lib/calculators/engines/flange-dimension";
 import {
+  calculateLinkSeal,
+  computeLinkSeal,
+} from "@/lib/calculators/engines/link-seal";
+import {
   apiRp14eLimitMs,
   calculateFlowVelocity,
   computeFlowVelocity,
@@ -283,9 +287,9 @@ describe("03 Flange Dimension (ASME B16.5)", () => {
     expect(out.summary.find((row) => row.label === "Single flange (W_f)")?.value).toContain(
       "10.00",
     );
-    expect(out.rows.find((row) => row.label.includes("Flange OD"))?.value).toContain("228.600");
+    expect(out.rows.find((row) => row.label.includes("Flange OD"))?.value).toContain("228.6");
     expect(out.rows.find((row) => row.label.includes("Number of bolts"))?.value).toBe("8");
-    expect(out.rows.find((row) => row.label.includes("hub bore"))?.value).toContain("102.260");
+    expect(out.rows.find((row) => row.label.includes("hub bore"))?.value).toContain("102.3");
     expect(out.rows.find((row) => row.label.includes("Stud bolt"))?.value).toBe("5/8 in × 90 mm");
     expect(out.rows.find((row) => row.label.includes("wrench"))?.value).toBe("1-1/16 in (27 mm)");
     expect(out.rows.find((row) => row.label.includes("Mated pair"))?.value).toContain("22.50");
@@ -304,21 +308,32 @@ describe("03 Flange Dimension (ASME B16.5)", () => {
     );
     expect(out.rows.find((row) => row.label.includes("Flange OD"))?.value).toContain("320");
     expect(out.rows.find((row) => row.label.includes("Flange thickness"))?.value).toContain("35");
-    expect(out.rows.find((row) => row.label.includes("Bolt circle"))?.value).toContain("269.900");
+    expect(out.rows.find((row) => row.label.includes("Bolt circle"))?.value).toContain("269.9");
     expect(out.rows.find((row) => row.label.includes("Number of bolts"))?.value).toBe("12");
     expect(out.rows.find((row) => row.label.includes("Stud bolt"))?.value).toBe("3/4 in × 120 mm");
     expect(out.heroBadges?.find((b) => b.label === "Bolts")?.value).toBe('12 × 3/4"');
     expectNoPoison(out);
   });
 
-  it("uses Sch 40 / STD pipe ID for WN hub bore and RF stud length by class", () => {
+  it("uses selected pipe schedule for WN hub bore and RF stud length by class", () => {
     const sch40 = calculateFlangeDimension({
       unitSystem: "metric",
       nps: "4",
       pressureClass: "150",
+      pipeSchedule: "40",
     });
-    expect(sch40.rows.find((row) => row.label.includes("hub bore"))?.value).toContain("102.260");
-    expect(sch40.rows.find((row) => row.label === "Pipe schedule")).toBeUndefined();
+    expect(sch40.rows.find((row) => row.label.includes("hub bore"))?.value).toContain("102.3");
+    expect(sch40.rows.find((row) => row.label === "Pipe schedule (hub bore)")?.value).toMatch(
+      /Sch 40|STD/,
+    );
+
+    const sch80 = calculateFlangeDimension({
+      unitSystem: "metric",
+      nps: "4",
+      pressureClass: "150",
+      pipeSchedule: "80",
+    });
+    expect(sch80.rows.find((row) => row.label.includes("hub bore"))?.value).toContain("97.2");
 
     const cl600 = calculateFlangeDimension({
       unitSystem: "metric",
@@ -328,10 +343,11 @@ describe("03 Flange Dimension (ASME B16.5)", () => {
     expect(cl600.rows.find((row) => row.label.includes("Stud bolt"))?.value).toBe("3/4 in × 115 mm");
     expect(cl600.rows.find((row) => row.label.includes("wrench"))?.value).toBe("1-1/4 in (32 mm)");
     expectNoPoison(sch40);
+    expectNoPoison(sch80);
     expectNoPoison(cl600);
   });
 
-  it("scales weight by flange type and enables RTJ ring + stud length from Class 300", () => {
+  it("scales SO by type factor; Blind uses solid-disc estimate (not 0.85×WN)", () => {
     const so = calculateFlangeDimension({
       unitSystem: "metric",
       nps: "4",
@@ -343,7 +359,23 @@ describe("03 Flange Dimension (ASME B16.5)", () => {
     expect(so.summary.find((row) => row.label === "Single flange (W_f)")?.value).toContain(
       "7.00",
     );
-    expect(so.rows.find((row) => row.label.includes("hub bore"))?.value).toContain("114.300");
+    expect(so.rows.find((row) => row.label.includes("hub bore"))?.value).toContain("114.3");
+
+    const bl = calculateFlangeDimension({
+      unitSystem: "metric",
+      nps: "10",
+      pressureClass: "600",
+      flangeType: "bl",
+    });
+    const blWf = Number(
+      bl.summary
+        .find((row) => row.label === "Single flange (W_f)")
+        ?.value.replace(/[^\d.]/g, "") ?? "0",
+    );
+    // Solid disc for 510×63.5 ≈ 102 kg; 0.85×WN(86) ≈ 73 would under-predict.
+    expect(blWf).toBeGreaterThan(86);
+    expect(blWf).toBeGreaterThan(0.85 * 86);
+    expect(bl.rows.find((row) => row.label === "W_f mass basis")?.value).toMatch(/solid-disc/i);
 
     const rtj150 = calculateFlangeDimension({
       unitSystem: "metric",
@@ -362,6 +394,8 @@ describe("03 Flange Dimension (ASME B16.5)", () => {
     expect(rtj300.rows.find((row) => row.label === "RTJ ring number")?.value).toBe("R-37");
     expect(rtj300.rows.find((row) => row.label.includes("Stud bolt"))?.value).toBe("3/4 in × 120 mm");
     expectNoPoison(so);
+    expectNoPoison(bl);
+    expectNoPoison(rtj150);
     expectNoPoison(rtj300);
   });
 
@@ -1568,6 +1602,122 @@ describe("pSEO spec routes", () => {
   });
 });
 
+describe("16 Link-Seal Penetration Sleeve", () => {
+  it("selects LS-400-C × 9 links for NPS 4 OD 114.3 / sleeve 190 mm", () => {
+    const out = calculateLinkSeal({
+      unitSystem: "metric",
+      nps: "4",
+      pipeOd: 114.3,
+      openingType: "steel_sleeve",
+      sleeveId: 190,
+      hardware: "C",
+    });
+    expect(out.heroValue).toBe("LS-400-C × 9 Links");
+    expect(out.rows.find((r) => r.label.includes("Annular clearance"))?.value).toContain(
+      "37.9",
+    );
+    expect(out.rows.find((r) => r.label === "Number of links (N)")?.value).toBe("9");
+    expect(out.rows.find((r) => r.label.includes("Pressure rating"))?.value).toMatch(
+      /0\.14 MPa/,
+    );
+    expect(out.rows.find((r) => r.label === "Ideal minimum sleeve ID")?.value).toContain(
+      "186.9",
+    );
+    expect(out.rows.find((r) => r.label.startsWith("Pitch diameter"))?.value).toContain(
+      "186.9",
+    );
+    expect(out.heroStatusLevel).toBe("pass");
+    expectNoPoison(out);
+  });
+
+  it("formats pressure rating in imperial units", () => {
+    const out = calculateLinkSeal({
+      unitSystem: "imperial",
+      nps: "4",
+      pipeOd: 4.5,
+      openingType: "steel_sleeve",
+      sleeveId: 7.48,
+      hardware: "C",
+    });
+    expect(out.rows.find((r) => r.label.includes("Pressure rating"))?.value).toMatch(
+      /20 psig/,
+    );
+    expectNoPoison(out);
+  });
+
+  it("warns when annular space is outside 12–85 mm", () => {
+    const tight = computeLinkSeal({
+      unitSystem: "metric",
+      nps: "",
+      pipeOd: 114.3,
+      openingType: "core_drilled",
+      sleeveId: 120,
+      hardware: "C",
+    });
+    expect(tight.annularClearanceMm).toBeCloseTo(2.85, 2);
+    expect(tight.outOfRange).toBe(true);
+    expect(tight.model).toBeNull();
+
+    const out = calculateLinkSeal({
+      unitSystem: "metric",
+      nps: "",
+      pipeOd: 114.3,
+      openingType: "core_drilled",
+      sleeveId: 120,
+      hardware: "S316",
+    });
+    expect(out.heroStatusLevel).toBe("fail");
+    expect(out.callouts?.some((c) => c.tone === "warn")).toBe(true);
+    expectNoPoison(out);
+  });
+
+  it("formats imperial OD/sleeve to 3 decimal inches", () => {
+    const out = calculateLinkSeal({
+      unitSystem: "imperial",
+      nps: "4",
+      pipeOd: 4.5,
+      openingType: "steel_sleeve",
+      sleeveId: 7.48,
+      hardware: "T",
+    });
+    expect(out.heroValue).toMatch(/LS-400-T/);
+    expect(out.rows.find((r) => r.label.includes("Pipe outside"))?.value).toMatch(
+      /4\.500 in/,
+    );
+    expectNoPoison(out);
+  });
+
+  it("flags oversized annulus and recommends OD-class Ideal sleeve (not LS-575)", () => {
+    const r = computeLinkSeal({
+      unitSystem: "metric",
+      nps: "1.25",
+      pipeOd: 42.16,
+      openingType: "core_drilled",
+      sleeveId: 190,
+      hardware: "T",
+    });
+    expect(r.model).toBeNull();
+    expect(r.oversizedAnnulus).toBe(true);
+    expect(r.nearestModel?.id).toBe("LS-300");
+    expect(r.recommendedSleeveIdMm).toBeCloseTo(78.2, 1);
+
+    const out = calculateLinkSeal({
+      unitSystem: "metric",
+      nps: "1.25",
+      pipeOd: 42.16,
+      openingType: "core_drilled",
+      sleeveId: 190,
+      hardware: "T",
+    });
+    expect(out.heroValue).toBe("Resize sleeve → LS-300");
+    expect(out.heroStatusLevel).toBe("fail");
+    expect(out.rows.find((row) => row.label === "Ideal minimum sleeve ID")?.value).toContain(
+      "78.2",
+    );
+    expectNoPoison(out);
+  });
+});
+
 describe("pSEO reference pages", () => {
   it("covers every published calculator with formula, table, how-to, and FAQ", async () => {
     const { getLocalPublishedCalculators } = await import(
@@ -1575,7 +1725,7 @@ describe("pSEO reference pages", () => {
     );
     const { getCalculatorSeo } = await import("../data/calculatorSeoData");
     const published = getLocalPublishedCalculators();
-    expect(published.length).toBe(15);
+    expect(published.length).toBe(16);
     for (const calculator of published) {
       const seo = getCalculatorSeo(calculator.slug);
       expect(seo, calculator.slug).toBeDefined();
