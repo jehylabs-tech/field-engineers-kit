@@ -72,10 +72,14 @@ export const CATALOG_SEO_BLURBS: Record<string, string> = {
     "ISA / IEC 60534 control-valve Cv sizing for liquid and gas service.",
   "bolt-torque-tensioning":
     "ASME PCC-1 flange joint assembly torque, stud count, and star tightening sequence.",
+  "flange-bolt-tightening-sequence":
+    "ASME PCC-1 flange bolt star/cross and circular tightening sequence generator with interactive diagram.",
   "blind-flange-thickness":
     "ASME B31.3 / VIII-1 UG-34 blind thickness t = d × √(0.3P / SE) + c.",
   "metal-weight-cost":
     "Plate, pipe, and bar metal weight and procurement cost from density and unit price.",
+  "stainless-alloy-weight-density":
+    "SS304/316, Duplex, Inconel, Hastelloy, and Titanium weight & density for plate, pipe, and bar.",
   "hydro-test-pressure":
     "ASME B31.3 St/S stress ratio & yield limit check for 1.5× hydro / 1.1× pneumatic tests.",
   "thermal-expansion-loop":

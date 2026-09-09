@@ -107,6 +107,7 @@ export default async function CalculatorPage({ params }: CalculatorPageProps) {
           slug={calculator.slug}
           title={calculator.title}
           description={calculator.meta_description ?? undefined}
+          pagePath={`/calculator/${calculator.slug}`}
         />
       </CalculatorShell>
   );

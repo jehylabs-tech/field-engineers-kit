@@ -12,6 +12,17 @@ import {
 import { syncCompanionUnits } from "@/lib/unitConverter";
 import { calculateBoltTorque } from "@/lib/calculators/engines/bolt-torque";
 import {
+  calculateBoltSequence,
+  formatSequenceArrowText,
+  generateCircularSequence,
+  generateStarSequence,
+} from "@/lib/calculators/engines/bolt-sequence";
+import {
+  calculateAlloyWeight,
+  densityGPerCm3,
+  DEFAULT_ALLOY_WEIGHT_INPUTS,
+} from "@/lib/calculators/engines/alloy-weight";
+import {
   calculateFittingValveDimension,
   DEFAULT_FITTING_VALVE_DIMENSION_INPUTS,
 } from "@/lib/calculators/engines/fitting-valve-dimension";
@@ -75,7 +86,17 @@ import {
   convertVelocity,
 } from "@/lib/units/engineering";
 import { barToPsi, psiToBar } from "@/utils/unitConverter";
-import { parseSpecToQuery, resolveSpecRoute } from "@/lib/calculators/spec-routes";
+import {
+  buildSpecPath,
+  buildSpecSeoCopy,
+  findSpecRouteForInputs,
+  listAllSpecRoutes,
+  listSpecRoutesForSlug,
+  parseSpecToQuery,
+  resolveSpecRoute,
+} from "@/lib/calculators/spec-routes";
+import { getLocalPublishedCalculators } from "@/lib/calculators/local-seed";
+import { SLUG_TO_CALCULATOR_TYPE } from "@/lib/plant-context/tags";
 
 const REL_TOL = 1e-4; // 0.01%
 
@@ -1600,6 +1621,191 @@ describe("pSEO spec routes", () => {
     expect(torque?.query.to).toBe("ft·lb");
     expect(resolveSpecRoute("unit-converter", "velocity")?.query.from).toBe("m/s");
   });
+
+  it("lists at least one SpecRoute for every published calculator", () => {
+    const slugs = getLocalPublishedCalculators().map((item) => item.slug);
+    expect(slugs.length).toBeGreaterThanOrEqual(16);
+    for (const slug of slugs) {
+      const count = listSpecRoutesForSlug(slug).length;
+      expect(count).toBeGreaterThan(0);
+    }
+  });
+
+  it("includes pipe-wall-thickness 4-inch-sch-40 with long-tail SEO copy", () => {
+    const route = resolveSpecRoute("pipe-wall-thickness", "4-inch-sch-40");
+    expect(route?.query).toMatchObject({ nps: "4", sch: "40" });
+    expect(
+      listSpecRoutesForSlug("pipe-wall-thickness").some(
+        (item) => item.spec === "4-inch-sch-40",
+      ),
+    ).toBe(true);
+    const copy = buildSpecSeoCopy(
+      "ASME B31.3 Pipe Thickness Calculator",
+      SLUG_TO_CALCULATOR_TYPE["pipe-wall-thickness"],
+      route!,
+      "Calculate minimum required pipe wall thickness per ASME B31.3.",
+    );
+    expect(copy.title).toMatch(/4 Inch Schedule 40/i);
+    expect(copy.title).toMatch(/FieldEngineersKit/);
+    expect(buildSpecPath("pipe-wall-thickness", "4-inch-sch-40")).toBe(
+      "/calculator/pipe-wall-thickness/4-inch-sch-40",
+    );
+  });
+
+  it("finds SpecRoute from UI inputs (nps + sch / class)", () => {
+    expect(
+      findSpecRouteForInputs("pipe-schedule-dimension", {
+        nps: "6",
+        sch: "80",
+      })?.spec,
+    ).toBe("6-inch-sch-80");
+    expect(
+      findSpecRouteForInputs("flange-dimension-weight", {
+        nps: "4",
+        class: "300",
+      })?.spec,
+    ).toBe("4-inch-class-300");
+    expect(
+      findSpecRouteForInputs("pipe-wall-thickness", { nps: "4" })?.spec,
+    ).toBe("4-inch-sch-40");
+  });
+
+  it("keeps total SpecRoute count within a sane SSG ceiling", () => {
+    const slugs = getLocalPublishedCalculators().map((item) => item.slug);
+    const total = listAllSpecRoutes(slugs).length;
+    expect(total).toBeGreaterThan(50);
+    expect(total).toBeLessThan(2500);
+  });
+
+  it("lists bolt sequence pSEO paths like 8-bolt-star", () => {
+    expect(parseSpecToQuery("8-bolt-star")).toMatchObject({
+      bolts: "8",
+      pattern: "star",
+    });
+    expect(
+      resolveSpecRoute("flange-bolt-tightening-sequence", "8-bolt-star")?.query,
+    ).toMatchObject({ bolts: "8", pattern: "star" });
+    expect(
+      findSpecRouteForInputs("flange-bolt-tightening-sequence", {
+        bolts: "12",
+        pattern: "circular",
+      })?.spec,
+    ).toBe("12-bolt-circular");
+    const copy = buildSpecSeoCopy(
+      "Flange Bolt Tightening Sequence & Star Pattern Generator",
+      "bolt-sequence",
+      resolveSpecRoute("flange-bolt-tightening-sequence", "8-bolt-star")!,
+    );
+    expect(copy.title).toMatch(/8-Bolt Star/i);
+  });
+});
+
+describe("bolt tightening sequence engine", () => {
+  it("matches known 4 / 8 / 12 / 16 star patterns", () => {
+    expect(generateStarSequence(4)).toEqual([1, 3, 2, 4]);
+    expect(generateStarSequence(8)).toEqual([1, 5, 3, 7, 2, 6, 4, 8]);
+    expect(generateStarSequence(12)).toEqual([
+      1, 7, 4, 10, 2, 8, 5, 11, 3, 9, 6, 12,
+    ]);
+    expect(generateStarSequence(16)).toEqual([
+      1, 9, 5, 13, 3, 11, 7, 15, 2, 10, 6, 14, 4, 12, 8, 16,
+    ]);
+    expect(generateStarSequence(20)).toEqual([
+      1, 11, 6, 16, 2, 12, 7, 17, 3, 13, 8, 18, 4, 14, 9, 19, 5, 15, 10, 20,
+    ]);
+    expect(generateStarSequence(24)).toEqual([
+      1, 13, 7, 19, 4, 16, 10, 22, 2, 14, 8, 20, 5, 17, 11, 23, 3, 15, 9, 21, 6,
+      18, 12, 24,
+    ]);
+    expect(generateStarSequence(64)).toHaveLength(64);
+    expect(new Set(generateStarSequence(64)).size).toBe(64);
+  });
+
+  it("builds circular 1…N and calculator hero text", () => {
+    expect(generateCircularSequence(8)).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
+    const out = calculateBoltSequence({
+      boltCount: 8,
+      pattern: "star",
+      nps: "",
+      pressureClass: "",
+      targetTorqueNm: 0,
+    });
+    expect(out.heroValue).toBe(
+      formatSequenceArrowText([1, 5, 3, 7, 2, 6, 4, 8]),
+    );
+    expect(out.heroStatusLevel).toBe("pass");
+  });
+
+  it("fills bolt count from B16.5 joint helper", () => {
+    const out = calculateBoltSequence({
+      boltCount: 8,
+      pattern: "star",
+      nps: "6",
+      pressureClass: "300",
+      targetTorqueNm: 0,
+    });
+    expect(out.summary.some((row) => row.value.includes("12 bolts"))).toBe(
+      true,
+    );
+  });
+
+  it("screens Round 1–4 wrench values when target T is set", () => {
+    const out = calculateBoltSequence(
+      {
+        boltCount: 8,
+        pattern: "star",
+        nps: "",
+        pressureClass: "",
+        targetTorqueNm: 100,
+      },
+      "metric",
+    );
+    expect(out.rows.find((r) => r.label === "Round 1")?.value).toContain(
+      "30 N·m",
+    );
+    expect(out.rows.find((r) => r.label === "Round 2")?.value).toContain(
+      "60 N·m",
+    );
+  });
+});
+
+describe("alloy weight & density engine", () => {
+  it("uses SS304 7.93 vs SS316 8.00 g/cm³", () => {
+    expect(densityGPerCm3(7930)).toBeCloseTo(7.93, 2);
+    expect(densityGPerCm3(8000)).toBeCloseTo(8.0, 2);
+  });
+
+  it("weighs a 1 m × 1 m × 10 mm SS316 plate near 80 kg", () => {
+    const out = calculateAlloyWeight({
+      ...DEFAULT_ALLOY_WEIGHT_INPUTS,
+      material: "ss316",
+      shape: "plate",
+      length: 1000,
+      width: 1000,
+      thickness: 10,
+      quantity: 1,
+      unitSystem: "metric",
+    });
+    expect(out.heroValue).toMatch(/80\.00 kg/);
+    expect(out.callouts?.[0]?.body).toMatch(/SS304/);
+  });
+
+  it("lists ss316 pSEO path for stainless-alloy-weight-density", () => {
+    expect(
+      resolveSpecRoute("stainless-alloy-weight-density", "ss316")?.query
+        .material,
+    ).toBe("ss316");
+    expect(
+      findSpecRouteForInputs("stainless-alloy-weight-density", {
+        material: "inconel-625",
+      })?.spec,
+    ).toBe("inconel-625");
+    expect(
+      findSpecRouteForInputs("stainless-alloy-weight-density", {
+        material: "super-duplex-2507",
+      })?.spec,
+    ).toBe("super-duplex-2507");
+  });
 });
 
 describe("16 Link-Seal Penetration Sleeve", () => {
@@ -1725,7 +1931,7 @@ describe("pSEO reference pages", () => {
     );
     const { getCalculatorSeo } = await import("../data/calculatorSeoData");
     const published = getLocalPublishedCalculators();
-    expect(published.length).toBe(16);
+    expect(published.length).toBe(18);
     for (const calculator of published) {
       const seo = getCalculatorSeo(calculator.slug);
       expect(seo, calculator.slug).toBeDefined();

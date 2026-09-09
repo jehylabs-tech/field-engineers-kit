@@ -14,11 +14,13 @@ export const CALCULATOR_TYPE_SLUG: Record<CalculatorType, string> = {
   "fitting-valve-dimension": "fitting-valve-dimension",
   "butt-weld-fitting": "butt-weld-fitting-dimension",
   "bolt-torque": "bolt-torque-tensioning",
+  "bolt-sequence": "flange-bolt-tightening-sequence",
   "gasket-dimension": "gasket-dimension-selection",
   "hydro-test": "hydro-test-pressure",
   "blind-flange": "blind-flange-thickness",
   "valve-cv": "valve-cv-sizing",
   "metal-weight": "metal-weight-cost",
+  "alloy-weight": "stainless-alloy-weight-density",
   "thermal-expansion": "thermal-expansion-loop",
   "pressure-drop": "pressure-drop-friction",
   "flow-velocity": "flow-velocity-erosion",
@@ -62,6 +64,10 @@ export const CALCULATOR_PLANT_TAGS: Record<CalculatorType, CalculatorPlantTags> 
       consumes: ["size", "class_rating"],
       produces: ["size", "class_rating"],
     },
+    "bolt-sequence": {
+      consumes: ["size", "class_rating"],
+      produces: ["size", "class_rating"],
+    },
     "gasket-dimension": {
       consumes: ["size", "class_rating"],
       produces: ["size", "class_rating"],
@@ -81,6 +87,10 @@ export const CALCULATOR_PLANT_TAGS: Record<CalculatorType, CalculatorPlantTags> 
     "metal-weight": {
       consumes: ["size", "schedule", "material"],
       produces: ["size", "schedule", "material"],
+    },
+    "alloy-weight": {
+      consumes: ["material"],
+      produces: ["material"],
     },
     "thermal-expansion": {
       consumes: ["size", "material", "temperature"],

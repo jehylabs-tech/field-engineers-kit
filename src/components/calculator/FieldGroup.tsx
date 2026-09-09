@@ -11,7 +11,7 @@ export const FIELD_SELECT_CLASS =
   "h-10 min-h-10 w-full min-w-0 rounded-lg border border-slate-300 bg-white px-2.5 font-mono text-sm text-slate-900 outline-none focus:border-spec-accent focus:ring-2 focus:ring-spec-accent dark:border-slate-600 dark:bg-spec-bg dark:text-spec-text";
 
 const UNIT_GUTTER_CLASS =
-  "box-border h-10 min-h-10 w-full min-w-0 appearance-none rounded-lg border border-slate-300 bg-white px-2.5 text-center text-sm leading-10 text-slate-600 dark:border-slate-600 dark:bg-spec-bg dark:text-spec-text2";
+  "box-border flex h-10 min-h-10 w-full min-w-0 appearance-none items-center justify-center rounded-lg border border-slate-300 bg-white px-2.5 text-center text-sm text-slate-600 dark:border-slate-600 dark:bg-spec-bg dark:text-spec-text2";
 
 const FIELD_WRAP =
   "calc-field mb-0 w-full max-w-[300px] min-w-0";

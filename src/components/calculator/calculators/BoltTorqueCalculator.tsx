@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState, type ReactNode } from "react";
+import BoltCircleDiagram from "@/components/calculator/BoltCircleDiagram";
 import CalculatorBaseLayout from "@/components/calculator/CalculatorBaseLayout";
 import CopyValueButton from "@/components/calculator/CopyValueButton";
 import ExportButtons from "@/components/calculator/ExportButtons";
@@ -65,69 +66,6 @@ function SelectField({
       onChange={onChange}
       hint={fieldLabelHint(label)}
     />
-  );
-}
-
-function StarPatternDiagram({ boltCount }: { boltCount: number }) {
-  const boltR =
-    boltCount <= 8 ? 9 : boltCount <= 12 ? 7.5 : boltCount <= 16 ? 6.5 : 5.5;
-  const fontSize =
-    boltCount <= 8 ? 9 : boltCount <= 12 ? 7.5 : boltCount <= 16 ? 6.5 : 5.5;
-  // Keep bolt discs fully inside the viewBox (center 50 + ringR + boltR + stroke).
-  const strokePad = 2;
-  const ringR = 50 - boltR - strokePad;
-  const guideR = Math.min(44, ringR + boltR * 0.35);
-  const positions = Array.from({ length: boltCount }, (_, index) => {
-    const angle = (index / boltCount) * 2 * Math.PI - Math.PI / 2;
-    return {
-      number: index + 1,
-      x: 50 + ringR * Math.cos(angle),
-      y: 50 + ringR * Math.sin(angle),
-    };
-  });
-
-  return (
-    <div className="rounded-md border border-spec-border bg-spec-panel p-3">
-      <p className="mb-2 text-sm font-medium text-spec-text2">
-        Bolt numbering (clockwise from top)
-      </p>
-      <svg
-        viewBox="0 0 100 100"
-        className="mx-auto h-52 w-52 max-w-full overflow-visible sm:h-56 sm:w-56"
-      >
-        <circle
-          cx="50"
-          cy="50"
-          r={guideR}
-          fill="none"
-          stroke="#DDE1E6"
-          strokeWidth="1.8"
-        />
-        {positions.map((bolt) => (
-          <g key={bolt.number}>
-            <circle
-              cx={bolt.x}
-              cy={bolt.y}
-              r={boltR}
-              fill="#EEF2FF"
-              stroke="#3D5AFE"
-              strokeWidth="1.4"
-            />
-            <text
-              x={bolt.x}
-              y={bolt.y + fontSize * 0.35}
-              textAnchor="middle"
-              fontSize={fontSize}
-              fontWeight="600"
-              fill="#1A1D21"
-              fontFamily="ui-monospace, monospace"
-            >
-              {bolt.number}
-            </text>
-          </g>
-        ))}
-      </svg>
-    </div>
   );
 }
 
@@ -311,7 +249,7 @@ function BoltTorqueResultTabs({
         return (
           <div className="space-y-2.5">
             {boltCount && boltCount > 0 ? (
-              <StarPatternDiagram boltCount={boltCount} />
+              <BoltCircleDiagram boltCount={boltCount} />
             ) : (
               <p className="text-sm text-spec-text3">
                 Select NPS and class to view the star tightening pattern.

@@ -12,6 +12,10 @@ import {
   parsePlantContextFromSearchParams,
   writePlantContextToSearchParams,
 } from "@/lib/plant-context";
+import {
+  buildSpecPath,
+  findSpecRouteForInputs,
+} from "@/lib/calculators/spec-routes";
 import { syncCompanionUnits } from "@/lib/unitConverter";
 import { readPreferredUnitSystem } from "@/lib/units/preferred-system";
 
@@ -39,6 +43,64 @@ function applyUnitSystemChange<T extends Record<string, unknown>>(
   return syncCompanionUnits(current, nextSystem);
 }
 
+/** `/calculator/:slug` or `/calculator/:slug/:spec` (also legacy `/calculation/...`). */
+function parseCalculatorPath(pathname: string): {
+  base: "calculator" | "calculation" | null;
+  slug: string | null;
+  spec: string | null;
+} {
+  const parts = pathname.split("/").filter(Boolean);
+  if (parts.length < 2) {
+    return { base: null, slug: null, spec: null };
+  }
+  if (parts[0] !== "calculator" && parts[0] !== "calculation") {
+    return { base: null, slug: null, spec: null };
+  }
+  return {
+    base: parts[0] as "calculator" | "calculation",
+    slug: parts[1] ?? null,
+    spec: parts[2] ?? null,
+  };
+}
+
+function partialQueryFromInputs<T extends Record<string, unknown>>(
+  inputs: T,
+  config: ParamConfig<T>,
+): Record<string, string> {
+  const partial: Record<string, string> = {};
+  for (const key of Object.keys(config) as Array<keyof T>) {
+    const { param, serialize } = config[key];
+    const serialized = serialize(inputs[key]);
+    if (serialized !== "" && serialized != null) {
+      partial[param] = serialized;
+    }
+  }
+  // Normalize schedule aliases for SpecRoute matching.
+  if (partial.schedule && !partial.sch) {
+    partial.sch = partial.schedule.replace(/^Sch\s+/i, "");
+  }
+  if (partial.category && !partial.cat) {
+    partial.cat = partial.category;
+  }
+  return partial;
+}
+
+/** Query keys that belong on the path (not carried as ?state when path syncing). */
+const PATH_OWNED_PARAMS = new Set([
+  "nps",
+  "sch",
+  "schedule",
+  "class",
+  "class_rating",
+  "fluid",
+  "material",
+  "cat",
+  "category",
+  "size",
+  "bolts",
+  "pattern",
+]);
+
 export function useCalculatorUrlSync<T extends Record<string, unknown>>(
   defaults: T,
   config: ParamConfig<T>,
@@ -50,8 +112,6 @@ export function useCalculatorUrlSync<T extends Record<string, unknown>>(
   const defaultsRef = useRef(defaults);
   const { showToast } = useToast();
   const carryOver = useCarryOver();
-  // Always start from defaults so SSR and the first client paint match.
-  // Preferred units / URL are applied in useEffect after hydration (see below).
   const [inputs, setInputs] = useState<T>(defaults);
   const hasHydratedFromUrl = useRef(false);
 
@@ -83,10 +143,6 @@ export function useCalculatorUrlSync<T extends Record<string, unknown>>(
       next[key] = deserialize(raw, defaultsRef.current[key]);
     }
 
-    // Prefer explicit ?units=, else localStorage preference.
-    // Defaults are stored in the default unitSystem (usually metric). When the
-    // preferred system differs, convert fields that still hold default values.
-    // Fields present in the URL are already in the preferred system.
     if ("unitSystem" in next) {
       const fromUrl = source.get("units");
       const preferred =
@@ -132,7 +188,6 @@ export function useCalculatorUrlSync<T extends Record<string, unknown>>(
     }
   }, [carryOver, readFromUrl, searchParams, showToast]);
 
-  // Global navbar / SpecHeader unit toggle → convert inputs + labels together.
   useEffect(() => {
     function onUnits(event: Event) {
       const detail = (event as CustomEvent<string>).detail;
@@ -144,7 +199,6 @@ export function useCalculatorUrlSync<T extends Record<string, unknown>>(
     return () => window.removeEventListener("fek-units-change", onUnits);
   }, []);
 
-  // When SpecHeader rewrites ?units= after hydration, sync companion fields too.
   useEffect(() => {
     if (!hasHydratedFromUrl.current) return;
     if (!("unitSystem" in defaultsRef.current)) return;
@@ -179,6 +233,37 @@ export function useCalculatorUrlSync<T extends Record<string, unknown>>(
         continue;
       }
       params.set(param, serialized);
+    }
+
+    const pathInfo = parseCalculatorPath(pathname);
+    const partial = partialQueryFromInputs(inputs, config);
+    const matched =
+      pathInfo.slug != null
+        ? findSpecRouteForInputs(pathInfo.slug, partial)
+        : undefined;
+
+    // Prefer clean programmatic path when a SpecRoute matches (including
+    // first navigation from /calculator/:slug with no [spec] segment).
+    if (
+      pathInfo.base === "calculator" &&
+      pathInfo.slug &&
+      matched &&
+      matched.spec !== (pathInfo.spec ?? "")
+    ) {
+      const nextPath = buildSpecPath(pathInfo.slug, matched.spec);
+      const keep = new URLSearchParams();
+      params.forEach((value, key) => {
+        if (!PATH_OWNED_PARAMS.has(key)) {
+          keep.set(key, value);
+        }
+      });
+      // Drop SEO keys already encoded in the path; keep units / plant extras.
+      for (const key of PATH_OWNED_PARAMS) {
+        keep.delete(key);
+      }
+      const qs = keep.toString();
+      router.replace(qs ? `${nextPath}?${qs}` : nextPath, { scroll: false });
+      return;
     }
 
     const nextQuery = params.toString();

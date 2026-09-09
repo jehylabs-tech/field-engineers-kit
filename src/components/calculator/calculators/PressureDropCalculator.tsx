@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import PressureDropChart from "@/components/calculator/charts/PressureDropChart";
 import CalculatorBaseLayout from "@/components/calculator/CalculatorBaseLayout";
 import FieldGroup, { FieldSelect } from "@/components/calculator/FieldGroup";
 import { usePublishCalculatorOutput } from "@/components/calculator/usePublishCalculatorOutput";
@@ -65,7 +64,6 @@ export default function PressureDropCalculator({ title, standard }: Props) {
         { label: "Length (L)", value: `${inputs.length} ${lengthUnit}` },
         { label: "Roughness (ε)", value: `${inputs.roughness} mm` },
       ]}
-      chart={<PressureDropChart inputs={inputs} />}
       inputPanel={
         <div className="flex w-full min-w-0 flex-col gap-2.5 [&_.calc-field]:mb-0 [&_.calc-field]:max-w-none">
           {/* Under 1. Input Parameters — no duplicate top-level section number */}

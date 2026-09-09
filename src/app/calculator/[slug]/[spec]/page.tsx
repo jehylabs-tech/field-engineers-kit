@@ -2,15 +2,18 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import CalculatorSeoContent from "@/components/calculator/CalculatorSeoContent";
 import CalculatorShell from "@/components/calculator/CalculatorShell";
+import SpecProgrammaticPanel from "@/components/calculator/SpecProgrammaticPanel";
 import { getLocalPublishedCalculators } from "@/lib/calculators/local-seed";
 import {
   getPublishedCalculatorBySlug,
   getPublishedCalculators,
 } from "@/lib/calculators/queries";
 import {
+  buildSpecSeoCopy,
   listAllSpecRoutes,
   resolveSpecRoute,
 } from "@/lib/calculators/spec-routes";
+import { SLUG_TO_CALCULATOR_TYPE } from "@/lib/plant-context/tags";
 import { canonicalUrl } from "@/lib/site";
 
 type SpecPageProps = {
@@ -44,22 +47,23 @@ export async function generateMetadata({
     };
   }
 
-  // searchParams intentionally unused — strip state query params for the indexable URL
+  const copy = buildSpecSeoCopy(
+    calculator.title,
+    SLUG_TO_CALCULATOR_TYPE[slug],
+    specRoute,
+    calculator.meta_description,
+  );
   const canonical = canonicalUrl(
     `/calculator/${calculator.slug}/${specRoute.spec}`,
   );
-  const title = `${specRoute.label} ${calculator.title} | ASME & API Calculations`;
-  const description =
-    calculator.meta_description ??
-    `${specRoute.label} calculation & reference data for ${calculator.title}. Verified ASME/API engineering formulas.`;
 
   return {
-    title,
-    description,
+    title: copy.title,
+    description: copy.description,
     alternates: { canonical },
     openGraph: {
-      title,
-      description,
+      title: copy.title,
+      description: copy.description,
       url: canonical,
       type: "website",
       siteName: "FieldEngineersKit",
@@ -68,14 +72,14 @@ export async function generateMetadata({
           url: "/opengraph-image",
           width: 1200,
           height: 630,
-          alt: title,
+          alt: copy.title,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title,
-      description,
+      title: copy.title,
+      description: copy.description,
       images: ["/opengraph-image"],
     },
   };
@@ -92,17 +96,28 @@ export default async function CalculatorSpecPage({ params }: SpecPageProps) {
     notFound();
   }
 
+  const copy = buildSpecSeoCopy(
+    calculator.title,
+    SLUG_TO_CALCULATOR_TYPE[params.slug],
+    specRoute,
+    calculator.meta_description,
+  );
+
   return (
     <CalculatorShell
       calculator={calculator}
       allCalculators={allCalculators}
       specSeed={specRoute.query}
       specLabel={specRoute.label}
+      pageHeading={copy.h1}
     >
+      <SpecProgrammaticPanel h2={copy.h2} route={specRoute} />
       <CalculatorSeoContent
         slug={calculator.slug}
-        title={`${specRoute.label} · ${calculator.title}`}
-        description={calculator.meta_description ?? undefined}
+        title={copy.h1}
+        description={copy.description}
+        spec={specRoute.spec}
+        pagePath={`/calculator/${calculator.slug}/${specRoute.spec}`}
       />
     </CalculatorShell>
   );

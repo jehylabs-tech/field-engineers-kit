@@ -12,6 +12,8 @@ export type ThicknessGaugeBarProps = {
   caption?: string;
   captionInfo?: string;
   markerLabel?: string;
+  /** Label for the right-end scale value (default t_actual). */
+  scaleEndLabel?: string;
 };
 
 /** Match formatPipeThickness: imperial 3 dp; metric 2 dp (≥1) / 3 dp (<1). */
@@ -35,6 +37,7 @@ export default function ThicknessGaugeBar({
   caption,
   captionInfo,
   markerLabel = "t_min",
+  scaleEndLabel = "t_actual",
 }: ThicknessGaugeBarProps) {
   const isPass = tActual >= tMin;
   const markerPosition =
@@ -63,13 +66,13 @@ export default function ThicknessGaugeBar({
         <div
           className="relative h-3.5 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700"
           role="img"
-          aria-label={`${markerLabel} ${tMinText}, t_actual ${tActualText}, ${isPass ? "pass" : "fail"}`}
+          aria-label={`${markerLabel} ${tMinText}, ${scaleEndLabel} ${tActualText}, ${isPass ? "pass" : "fail"}`}
         >
           <div className={`h-full w-full rounded-full ${fillClass}`} />
         </div>
 
         <p className="pointer-events-none absolute right-0 bottom-0 m-0 font-mono text-[10px] font-semibold text-slate-600 dark:text-slate-400">
-          t_actual: {tActualText}
+          {scaleEndLabel}: {tActualText}
         </p>
       </div>
 

@@ -1,0 +1,220 @@
+---
+title: "ASME PCC-1 Flange Bolt Tightening Sequence & Torque Guide: Star Pattern & Pass Protocols"
+description: "Master ASME PCC-1 flange bolt tightening sequences, star patterns, torque pass steps, and nut factor friction equations for leak-free flanged joint assemblies."
+date: "2026-09-09"
+category: "Piping Engineering"
+tags:
+  - ASME PCC-1
+  - Flange Bolting
+  - Bolt Torque
+  - Star Pattern
+  - Flange Leakage
+relatedCalculatorUrl: "/calculator/flange-bolt-tightening-sequence"
+relatedCalculatorName: "Flange Bolt Tightening Sequence Generator"
+---
+
+Improper bolt tightening is a leading root cause of bolted flange joint assembly (BFJA) leaks in hydrocarbon, steam, and chemical service. A target wrench reading alone is not enough: **ASME PCC-1** (*Guidelines for Pressure Boundary Bolted Flange Joint Assembly*) requires controlled **tightening sequences** and incremental **torque passes** so gasket seating stress builds uniformly around the bolt circle.
+
+When nuts are run down in simple circumferential order (1-2-3-4…), elastic interaction unloads neighboring studs, cocking the flange faces and leaving leak paths at the gasket. Field crews therefore use **cross-pattern (star) sequences** for the early passes and a final **circular (round-robin)** pass at full target torque.
+
+Generate numbered star diagrams and Round 1–4 sequences with the interactive [Flange Bolt Tightening Sequence Generator](/calculator/flange-bolt-tightening-sequence). For B16.5 stud count and PCC-1-style screening torque, pair it with the [Bolt Torque & Tensioning Calculator](/calculator/bolt-torque-tensioning).
+
+<Callout title="Screening vs. project appendix" variant="info">
+This guide and the linked FEK tools are **field screening aids**. Owner PCC-1 appendices, calibrated wrench certificates, and gasket OEM seating data govern critical joints. FEK Round fractions are **30% / 60% / 100% / circular 100%** (aligned with the in-app Bolt Torque tool). ASME PCC-1 also discusses banded targets such as 20–30% and 50–60% — follow the site procedure when it differs.
+</Callout>
+
+## Quick Summary (TL;DR)
+
+| Item | Field takeaway |
+| :--- | :--- |
+| **Why star pattern?** | Opposite-bolt order limits flange tilt and uneven gasket crush from elastic interaction. |
+| **Numbering** | Bolt **#1 at top (12 o’clock)**; remaining bolts increase **clockwise**. |
+| **8-bolt star** | `1 → 5 → 3 → 7 → 2 → 6 → 4 → 8` |
+| **12-bolt star** | `1 → 7 → 4 → 10 → 2 → 8 → 5 → 11 → 3 → 9 → 6 → 12` |
+| **FEK / PCC-1 passes** | R1 **30%** star → R2 **60%** star → R3 **100%** star → R4 **100%** circular |
+| **Torque screen** | $T = K \cdot D \cdot F$ with $F = \sigma_b \cdot A_s$; $K$ rises sharply if threads are dry. |
+| **B16.5 geometry** | NPS × class sets **stud count and size** (e.g. 8″ Cl 300 → 12 × ⅞″). |
+
+---
+
+## 1. Core Engineering Formulas & Parameter Definitions
+
+### 1.1 Assembly torque and preload
+
+Short-form friction relation between applied nut torque $T$ and target bolt preload $F$:
+
+$$
+T = K \cdot D \cdot F
+$$
+
+$$
+F = \sigma_b \cdot A_s
+$$
+
+$K$ (nut factor) folds thread friction and nut-face friction into one empirical coefficient. Lubricant choice dominates $K$ more than most field crews expect.
+
+### 1.2 Tensile stress area $A_s$ (Unified inch threads)
+
+For UNC / 8-UN series per ASME B1.1:
+
+$$
+A_s = \frac{\pi}{4}\left(D - \frac{0.9743}{n}\right)^2
+$$
+
+where $D$ is nominal major diameter (in) and $n$ is threads per inch.
+
+### 1.3 Incremental pass protocol (FEK screening)
+
+| Round | Target fraction of $T$ | Pattern |
+| :---: | :---: | :--- |
+| **1** | **30%** | Star / cross |
+| **2** | **60%** | Star / cross |
+| **3** | **100%** | Star / cross |
+| **4** | **100%** | Circular clockwise until nuts stop rotating |
+
+Hand-snug and flange alignment come **before** Round 1. Do not jump straight to 100% on large joints.
+
+### Parameter definitions
+
+| Parameter | Symbol | Unit | Description |
+| :--- | :---: | :---: | :--- |
+| Applied bolt torque | $T$ | N·m, ft·lbf | Wrench / hydraulic torque applied to the nut |
+| Nut factor | $K$ | — | Empirical friction factor (≈ 0.11–0.20 typical) |
+| Nominal stud diameter | $D$ | mm, in | Major diameter (e.g. ⅞″) |
+| Target preload | $F$ | kN, lbf | Axial clamping force in the stud |
+| Target bolt stress | $\sigma_b$ | MPa, ksi | Assembly stress (often ~40–70% of $S_y$ — project specific) |
+| Tensile stress area | $A_s$ | mm², in² | Effective threaded area |
+| Thread count | $n$ | tpi | Threads per inch |
+
+---
+
+## 2. Nut Factor ($K$) & B16.5 Bolt Circles
+
+### 2.1 Typical $K$ by lubricant (screening)
+
+| Surface condition | Typical $K$ range | FEK Bolt Torque preset |
+| :--- | :---: | :--- |
+| Moly anti-seize (well lubricated) | 0.12 – 0.14 | **K = 0.13** (table baseline) |
+| PTFE / coated fasteners | ≈ 0.11 | **K = 0.11** |
+| Dry / lightly oiled steel | 0.18 – 0.22 | **K = 0.20** |
+| Heavy corrosion / untreated galvanizing | ≥ 0.25 | Outside normal presets — stop and remediate |
+
+Applying a **moly table torque to dry threads under-loads** the gasket. Raising $K$ at fixed $T$ cuts preload roughly as $1/K$.
+
+### 2.2 ASME B16.5 example — NPS 8 Class 300
+
+From the FEK B16.5 / PCC-1 joint table (WN RF screening row):
+
+| Item | Value |
+| :--- | :--- |
+| NPS × class | **8″ Class 300** |
+| Stud count × size | **12 × ⅞″ (M22)** |
+| FEK moly screening $T$ ($K_{\text{ref}}=0.13$, A193 B7) | **350 ft·lbf (475 N·m)** |
+| Star sequence | `1 → 7 → 4 → 10 → 2 → 8 → 5 → 11 → 3 → 9 → 6 → 12` |
+
+The worked example below uses **first-principles** $T = K\cdot D\cdot F$ at $K=0.14$ and $\sigma_b=45\text{ ksi}$. That educational target (**≈ 212 ft·lbf**) is **not** the same as the FEK moly table value (350 ft·lbf). Always reconcile project appendix, gasket seating, and tool calibration before wrenching.
+
+---
+
+## 3. Standard Star Sequences
+
+Bolts are numbered **1…N clockwise from the top**. Legacy PCC-1 cross-pattern builds groups of four: start → opposite ($+N/2$) → quarter ($+N/4$) → three-quarter.
+
+### 3.1 Eight-bolt star (common Class 150 joints)
+
+| Order | Bolts | Role |
+| :---: | :--- | :--- |
+| 1–2 | 1 → 5 | First diameter |
+| 3–4 | 3 → 7 | Cross diameter |
+| 5–6 | 2 → 6 | Second diameter |
+| 7–8 | 4 → 8 | Closing cross |
+| Final | 1→2→…→8 | Round 4 circular at 100% |
+
+### 3.2 Twelve-bolt star (e.g. 8″ Class 300)
+
+Full FEK / PCC-1-style order:
+
+$$
+1 \rightarrow 7 \rightarrow 4 \rightarrow 10 \rightarrow 2 \rightarrow 8 \rightarrow 5 \rightarrow 11 \rightarrow 3 \rightarrow 9 \rightarrow 6 \rightarrow 12
+$$
+
+Use the [Sequence Generator](/calculator/flange-bolt-tightening-sequence/12-bolt-star) to step through each bolt on a live diagram.
+
+---
+
+## 4. Step-by-Step Worked Example
+
+### Field scenario
+
+Offshore turnaround crew seating a spiral-wound gasket on an **ASME B16.5 8″ Class 300** flange with **ASTM A193 B7** studs and high-grade anti-seize on threads and nut faces.
+
+| Input | Value |
+| :--- | :--- |
+| Flange | 8″ Class 300 (12 studs × ⅞″-9 UNC) |
+| $D$ | 0.875 in |
+| $n$ | 9 tpi |
+| Target $\sigma_b$ | 45,000 psi (~50% of B7 $S_y$ screening assumption) |
+| Nut factor $K$ | 0.14 |
+
+### Step 1 — Tensile stress area
+
+$$
+A_s = \frac{\pi}{4}\left(0.875 - \frac{0.9743}{9}\right)^2
+= \frac{\pi}{4}\left(0.875 - 0.10826\right)^2
+= 0.4617\ \text{in}^2
+$$
+
+### Step 2 — Target preload
+
+$$
+F = \sigma_b \cdot A_s = 45{,}000 \times 0.4617 = 20{,}776.5\ \text{lbf}
+$$
+
+### Step 3 — Target torque
+
+$$
+T = K \cdot D \cdot F = 0.14 \times 0.875 \times 20{,}776.5 = 2{,}545\ \text{in·lbf}
+$$
+
+$$
+T = \frac{2{,}545}{12} = 212\ \text{ft·lbf}\ \approx 288\ \text{N·m}
+$$
+
+### Step 4 — FEK-aligned pass schedule (12-bolt star)
+
+| Round | Pattern | Torque |
+| :---: | :--- | ---: |
+| **1** | Star `1-7-4-10-2-8-5-11-3-9-6-12` | **64 ft·lbf** (30%) |
+| **2** | Same star | **127 ft·lbf** (60%) |
+| **3** | Same star | **212 ft·lbf** (100%) |
+| **4** | Circular `1-2-…-12` | **212 ft·lbf** until nuts stop |
+
+<Callout title="Try the live tools" variant="tip">
+Open the [Flange Bolt Tightening Sequence Generator](/calculator/flange-bolt-tightening-sequence/12-bolt-star) for the visual star diagram and optional Round 1–4 wrench values from a target $T$. Use [Bolt Torque & Tensioning](/calculator/bolt-torque-tensioning) for B16.5 stud lookup and moly-table screening torque with $K$ / grade rescale.
+</Callout>
+
+---
+
+## 5. Frequently Asked Questions
+
+### Why does ASME PCC-1 require a final circular (round-robin) pass?
+
+Star passes build clamp load while limiting flange distortion, but **elastic interaction** still relaxes neighbors as each stud is tightened. The final **clockwise 100% pass** equalizes residual nut rotation so every stud ends near the same preload before hydrotest or startup.
+
+### What happens if the same torque is applied to dry threads?
+
+Raising $K$ from 0.14 to 0.20 at fixed $T = 2{,}545\ \text{in·lbf}$:
+
+$$
+F_{\text{dry}} = \frac{T}{K D} = \frac{2{,}545}{0.20 \times 0.875} \approx 14{,}540\ \text{lbf}
+$$
+
+That is roughly a **30% loss of clamp force** versus the lubricated case ($F \approx 20{,}780\ \text{lbf}$). Under-loaded spiral-wound joints are a classic hydrotest leak or blowout risk.
+
+### What is ASME PCC-1 Alternative Pattern #1?
+
+**Alternative Pattern #1** is a modern assembly option for **large bolt circles** (often ≥ 20 bolts / large NPS) or multi-tool setups. Instead of every move jumping across the flange, studs are grouped (quadrants / simultaneous tools) to cut walk time while still controlling gasket stress. Legacy star/cross remains the default teaching pattern for common 4–16 bolt B16.5 joints and is what FEK diagrams generate.
+
+### How do FEK Round percentages relate to PCC-1 “20–30% / 50–60%” wording?
+
+PCC-1 discusses **banded** early-pass targets. FEK’s Sequence and Bolt Torque tools standardize on **30% / 60% / 100% / circular 100%** for consistent screening and export sheets. If the owner appendix specifies 20–30% and 50–60%, use those fractions on the same star order — do not mix two different pass plans on one joint.

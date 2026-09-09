@@ -57,23 +57,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const allSpecs = listAllSpecRoutes(slugs);
 
-  const specRoutes: MetadataRoute.Sitemap = allSpecs.map(
-    (route) => ({
-      url: canonicalUrl(`/calculator/${route.slug}/${route.spec}`),
-      lastModified: nowIso,
-      changeFrequency: "weekly" as const,
-      priority: 0.7,
-    }),
-  );
-
-  const calculationRoutes: MetadataRoute.Sitemap = allSpecs.map(
-    (route) => ({
-      url: canonicalUrl(`/calculation/${route.slug}/${route.spec}`),
-      lastModified: nowIso,
-      changeFrequency: "weekly" as const,
-      priority: 0.7,
-    }),
-  );
+  const specRoutes: MetadataRoute.Sitemap = allSpecs.map((route) => ({
+    url: canonicalUrl(`/calculator/${route.slug}/${route.spec}`),
+    lastModified: nowIso,
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
+  }));
 
   const blogRoutes: MetadataRoute.Sitemap = [
     ...getAllPosts().map((post) => ({
@@ -91,6 +80,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...blogRoutes,
     ...calculatorRoutes,
     ...specRoutes,
-    ...calculationRoutes,
   ];
 }

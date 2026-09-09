@@ -141,26 +141,6 @@ export const WORKSTATION_DOMAINS: WorkstationDomain[] = [
         href: "/calculator/flow-velocity-erosion",
         keywords: ["velocity", "erosion", "api 14e"],
       },
-      {
-        id: "link-seal-penetration-sleeve",
-        title: "Link-Seal & Penetration Sleeve",
-        seoLabel:
-          "Link-Seal Modular Seal Sizing Calculator — Annular Clearance, Model & Link Count",
-        standard: "GPT Link-Seal",
-        href: buildCalculatorHref("link-seal-penetration-sleeve", {
-          size: DEMO.size,
-        }),
-        keywords: [
-          "link seal",
-          "link-seal",
-          "penetration",
-          "sleeve",
-          "modular seal",
-          "annular",
-          "wall sleeve",
-          "century-line",
-        ],
-      },
     ],
   },
   {
@@ -187,6 +167,15 @@ export const WORKSTATION_DOMAINS: WorkstationDomain[] = [
           class_rating: DEMO.class_rating,
         }),
         keywords: ["torque", "pcc-1", "stud", "tension"],
+      },
+      {
+        id: "flange-bolt-tightening-sequence",
+        title: "Bolt Tightening Sequence",
+        seoLabel:
+          "Flange Bolt Tightening Sequence & Star Pattern Generator (ASME PCC-1)",
+        standard: "PCC-1",
+        href: "/calculator/flange-bolt-tightening-sequence/8-bolt-star",
+        keywords: ["star pattern", "bolt sequence", "pcc-1", "8 bolt"],
       },
       {
         id: "blind-flange-thickness",
@@ -306,6 +295,23 @@ export const WORKSTATION_DOMAINS: WorkstationDomain[] = [
           material: DEMO.material,
         }),
         keywords: ["weight", "cost", "mto", "procurement"],
+      },
+      {
+        id: "stainless-alloy-weight-density",
+        title: "SS & Alloy Weight / Density",
+        seoLabel:
+          "Stainless Steel & Special Alloy Weight & Density Calculator",
+        standard: "Catalog ρ",
+        href: "/calculator/stainless-alloy-weight-density/ss316",
+        keywords: [
+          "ss316",
+          "ss304",
+          "duplex",
+          "inconel",
+          "density",
+          "plate weight",
+          "hastelloy",
+        ],
       },
       {
         id: "unit-converter",

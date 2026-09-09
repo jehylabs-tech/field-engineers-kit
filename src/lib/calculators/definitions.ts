@@ -5,11 +5,13 @@ export type CalculatorType =
   | "fitting-valve-dimension"
   | "butt-weld-fitting"
   | "bolt-torque"
+  | "bolt-sequence"
   | "gasket-dimension"
   | "hydro-test"
   | "blind-flange"
   | "valve-cv"
   | "metal-weight"
+  | "alloy-weight"
   | "thermal-expansion"
   | "pressure-drop"
   | "flow-velocity"
@@ -90,6 +92,8 @@ export type CalculatorOutput = {
     caption?: string;
     captionInfo?: string;
     markerLabel?: string;
+    /** Right-end scale label for thickness-margin variant (default t_actual). */
+    scaleEndLabel?: string;
     /** Renders single-color thickness bar with t_min pointer. */
     variant?: "thickness-margin";
     tMin?: number;

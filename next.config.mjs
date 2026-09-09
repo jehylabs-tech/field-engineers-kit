@@ -30,6 +30,11 @@ const nextConfig = {
         destination: "/calculator/flange-dimension-weight",
         permanent: true,
       },
+      {
+        source: "/calculation/:slug/:spec",
+        destination: "/calculator/:slug/:spec",
+        permanent: true,
+      },
     ];
   },
 };

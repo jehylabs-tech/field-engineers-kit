@@ -1958,6 +1958,134 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
     ],
   },
 
+  "flange-bolt-tightening-sequence": {
+    slug: "flange-bolt-tightening-sequence",
+    formulaTitle: "Star / Cross Sequence & PCC-1 Rounds",
+    formulaHtml:
+      '<p class="font-mono text-sm not-italic leading-relaxed text-slate-800 dark:text-slate-100 md:text-base">Star sequence: groups of four — start → +N/2 → +N/4 → +3N/4 (bolt 1 at top, clockwise)</p>' +
+      '<p class="font-mono text-sm not-italic leading-relaxed text-slate-800 dark:text-slate-100 md:text-base">Round 1 = 0.30 T · Round 2 = 0.60 T · Round 3 = 1.00 T (star) · Round 4 = 1.00 T (circular)</p>' +
+      '<p class="eng-plain">ASME PCC-1 assembly guidance · ASME B16.5 / B16.47 bolt-count helper</p>',
+    formulaLatex:
+      "\\text{Star: }1\\rightarrow\\tfrac{N}{2}+1\\rightarrow\\ldots\\quad R_{1..3}\\text{ star, }R_4\\text{ circular at }100\\%T",
+    formulaNotes:
+      "This generator builds ASME PCC-1 style star/cross and circular bolt sequences for even counts from 4 to 64. Bolts are numbered clockwise with bolt 1 at the top of the flange. Optional NPS × class selection fills bolt count from the same B16.5 / B16.47 table used by the Bolt Torque calculator. Round fractions (30% / 60% / 100% / circular 100%) match FEK torque screening — confirm wrench targets against the project procedure.",
+    formulaBadges: [
+      { label: "8-bolt star", value: "1→5→3→7→2→6→4→8" },
+      { label: "Round 1–3", value: "Star / cross" },
+      { label: "Round 4", value: "Circular 100%" },
+      { label: "Bolt counts", value: "4–64" },
+    ],
+    variables: [
+      {
+        symbol: "N",
+        name: "Bolt count",
+        definition:
+          "Number of studs on the bolt circle (even, 4–64). Optional flange preset fills N from B16.5 / B16.47.",
+      },
+      {
+        symbol: "Sequence",
+        name: "Tightening order",
+        definition:
+          "Ordered list of bolt numbers for the selected pattern (star/cross or circular).",
+      },
+      {
+        symbol: "T",
+        name: "Target assembly torque",
+        definition:
+          "Not computed here — use the Bolt Torque calculator for PCC-1 Round 1–4 wrench values.",
+      },
+    ],
+    standards: [
+      "ASME PCC-1 (Guidelines for Pressure Boundary Bolted Flange Joint Assembly)",
+      "ASME B16.5 / B16.47 (Flange bolting count)",
+    ],
+    allowancesAndTolerances: {
+      title: "PCC-1 sequence practice",
+      summary:
+        "Use star/cross for incremental passes, then a circular check pass. Sequence diagrams are field aids — project procedures govern.",
+      items: [
+        {
+          label: "Numbering",
+          value: "Clockwise from top",
+          description: "Bolt 1 at 12 o’clock; remaining bolts increase clockwise.",
+        },
+        {
+          label: "Rounds 1–3",
+          value: "30% / 60% / 100% star",
+          description: "Aligned with FEK Bolt Torque screening targets.",
+        },
+        {
+          label: "Round 4",
+          value: "100% circular",
+          description: "Continue clockwise until nuts no longer rotate at target torque.",
+        },
+      ],
+    },
+    tableCaption:
+      "Common star / cross sequences (bolt 1 at top, numbered clockwise)",
+    tableHeaders: ["Bolts (N)", "Pattern name", "Tightening sequence"],
+    tableAllNumeric: false,
+    tableRows: [
+      ["4", "Cross", "1 → 3 → 2 → 4"],
+      ["8", "Star", "1 → 5 → 3 → 7 → 2 → 6 → 4 → 8"],
+      ["12", "Star", "1 → 7 → 4 → 10 → 2 → 8 → 5 → 11 → 3 → 9 → 6 → 12"],
+      [
+        "16",
+        "Star",
+        "1 → 9 → 5 → 13 → 3 → 11 → 7 → 15 → 2 → 10 → 6 → 14 → 4 → 12 → 8 → 16",
+      ],
+      [
+        "20",
+        "Star",
+        "1 → 11 → 6 → 16 → 2 → 12 → 7 → 17 → 3 → 13 → 8 → 18 → 4 → 14 → 9 → 19 → 5 → 15 → 10 → 20",
+      ],
+      [
+        "24",
+        "Star",
+        "1 → 13 → 7 → 19 → 4 → 16 → 10 → 22 → 2 → 14 → 8 → 20 → 5 → 17 → 11 → 23 → 3 → 15 → 9 → 21 → 6 → 18 → 12 → 24",
+      ],
+    ],
+    ...howTo("How to generate a flange bolt tightening sequence", [
+      {
+        name: "1. Select bolt count",
+        text: "Choose 4–64 bolts, or pick NPS × class to auto-fill from B16.5 / B16.47.",
+      },
+      {
+        name: "2. Choose pattern mode",
+        text: "Star/cross for Rounds 1–3; circular for the final check pass (or practice either).",
+      },
+      {
+        name: "3. Step through the diagram",
+        text: "Use Next / Prev or tap sequence chips to highlight each bolt in order.",
+      },
+      {
+        name: "4. Copy or export",
+        text: "Copy the arrow sequence text, or export PDF/CSV for the work pack.",
+      },
+      {
+        name: "5. Get torque values",
+        text: "Open the Bolt Torque calculator for Round 1–4 wrench targets at the same joint.",
+      },
+    ]),
+    faq: [
+      {
+        question: "What is the 8-bolt star pattern?",
+        answer:
+          "Number bolts **1–8** clockwise from the top, then tighten **1 → 5 → 3 → 7 → 2 → 6 → 4 → 8**. Finish with a **circular 100%** pass.",
+      },
+      {
+        question: "How do Round percentages relate to ASME PCC-1?",
+        answer:
+          "This tool uses the same screening fractions as the FEK Bolt Torque calculator (**30% / 60% / 100% / circular 100%**). Owner appendices may specify bands such as 20–30% / 50–60% — follow the site procedure when it differs.",
+      },
+      {
+        question: "Where do I get the actual torque values?",
+        answer:
+          "Open the **ASME PCC-1 Bolt Torque & Tensioning Calculator** and carry over the same NPS / class when using the flange helper.",
+      },
+    ],
+  },
+
   "blind-flange-thickness": {
     slug: "blind-flange-thickness",
     formulaTitle: "Core Formula & Variable Definitions",
@@ -2372,6 +2500,124 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
         question: "What is the difference between theoretical weight (MTO) and scale weight (Mill Cert)?",
         answer:
           "**Theoretical Weight (MTO)** is calculated from nominal geometric dimensions and standard density for purchasing and engineering estimates. **Scale Weight (Mill Cert)** is the actual physical weight measured on calibrated industrial scales at the steel mill. Due to manufacturing thickness tolerances (ASTM -12.5% mill tolerance), scale weight is typically **1% to 3% lighter than theoretical MTO weight**.",
+      },
+    ],
+  },
+
+  "stainless-alloy-weight-density": {
+    slug: "stainless-alloy-weight-density",
+    formulaTitle: "Mass, Volume & Catalog Density",
+    formulaHtml:
+      '<p class="font-mono text-sm not-italic leading-relaxed text-slate-800 dark:text-slate-100 md:text-base">m = ρ × V &nbsp;·&nbsp; Plate/rect: V = L × W × t &nbsp;·&nbsp; Round bar: V = (π/4) D² L</p>' +
+      '<p class="font-mono text-sm not-italic leading-relaxed text-slate-800 dark:text-slate-100 md:text-base">Pipe/tube: V = (π/4)(OD² − ID²)L with ID = OD − 2t</p>' +
+      '<p class="eng-plain">Catalog densities for SS / Duplex / Nickel alloy procurement screening</p>',
+    formulaLatex:
+      "m = \\rho V,\\quad V_{\\text{pipe}} = \\tfrac{\\pi}{4}(OD^2 - ID^2)L,\\quad ID = OD - 2t",
+    formulaNotes:
+      "This calculator screens piece and total mass from catalog densities for stainless, duplex, nickel alloys, and common comparison metals. SS304 uses 7.93 g/cm³ and SS316 uses 8.00 g/cm³ so the density delta is visible for MTO. Optional unit price estimates material cost. Mill certificates govern contractual mass.",
+    formulaBadges: [
+      { label: "SS304", value: "7.93 g/cm³" },
+      { label: "SS316 / 316L", value: "8.00 g/cm³" },
+      { label: "Duplex 2205", value: "7.80 g/cm³" },
+      { label: "Inconel 625", value: "8.44 g/cm³" },
+    ],
+    variables: [
+      {
+        symbol: "ρ",
+        name: "Density",
+        definition:
+          "Catalog mass density (kg/m³). Also shown as g/cm³ and lb/in³.",
+      },
+      {
+        symbol: "V",
+        name: "Volume",
+        definition:
+          "Solid or annular volume from the selected shape dimensions.",
+      },
+      {
+        symbol: "m",
+        name: "Mass",
+        definition: "Piece or total weight (kg / lb) after quantity.",
+      },
+    ],
+    standards: [
+      "ASTM / EN product standards (density reference — screening only)",
+      "ASME B36.10M / B36.19M (pipe OD & wall geometry when entered manually)",
+    ],
+    allowancesAndTolerances: {
+      title: "Density & mill tolerance notes",
+      summary:
+        "Catalog ρ values are for logistics and MTO. Actual mass varies with chemistry and mill wall tolerance.",
+      items: [
+        {
+          label: "SS304 vs SS316",
+          value: "7.93 vs 8.00 g/cm³",
+          description:
+            "SS316 is ~0.9% denser — same plate size is slightly heavier.",
+        },
+        {
+          label: "Pipe wall tolerance",
+          value: "ASTM ~−12.5% typical",
+          description:
+            "Scale weight is often 1–3% below theoretical OD×wall mass.",
+        },
+      ],
+    },
+    tableCaption:
+      "Material density quick reference (catalog screening values)",
+    tableHeaders: [
+      "Material",
+      "kg/m³",
+      "g/cm³",
+      "lb/in³",
+      "Family",
+    ],
+    tableAllNumeric: false,
+    tableRows: [
+      ["SS304 / 304L", "7930", "7.93", "0.286", "Stainless"],
+      ["SS316 / 316L", "8000", "8.00", "0.289", "Stainless"],
+      ["SS321", "8020", "8.02", "0.290", "Stainless"],
+      ["Duplex 2205 (S31803)", "7800", "7.80", "0.282", "Duplex"],
+      ["Super Duplex 2507", "7800", "7.80", "0.282", "Duplex"],
+      ["Inconel 625", "8440", "8.44", "0.305", "Nickel"],
+      ["Hastelloy C-276", "8890", "8.89", "0.321", "Nickel"],
+      ["Monel 400", "8830", "8.83", "0.319", "Nickel"],
+      ["Carbon steel", "7850", "7.85", "0.284", "Other"],
+      ["Titanium Gr. 2", "4510", "4.51", "0.163", "Other"],
+    ],
+    ...howTo("How to estimate SS / alloy piece weight", [
+      {
+        name: "1. Select material",
+        text: "Filter or pick SS304/316, Duplex, Inconel, Hastelloy, Titanium, etc.",
+      },
+      {
+        name: "2. Choose shape",
+        text: "Plate, pipe/tube, round bar, rectangular bar, or structural screening.",
+      },
+      {
+        name: "3. Enter dimensions & quantity",
+        text: "Use navbar metric/imperial units. Add optional $/kg or $/lb for cost.",
+      },
+      {
+        name: "4. Read weight & export",
+        text: "Copy or export total mass for MTO / freight. Confirm ρ on the mill cert for PO mass.",
+      },
+    ]),
+    faq: [
+      {
+        question: "What is the density difference between SS304 and SS316?",
+        answer:
+          "This tool uses **7.93 g/cm³ for SS304** and **8.00 g/cm³ for SS316/316L** — about **0.9% denser** for 316 at the same volume.",
+      },
+      {
+        question: "Does this replace the Metal Weight & Cost calculator?",
+        answer:
+          "**No.** Use this tool for stainless / duplex / nickel alloy density screens and plate/pipe/bar mass. Use **Metal Weight & Cost** when you need NPS×schedule pipe fill and broader construction metals.",
+      },
+      {
+        question: "Are Inconel and Hastelloy densities exact?",
+        answer:
+          "They are **catalog screening values**. Heat chemistry and product form can shift ρ slightly — use the mill certificate for contractual shipping mass.",
       },
     ],
   },

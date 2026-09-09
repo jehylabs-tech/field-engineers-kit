@@ -100,7 +100,7 @@ export default function SeoLookupTable({
 
   return (
     <>
-      <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white dark:border-spec-border dark:bg-spec-bg">
+      <div className="w-full overflow-x-auto rounded-lg border border-slate-200 bg-white dark:border-spec-border dark:bg-spec-bg">
         <table className="min-w-full border-collapse border border-slate-200 text-sm text-slate-700 dark:border-spec-border dark:text-slate-200">
           <caption className="border-b border-slate-200 bg-slate-50 px-3 py-2 text-left text-sm font-medium text-slate-700 dark:border-spec-border dark:bg-spec-panel dark:text-slate-300">
             {displayCaption}
@@ -111,9 +111,9 @@ export default function SeoLookupTable({
                 <th
                   key={`${header}-${headerIndex}`}
                   scope="col"
-                  className={`border border-slate-200 bg-slate-100 px-3 py-2.5 font-mono text-sm font-semibold tabular-nums dark:border-spec-border dark:bg-slate-800 ${
+                  className={`border border-slate-200 bg-slate-100 px-3 py-2.5 font-mono text-sm font-semibold dark:border-spec-border dark:bg-slate-800 ${
                     allNumeric || headerIndex > 0 ? "text-right" : "text-left"
-                  }`}
+                  } ${headerIndex === displayHeaders.length - 1 ? "min-w-[18rem]" : ""}`}
                 >
                   {header}
                 </th>
@@ -141,11 +141,15 @@ export default function SeoLookupTable({
                   return (
                     <td
                       key={`${rowIndex}-${cellIndex}`}
-                      className={`border border-slate-200 px-3 py-2 font-mono text-sm tabular-nums dark:border-spec-border ${
+                      className={`border border-slate-200 px-3 py-2 font-mono text-sm dark:border-spec-border ${
                         bold
                           ? "font-bold text-slate-900 dark:text-slate-50"
                           : "font-normal text-slate-700 dark:text-slate-200"
-                      } ${rightAlign ? "text-right" : "text-left"}`}
+                      } ${rightAlign ? "text-right" : "text-left"} ${
+                        meta
+                          ? "whitespace-nowrap tabular-nums"
+                          : "min-w-[12rem] whitespace-normal break-words"
+                      }`}
                     >
                       {display}
                     </td>

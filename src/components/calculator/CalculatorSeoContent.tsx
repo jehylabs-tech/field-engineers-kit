@@ -17,6 +17,10 @@ type CalculatorSeoContentProps = {
   slug: string;
   title: string;
   description?: string;
+  /** Spec slug segment when on a programmatic SEO page. */
+  spec?: string;
+  /** Canonical path for JSON-LD (e.g. /calculator/slug/spec). */
+  pagePath?: string;
 };
 
 function stripStepNumber(name: string) {
@@ -35,13 +39,15 @@ export default function CalculatorSeoContent({
   slug,
   title,
   description,
+  spec,
+  pagePath,
 }: CalculatorSeoContentProps) {
   const data = getCalculatorSeo(slug);
   if (!data) return null;
 
   const articleDescription =
     description ?? data.formulaNotes ?? `Engineering calculator: ${title}`;
-  const pageUrl = `${getSiteUrl()}/calculator/${slug}`;
+  const pageUrl = `${getSiteUrl()}${pagePath ?? `/calculator/${slug}${spec ? `/${spec}` : ""}`}`;
   const isUnitConverter = slug === "unit-converter";
   const isFittingValve = slug === "fitting-valve-dimension";
   const useDynamicReference = isUnitConverter || isFittingValve;

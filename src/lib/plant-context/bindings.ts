@@ -1,11 +1,12 @@
 import type { CalculatorType } from "@/lib/calculators/definitions";
+import { ALLOY_MATERIALS } from "@/lib/calculators/engines/alloy-weight";
 import { mapExpansionMaterial } from "@/lib/calculators/engines/thermal-expansion";
 import {
   mapPipeThicknessMaterialId,
   PIPE_THICKNESS_MATERIAL_PRESETS,
   pipeThicknessStressForMaterial,
 } from "@/lib/calculators/engines/pipe-thickness";
-import { getPipeScheduleEntry, getPipeScheduleSize } from "@/lib/data/loaders";
+import { getPipeScheduleEntry, getPipeScheduleSize, getBoltTorqueEntry } from "@/lib/data/loaders";
 import {
   formatSizeLabel,
   normalizeClassRating,
@@ -128,6 +129,18 @@ export function applyPlantContext<T extends Record<string, unknown>>(
     case "bolt-torque":
     case "gasket-dimension":
       return applyClass(applyNps(inputs, ctx), ctx) as T;
+    case "bolt-sequence": {
+      const next = applyClass(applyNps(inputs, ctx), ctx) as T & {
+        nps?: string;
+        pressureClass?: string;
+        boltCount?: number;
+      };
+      if (next.nps && next.pressureClass) {
+        const entry = getBoltTorqueEntry(next.nps, next.pressureClass);
+        if (entry) next.boltCount = entry.rating.boltCount;
+      }
+      return next as T;
+    }
     case "butt-weld-fitting":
       return applySchedule(applyNps(inputs, ctx), ctx) as T;
     case "hydro-test":
@@ -194,6 +207,20 @@ export function applyPlantContext<T extends Record<string, unknown>>(
         }
       }
       return next;
+    }
+    case "alloy-weight": {
+      const next = { ...inputs } as T & { material?: string };
+      if (ctx.material) {
+        const needle = ctx.material.toLowerCase();
+        const hit = ALLOY_MATERIALS.find(
+          (m) =>
+            m.id === needle ||
+            m.label.toLowerCase() === needle ||
+            m.aliases.some((a) => needle.includes(a.toLowerCase())),
+        );
+        if (hit) next.material = hit.id;
+      }
+      return next as T;
     }
     case "thermal-expansion": {
       const next = { ...inputs } as T & {

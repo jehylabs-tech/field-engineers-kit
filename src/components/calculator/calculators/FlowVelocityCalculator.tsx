@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import FlowVelocityChart from "@/components/calculator/charts/FlowVelocityChart";
 import CalculatorBaseLayout from "@/components/calculator/CalculatorBaseLayout";
 import FieldGroup, { FieldSelect } from "@/components/calculator/FieldGroup";
 import { usePublishCalculatorOutput } from "@/components/calculator/usePublishCalculatorOutput";
@@ -96,7 +95,6 @@ export default function FlowVelocityCalculator({ title, standard }: Props) {
         { label: "Flow (Q)", value: `${inputs.flow} ${flowUnitLabel}` },
         { label: "Density (ρ)", value: `${inputs.density} ${densityUnit}` },
       ]}
-      chart={<FlowVelocityChart inputs={inputs} />}
       inputPanel={
         <div className="flex w-full min-w-0 flex-col gap-2.5 [&_.calc-field]:mb-0 [&_.calc-field]:max-w-none">
           {/* Under 1. Input Parameters — no duplicate top-level section number */}

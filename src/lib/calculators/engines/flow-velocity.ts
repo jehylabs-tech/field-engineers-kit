@@ -254,11 +254,24 @@ export function calculateFlowVelocity(
       level,
     },
     gauge: {
-      fillPercent: Math.min(100, vc > 0 ? (velocity / vc) * 80 : 0),
-      limitPercent: 80,
-      minLabel: "0",
-      limitLabel: "vc",
-      maxLabel: "1.25 vc",
+      variant: "thickness-margin",
+      tMin: inputs.unitSystem === "imperial" ? msToFts(velocity) : velocity,
+      tActual: inputs.unitSystem === "imperial" ? msToFts(vc) : vc,
+      unit: velUnit,
+      limitLabel: vOut,
+      maxLabel: vcOut,
+      markerLabel: "v",
+      scaleEndLabel: "vc",
+      caption:
+        vc > 0
+          ? status === "Safe"
+            ? `Margin to vc: ${formatVelocity(Math.max(0, vc - velocity), inputs.unitSystem)} (${(100 - ratioPct).toFixed(0)}% headroom)`
+            : status === "Warning"
+              ? `Approaching vc — v/vc = ${ratioPct.toFixed(0)}% (warn ≥ 80%)`
+              : `Exceeds erosional limit — v/vc = ${ratioPct.toFixed(0)}%`
+          : undefined,
+      captionInfo:
+        "Bar length = API RP 14E vc; marker = mean velocity v. Pass when v ≤ vc.",
     },
     rows: [
       {

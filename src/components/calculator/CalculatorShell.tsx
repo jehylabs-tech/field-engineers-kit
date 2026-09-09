@@ -50,6 +50,9 @@ const CALCULATOR_VIEWS: Record<
   "metal-weight": dynamic(() => import("./calculators/MetalWeightCalculator"), {
     loading: loadingFallback,
   }),
+  "alloy-weight": dynamic(() => import("./calculators/AlloyWeightCalculator"), {
+    loading: loadingFallback,
+  }),
   "pipe-schedule": dynamic(() => import("./calculators/PipeScheduleCalculator"), {
     loading: loadingFallback,
   }),
@@ -66,6 +69,9 @@ const CALCULATOR_VIEWS: Record<
     { loading: loadingFallback },
   ),
   "bolt-torque": dynamic(() => import("./calculators/BoltTorqueCalculator"), {
+    loading: loadingFallback,
+  }),
+  "bolt-sequence": dynamic(() => import("./calculators/BoltSequenceCalculator"), {
     loading: loadingFallback,
   }),
   "gasket-dimension": dynamic(
@@ -107,6 +113,8 @@ type CalculatorShellProps = {
   children?: ReactNode;
   specSeed?: Record<string, string>;
   specLabel?: string;
+  /** Programmatic SEO H1 override (spec pages). */
+  pageHeading?: string;
 };
 
 function CalculatorBody({
@@ -138,12 +146,13 @@ function CalculatorMain({
   definition,
   children,
   specLabel,
+  pageHeading,
 }: CalculatorShellProps & { definition: CalculatorDefinition }) {
   const { output } = useCalculatorOutput();
   const [navOpen, setNavOpen] = useState(false);
-  const title = specLabel
-    ? `${specLabel} · ${calculator.title}`
-    : calculator.title;
+  const title =
+    pageHeading ??
+    (specLabel ? `${specLabel} · ${calculator.title}` : calculator.title);
   const navCalculators = allCalculators.map((item) => ({
     slug: item.slug,
     title: item.title,

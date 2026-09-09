@@ -8,11 +8,11 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import HydroStressChart from "@/components/calculator/charts/HydroStressChart";
 import CalculatorBaseLayout from "@/components/calculator/CalculatorBaseLayout";
 import CopyValueButton from "@/components/calculator/CopyValueButton";
 import ExportButtons from "@/components/calculator/ExportButtons";
 import FieldGroup, { FieldSelect } from "@/components/calculator/FieldGroup";
+import ThicknessGaugeBar from "@/components/calculator/ThicknessGaugeBar";
 import { usePublishCalculatorOutput } from "@/components/calculator/usePublishCalculatorOutput";
 import type { CalculatorOutput, ResultRow } from "@/lib/calculators/definitions";
 import {
@@ -32,12 +32,11 @@ type HydroTestCalculatorProps = {
   standard?: string;
 };
 
-type ResultTabId = "summary" | "safety" | "chart";
+type ResultTabId = "summary" | "safety";
 
 const RESULT_TABS: { id: ResultTabId; label: string }[] = [
   { id: "summary", label: "Summary" },
   { id: "safety", label: "Safety & Codes" },
-  { id: "chart", label: "Chart" },
 ];
 
 const FORMULA_HINT =
@@ -238,7 +237,7 @@ function HydroResultTabs({
   exportTitle,
   standard,
   inputRows,
-  inputs,
+  stressRatio,
   capped,
   invalid,
 }: {
@@ -246,7 +245,7 @@ function HydroResultTabs({
   exportTitle: string;
   standard?: string;
   inputRows: { label: string; value: string }[];
-  inputs: HydroTestInputs;
+  stressRatio: number;
   capped: boolean;
   invalid: boolean;
 }) {
@@ -257,6 +256,10 @@ function HydroResultTabs({
   const yieldBody =
     output.callouts?.find((c) => c.title === "Yield limit")?.body ??
     "Pt shall not produce stress above yield at test temperature (ASME B31.3 para. 345.4.2).";
+  const ratioLabel = Number.isFinite(stressRatio)
+    ? stressRatio.toFixed(3)
+    : "—";
+  const capLabel = STRESS_RATIO_MAX.toFixed(1);
 
   const panels: { id: ResultTabId; node: ReactNode }[] = [
     {
@@ -312,6 +315,23 @@ function HydroResultTabs({
             </p>
           </div>
           <CompactResultTable rows={output.rows} />
+          {!invalid ? (
+            <ThicknessGaugeBar
+              tMin={Math.max(0, stressRatio)}
+              tActual={STRESS_RATIO_MAX}
+              unit=""
+              tMinLabel={ratioLabel}
+              tActualLabel={capLabel}
+              markerLabel="St/S"
+              scaleEndLabel="cap"
+              caption={
+                capped
+                  ? `St/S exceeds field screening cap ${capLabel} — verify yield at test temperature.`
+                  : `St/S within field screening cap ${capLabel} (ASME B31.3 para. 345.4.2).`
+              }
+              captionInfo="Bar length = screening cap; marker = St/S. Pass when St/S ≤ cap."
+            />
+          ) : null}
           <YieldStatusBadge invalid={invalid} capped={capped} />
         </div>
       ),
@@ -342,14 +362,6 @@ function HydroResultTabs({
               pressurization.
             </p>
           </aside>
-        </div>
-      ),
-    },
-    {
-      id: "chart",
-      node: (
-        <div className="-mx-0.5">
-          <HydroStressChart inputs={inputs} />
         </div>
       ),
     },
@@ -466,7 +478,7 @@ export default function HydroTestCalculator({
           exportTitle={title}
           standard={standard}
           inputRows={inputRows}
-          inputs={inputs}
+          stressRatio={rawRatio}
           capped={capped}
           invalid={invalid}
         />

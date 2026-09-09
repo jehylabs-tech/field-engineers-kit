@@ -460,6 +460,7 @@ export default function ResultPane({
           caption={output.gauge.caption}
           captionInfo={output.gauge.captionInfo}
           markerLabel={output.gauge.markerLabel}
+          scaleEndLabel={output.gauge.scaleEndLabel}
         />
       ) : output.gauge ? (
         <div className="mt-3">

@@ -114,6 +114,48 @@
     "created_at": "2026-08-12T00:00:06.000Z"
   },
   {
+    "id": "local-flange-bolt-tightening-sequence",
+    "category": "mechanical",
+    "title": "Flange Bolt Tightening Sequence",
+    "slug": "flange-bolt-tightening-sequence",
+    "meta_description": "Free online flange bolt tightening sequence generator. View interactive star pattern diagrams and tightening passes for 4 to 64 bolt flanges per ASME PCC-1.",
+    "formula_json": {
+      "type": "bolt-sequence",
+      "standard": "ASME PCC-1",
+      "subtitle": "Star/cross & circular sequences · B16.5 bolt-count helper · Round 1–4 guide",
+      "formulaBasis": "ASME PCC-1 legacy cross-pattern (star) sequences for even bolt counts 4–64, numbered clockwise from bolt 1 at top. Optional NPS × class helper fills bolt count from the same ASME B16.5 / B16.47 joint table as the Bolt Torque tool. Assembly rounds: 30% / 60% / 100% star, then 100% circular check — aligned with FEK torque screening.",
+      "related": [
+        {
+          "slug": "bolt-torque-tensioning",
+          "title": "Bolt Torque & Tensioning",
+          "carry": "Same NPS / class"
+        },
+        {
+          "slug": "flange-dimension-weight",
+          "title": "Flange Dimensions",
+          "carry": "Same NPS / class"
+        },
+        {
+          "slug": "gasket-dimension-selection",
+          "title": "Gasket Dimensions",
+          "carry": "Same NPS / class"
+        }
+      ],
+      "faq": [
+        {
+          "q": "What is an 8-bolt flange star pattern?",
+          "a": "Number bolts 1–8 clockwise from the top. Tighten in order 1 → 5 → 3 → 7 → 2 → 6 → 4 → 8 (opposite pairs), then finish with a circular 100% pass."
+        },
+        {
+          "q": "Does this replace ASME PCC-1 Appendix F?",
+          "a": "No. It is a field sequence diagram and Round 1–4 reminder. Use the project procedure and the Bolt Torque calculator for wrench targets."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-09T00:00:20.000Z"
+  },
+  {
     "id": "local-blind-flange-thickness",
     "category": "mechanical",
     "title": "Blind Flange Thickness",
@@ -142,6 +184,43 @@
     },
     "is_published": true,
     "created_at": "2026-08-12T00:00:08.000Z"
+  },
+  {
+    "id": "local-stainless-alloy-weight-density",
+    "category": "procurement",
+    "title": "Stainless Steel & Special Alloy Weight & Density",
+    "slug": "stainless-alloy-weight-density",
+    "meta_description": "Calculate weight and volume for SS304, SS316L, Duplex, Inconel, and Titanium plates, pipes, and bars. Includes material density reference tables.",
+    "formula_json": {
+      "type": "alloy-weight",
+      "standard": "Procurement screening · catalog densities",
+      "subtitle": "SS / Duplex / Nickel alloy mass = ρ × V · plate, pipe, bar",
+      "formulaBasis": "Mass = density × volume. Densities are typical catalog values (e.g. SS304 7930 kg/m³, SS316 8000 kg/m³). Pipe volume uses OD and wall; plate/rect use L×W×t; round bar uses π/4·D²·L. Optional unit price screens material cost. Not a mill certificate substitute.",
+      "related": [
+        {
+          "slug": "metal-weight-cost",
+          "title": "Metal Weight & Cost",
+          "carry": "General metals / NPS pipe"
+        },
+        {
+          "slug": "pipe-schedule-dimension",
+          "title": "Pipe Schedule",
+          "carry": "OD / wall lookup"
+        }
+      ],
+      "faq": [
+        {
+          "q": "Why does SS316 weigh more than SS304 for the same size?",
+          "a": "Typical catalog density for SS316 is about 8.00 g/cm³ versus 7.93 g/cm³ for SS304 — roughly 0.9% denser, so the same volume is slightly heavier."
+        },
+        {
+          "q": "Are these densities exact for every heat?",
+          "a": "No. They are screening values for MTO and logistics. Use the mill certificate or ASTM / EN density for contractual mass."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-09T00:00:30.000Z"
   },
   {
     "id": "local-hydro-test-pressure",
