@@ -230,6 +230,13 @@ export function calculateFlowVelocity(
   const standardLabel =
     material === "ss" ? "ASME B36.19M" : "ASME B36.10M";
 
+  // Gauge: bar end = vc, marker = v (pass when vc ≥ v).
+  const vGauge = inputs.unitSystem === "imperial" ? msToFts(velocity) : velocity;
+  const vcGauge = inputs.unitSystem === "imperial" ? msToFts(vc) : vc;
+  const fillPercent = vcGauge > 0 ? 100 : 0;
+  const limitPercent =
+    vcGauge > 0 ? Math.min(100, (vGauge / vcGauge) * 100) : 0;
+
   return {
     heroLabel: "Mean Velocity (v)",
     heroValue: vOut,
@@ -255,9 +262,12 @@ export function calculateFlowVelocity(
     },
     gauge: {
       variant: "thickness-margin",
-      tMin: inputs.unitSystem === "imperial" ? msToFts(velocity) : velocity,
-      tActual: inputs.unitSystem === "imperial" ? msToFts(vc) : vc,
+      fillPercent,
+      limitPercent,
+      tMin: vGauge,
+      tActual: vcGauge,
       unit: velUnit,
+      minLabel: `0 ${velUnit}`,
       limitLabel: vOut,
       maxLabel: vcOut,
       markerLabel: "v",

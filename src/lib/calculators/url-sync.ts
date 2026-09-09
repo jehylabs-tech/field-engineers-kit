@@ -258,7 +258,7 @@ export function useCalculatorUrlSync<T extends Record<string, unknown>>(
         }
       });
       // Drop SEO keys already encoded in the path; keep units / plant extras.
-      for (const key of PATH_OWNED_PARAMS) {
+      for (const key of Array.from(PATH_OWNED_PARAMS)) {
         keep.delete(key);
       }
       const qs = keep.toString();
