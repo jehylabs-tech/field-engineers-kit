@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import CalculatorSeoContent from "@/components/calculator/CalculatorSeoContent";
 import CalculatorShell from "@/components/calculator/CalculatorShell";
@@ -21,6 +22,9 @@ type SpecPageProps = {
   /** Present when users share stateful URLs; ignored for SEO canonical. */
   searchParams?: Record<string, string | string[] | undefined>;
 };
+
+/** Only listed SpecRoutes are indexable SSG pages (Pattern B sitemap set). */
+export const dynamicParams = false;
 
 export async function generateStaticParams() {
   const slugs = getLocalPublishedCalculators().map((item) => item.slug);
@@ -60,7 +64,12 @@ export async function generateMetadata({
   return {
     title: copy.title,
     description: copy.description,
+    // Pattern B: self-referencing canonical for THIS spec path (never the root).
     alternates: { canonical },
+    robots: {
+      index: true,
+      follow: true,
+    },
     openGraph: {
       title: copy.title,
       description: copy.description,
@@ -111,6 +120,14 @@ export default async function CalculatorSpecPage({ params }: SpecPageProps) {
       specLabel={specRoute.label}
       pageHeading={copy.h1}
     >
+      <p className="mb-3 text-sm text-slate-600 dark:text-slate-400">
+        <Link
+          href={`/calculator/${calculator.slug}`}
+          className="font-medium text-spec-accent underline-offset-2 hover:underline"
+        >
+          ← All indexable specifications for this calculator
+        </Link>
+      </p>
       <SpecProgrammaticPanel h2={copy.h2} route={specRoute} />
       <CalculatorSeoContent
         slug={calculator.slug}

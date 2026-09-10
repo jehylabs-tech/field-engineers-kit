@@ -1677,6 +1677,16 @@ describe("pSEO spec routes", () => {
     expect(total).toBeLessThan(2500);
   });
 
+  it("builds Pattern B clean paths without query strings for every SpecRoute", () => {
+    const slugs = getLocalPublishedCalculators().map((item) => item.slug);
+    for (const route of listAllSpecRoutes(slugs)) {
+      const path = buildSpecPath(route.slug, route.spec);
+      expect(path).toBe(`/calculator/${route.slug}/${route.spec}`);
+      expect(path).not.toContain("?");
+      expect(route.spec).not.toContain("?");
+    }
+  });
+
   it("lists bolt sequence pSEO paths like 8-bolt-star", () => {
     expect(parseSpecToQuery("8-bolt-star")).toMatchObject({
       bolts: "8",

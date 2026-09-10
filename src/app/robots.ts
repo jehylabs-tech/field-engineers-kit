@@ -1,20 +1,41 @@
 import type { MetadataRoute } from "next";
-import { getSiteUrl } from "@/lib/site";
+import { PRODUCTION_SITE_URL, getSiteUrl } from "@/lib/site";
 
 /**
  * Serves /robots.txt via App Router.
- * Query-param and /calculation/ paths are intentionally crawlable so Googlebot
- * can read Dynamic Canonical tags on calculator URLs with state query strings.
+ *
+ * - Allow all public calculator paths (`/calculator/*`) including programmatic
+ *   SpecRoutes so Googlebot can crawl Pattern B self-canonical pages.
+ * - Disallow private / API surfaces. Legacy `/calculation/` workspaces are
+ *   noindex and excluded from the sitemap; block crawl budget here too.
+ * - Query-param calculator variants remain crawlable so bots can follow the
+ *   Dynamic Canonical tag back to the clean path.
  */
 export default function robots(): MetadataRoute.Robots {
   const siteUrl = getSiteUrl();
+  const sitemapUrl = `${PRODUCTION_SITE_URL}/sitemap.xml`;
 
   return {
     rules: [
       {
         userAgent: "*",
-        allow: ["/", "/ads.txt", "/calculator/", "/docs/", "/category/"],
-        disallow: ["/api/", "/admin/", "/auth/", "/private/"],
+        allow: [
+          "/",
+          "/ads.txt",
+          "/calculator/",
+          "/calculators",
+          "/docs/",
+          "/category/",
+          "/standards",
+          "/about",
+        ],
+        disallow: [
+          "/api/",
+          "/admin/",
+          "/auth/",
+          "/private/",
+          "/calculation/",
+        ],
       },
       {
         userAgent: "AdsBot-Google",
@@ -25,7 +46,7 @@ export default function robots(): MetadataRoute.Robots {
         allow: "/",
       },
     ],
-    sitemap: `${siteUrl}/sitemap.xml`,
-    host: siteUrl,
+    sitemap: sitemapUrl,
+    host: siteUrl.includes("localhost") ? PRODUCTION_SITE_URL : siteUrl,
   };
 }

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import CalculatorSeoContent from "@/components/calculator/CalculatorSeoContent";
 import CalculatorShell from "@/components/calculator/CalculatorShell";
+import SpecRouteLinkGrid from "@/components/calculator/SpecRouteLinkGrid";
 import { getLocalPublishedCalculators } from "@/lib/calculators/local-seed";
 import {
   getPublishedCalculatorBySlug,
@@ -60,8 +61,13 @@ export async function generateMetadata({
     title,
     description,
     keywords: calculatorKeywords,
+    // Pattern B: self-referencing canonical on the clean root calculator path.
     alternates: {
       canonical,
+    },
+    robots: {
+      index: true,
+      follow: true,
     },
     openGraph: {
       title: `${title} | FieldEngineersKit`,
@@ -103,6 +109,7 @@ export default async function CalculatorPage({ params }: CalculatorPageProps) {
         calculator={calculator}
         allCalculators={allCalculators}
       >
+        <SpecRouteLinkGrid slug={calculator.slug} />
         <CalculatorSeoContent
           slug={calculator.slug}
           title={calculator.title}
