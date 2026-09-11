@@ -99,6 +99,21 @@ const PATH_OWNED_PARAMS = new Set([
   "size",
   "bolts",
   "pattern",
+  "hnps",
+  "bnps",
+  "hsch",
+  "bsch",
+  "theta",
+  "pt",
+  "vol",
+  "mode",
+  "gas",
+  "temp",
+  "arr",
+  "hs",
+  "hf",
+  "npshr",
+  "ps",
 ]);
 
 export function useCalculatorUrlSync<T extends Record<string, unknown>>(
@@ -172,8 +187,17 @@ export function useCalculatorUrlSync<T extends Record<string, unknown>>(
 
     if (!options?.type) return next;
 
+    const beforePlant = { ...next };
     const plant = parsePlantContextFromSearchParams(source);
-    return applyPlantContext(options.type, next, plant);
+    const applied = applyPlantContext(options.type, next, plant);
+    // SpecRoute / explicit query keys win over soft plant-context carry-over
+    // (e.g. ?size=12in must not overwrite hnps=4 from /4-on-6-… path seed).
+    for (const key of explicitParams) {
+      (applied as Record<string, unknown>)[key] = (
+        beforePlant as Record<string, unknown>
+      )[key];
+    }
+    return applied;
   }, [config, mergedSearch, options?.type]);
 
   useEffect(() => {
@@ -262,6 +286,21 @@ export function useCalculatorUrlSync<T extends Record<string, unknown>>(
         keep.delete(key);
       }
       const qs = keep.toString();
+      router.replace(qs ? `${nextPath}?${qs}` : nextPath, { scroll: false });
+      return;
+    }
+
+    // Stale SpecRoute path (inputs no longer match any listed combo) →
+    // drop to the calculator root and keep state in the query string so the
+    // URL never advertises a different joint than the live inputs.
+    if (
+      pathInfo.base === "calculator" &&
+      pathInfo.slug &&
+      pathInfo.spec &&
+      !matched
+    ) {
+      const nextPath = `/calculator/${pathInfo.slug}`;
+      const qs = params.toString();
       router.replace(qs ? `${nextPath}?${qs}` : nextPath, { scroll: false });
       return;
     }

@@ -23,6 +23,23 @@ import {
   DEFAULT_ALLOY_WEIGHT_INPUTS,
 } from "@/lib/calculators/engines/alloy-weight";
 import {
+  calculatePipeCoping,
+  computePipeCopingOrdinates,
+  DEFAULT_PIPE_COPING_INPUTS,
+  isBranchNpsValid,
+} from "@/lib/calculators/engines/pipe-coping";
+import {
+  calculatePneumaticSafety,
+  DEFAULT_PNEUMATIC_SAFETY_INPUTS,
+  pneumaticSafeDistanceM,
+  pneumaticStoredEnergyJ,
+} from "@/lib/calculators/engines/pneumatic-safety";
+import {
+  calculatePumpNpsh,
+  computePumpNpsh,
+  DEFAULT_PUMP_NPSH_INPUTS,
+} from "@/lib/calculators/engines/pump-npsh";
+import {
   calculateFittingValveDimension,
   DEFAULT_FITTING_VALVE_DIMENSION_INPUTS,
 } from "@/lib/calculators/engines/fitting-valve-dimension";
@@ -1311,6 +1328,50 @@ describe("11 Thermal Expansion", () => {
     expect(out.heroValue).not.toMatch(/mm/);
     expectNoPoison(out);
   });
+
+  it("CPVC ΔL uses thermoplastic α and warns above service ceiling", () => {
+    const dL = thermalExpansionDeltaLMm({
+      unitSystem: "metric",
+      material: "cpvc",
+      installTemp: 21,
+      operatingTemp: 60,
+      length: 20,
+      nps: "4",
+      schedule: "40",
+      allowableSa: 13.8,
+      frictionFactor: 0.3,
+    });
+    nearly(dL, 66.6e-6 * 20 * 39 * 1000);
+    const hot = calculateThermalExpansion({
+      unitSystem: "metric",
+      material: "cpvc",
+      installTemp: 21,
+      operatingTemp: 100,
+      length: 20,
+      nps: "4",
+      schedule: "40",
+      allowableSa: 13.8,
+      frictionFactor: 0.3,
+    });
+    expect(hot.heroStatusLevel).toBe("warn");
+    expect(hot.heroStatus).toMatch(/93/);
+  });
+
+  it("lists cpvc / steam material×NPS×Sch pSEO paths", () => {
+    expect(
+      resolveSpecRoute("thermal-expansion-loop", "cpvc-4-sch-40")?.query,
+    ).toMatchObject({ material: "cpvc", nps: "4", sch: "40" });
+    expect(
+      resolveSpecRoute("thermal-expansion-loop", "steam-6-sch-80")?.query,
+    ).toMatchObject({ material: "steam", nps: "6", sch: "80" });
+    expect(
+      findSpecRouteForInputs("thermal-expansion-loop", {
+        material: "cpvc",
+        nps: "4",
+        sch: "40",
+      })?.spec,
+    ).toBe("cpvc-4-sch-40");
+  });
 });
 
 describe("12 Darcy–Weisbach Pressure Drop", () => {
@@ -1815,6 +1876,13 @@ describe("alloy weight & density engine", () => {
         material: "super-duplex-2507",
       })?.spec,
     ).toBe("super-duplex-2507");
+    const copy = buildSpecSeoCopy(
+      "Stainless Steel & Special Alloy Weight & Density",
+      "alloy-weight",
+      resolveSpecRoute("stainless-alloy-weight-density", "ss316")!,
+    );
+    expect(copy.h2).toBe("Material Weight & Cost Summary");
+    expect(copy.h2).not.toMatch(/PCC-1/i);
   });
 });
 
@@ -1941,7 +2009,7 @@ describe("pSEO reference pages", () => {
     );
     const { getCalculatorSeo } = await import("../data/calculatorSeoData");
     const published = getLocalPublishedCalculators();
-    expect(published.length).toBe(18);
+    expect(published.length).toBe(19);
     for (const calculator of published) {
       const seo = getCalculatorSeo(calculator.slug);
       expect(seo, calculator.slug).toBeDefined();
@@ -1950,5 +2018,202 @@ describe("pSEO reference pages", () => {
       expect(seo?.tableRows.length).toBeGreaterThanOrEqual(5);
       expect(seo?.variables.length).toBeGreaterThan(0);
     }
+  });
+});
+
+describe("pipe coping & branch cut layout", () => {
+  it("computes finite 16-point orthogonal set-on ordinates for 4 on 6 Sch 40", () => {
+    const geom = computePipeCopingOrdinates({
+      ...DEFAULT_PIPE_COPING_INPUTS,
+      headerNps: "6",
+      branchNps: "4",
+      headerSchedule: "40",
+      branchSchedule: "40",
+      angleDeg: 90,
+      offset: 0,
+      cutType: "set-on",
+      points: 16,
+      unitSystem: "metric",
+    });
+    expect(geom).not.toBeNull();
+    expect(geom!.points).toHaveLength(16);
+    expect(geom!.deltaZMax).toBeGreaterThan(0);
+    expect(Number.isFinite(geom!.deltaZMax)).toBe(true);
+    const out = calculatePipeCoping({
+      ...DEFAULT_PIPE_COPING_INPUTS,
+      unitSystem: "metric",
+    });
+    expect(out.heroValue).toMatch(/mm/);
+    expect(out.heroLabel).toMatch(/Δz_max/);
+  });
+
+  it("rejects branch NPS larger than header", () => {
+    expect(isBranchNpsValid("6", "4")).toBe(true);
+    expect(isBranchNpsValid("4", "6")).toBe(false);
+    const out = calculatePipeCoping({
+      ...DEFAULT_PIPE_COPING_INPUTS,
+      headerNps: "12",
+      branchNps: "16",
+      unitSystem: "metric",
+    });
+    expect(out.heroValue).toBe("—");
+    expect(out.heroStatusLevel).toBe("warn");
+    expect(out.summary.find((r) => r.label === "Joint")?.value).toMatch(
+      /16" branch on 12" header/,
+    );
+  });
+
+  it("lists 4-on-6-sch-40-90deg pSEO path", () => {
+    expect(
+      resolveSpecRoute("pipe-coping-branch-cut-layout", "4-on-6-sch-40-90deg")
+        ?.query,
+    ).toMatchObject({
+      bnps: "4",
+      hnps: "6",
+      hsch: "40",
+      theta: "90",
+    });
+    expect(
+      findSpecRouteForInputs("pipe-coping-branch-cut-layout", {
+        hnps: "6",
+        bnps: "4",
+        hsch: "40",
+        theta: "90",
+      })?.spec,
+    ).toBe("4-on-6-sch-40-90deg");
+    expect(
+      findSpecRouteForInputs("pipe-coping-branch-cut-layout", {
+        hnps: "12",
+        bnps: "8",
+        hsch: "40",
+        theta: "90",
+      })?.spec,
+    ).toBe("8-on-12-sch-40-90deg");
+  });
+});
+
+describe("pneumatic test safety distance (PCC-2 Art. 501)", () => {
+  it("computes finite stored energy and distance for 10 bar · 2 m³ air", () => {
+    const inputs = { ...DEFAULT_PNEUMATIC_SAFETY_INPUTS };
+    const e = pneumaticStoredEnergyJ(inputs);
+    const d = pneumaticSafeDistanceM(inputs);
+    expect(e).toBeGreaterThan(2e6);
+    expect(e).toBeLessThan(4e6);
+    expect(d).toBeGreaterThan(10);
+    expect(d).toBeLessThan(25);
+    const out = calculatePneumaticSafety(inputs);
+    expect(out.heroLabel).toMatch(/safe distance/i);
+    expect(out.heroValue).toMatch(/m/);
+    expect(out.heroBadges?.some((b) => b.label === "E")).toBe(true);
+    expect(out.rows.some((r) => r.label.includes("Absolute") && /bar a/.test(r.value))).toBe(
+      true,
+    );
+    expect(out.heroBadges?.some((b) => b.label === "V" && b.value.includes("m³"))).toBe(
+      true,
+    );
+    expectNoPoison(out);
+  });
+
+  it("reports absolute pressure in psi a for imperial inputs", () => {
+    const out = calculatePneumaticSafety({
+      ...DEFAULT_PNEUMATIC_SAFETY_INPUTS,
+      unitSystem: "imperial",
+      testPressure: 150,
+      volume: 50,
+    });
+    expect(out.heroValue).toMatch(/ft/);
+    expect(
+      out.rows.some((r) => r.label.includes("Absolute") && /psi a/.test(r.value)),
+    ).toBe(true);
+    expectNoPoison(out);
+  });
+
+  it("lists 10-bar-2-m3 and 150-psi-50-ft3 pSEO paths", () => {
+    expect(
+      resolveSpecRoute("pneumatic-test-safety-distance", "10-bar-2-m3")?.query,
+    ).toMatchObject({
+      units: "metric",
+      pt: "10",
+      vol: "2",
+      mode: "volume",
+    });
+    expect(
+      resolveSpecRoute("pneumatic-test-safety-distance", "150-psi-50-ft3")
+        ?.query,
+    ).toMatchObject({
+      units: "imperial",
+      pt: "150",
+      vol: "50",
+    });
+    expect(
+      findSpecRouteForInputs("pneumatic-test-safety-distance", {
+        units: "metric",
+        pt: "10",
+        vol: "2",
+      })?.spec,
+    ).toBe("10-bar-2-m3");
+    expect(
+      resolveSpecRoute("pneumatic-test-safety-distance", "5-bar-0p5-m3")?.query
+        .vol,
+    ).toBe("0.5");
+  });
+});
+
+describe("pump NPSH & cavitation (HI 9.6.1 screening)", () => {
+  it("computes comfortable NPSHa for default water flooded case", () => {
+    const c = computePumpNpsh(DEFAULT_PUMP_NPSH_INPUTS);
+    expect(c.npshaM).toBeGreaterThan(8);
+    expect(c.marginM).toBeGreaterThan(3);
+    expect(c.ratio).toBeGreaterThan(2);
+    const out = calculatePumpNpsh(DEFAULT_PUMP_NPSH_INPUTS);
+    expect(out.heroLabel).toMatch(/NPSHa/i);
+    expect(out.heroValue).toMatch(/m/);
+    expect(out.heroStatusLevel).toBe("pass");
+    expectNoPoison(out);
+  });
+
+  it("flags cavitation when suction lift and losses wipe NPSHa", () => {
+    const out = calculatePumpNpsh({
+      ...DEFAULT_PUMP_NPSH_INPUTS,
+      arrangement: "lift",
+      staticHeight: 8,
+      frictionLoss: 3,
+      npshr: 5,
+    });
+    expect(out.heroStatusLevel).toBe("fail");
+    expect(out.heroValue === "—" || Number.parseFloat(out.heroValue) < 5).toBe(
+      true,
+    );
+    expectNoPoison(out);
+  });
+
+  it("lists water-20c-flooded-2m and water-68f-flooded-6ft pSEO paths", () => {
+    expect(
+      resolveSpecRoute("pump-npsh-cavitation", "water-20c-flooded-2m")?.query,
+    ).toMatchObject({
+      units: "metric",
+      fluid: "water",
+      temp: "20",
+      arr: "flooded",
+      hs: "2",
+    });
+    expect(
+      resolveSpecRoute("pump-npsh-cavitation", "water-68f-flooded-6ft")?.query,
+    ).toMatchObject({
+      units: "imperial",
+      fluid: "water",
+      temp: "68",
+      arr: "flooded",
+      hs: "6",
+    });
+    expect(
+      findSpecRouteForInputs("pump-npsh-cavitation", {
+        units: "metric",
+        fluid: "water",
+        temp: "20",
+        arr: "flooded",
+        hs: "2",
+      })?.spec,
+    ).toBe("water-20c-flooded-2m");
   });
 });

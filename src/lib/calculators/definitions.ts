@@ -16,7 +16,10 @@ export type CalculatorType =
   | "pressure-drop"
   | "flow-velocity"
   | "unit-converter"
-  | "link-seal";
+  | "link-seal"
+  | "pipe-coping"
+  | "pneumatic-safety"
+  | "pump-npsh";
 
 export type FaqItem = {
   q: string;

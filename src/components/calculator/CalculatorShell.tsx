@@ -53,6 +53,16 @@ const CALCULATOR_VIEWS: Record<
   "alloy-weight": dynamic(() => import("./calculators/AlloyWeightCalculator"), {
     loading: loadingFallback,
   }),
+  "pipe-coping": dynamic(() => import("./calculators/PipeCopingCalculator"), {
+    loading: loadingFallback,
+  }),
+  "pneumatic-safety": dynamic(
+    () => import("./calculators/PneumaticSafetyCalculator"),
+    { loading: loadingFallback },
+  ),
+  "pump-npsh": dynamic(() => import("./calculators/PumpNpshCalculator"), {
+    loading: loadingFallback,
+  }),
   "pipe-schedule": dynamic(() => import("./calculators/PipeScheduleCalculator"), {
     loading: loadingFallback,
   }),

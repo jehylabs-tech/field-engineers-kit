@@ -10,6 +10,7 @@ import {
   DEFAULT_THERMAL_EXPANSION_INPUTS,
   EXPANSION_MATERIAL_OPTIONS,
   EXPANSION_SCHEDULE_OPTIONS,
+  EXPANSION_SERVICE_PRESETS,
   materialDefaultSa,
   pipeSectionProperties,
   type ExpansionMaterial,
@@ -30,6 +31,16 @@ type Props = { title: string; standard?: string };
 function toNumber(value: string, fallback: number) {
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function cToDisplay(
+  tempC: number,
+  unitSystem: ThermalExpansionInputs["unitSystem"],
+) {
+  if (unitSystem === "imperial") {
+    return Math.round(tempC * 1.8 + 32);
+  }
+  return tempC;
 }
 
 export default function ThermalExpansionCalculator({ title, standard }: Props) {
@@ -125,6 +136,18 @@ export default function ThermalExpansionCalculator({ title, standard }: Props) {
     }));
   }
 
+  function applyServicePreset(presetId: string) {
+    const preset = EXPANSION_SERVICE_PRESETS.find((p) => p.id === presetId);
+    if (!preset) return;
+    setInputs((current) => ({
+      ...current,
+      material: preset.material,
+      installTemp: cToDisplay(preset.installTempC, current.unitSystem),
+      operatingTemp: cToDisplay(preset.operatingTempC, current.unitSystem),
+      allowableSa: materialDefaultSa(preset.material, current.unitSystem),
+    }));
+  }
+
   return (
     <CalculatorBaseLayout
       layout="formula"
@@ -167,6 +190,25 @@ export default function ThermalExpansionCalculator({ title, standard }: Props) {
           <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">
             Line, pipe &amp; temperatures
           </h3>
+          <div className="flex flex-wrap gap-1.5">
+            {EXPANSION_SERVICE_PRESETS.map((preset) => {
+              const active = inputs.material === preset.material;
+              return (
+                <button
+                  key={preset.id}
+                  type="button"
+                  onClick={() => applyServicePreset(preset.id)}
+                  className={`rounded-md border px-2.5 py-1 text-xs font-semibold transition-colors ${
+                    active
+                      ? "border-blue-500 bg-blue-50 text-blue-800 dark:border-blue-400 dark:bg-blue-950/40 dark:text-blue-200"
+                      : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50 dark:border-spec-border dark:bg-spec-bg dark:text-slate-300"
+                  }`}
+                >
+                  {preset.label}
+                </button>
+              );
+            })}
+          </div>
           <FieldSelect
             label="Pipe material"
             value={inputs.material}
@@ -217,6 +259,13 @@ export default function ThermalExpansionCalculator({ title, standard }: Props) {
               setField("operatingTemp", toNumber(value, inputs.operatingTemp))
             }
             unit={tempUnit}
+            hint={
+              inputs.material === "cpvc"
+                ? "CPVC typical continuous service ≤ ~60–93 °C — confirm manufacturer."
+                : inputs.material === "steam"
+                  ? "Steam preset ≈ 10 barg saturated (~184 °C). Adjust to your design T."
+                  : undefined
+            }
           />
           <FieldGroup
             label="Straight run length (L)"
@@ -262,7 +311,11 @@ export default function ThermalExpansionCalculator({ title, standard }: Props) {
                     setField("allowableSa", toNumber(value, inputs.allowableSa))
                   }
                   unit={stressUnit}
-                  hint="Default is material screening S_A (138 MPa / 20 ksi). Override for B31.3 Eq. 1a."
+                  hint={
+                    inputs.material === "cpvc"
+                      ? "Default CPVC screening S_A = 13.8 MPa (2 ksi). Override per manufacturer / project."
+                      : "Default is material screening S_A (138 MPa / 20 ksi). Override for B31.3 Eq. 1a."
+                  }
                 />
                 <FieldGroup
                   label="Pipe rack friction factor (μ)"

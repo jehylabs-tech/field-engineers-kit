@@ -22,7 +22,8 @@ const defaultKeywords = [
   "Pressure Drop",
   "Flow Velocity",
   "Blind Flange Thickness",
-  "Thermal Expansion",
+  "Thermal Expansion & Anchor Load",
+  "Pneumatic Test Safety Distance",
 ];
 
 type SiteMetadataOptions = Partial<Metadata> & {

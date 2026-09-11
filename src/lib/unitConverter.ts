@@ -357,10 +357,30 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
   }
 
   // Valve / general process pressure in bar ↔ psi
-  for (const key of ["inletPressure", "outletPressure"]) {
+  // surfacePressureAbs: absolute suction-drum / tank pressure for NPSH (bar a ↔ psi a)
+  for (const key of [
+    "inletPressure",
+    "outletPressure",
+    "testPressure",
+    "surfacePressureAbs",
+  ]) {
     if (typeof next[key] === "number" && Number.isFinite(next[key] as number)) {
       convertNum(key, toImperial ? barToPsi : psiToBar, 3);
     }
+  }
+
+  // Pump NPSH head terms: m ↔ ft
+  for (const key of ["staticHeight", "frictionLoss", "npshr"]) {
+    if (typeof next[key] === "number" && Number.isFinite(next[key] as number)) {
+      convertNum(key, toImperial ? mToFt : ftToM, 3);
+    }
+  }
+
+  // Large volumes: m³ ↔ ft³ (pneumatic test safety, vessels)
+  if (typeof next.volume === "number" && Number.isFinite(next.volume)) {
+    const m3ToFt3 = (m3: number) => m3 / 0.028316846592;
+    const ft3ToM3 = (ft3: number) => ft3 * 0.028316846592;
+    convertNum("volume", toImperial ? m3ToFt3 : ft3ToM3, 3);
   }
 
   // Stress / pressure in MPa ↔ psi (pipe thickness, hydro, blind)
@@ -407,6 +427,7 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
     "diameter",
     "pipeOd",
     "sleeveId",
+    "offset",
   ]) {
     if (typeof next[key] === "number" && Number.isFinite(next[key] as number)) {
       convertNum(key, toImperial ? mmToIn : inToMm, 4);

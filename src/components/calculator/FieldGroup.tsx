@@ -158,7 +158,7 @@ export default function FieldGroup({
           onBlur={() => {
             if (highlight) schematic?.setActive(null);
           }}
-          className="box-border h-10 min-h-10 w-full min-w-0 rounded-lg border border-slate-300 bg-white px-2.5 font-mono text-sm leading-10 text-slate-900 outline-none focus:border-spec-accent focus:ring-2 focus:ring-spec-accent dark:border-slate-600 dark:bg-spec-bg dark:text-spec-text"
+          className="box-border flex h-10 min-h-10 w-full min-w-0 items-center rounded-lg border border-slate-300 bg-white px-2.5 font-mono text-sm text-slate-900 outline-none focus:border-spec-accent focus:ring-2 focus:ring-spec-accent dark:border-slate-600 dark:bg-spec-bg dark:text-spec-text"
         />
         <select
           disabled

@@ -5,7 +5,13 @@ import {
   getPipeScheduleSize,
 } from "@/lib/data/loaders";
 
-export type ExpansionMaterial = "cs" | "304ss" | "316ss" | "alloy";
+export type ExpansionMaterial =
+  | "cs"
+  | "steam"
+  | "cpvc"
+  | "304ss"
+  | "316ss"
+  | "alloy";
 
 export type ThermalExpansionInputs = {
   unitSystem: UnitSystem;
@@ -30,6 +36,10 @@ type MaterialProps = {
   alphaPerC: number;
   eColdMpa: number;
   saMpa: number;
+  /** Multiplier on B36 steel mass for friction screening (CPVC ≈ 0.20). */
+  weightFactor: number;
+  /** Soft service ceiling used for UI warn copy (°C). */
+  maxServiceC?: number;
 };
 
 const MATERIALS: Record<ExpansionMaterial, MaterialProps> = {
@@ -38,24 +48,46 @@ const MATERIALS: Record<ExpansionMaterial, MaterialProps> = {
     alphaPerC: 12.1e-6,
     eColdMpa: 203000,
     saMpa: 138,
+    weightFactor: 1,
+  },
+  /** Same α/E as CS — steam SEO / service preset (high T2). */
+  steam: {
+    label: "Steam pipe (CS A106 / A53)",
+    alphaPerC: 12.1e-6,
+    eColdMpa: 203000,
+    saMpa: 138,
+    weightFactor: 1,
+  },
+  cpvc: {
+    label: "CPVC (chlorinated PVC, IPS)",
+    // Typical mean α for CPVC pressure pipe (much higher than metals).
+    alphaPerC: 66.6e-6,
+    eColdMpa: 2760,
+    // Thermoplastic screening S_A — confirm manufacturer / ASME NM.1 HDB.
+    saMpa: 13.8,
+    weightFactor: 0.2,
+    maxServiceC: 93,
   },
   "304ss": {
     label: "304 / 304L stainless",
     alphaPerC: 17.3e-6,
     eColdMpa: 195000,
     saMpa: 138,
+    weightFactor: 1,
   },
   "316ss": {
     label: "316 / 316L stainless",
     alphaPerC: 16.2e-6,
     eColdMpa: 193000,
     saMpa: 138,
+    weightFactor: 1,
   },
   alloy: {
     label: "Cr-Mo alloy (P11 / P22 / P91)",
     alphaPerC: 13.7e-6,
     eColdMpa: 206000,
     saMpa: 138,
+    weightFactor: 1,
   },
 };
 
@@ -64,10 +96,121 @@ export const EXPANSION_MATERIAL_OPTIONS: {
   label: string;
 }[] = [
   { value: "cs", label: "CS — A106 / A53" },
+  { value: "steam", label: "Steam pipe (CS)" },
+  { value: "cpvc", label: "CPVC (IPS)" },
   { value: "304ss", label: "304SS" },
   { value: "316ss", label: "316SS" },
   { value: "alloy", label: "Alloy — P11 / P22 / P91" },
 ];
+
+/** Service presets — set material + typical T1/T2 for field starts. */
+export const EXPANSION_SERVICE_PRESETS: {
+  id: string;
+  label: string;
+  material: ExpansionMaterial;
+  installTempC: number;
+  operatingTempC: number;
+}[] = [
+  {
+    id: "process-cs",
+    label: "Process CS",
+    material: "cs",
+    installTempC: 21,
+    operatingTempC: 150,
+  },
+  {
+    id: "steam",
+    label: "Steam (~10 barg sat.)",
+    material: "steam",
+    installTempC: 21,
+    operatingTempC: 184,
+  },
+  {
+    id: "cpvc-hot",
+    label: "CPVC hot water",
+    material: "cpvc",
+    installTempC: 21,
+    operatingTempC: 60,
+  },
+];
+
+/** High-volume pSEO materials (path segment tokens). */
+export const THERMAL_EXPANSION_PSEO_MATERIALS: ExpansionMaterial[] = [
+  "cs",
+  "steam",
+  "cpvc",
+  "304ss",
+  "316ss",
+  "alloy",
+];
+
+export const THERMAL_EXPANSION_PSEO_NPS = [
+  "1",
+  "2",
+  "3",
+  "4",
+  "6",
+  "8",
+  "10",
+  "12",
+] as const;
+
+export const THERMAL_EXPANSION_PSEO_SCH = ["40", "80"] as const;
+
+export function expansionMaterialSeoLabel(
+  material: ExpansionMaterial,
+): string {
+  switch (material) {
+    case "cs":
+      return "Carbon Steel";
+    case "steam":
+      return "Steam Pipe (CS)";
+    case "cpvc":
+      return "CPVC";
+    case "304ss":
+      return "304SS";
+    case "316ss":
+      return "316SS";
+    case "alloy":
+      return "Cr-Mo Alloy";
+    default:
+      return material;
+  }
+}
+
+/**
+ * Programmatic SEO paths: `{material}-{nps}-sch-{sch}`
+ * e.g. /calculator/thermal-expansion-loop/cpvc-4-sch-40
+ */
+export function listThermalExpansionPseoRoutes(slug: string): {
+  slug: string;
+  spec: string;
+  query: Record<string, string>;
+  label: string;
+}[] {
+  const routes: {
+    slug: string;
+    spec: string;
+    query: Record<string, string>;
+    label: string;
+  }[] = [];
+  for (const material of THERMAL_EXPANSION_PSEO_MATERIALS) {
+    for (const nps of THERMAL_EXPANSION_PSEO_NPS) {
+      for (const sch of THERMAL_EXPANSION_PSEO_SCH) {
+        const entry = getPipeScheduleEntry(nps, sch);
+        if (!entry) continue;
+        const matLabel = expansionMaterialSeoLabel(material);
+        routes.push({
+          slug,
+          spec: `${material}-${nps}-sch-${sch}`,
+          query: { material, nps, sch },
+          label: `${matLabel} · ${nps}" Sch ${sch}`,
+        });
+      }
+    }
+  }
+  return routes;
+}
 
 /** Preferred schedule chips for thermal loop sizing. */
 export const EXPANSION_SCHEDULE_OPTIONS = [
@@ -109,6 +252,21 @@ function materialHotEMpa(material: ExpansionMaterial, operatingTempC: number): n
       [300, 184000],
       [400, 177000],
       [500, 168000],
+    ],
+    steam: [
+      [20, 203000],
+      [100, 198000],
+      [200, 191000],
+      [300, 184000],
+      [400, 177000],
+      [500, 168000],
+    ],
+    cpvc: [
+      [20, 2760],
+      [40, 2550],
+      [60, 2200],
+      [80, 1800],
+      [93, 1500],
     ],
     "304ss": [
       [20, 195000],
@@ -226,6 +384,12 @@ export function mapExpansionMaterial(
 ): ExpansionMaterial | undefined {
   if (!raw) return undefined;
   const value = raw.toLowerCase();
+  if (value.includes("cpvc") || value === "pvc" || value.includes("chlorinated")) {
+    return "cpvc";
+  }
+  if (value.includes("steam")) {
+    return "steam";
+  }
   if (value.includes("316")) return "316ss";
   if (
     value.includes("304") ||
@@ -344,12 +508,18 @@ export function calculateThermalExpansion(
   const entry = getPipeScheduleEntry(inputs.nps, inputs.schedule);
   const pipeWeightN =
     (entry?.row.weightKgPerM ?? 0) *
+    mat.weightFactor *
     (inputs.unitSystem === "imperial" ? inputs.length * 0.3048 : inputs.length) *
     9.80665;
   const frictionForceN = Math.max(0, inputs.frictionFactor) * pipeWeightN;
   const totalAnchorForceN = bendingForceN + frictionForceN;
   const g1Mm = 4 * section.odMm;
   const g2Mm = 14 * section.odMm;
+
+  const serviceWarn =
+    mat.maxServiceC != null && t2 > mat.maxServiceC
+      ? `T2 exceeds typical ${mat.label} service (~${mat.maxServiceC} °C) — verify manufacturer rating`
+      : null;
 
   const tempUnit = inputs.unitSystem === "imperial" ? "°F" : "°C";
   const lengthUnit = inputs.unitSystem === "imperial" ? "ft" : "m";
@@ -380,12 +550,20 @@ export function calculateThermalExpansion(
       ? `${(eHotMpa / 6.894757).toFixed(0)} ksi`
       : `${eHotMpa.toFixed(0)} MPa`;
 
-  const level = absDelta < 10 ? "pass" : absDelta < 80 ? "warn" : "fail";
+  const level = serviceWarn
+    ? "warn"
+    : absDelta < 10
+      ? "pass"
+      : absDelta < 80
+        ? "warn"
+        : "fail";
 
   return {
     heroLabel: "Thermal Expansion (ΔL)",
     heroValue: deltaLHero,
-    heroStatus: `${mat.label} · α = ${(mat.alphaPerC * 1e6).toFixed(1)}×10⁻⁶ /°C · E_h = ${(eHotMpa / 1000).toFixed(1)} GPa`,
+    heroStatus: serviceWarn
+      ? serviceWarn
+      : `${mat.label} · α = ${(mat.alphaPerC * 1e6).toFixed(1)}×10⁻⁶ /°C · E_h = ${(eHotMpa / 1000).toFixed(1)} GPa`,
     heroStatusLevel: level === "fail" ? "warn" : level,
     heroBadges: [
       { label: "H", value: lengthOut },
@@ -394,6 +572,7 @@ export function calculateThermalExpansion(
       { label: "ΔT", value: deltaTDisplay },
     ],
     summary: [
+      { label: "Material", value: mat.label },
       { label: "L-shape leg (H)", value: lengthOut },
       { label: "U-loop width (W)", value: widthOut },
       { label: "Anchor force (F_anchor)", value: forceOut },
@@ -405,6 +584,16 @@ export function calculateThermalExpansion(
     },
     rows: [
       { label: "Material", value: mat.label, section: "Line conditions" },
+      ...(serviceWarn
+        ? [
+            {
+              label: "Service note",
+              value: serviceWarn,
+              section: "Line conditions",
+              warn: true as const,
+            },
+          ]
+        : []),
       {
         label: "Install temperature (T1)",
         value: `${inputs.installTemp} ${tempUnit}`,
@@ -444,19 +633,19 @@ export function calculateThermalExpansion(
         label: "Outside diameter (OD)",
         value: formatLengthMm(section.odMm, inputs.unitSystem),
         section: "Pipe section",
-        highlight: "od",
+        highlight: "od" as const,
       },
       {
         label: "Wall thickness (t)",
         value: formatLengthMm(section.tMm, inputs.unitSystem),
         section: "Pipe section",
-        highlight: "t",
+        highlight: "t" as const,
       },
       {
         label: "Inside diameter (ID)",
         value: formatLengthMm(section.idMm, inputs.unitSystem),
         section: "Pipe section",
-        highlight: "bore",
+        highlight: "bore" as const,
       },
       {
         label: "Moment of inertia (I)",

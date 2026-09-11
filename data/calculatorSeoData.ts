@@ -2845,12 +2845,12 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
       '<p class="eng-plain">ASME B31.3 guided-cantilever loop screening (this app)</p>',
     formulaLatex: "\\Delta L = \\alpha L \\Delta T,\\quad H = \\sqrt{\\frac{3 E_h D (\\Delta L/2)}{S_A}},\\quad W = H/2,\\quad F_{anchor} = F_{bending} + \\mu W_{pipe}",
     formulaNotes:
-      "This calculator computes unrestrained growth ΔL = α · L · ΔT with app mean α values (CS 12.1, 304SS 17.3, 316SS 16.2, Cr-Mo 13.7 ×10⁻⁶ /°C). Guided-cantilever leg H uses hot modulus E_h at T2, pipe OD D, ΔL_leg = ΔL/2, and S_A. U-loop width W = H/2. Anchor force adds rack friction μ · W_pipe. Guide spacing G₁ = 4·OD, G₂ = 14·OD. Screening only — not CAESAR II / B31.3 formal analysis.",
+      "This calculator computes unrestrained growth ΔL = α · L · ΔT with app mean α values (CS/steam 12.1, 304SS 17.3, 316SS 16.2, Cr-Mo 13.7, CPVC 66.6 ×10⁻⁶ /°C). Guided-cantilever leg H uses hot modulus E_h at T2, pipe OD D, ΔL_leg = ΔL/2, and S_A. U-loop width W = H/2. Anchor force adds rack friction μ · W_pipe (CPVC mass scaled ~0.20× steel catalog weight). Guide spacing G₁ = 4·OD, G₂ = 14·OD. Screening only — not CAESAR II / B31.3 formal analysis.",
     formulaBadges: [
-      { label: "CS α", value: "12.1 × 10⁻⁶ /°C" },
-      { label: "304SS α", value: "17.3 × 10⁻⁶ /°C" },
+      { label: "CS / steam α", value: "12.1 × 10⁻⁶ /°C" },
+      { label: "CPVC α", value: "66.6 × 10⁻⁶ /°C" },
       { label: "H (leg)", value: "√(3 E_h D · ΔL/2 / S_A)" },
-      { label: "W", value: "H / 2" },
+      { label: "F_anchor", value: "F_bending + μ W_pipe" },
     ],
     variables: [
       { symbol: "ΔL", name: "Total Thermal Growth", definition: "Hero output — unrestrained expansion between anchors (mm or in)." },
@@ -2925,6 +2925,18 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
           notes: "Baseline industrial piping material in the calculator.",
         },
         {
+          materialGroup: "Steam pipe (CS A106 / A53)",
+          temperatureLimit: "Same α/E as CS · elevated T2 preset (~184 °C)",
+          stressLimit: "Default S_A = 138 MPa (20 ksi)",
+          notes: "Steam SEO / service preset — mechanical properties match carbon steel.",
+        },
+        {
+          materialGroup: "CPVC (IPS)",
+          temperatureLimit: "α = 66.6 × 10⁻⁶ /°C · typical ≤ 60–93 °C",
+          stressLimit: "Default S_A = 13.8 MPa (2 ksi) screening",
+          notes: "Thermoplastic screening. Confirm manufacturer HDB / pressure rating. Mass for friction ≈ 0.20× steel catalog weight.",
+        },
+        {
           materialGroup: "304 / 304L Stainless",
           temperatureLimit: "α = 17.3 × 10⁻⁶ /°C",
           stressLimit: "Default S_A = 138 MPa",
@@ -2947,6 +2959,7 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
         "Calculator scope: ΔL, guided-cantilever H/W, G₁/G₂, and F_anchor screening. It does not satisfy B31.3 formal computer analysis requirements.",
         "Rotating-equipment nozzles and severe cyclic service need CAESAR II / AutoPIPE (or equal).",
         "Confirm slide-plate travel ≥ ~1.5 × ΔL so shoes do not walk off the steel.",
+        "CPVC / thermoplastic lines: verify continuous-service temperature and pressure rating with the pipe manufacturer before using loop results.",
       ],
     },
     workedExample: {
@@ -3007,9 +3020,9 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
       conclusion:
         "Default app case: ΔL = 31.2 mm, H = 2.75 m, W = 1.37 m, G₁/G₂ = 457 / 1600 mm, F_anchor ≈ 11.53 kN. Use for layout budgeting only.",
     },
-    ...howTo("How to estimate thermal expansion", [
-      { name: "1. Select material & pipe", text: "CS / 304 / 316 / Cr-Mo plus NPS and schedule (sets D and I)." },
-      { name: "2. Enter T1, T2, and L", text: "Install and operating temperatures and the free straight run." },
+    ...howTo("How to estimate thermal expansion & anchor load", [
+      { name: "1. Pick service & material", text: "Use Process CS, Steam, or CPVC hot-water presets — or pick CS / steam / CPVC / 304 / 316 / Cr-Mo plus NPS and schedule." },
+      { name: "2. Enter T1, T2, and L", text: "Install and operating temperatures and the free straight run between anchors." },
       { name: "3. Read ΔL, H, W, F_anchor", text: "Optional 1.2 overrides S_A and μ. Guides use 4·OD / 14·OD." },
       { name: "4. Export / escalate", text: "Attach the screening sheet; escalate to CAESAR II where B31.3 requires formal analysis." },
     ]),
@@ -3018,6 +3031,16 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
         question: "Why does 304SS need a deeper loop than carbon steel?",
         answer:
           "App **α(304SS) = 17.3×10⁻⁶ /°C** vs **α(CS) = 12.1×10⁻⁶ /°C** (~43% more ΔL). Because **H ∝ √ΔL**, the leg is roughly **~19% deeper** for the same L, ΔT, D, and S_A.",
+      },
+      {
+        question: "How is CPVC pipe expansion handled?",
+        answer:
+          "CPVC uses **α ≈ 66.6×10⁻⁶ /°C**, a low thermoplastic **E**, and a screening **S_A = 13.8 MPa (2 ksi)**. Growth is much larger than steel at the same ΔT — confirm continuous-service temperature with the manufacturer (often ≤ 60–93 °C).",
+      },
+      {
+        question: "Is “steam pipe” a different metal?",
+        answer:
+          "**No.** Steam pipe uses **carbon-steel α/E** with a **high-T2 service preset** (~184 °C for ~10 barg saturated steam). Adjust T2 to your design steam temperature.",
       },
       {
         question: "Does this replace CAESAR II?",
@@ -3032,7 +3055,7 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
       {
         question: "What does F_anchor include?",
         answer:
-          "**F_anchor = F_bending + μ · W_pipe**, where F_bending uses the guided-cantilever stiffness form and W_pipe is plain-end mass × g for the entered length.",
+          "**F_anchor = F_bending + μ · W_pipe**, where F_bending uses the guided-cantilever stiffness form and W_pipe is plain-end mass × g for the entered length (CPVC mass scaled ~0.20× steel catalog weight).",
       },
     ],
   },
@@ -3653,6 +3676,662 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
         question: "Does this replace the GPT sizing chart?",
         answer:
           "**No.** This is a **field screening** calculator using published free thickness / belt width. Always verify model and link count on the **current GPT Link-Seal sizing chart** before procurement. Link-Seal® is a registered trademark of GPT Industries — this app is **not affiliated with or endorsed by** GPT Industries.",
+      },
+    ],
+  },
+
+  "pipe-coping-branch-cut-layout": {
+    slug: "pipe-coping-branch-cut-layout",
+    formulaTitle: "Branch Cut Envelope & Unwrapped Template",
+    formulaHtml:
+      '<p class="font-mono text-sm not-italic leading-relaxed text-slate-800 dark:text-slate-100 md:text-base">x = r_B·sin(φ) + e &nbsp;·&nbsp; y = r_B·cos(φ)</p>' +
+      '<p class="font-mono text-sm not-italic leading-relaxed text-slate-800 dark:text-slate-100 md:text-base">z_H = √(R_H² − x²) &nbsp;·&nbsp; z_cut = z_H / sin(θ) − y·cot(θ)</p>' +
+      '<p class="font-mono text-sm not-italic leading-relaxed text-slate-800 dark:text-slate-100 md:text-base">S = r_B·φ &nbsp;·&nbsp; Δz_max = max(z_cut) − min(z_cut)</p>' +
+      '<p class="eng-plain">ASME B31.3 fabrication screening · PIP shop layout practice</p>',
+    formulaLatex:
+      "z_{\\mathrm{cut}}(\\phi)=\\frac{\\sqrt{R_H^2-x^2}}{\\sin\\theta}-y\\cot\\theta,\\quad \\Delta z_{\\max}=\\max z_{\\mathrm{cut}}-\\min z_{\\mathrm{cut}}",
+    formulaNotes:
+      "This calculator builds an unwrapped flat-pattern cut line for a branch pipe intersecting a header. Set-on / miter use the header OD envelope; set-in uses the header ID. Layout points (16 or 32) give shop marking distances S and relative cut offsets. Confirm bevel angle and branch reinforcement per ASME B31.3 Paragraph 304.3 — this is a fabrication aid, not a reinforcement design.",
+    formulaHighlight: true,
+    formulaBadges: [
+      { label: "θ range", value: "30°–90°" },
+      { label: "Ordinates", value: "16 / 32 pts" },
+      { label: "Cuts", value: "Set-on · Set-in · Miter" },
+      { label: "Δz_max", value: "Peak-to-valley" },
+    ],
+    variables: [
+      {
+        symbol: "R_H",
+        name: "Header radius",
+        definition:
+          "Header OD/2 for set-on/miter, or header ID/2 for set-in through-hole cuts.",
+      },
+      {
+        symbol: "r_B",
+        name: "Branch radius",
+        definition: "Branch outside radius (OD/2) used for the unwrapped circumference.",
+      },
+      {
+        symbol: "θ",
+        name: "Intersection angle",
+        definition: "Angle between branch axis and header axis (90° = orthogonal tee).",
+      },
+      {
+        symbol: "e",
+        name: "Eccentricity",
+        definition:
+          "Lateral offset of the branch centerline. Max ≈ (OD_H − OD_B)/2 for concentric-to-eccentric range.",
+      },
+      {
+        symbol: "z_cut",
+        name: "Axial cut offset",
+        definition:
+          "Distance along the branch axis from a reference plane to the header surface at angle φ.",
+      },
+      {
+        symbol: "Δz_max",
+        name: "Peak-to-valley depth",
+        definition: "max(z_cut) − min(z_cut) — primary wrap-template height.",
+      },
+    ],
+    standards: [
+      "ASME B31.3 (Process Piping) — fabrication / branch connection practice",
+      "ASME B36.10M / B36.19M (Pipe OD & wall by NPS × schedule)",
+      "PIP fabrication practices (shop layout screening)",
+    ],
+    allowancesAndTolerances: {
+      title: "Fabrication notes",
+      summary:
+        "Use the ordinate table as a wrap-around marking guide. Bevel and reinforcement are separate code checks.",
+      items: [
+        {
+          label: "Bevel",
+          value: "37.5° ± 2.5° typical",
+          description:
+            "Apply weld bevel along z_cut after transferring the template (project WPS governs).",
+        },
+        {
+          label: "Reinforcement",
+          value: "B31.3 §304.3",
+          description:
+            "Verify pad / integrally reinforced branch / Weldolet requirements separately.",
+        },
+        {
+          label: "Branch ≤ header",
+          value: "NPS rule",
+          description:
+            "Branch NPS must not exceed header NPS for standard set-on / set-in fittings.",
+        },
+      ],
+    },
+    tableCaption: "Example orthogonal set-on screening (illustrative)",
+    tableHeaders: ["Branch on header", "Sch", "θ", "Focus metric"],
+    tableAllNumeric: false,
+    tableRows: [
+      ['4" on 6"', "40", "90°", "Δz_max + 16-pt table"],
+      ['3" on 6"', "40", "90°", "Δz_max + 16-pt table"],
+      ['4" on 8"', "40", "45°", "Angled branch template"],
+      ['6" on 8"', "80", "60°", "Heavier wall envelope"],
+      ['2" on 4"', "40", "90°", "Small-bore set-on"],
+    ],
+    ...howTo("How to generate a branch cut template", [
+      {
+        name: "1. Select header & branch",
+        text: "Pick NPS and schedule for both pipes. Branch NPS must be ≤ header NPS.",
+      },
+      {
+        name: "2. Set angle, offset, and cut type",
+        text: "θ = 90° for a square tee. Offset e = 0 for concentric. Choose set-on, set-in, or miter.",
+      },
+      {
+        name: "3. Choose 16 or 32 points",
+        text: "More points smooth the wrap curve for large OD branches.",
+      },
+      {
+        name: "4. Transfer the flat pattern",
+        text: "Wrap the unwrapped curve / ordinate table onto the branch OD, mark, cut, then bevel per WPS.",
+      },
+    ]),
+    workedExample: {
+      title:
+        'Step-by-Step Worked Example: 4" Sch 40 branch on 6" Sch 40 header @ 90°',
+      scenario:
+        "Generate a set-on wrap template for an NPS 4 Sch 40 branch onto an NPS 6 Sch 40 header at θ = 90° (orthogonal tee), concentric (e = 0), using 16 layout points. OD values come from ASME B36.10M.",
+      designConditions: [
+        { label: "Header", value: 'NPS 6 Sch 40 · OD 168.28 mm' },
+        { label: "Branch", value: 'NPS 4 Sch 40 · OD 114.30 mm' },
+        { label: "Angle θ", value: "90° (orthogonal)" },
+        { label: "Offset e", value: "0 mm (concentric)" },
+        { label: "Cut type", value: "Full-size set-on (header OD envelope)" },
+        { label: "Ordinates", value: "16 points" },
+      ],
+      steps: [
+        {
+          step: "Step 1",
+          name: "Resolve radii from B36 OD",
+          formula: "R_H = OD_H / 2,\\quad r_B = OD_B / 2",
+          calculation:
+            "R_H = 168.28 / 2 = 84.14 mm · r_B = 114.30 / 2 = 57.15 mm",
+          result: "R_H = 84.14 mm, r_B = 57.15 mm",
+          note: "Set-on uses header OD radius. Set-in would use header ID/2 instead.",
+        },
+        {
+          step: "Step 2",
+          name: "Evaluate surface depth at key φ",
+          formula:
+            "x = r_B\\sin\\phi + e,\\quad z_H = \\sqrt{\\max(0, R_H^2 - x^2)}",
+          calculation:
+            "At φ = 0° (crotch): x = 0 → z_H = R_H = 84.14 mm. At φ = 90° (flank): x = 57.15 → z_H = √(84.14² − 57.15²) ≈ 61.72 mm.",
+          result: "z_H(0°) ≈ 84.14 mm · z_H(90°) ≈ 61.72 mm",
+        },
+        {
+          step: "Step 3",
+          name: "Convert to axial cut offset at θ = 90°",
+          formula:
+            "z_{\\mathrm{cut}} = \\frac{z_H}{\\sin\\theta} - y\\cot\\theta",
+          calculation:
+            "θ = 90° → sinθ = 1, cotθ = 0 → z_cut(φ) = z_H(φ). So crotch and flank offsets equal the surface depths above.",
+          result: "z_cut(0°) ≈ 84.14 mm · z_cut(90°) ≈ 61.72 mm",
+        },
+        {
+          step: "Step 4",
+          name: "Report peak-to-valley template height",
+          formula: "\\Delta z_{\\max} = \\max z_{\\mathrm{cut}} - \\min z_{\\mathrm{cut}}",
+          calculation:
+            "Δz_max ≈ 84.14 − 61.72 = 22.42 mm (wrap height from valley baseline). Mark S = r_B·φ along the branch OD, then transfer z_rel = z_cut − min(z_cut).",
+          result: "Δz_max ≈ 22.4 mm for this 4\" on 6\" Sch 40 @ 90° case",
+          note: "Use the live ordinate table for all 16/32 shop marks. Confirm bevel and B31.3 §304.3 reinforcement separately.",
+        },
+      ],
+      conclusion:
+        "The wrap template height is Δz_max ≈ 22.4 mm for a concentric 4\"×6\" Sch 40 orthogonal set-on. Open the matching spec URL (/4-on-6-sch-40-90deg), copy the ordinate table, mark the branch OD, cut, then bevel per the project WPS.",
+    },
+    materialLimitations: {
+      title: "Applicability",
+      summary:
+        "Screening tool for circular pipe-on-pipe intersections. Not for square headers, saddles with pad geometry, or CNC lofting replacement.",
+      items: [
+        {
+          materialGroup: "Carbon / alloy / stainless pipe",
+          temperatureLimit: "Geometry only (no T-limit in this tool)",
+          stressLimit: "N/A — not a stress calc",
+          notes: "Uses B36 OD/ID. Actual mill OD/wall may differ slightly from catalog.",
+        },
+        {
+          materialGroup: "High-pressure process",
+          temperatureLimit: "Per project piping class",
+          stressLimit: "Verify separately (B31.3 §304.3)",
+          notes: "Always verify branch reinforcement and WPS bevel requirements before hot work.",
+        },
+      ],
+      codeRestrictions: [
+        "Fabrication layout aid only — does not size reinforcement pads, integrally reinforced branches, or Weldolets (ASME B31.3 §304.3).",
+        "Assumes circular pipe OD/ID envelopes from ASME B36 tables; do not use for square headers, structural tube, or cast fittings with non-circular hubs.",
+        "Bevel angle, root face, and WPS acceptance criteria are outside this tool — transfer the template, then prepare the joint per the approved procedure.",
+        "Eccentric / angled cases are geometric screening; always verify fit-up on the header before hot work when offset approaches (OD_H − OD_B)/2.",
+      ],
+    },
+    faq: [
+      {
+        question: "What does Δz_max mean on the shop floor?",
+        answer:
+          "**Δz_max** is the peak-to-valley height of the unwrapped cut curve — the amount of material you remove axially between the deepest and shallowest marks when wrapping the template.",
+      },
+      {
+        question: "Set-on vs set-in — which radius is used?",
+        answer:
+          "**Set-on / miter** intersect the **header OD**. **Set-in** intersects the **header ID** (through-hole). The calculator switches R_H accordingly.",
+      },
+      {
+        question: "Can branch NPS be larger than header NPS?",
+        answer:
+          "**No for standard fitting practice.** The UI blocks / warns when Branch NPS > Header NPS.",
+      },
+      {
+        question: "Does this calculate reinforcement pad size?",
+        answer:
+          "**No.** Use ASME B31.3 Paragraph **304.3** (or your project calc) for reinforcement. This tool only produces the cut layout template.",
+      },
+    ],
+  },
+
+  "pneumatic-test-safety-distance": {
+    slug: "pneumatic-test-safety-distance",
+    formulaTitle: "Pneumatic Stored Energy & Exclusion Distance",
+    formulaHtml:
+      '<p class="font-mono text-sm not-italic leading-relaxed text-slate-800 dark:text-slate-100 md:text-base">E = [P₁·V / (γ − 1)] · [1 − (P₀/P₁)^((γ−1)/γ)]</p>' +
+      '<p class="font-mono text-sm not-italic leading-relaxed text-slate-800 dark:text-slate-100 md:text-base">D = R₀ · (E / E_TNT)<sup>1/3</sup> &nbsp;·&nbsp; R₀ = 45 ft per lb TNT</p>' +
+      '<p class="eng-plain">ASME PCC-2 Article 501 Nonmandatory Appendix energy method (screening)</p>',
+    formulaLatex:
+      "E=\\frac{P_1 V}{\\gamma-1}\\left[1-\\left(\\frac{P_0}{P_1}\\right)^{(\\gamma-1)/\\gamma}\\right],\\quad D=R_0\\,(E/E_{\\mathrm{TNT}})^{1/3}",
+    formulaNotes:
+      "Pneumatic tests store elastic energy in the compressed gas. This calculator evaluates ideal-gas expansion to atmosphere (γ = 1.40 for air/N₂, 1.67 for He), converts energy to TNT equivalent (1 lb TNT ≈ 1.4×10⁶ ft·lbf), and scales an unprotected personnel standoff with R₀ = 45 ft (~1 psi side-on). Volume may be entered directly or from NPS × schedule × length (B36 ID). Prefer hydrostatic testing when practical. Screening only — not a stamped blast or AHJ package.",
+    formulaHighlight: true,
+    formulaBadges: [
+      { label: "Standard", value: "PCC-2 Art. 501" },
+      { label: "γ air/N₂", value: "1.40" },
+      { label: "R₀", value: "45 ft / lb TNT" },
+      { label: "Output", value: "D · E · TNT eq." },
+    ],
+    variables: [
+      {
+        symbol: "P₁",
+        name: "Absolute test pressure",
+        definition: "Gauge test pressure + atmospheric (Pa absolute).",
+      },
+      {
+        symbol: "P₀",
+        name: "Atmosphere",
+        definition: "101.325 kPa absolute reference for expansion.",
+      },
+      {
+        symbol: "V",
+        name: "Pressurized volume",
+        definition: "Pipe / vessel / tubing envelope under test (m³ or ft³).",
+      },
+      {
+        symbol: "γ",
+        name: "Ratio of specific heats",
+        definition: "1.40 air/nitrogen · 1.67 helium.",
+      },
+      {
+        symbol: "E",
+        name: "Stored energy",
+        definition: "Ideal-gas expansion energy released to atmosphere (J / MJ).",
+      },
+      {
+        symbol: "D",
+        name: "Min. safe distance",
+        definition: "Unprotected personnel exclusion radius from cube-root scaling.",
+      },
+    ],
+    standards: [
+      "ASME PCC-2 (Repair of Pressure Equipment & Piping) — Article 501 Pneumatic Testing",
+      "ASME B31.3 Chapter VI — pneumatic test authorization & limits (companion)",
+      "ASME B36.10M / B36.19M — ID for pipe-run volume mode",
+    ],
+    allowancesAndTolerances: {
+      title: "Test controls (companion to D)",
+      summary:
+        "Distance screening does not replace barriers, stepwise pressurization, or written authorization.",
+      items: [
+        {
+          label: "Prefer hydrotest",
+          value: "When practical",
+          description:
+            "Water stores little elastic energy vs gas. Use pneumatic only when hydrotest is impractical.",
+        },
+        {
+          label: "B31.3 Pt limit",
+          value: "≤ 1.1 × P × (St/S)",
+          description:
+            "Resolve pneumatic test pressure separately (Hydro / Pneumatic Pt calculator), then screen D here.",
+        },
+        {
+          label: "R₀ basis",
+          value: "45 ft / lb TNT",
+          description:
+            "~1 psi side-on unprotected personnel screening. AHJ / barrier layouts may require larger zones.",
+        },
+        {
+          label: "PDF / inspection package",
+          value: "Export screening sheet",
+          description:
+            "Use Export for the field package start; formal PCC-2 Article 501 documentation is a paid inspection deliverable.",
+        },
+      ],
+    },
+    tableCaption: "Illustrative air-test screening distances (this app, R₀ = 45 ft)",
+    tableHeaders: ["P (gauge)", "V", "D (approx.)", "Focus"],
+    tableAllNumeric: false,
+    tableRows: [
+      ["5 bar", "1 m³", "9.3 m", "Small envelope"],
+      ["10 bar", "2 m³", "15.5 m", "Default app case"],
+      ["15 bar", "5 m³", "24.6 m", "Larger envelope"],
+      ["20 bar", "10 m³", "34.6 m", "High stored energy"],
+      ["150 psi", "50 ft³", "45.8 ft", "Imperial SEO case"],
+    ],
+    ...howTo("How to screen pneumatic test safety distance", [
+      {
+        name: "1. Enter test pressure",
+        text: "Use the authorized pneumatic Pt (often from B31.3 1.1 × P × St/S).",
+      },
+      {
+        name: "2. Set volume",
+        text: "Direct m³/ft³, or NPS × schedule × length for a pipe run (B36 ID).",
+      },
+      {
+        name: "3. Select gas",
+        text: "Air/N₂ (γ = 1.40) or helium (γ = 1.67).",
+      },
+      {
+        name: "4. Read D / E / TNT eq.",
+        text: "Keep non-essential people outside D. Export the sheet; escalate for barriers and signed procedures.",
+      },
+    ]),
+    workedExample: {
+      title: "Step-by-Step Worked Example: 10 bar g · 2 m³ air",
+      scenario:
+        "Screen the unprotected personnel exclusion distance for a 10 bar gauge air pneumatic test on a 2 m³ pressurized envelope (ASME PCC-2 Article 501 energy method, R₀ = 45 ft per lb TNT).",
+      designConditions: [
+        { label: "Test pressure", value: "10 bar g (P₁ = 11.013 bar a)" },
+        { label: "Volume V", value: "2.0 m³" },
+        { label: "Gas", value: "Air · γ = 1.40" },
+        { label: "P₀", value: "1.01325 bar a" },
+        { label: "R₀", value: "45 ft per lb TNT" },
+      ],
+      steps: [
+        {
+          step: "Step 1",
+          name: "Form absolute pressure and energy",
+          formula:
+            "E=\\frac{P_1 V}{\\gamma-1}\\left[1-\\left(\\frac{P_0}{P_1}\\right)^{(\\gamma-1)/\\gamma}\\right]",
+          calculation:
+            "P₁ = 1.101325 MPa · V = 2 m³ · γ = 1.4 → E ≈ 2.722 MJ (2.722×10⁶ J).",
+          result: "E ≈ 2.722 MJ",
+        },
+        {
+          step: "Step 2",
+          name: "Convert to TNT equivalent",
+          formula: "W = E / E_{\\mathrm{TNT}}",
+          calculation:
+            "E_TNT ≈ 1.4×10⁶ ft·lbf/lb ≈ 1.898 MJ/lb → W ≈ 2.722 / 1.898 ≈ 1.43 lb TNT.",
+          result: "W ≈ 1.43 lb TNT",
+        },
+        {
+          step: "Step 3",
+          name: "Scale exclusion distance",
+          formula: "D = R_0 \\cdot W^{1/3}",
+          calculation:
+            "D = 45 ft × (1.43)^{1/3} ≈ 45 × 1.13 ≈ 50.8 ft ≈ 15.5 m.",
+          result: "D ≈ 15.5 m (50.8 ft)",
+          note: "Keep non-essential personnel outside this radius during pressurization and hold unless an engineered barrier plan says otherwise.",
+        },
+      ],
+      conclusion:
+        "For 10 bar g × 2 m³ air, this app’s PCC-2 Article 501 screening gives D ≈ 15.5 m. Open /10-bar-2-m3, export the sheet for the test package, and escalate barrier / AHJ documentation to your inspection contractor.",
+    },
+    materialLimitations: {
+      title: "Applicability",
+      summary:
+        "Ideal-gas screening for air, nitrogen, and helium. Not for reactive / toxic release modeling or confined blast.",
+      items: [
+        {
+          materialGroup: "Air / nitrogen",
+          temperatureLimit: "γ = 1.40",
+          stressLimit: "N/A — energy method",
+          notes: "Default pneumatic media for most plant tests.",
+        },
+        {
+          materialGroup: "Helium",
+          temperatureLimit: "γ = 1.67",
+          stressLimit: "N/A — energy method",
+          notes: "Higher γ changes stored energy vs air at the same P·V.",
+        },
+        {
+          materialGroup: "Pipe-run volume",
+          temperatureLimit: "Ambient screening",
+          stressLimit: "Uses B36 ID",
+          notes: "Add vessel / tubing volume separately when significant.",
+        },
+      ],
+      codeRestrictions: [
+        "Field screening only — does not satisfy a formal blast study, barrier design, or stamped PCC-2 Article 501 procedure.",
+        "ASME B31.3 still requires written authorization, barriers, and stepwise pressurization for pneumatic tests.",
+        "R₀ = 45 ft assumes ~1 psi side-on unprotected exposure; occupied buildings and roads may need larger zones.",
+        "Export / PDF output is a screening sheet for packages and B2B inspection handoff — not a certified report by itself.",
+      ],
+    },
+    faq: [
+      {
+        question: "What does ASME PCC-2 Article 501 cover here?",
+        answer:
+          "This tool implements the **stored-energy → cube-root distance** screening used with **ASME PCC-2 Article 501** pneumatic testing guidance: compute **E**, convert to **TNT equivalent**, then report an unprotected personnel **exclusion radius D**.",
+      },
+      {
+        question: "How is pipe-run volume calculated?",
+        answer:
+          "In **Pipe run** mode, volume is **V = π/4 · ID² · L** using the ASME **B36** inside diameter for the selected NPS and schedule. Add vessel or tubing volume separately when it is a meaningful share of the pressurized envelope.",
+      },
+      {
+        question: "What does R₀ = 45 ft mean?",
+        answer:
+          "**R₀ = 45 ft per lb TNT** is the unprotected personnel screening standoff corresponding to roughly **~1 psi side-on** overpressure. Barriers, occupied buildings, and AHJ rules often require a **larger** zone than this screening value.",
+      },
+      {
+        question: "Is this an ASME calculator for pipe stress?",
+        answer:
+          "**No.** It does **not** run pipe-stress / flexibility analysis. It screens **pneumatic test safety distance**. For stress/flexibility, use thermal expansion / loop tools or CAESAR II.",
+      },
+      {
+        question: "Can I use this for a paid PDF / inspection package?",
+        answer:
+          "**Yes as a starting sheet.** Export the results into your test package, then have an authorized inspector / NDE firm complete **barrier layout, procedure, and witness** deliverables for B2B clients.",
+      },
+      {
+        question: "Why prefer hydrostatic testing?",
+        answer:
+          "Liquid water stores **far less elastic energy** than compressed gas. Codes and good practice prefer hydrotest whenever the process and materials allow.",
+      },
+    ],
+  },
+
+  "pump-npsh-cavitation": {
+    slug: "pump-npsh-cavitation",
+    formulaTitle: "Available NPSH & Cavitation Margin",
+    formulaHtml:
+      '<p class="font-mono text-sm not-italic leading-relaxed text-slate-800 dark:text-slate-100 md:text-base">NPSHa = (Ps − Pv)/(ρ·g) + zs − hf</p>' +
+      '<p class="font-mono text-sm not-italic leading-relaxed text-slate-800 dark:text-slate-100 md:text-base">Margin = NPSHa − NPSHr &nbsp;·&nbsp; Ratio = NPSHa / NPSHr</p>' +
+      '<p class="eng-plain">Hydraulic Institute ANSI/HI 9.6.1 · ASME B73.1 · API 610 (screening)</p>',
+    formulaLatex:
+      "\\mathrm{NPSHa}=\\frac{P_s-P_v}{\\rho g}+z_s-h_f,\\quad \\mathrm{margin}=\\mathrm{NPSHa}-\\mathrm{NPSHr}",
+    formulaNotes:
+      "NPSHa is the suction-system available net positive suction head for centrifugal pumps (mechanical / rotating equipment selection). Ps is absolute free-surface pressure, Pv liquid vapor pressure at pumping temperature, zs signed static head (flooded +, lift −), and hf suction friction/fitting losses. Compare to OEM NPSHr from the pump curve at the operating capacity. HI 9.6.1 defines margin practice; ASME B73.1 and API 610 expect the purchaser to set required margin. Densities and Pv are screening curves — not a process simulator.",
+    formulaHighlight: true,
+    formulaBadges: [
+      { label: "Standard", value: "HI 9.6.1" },
+      { label: "Companions", value: "B73.1 · API 610" },
+      { label: "Hero", value: "NPSHa" },
+      { label: "Check", value: "Margin · Ratio" },
+    ],
+    variables: [
+      {
+        symbol: "Ps",
+        name: "Surface pressure (abs)",
+        definition: "Absolute pressure on the liquid free surface (open tank ≈ Patm).",
+      },
+      {
+        symbol: "Pv",
+        name: "Vapor pressure",
+        definition: "Liquid vapor pressure at the pumping temperature.",
+      },
+      {
+        symbol: "ρ",
+        name: "Liquid density",
+        definition: "Mass density used to convert pressures to head (kg/m³ or lb/ft³).",
+      },
+      {
+        symbol: "zs",
+        name: "Static suction head",
+        definition: "Geometric height from free surface to pump CL (+ flooded / − lift).",
+      },
+      {
+        symbol: "hf",
+        name: "Suction losses",
+        definition: "Friction + fittings + strainer head loss on the suction line.",
+      },
+      {
+        symbol: "NPSHa",
+        name: "Available NPSH",
+        definition: "System-side net positive suction head available at the pump.",
+      },
+      {
+        symbol: "NPSHr",
+        name: "Required NPSH",
+        definition: "Pump-required NPSH from the OEM performance curve at capacity.",
+      },
+    ],
+    standards: [
+      "Hydraulic Institute ANSI/HI 9.6.1 — NPSH Margin",
+      "ASME B73.1 — Specification for Horizontal End Suction Centrifugal Pumps for Chemical Process (NPSH per HI)",
+      "API 610 — Centrifugal Pumps for Petroleum, Petrochemical and Natural Gas Industries",
+    ],
+    allowancesAndTolerances: {
+      title: "Margin practice (screening)",
+      summary:
+        "Codes define NPSH terms; the purchaser / HI guidance sets how much margin is enough for the service.",
+      items: [
+        {
+          label: "HI 9.6.1 margin",
+          value: "Service-dependent",
+          description:
+            "Margin = NPSHa − NPSHr (often also tracked as a ratio). Continuous cold-water duties commonly target ≥ ~1.1× NPSHr; confirm HI charts for the duty.",
+        },
+        {
+          label: "API 610 purchaser margin",
+          value: "Project-specified",
+          description:
+            "API 610 expects NPSHa to exceed NPSHr by the margin stated by the purchaser — do not assume a universal default.",
+        },
+        {
+          label: "Hot / volatile liquids",
+          value: "Larger margin",
+          description:
+            "Boiler feed, condensate near boiling, and light hydrocarbons need more margin than cold water — Hvp rises fast with temperature.",
+        },
+        {
+          label: "Suction piping",
+          value: "FOT eccentric · short run",
+          description:
+            "Keep suction short and flooded when practical. Eccentric reducers flat-on-top to avoid vapor pockets.",
+        },
+      ],
+    },
+    tableCaption:
+      "Illustrative atmospheric cases (this app, hf as noted, open-tank Ps)",
+    tableHeaders: ["Case", "NPSHa (approx.)", "Flag vs typical NPSHr"],
+    tableAllNumeric: false,
+    tableRows: [
+      ["Water 20 °C · flooded 2 m · hf 1 m", "~11.1 m", "Comfortable vs 3.5 m"],
+      ["Water 20 °C · lift 5 m · hf 2 m", "~3.1 m", "Check vs 4 m NPSHr"],
+      ["Water 80 °C · flooded 2 m · hf 1 m", "~6.7 m", "Still often OK / thinner"],
+      ["Water ~100 °C · flooded 1 m · hf 0.5 m", "~0.5 m", "Near boiling — high risk"],
+      ["Light HC 40 °C · flooded 3 m", "Lower than water", "Prefer flooded suction"],
+    ],
+    ...howTo("How to screen pump NPSH & cavitation", [
+      {
+        name: "1. Select fluid & temperature",
+        text: "Sets density ρ and vapor pressure Pv (screening curves).",
+      },
+      {
+        name: "2. Set surface pressure & arrangement",
+        text: "Open tank ≈ atmosphere. Choose flooded head or suction lift and enter |z|.",
+      },
+      {
+        name: "3. Enter hf and OEM NPSHr",
+        text: "Estimate suction losses; take NPSHr from the pump curve at operating flow.",
+      },
+      {
+        name: "4. Read NPSHa, margin, and ratio",
+        text: "If NPSHa < NPSHr, treat as cavitation risk. Confirm HI / API project margin before approving the layout.",
+      },
+    ]),
+    workedExample: {
+      title: "Step-by-Step Worked Example: Water 20 °C · flooded 2 m",
+      scenario:
+        "Screen NPSHa for an atmospheric fresh-water centrifugal pump suction: flooded static head 2 m, suction losses 1 m, OEM NPSHr 3.5 m at the operating capacity (HI 9.6.1 / ASME B73.1 field screening).",
+      designConditions: [
+        { label: "Fluid", value: "Fresh water · 20 °C" },
+        { label: "Ps", value: "1.01325 bar a (open tank)" },
+        { label: "zs", value: "+2.0 m (flooded)" },
+        { label: "hf", value: "1.0 m" },
+        { label: "NPSHr", value: "3.5 m (OEM curve)" },
+      ],
+      steps: [
+        {
+          step: "Step 1",
+          name: "Form Ha and Hvp",
+          formula: "H_a=P_s/(\\rho g),\\quad H_{vp}=P_v/(\\rho g)",
+          calculation:
+            "ρ ≈ 998 kg/m³ · Ps = 101.325 kPa · Pv ≈ 2.34 kPa → Ha ≈ 10.35 m · Hvp ≈ 0.24 m.",
+          result: "Ha ≈ 10.35 m · Hvp ≈ 0.24 m",
+        },
+        {
+          step: "Step 2",
+          name: "Assemble NPSHa",
+          formula: "\\mathrm{NPSHa}=H_a+z_s-H_{vp}-h_f",
+          calculation: "NPSHa = 10.35 + 2.0 − 0.24 − 1.0 ≈ 11.11 m.",
+          result: "NPSHa ≈ 11.1 m",
+        },
+        {
+          step: "Step 3",
+          name: "Margin vs NPSHr",
+          formula: "\\mathrm{margin}=\\mathrm{NPSHa}-\\mathrm{NPSHr}",
+          calculation:
+            "Margin ≈ 11.1 − 3.5 = 7.6 m · Ratio ≈ 11.1 / 3.5 ≈ 3.2× — comfortable for typical cold-water continuous duty; still confirm project HI/API margin policy.",
+          result: "Margin ≈ 7.6 m · Ratio ≈ 3.2×",
+          note: "Open /water-20c-flooded-2m for the live default case. Hot water or suction lift cases shrink margin quickly via Hvp and −zs.",
+        },
+      ],
+      conclusion:
+        "For cold atmospheric water with modest flooded head, NPSHa usually exceeds typical OEM NPSHr with comfortable margin. Re-run with the actual temperature, lift, and hf before freezing the pump suction layout.",
+    },
+    materialLimitations: {
+      title: "Applicability",
+      summary:
+        "Screening fluids: fresh water, seawater, condensate (water-like), and light hydrocarbon. Not a multi-component flash or dissolved-gas model.",
+      items: [
+        {
+          materialGroup: "Fresh water / condensate",
+          temperatureLimit: "≈ 1–100 °C Antoine Pv",
+          stressLimit: "N/A — NPSH energy heads",
+          notes: "Near boiling, Pv ≈ Patm and NPSHa collapses unless pressurized or strongly flooded.",
+        },
+        {
+          materialGroup: "Seawater",
+          temperatureLimit: "Ambient screening",
+          stressLimit: "ρ ≈ 1.025× water",
+          notes: "Uses denser ρ and slightly reduced Pv vs fresh water.",
+        },
+        {
+          materialGroup: "Light hydrocarbon",
+          temperatureLimit: "Screening Reid-style Pv",
+          stressLimit: "Lower ρ · higher Pv",
+          notes: "Order-of-magnitude only — use project fluid properties for design.",
+        },
+      ],
+      codeRestrictions: [
+        "Field screening only — not a substitute for OEM NPSHr, HI 9.6.1 project margin charts, or API 610 datasheet guarantees.",
+        "NPSHr must come from the pump curve at the operating capacity (and speed).",
+        "Dissolved gas, air entrainment, and transient startup/surge are outside this calculator.",
+        "Export / PDF is a suction screening sheet — not a stamped pump selection report.",
+      ],
+    },
+    faq: [
+      {
+        question: "What standards define NPSH for this tool?",
+        answer:
+          "**Hydraulic Institute ANSI/HI 9.6.1** defines NPSH margin practice. **ASME B73.1** chemical-process pumps reference HI NPSH definitions. **API 610** requires NPSHa to exceed NPSHr by the **purchaser-specified** margin.",
+      },
+      {
+        question: "What is the difference between NPSHa and NPSHr?",
+        answer:
+          "**NPSHa** is available from the suction system (tank pressure, elevation, losses, vapor pressure). **NPSHr** is required by the pump at the operating point on the OEM curve. Cavitation risk rises when **NPSHa < NPSHr**.",
+      },
+      {
+        question: "Flooded suction vs suction lift — which is safer?",
+        answer:
+          "**Flooded** (liquid level above the pump centerline) adds **+zs** and is preferred. **Suction lift** subtracts **|z|** from NPSHa and is the usual reason cold-water pumps still cavitate when the tank is too low or suction losses are high.",
+      },
+      {
+        question: "Why does hot water lose NPSH so quickly?",
+        answer:
+          "Vapor pressure **Pv** (and **Hvp**) rises rapidly toward atmospheric as temperature approaches boiling, so **(Ps − Pv)** shrinks and **NPSHa** collapses unless the surface is pressurized or the pump is strongly flooded.",
+      },
+      {
+        question: "Can I use this instead of a vendor pump selection?",
+        answer:
+          "**No.** Use it to screen suction layout and margin before RFQ. Final selection still needs the OEM curve, HI margin policy, and project / API 610 datasheet requirements.",
       },
     ],
   },

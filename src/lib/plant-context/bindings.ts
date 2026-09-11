@@ -265,6 +265,64 @@ export function applyPlantContext<T extends Record<string, unknown>>(
       }
       return next as T;
     }
+    case "pipe-coping": {
+      const next = { ...inputs } as T & {
+        headerNps?: string;
+        branchNps?: string;
+        headerSchedule?: string;
+        branchSchedule?: string;
+      };
+      const nps = normalizeNps(ctx.size);
+      if (nps) {
+        next.headerNps = nps;
+        if (
+          typeof next.branchNps !== "string" ||
+          Number(next.branchNps) > Number(nps)
+        ) {
+          next.branchNps = nps;
+        }
+      }
+      if (ctx.schedule) {
+        const sch = normalizeSchedule(ctx.schedule);
+        if (sch) {
+          next.headerSchedule = sch;
+          next.branchSchedule = sch;
+        }
+      }
+      return next as T;
+    }
+    case "pneumatic-safety": {
+      const next = { ...applySchedule(applyNps(inputs, ctx), ctx) } as T & {
+        testPressure?: number;
+        unitSystem?: string;
+        mode?: string;
+        nps?: string;
+      };
+      if (ctx.pressure) {
+        next.testPressure =
+          next.unitSystem === "imperial"
+            ? pressureToPsi(ctx.pressure)
+            : pressureToBar(ctx.pressure);
+      }
+      // Only force pipe mode when plant context actually supplied a size.
+      if (ctx.size && typeof next.nps === "string" && next.nps) {
+        next.mode = "pipe";
+      }
+      return next as T;
+    }
+    case "pump-npsh": {
+      const next = { ...inputs } as T & {
+        unitSystem?: string;
+        temperature?: number;
+      };
+      if (ctx.temperature) {
+        next.temperature =
+          next.unitSystem === "imperial"
+            ? temperatureToF(ctx.temperature)
+            : temperatureToC(ctx.temperature);
+      }
+      return next as T;
+    }
     default:
       return inputs;
   }
@@ -275,11 +333,19 @@ export function extractPlantContext(
   inputs: Record<string, unknown>,
 ): PlantContext {
   const ctx: PlantContext = {};
-  const nps = typeof inputs.nps === "string" ? normalizeNps(inputs.nps) : undefined;
-  if (nps) ctx.size = formatSizeLabel(nps);
+  if (typeof inputs.nps === "string") {
+    const nps = normalizeNps(inputs.nps);
+    if (nps) ctx.size = formatSizeLabel(nps);
+  } else if (typeof inputs.headerNps === "string") {
+    const nps = normalizeNps(inputs.headerNps);
+    if (nps) ctx.size = formatSizeLabel(nps);
+  }
 
   if (typeof inputs.schedule === "string") {
     const schedule = normalizeSchedule(inputs.schedule);
+    if (schedule) ctx.schedule = `Sch ${schedule}`;
+  } else if (typeof inputs.headerSchedule === "string") {
+    const schedule = normalizeSchedule(inputs.headerSchedule);
     if (schedule) ctx.schedule = `Sch ${schedule}`;
   }
 
@@ -315,7 +381,21 @@ export function extractPlantContext(
         : { value: Number(inputs.inletPressure.toFixed(3)), unit: "bar" };
   }
 
+  if (type === "pneumatic-safety" && typeof inputs.testPressure === "number") {
+    ctx.pressure =
+      unitSystem === "imperial"
+        ? { value: Number(inputs.testPressure.toFixed(1)), unit: "psi" }
+        : { value: Number(inputs.testPressure.toFixed(3)), unit: "bar" };
+  }
+
   if (type === "valve-cv" && typeof inputs.temperature === "number") {
+    ctx.temperature =
+      unitSystem === "imperial"
+        ? { value: Number(inputs.temperature.toFixed(1)), unit: "F" }
+        : { value: Number(inputs.temperature.toFixed(1)), unit: "C" };
+  }
+
+  if (type === "pump-npsh" && typeof inputs.temperature === "number") {
     ctx.temperature =
       unitSystem === "imperial"
         ? { value: Number(inputs.temperature.toFixed(1)), unit: "F" }

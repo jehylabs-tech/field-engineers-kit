@@ -83,11 +83,17 @@ export const CATALOG_SEO_BLURBS: Record<string, string> = {
   "hydro-test-pressure":
     "ASME B31.3 St/S stress ratio & yield limit check for 1.5× hydro / 1.1× pneumatic tests.",
   "thermal-expansion-loop":
-    "ASME B31.3 thermal expansion ΔL = αLΔT and piping expansion-loop screening.",
+    "ASME B31.3 thermal expansion ΔL = αLΔT, loop H/W, and F_anchor for CS, steam pipe, and CPVC.",
   "pressure-drop-friction":
     "Darcy–Weisbach / Haaland friction pressure drop for process pipe and fittings.",
   "flow-velocity-erosion":
     "Pipe flow velocity v = Q/A and API RP 14E erosion velocity limit vc.",
+  "pump-npsh-cavitation":
+    "Mechanical pump NPSHa = (Ps−Pv)/ρg + zs − hf with HI 9.6.1 / ASME B73.1 / API 610 cavitation margin screening.",
+  "pipe-coping-branch-cut-layout":
+    "Pipe coping / branch cut flat-pattern layout with 16–32 ordinate marks for set-on, set-in, and miter joints.",
+  "pneumatic-test-safety-distance":
+    "ASME PCC-2 Article 501 pneumatic test stored energy and personnel exclusion distance screening.",
   "unit-converter":
     "Free engineering unit converter for pressure, dimension, temperature, flow, torque, weight, and velocity.",
   "link-seal-penetration-sleeve":

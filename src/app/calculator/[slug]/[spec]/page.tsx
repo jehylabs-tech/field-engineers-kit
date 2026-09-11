@@ -127,6 +127,14 @@ export default async function CalculatorSpecPage({ params }: SpecPageProps) {
         >
           ← All indexable specifications for this calculator
         </Link>
+        {specRoute.label ? (
+          <span className="ml-2 text-slate-500 dark:text-slate-400">
+            · Current spec:{" "}
+            <span className="font-medium text-slate-700 dark:text-slate-200">
+              {specRoute.label}
+            </span>
+          </span>
+        ) : null}
       </p>
       <SpecProgrammaticPanel h2={copy.h2} route={specRoute} />
       <CalculatorSeoContent

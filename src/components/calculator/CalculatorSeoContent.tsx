@@ -371,6 +371,11 @@ export default function CalculatorSeoContent({
                   </span>
                 </span>
               </summary>
+            {data.workedExample.title ? (
+              <h3 className="mb-2 text-sm font-semibold leading-snug text-slate-800 dark:text-slate-100">
+                {data.workedExample.title}
+              </h3>
+            ) : null}
             <p className="mb-3 text-sm font-medium text-slate-800 dark:text-slate-200">
               {data.workedExample.scenario}
             </p>

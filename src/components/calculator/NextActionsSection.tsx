@@ -69,7 +69,13 @@ export default function NextActionsSection({
         <p className="mb-4 text-sm leading-relaxed text-slate-700 dark:text-slate-300">
           {currentType === "butt-weld-fitting"
             ? "Open the next job with size, schedule, and material carried over. No re-entry. Values are already in the URL."
-            : "Open the next job with size, class, and pressure carried over. No re-entry. Values are already in the URL."}
+            : currentType === "pipe-coping"
+              ? "Open the next job with header/branch NPS, schedule, and intersection angle carried over. No re-entry. Values are already in the URL."
+              : currentType === "pneumatic-safety"
+                ? "Open the next job with size and pressure carried over. Pair with hydro Pt or test-blank thickness. Values are already in the URL."
+                : currentType === "alloy-weight"
+                  ? "Open the next job with material and geometry carried over. No re-entry. Values are already in the URL."
+                  : "Open the next job with size, class, and pressure carried over. No re-entry. Values are already in the URL."}
         </p>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map((item) => (

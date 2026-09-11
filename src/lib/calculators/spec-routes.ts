@@ -7,6 +7,15 @@ import {
   formatSequenceArrowText,
   generateBoltSequence,
 } from "@/lib/calculators/engines/bolt-sequence";
+import { listPipeCopingPseoRoutes } from "@/lib/calculators/engines/pipe-coping";
+import {
+  expansionMaterialSeoLabel,
+  listThermalExpansionPseoRoutes,
+  THERMAL_EXPANSION_PSEO_MATERIALS,
+  type ExpansionMaterial,
+} from "@/lib/calculators/engines/thermal-expansion";
+import { listPneumaticSafetyPseoRoutes } from "@/lib/calculators/pseo/pneumatic-safety-routes";
+import { listPumpNpshPseoRoutes } from "@/lib/calculators/pseo/pump-npsh-routes";
 import {
   getPipeScheduleEntry,
   listAvailableNps,
@@ -169,6 +178,79 @@ export function parseSpecToQuery(spec: string): Record<string, string> | null {
     return { bolts: boltPattern[1], pattern };
   }
 
+  const coping = value.match(
+    /^(\d+(?:\.\d+)?)-on-(\d+(?:\.\d+)?)-sch-([a-z0-9]+)-(\d+)deg$/,
+  );
+  if (coping) {
+    const schRaw = coping[3];
+    const sch =
+      schRaw.toUpperCase() === "STD" || schRaw.toUpperCase() === "XS"
+        ? schRaw.toUpperCase()
+        : schRaw;
+    return {
+      bnps: coping[1],
+      hnps: coping[2],
+      hsch: sch,
+      bsch: sch,
+      theta: coping[4],
+    };
+  }
+
+  // Thermal expansion: `{material}-{nps}-sch-{sch}` (cpvc-4-sch-40, steam-6-sch-80).
+  const thermalMat = THERMAL_EXPANSION_PSEO_MATERIALS.join("|");
+  const thermal = value.match(
+    new RegExp(`^(${thermalMat})-(\\d+(?:\\.\\d+)?)-sch-([a-z0-9]+)$`, "i"),
+  );
+  if (thermal) {
+    const schRaw = thermal[3];
+    const sch =
+      schRaw.toUpperCase() === "STD" || schRaw.toUpperCase() === "XS"
+        ? schRaw.toUpperCase()
+        : schRaw;
+    return {
+      material: thermal[1].toLowerCase(),
+      nps: thermal[2],
+      sch,
+    };
+  }
+
+  // Pneumatic safety: `{P}-bar-{V}-m3` or `{P}-psi-{V}-ft3` (0.5 m³ → 0p5).
+  const pneumatic = value.match(
+    /^(\d+(?:\.\d+)?)-(bar|psi)-(\d+(?:p\d+)?)-(m3|ft3)$/i,
+  );
+  if (pneumatic) {
+    const volRaw = pneumatic[3].replace("p", ".");
+    const punit = pneumatic[2].toLowerCase();
+    const vunit = pneumatic[4].toLowerCase();
+    return {
+      units: punit === "psi" || vunit === "ft3" ? "imperial" : "metric",
+      pt: pneumatic[1],
+      vol: volRaw,
+      mode: "volume",
+      gas: "air",
+    };
+  }
+
+  // Pump NPSH: `{fluid}-{temp}{c|f}-{flooded|lift}-{height}{m|ft}`
+  const npsh = value.match(
+    /^(water|seawater|condensate|light-hc)-(\d+(?:p\d+)?)(c|f)-(flooded|lift)-(\d+(?:p\d+)?)(m|ft)$/i,
+  );
+  if (npsh) {
+    const tempRaw = npsh[2].replace("p", ".");
+    const hsRaw = npsh[5].replace("p", ".");
+    const tempUnit = npsh[3].toLowerCase();
+    const lenUnit = npsh[6].toLowerCase();
+    const imperial = tempUnit === "f" || lenUnit === "ft";
+    return {
+      units: imperial ? "imperial" : "metric",
+      fluid: npsh[1].toLowerCase(),
+      temp: tempRaw,
+      arr: npsh[4].toLowerCase(),
+      hs: hsRaw,
+      ps: imperial ? "14.696" : "1.01325",
+    };
+  }
+
   if (value === "liquid" || value === "gas") {
     return { fluid: value };
   }
@@ -206,6 +288,45 @@ export function specLabelFromQuery(
       query.pattern === "circular" ? "circular" : "star";
     return `${query.bolts}-Bolt ${pattern === "circular" ? "Circular" : "Star"}`;
   }
+  if (query.bnps && query.hnps) {
+    const sch = query.hsch || query.bsch || "";
+    const ang = query.theta ? `${query.theta}°` : "";
+    return `${query.bnps}" on ${query.hnps}"${sch ? ` Sch ${sch}` : ""}${ang ? ` · ${ang}` : ""}`;
+  }
+  if (
+    query.material &&
+    THERMAL_EXPANSION_PSEO_MATERIALS.includes(
+      query.material as ExpansionMaterial,
+    ) &&
+    query.nps &&
+    query.sch
+  ) {
+    return `${expansionMaterialSeoLabel(query.material as ExpansionMaterial)} · ${query.nps}" Sch ${query.sch}`;
+  }
+  if (query.pt && query.vol && (query.units === "metric" || query.units === "imperial")) {
+    const pUnit = query.units === "imperial" ? "psi" : "bar";
+    const vUnit = query.units === "imperial" ? "ft³" : "m³";
+    return `${query.pt} ${pUnit} · ${query.vol} ${vUnit}`;
+  }
+  if (
+    query.fluid &&
+    query.temp &&
+    query.arr &&
+    query.hs &&
+    (query.arr === "flooded" || query.arr === "lift")
+  ) {
+    const fluid =
+      query.fluid === "seawater"
+        ? "Seawater"
+        : query.fluid === "condensate"
+          ? "Condensate"
+          : query.fluid === "light-hc"
+            ? "Light HC"
+            : "Water";
+    const tUnit = query.units === "imperial" ? "°F" : "°C";
+    const hUnit = query.units === "imperial" ? "ft" : "m";
+    return `${fluid} ${query.temp} ${tUnit} · ${query.arr} ${query.hs} ${hUnit}`;
+  }
   if (query.class && query.nps) return `${query.nps}" Class ${query.class}`;
   if (query.sch && query.nps) return `${query.nps}" Sch ${query.sch}`;
   if (query.nps) return `${query.nps}"`;
@@ -232,12 +353,13 @@ export function listSpecRoutesForSlug(slug: string): SpecRoute[] {
     case "pipe-schedule":
     case "pressure-drop":
     case "flow-velocity":
-    case "thermal-expansion":
     case "butt-weld-fitting":
     case "pipe-thickness":
     case "hydro-test":
     case "link-seal":
       return npsSchRoutes(slug);
+    case "thermal-expansion":
+      return listThermalExpansionPseoRoutes(slug);
     case "flange-dimension":
       return npsClassRoutes(slug, listFlangeClassesForNps, listFlangeNps());
     case "bolt-torque":
@@ -305,6 +427,12 @@ export function listSpecRoutesForSlug(slug: string): SpecRoute[] {
         query: { material: id },
         label: ALLOY_MATERIAL_BY_ID[id].label,
       }));
+    case "pipe-coping":
+      return listPipeCopingPseoRoutes(slug);
+    case "pneumatic-safety":
+      return listPneumaticSafetyPseoRoutes(slug);
+    case "pump-npsh":
+      return listPumpNpshPseoRoutes(slug);
     case "unit-converter":
       return [
         {
@@ -445,6 +573,58 @@ export function findSpecRouteForInputs(
     partial.pattern != null && partial.pattern !== ""
       ? String(partial.pattern)
       : "";
+  const hnps =
+    partial.hnps != null && partial.hnps !== ""
+      ? String(partial.hnps)
+      : "";
+  const bnps =
+    partial.bnps != null && partial.bnps !== ""
+      ? String(partial.bnps)
+      : "";
+  const hsch =
+    partial.hsch != null && partial.hsch !== ""
+      ? String(partial.hsch)
+      : "";
+  const theta =
+    partial.theta != null && partial.theta !== ""
+      ? String(Math.round(Number(partial.theta)) || partial.theta)
+      : "";
+  const pt =
+    partial.pt != null && partial.pt !== ""
+      ? String(partial.pt)
+      : partial.testPressure != null && partial.testPressure !== ""
+        ? String(partial.testPressure)
+        : "";
+  const vol =
+    partial.vol != null && partial.vol !== ""
+      ? String(partial.vol)
+      : partial.volume != null && partial.volume !== ""
+        ? String(partial.volume)
+        : "";
+  const units =
+    partial.units != null && partial.units !== ""
+      ? String(partial.units)
+      : partial.unitSystem != null && partial.unitSystem !== ""
+        ? String(partial.unitSystem)
+        : "";
+  const temp =
+    partial.temp != null && partial.temp !== ""
+      ? String(partial.temp)
+      : partial.temperature != null && partial.temperature !== ""
+        ? String(partial.temperature)
+        : "";
+  const arr =
+    partial.arr != null && partial.arr !== ""
+      ? String(partial.arr)
+      : partial.arrangement != null && partial.arrangement !== ""
+        ? String(partial.arrangement)
+        : "";
+  const hs =
+    partial.hs != null && partial.hs !== ""
+      ? String(partial.hs)
+      : partial.staticHeight != null && partial.staticHeight !== ""
+        ? String(partial.staticHeight)
+        : "";
 
   if (bolts && pattern) {
     const hit = routes.find(
@@ -462,7 +642,98 @@ export function findSpecRouteForInputs(
     if (hit) return hit;
   }
 
+  if (hnps && bnps && hsch && theta) {
+    const hit = routes.find(
+      (route) =>
+        route.query.hnps === hnps &&
+        route.query.bnps === bnps &&
+        route.query.hsch === hsch &&
+        route.query.theta === theta,
+    );
+    if (hit) return hit;
+  }
+  if (hnps && bnps && theta) {
+    const hit = routes.find(
+      (route) =>
+        route.query.hnps === hnps &&
+        route.query.bnps === bnps &&
+        route.query.theta === theta,
+    );
+    if (hit) return hit;
+  }
+
+  if (material && nps && sch) {
+    const hit = routes.find(
+      (route) =>
+        route.query.material === material &&
+        route.query.nps === nps &&
+        route.query.sch === sch,
+    );
+    if (hit) return hit;
+  }
+
+  if (pt && vol) {
+    const hit = routes.find((route) => {
+      if (route.query.pt !== pt) return false;
+      const routeVol = Number(route.query.vol);
+      const wantVol = Number(vol);
+      if (
+        Number.isFinite(routeVol) &&
+        Number.isFinite(wantVol) &&
+        Math.abs(routeVol - wantVol) < 1e-9
+      ) {
+        if (units && route.query.units && route.query.units !== units) {
+          return false;
+        }
+        return true;
+      }
+      return route.query.vol === vol;
+    });
+    if (hit) return hit;
+  }
+
+  if (fluid && temp && arr && hs) {
+    const hit = routes.find((route) => {
+      if (route.query.fluid !== fluid) return false;
+      if (route.query.arr !== arr) return false;
+      if (units && route.query.units && route.query.units !== units) {
+        return false;
+      }
+      const routeTemp = Number(route.query.temp);
+      const wantTemp = Number(temp);
+      const routeHs = Number(route.query.hs);
+      const wantHs = Number(hs);
+      const tempOk =
+        Number.isFinite(routeTemp) && Number.isFinite(wantTemp)
+          ? Math.abs(routeTemp - wantTemp) < 1e-9
+          : route.query.temp === temp;
+      const hsOk =
+        Number.isFinite(routeHs) && Number.isFinite(wantHs)
+          ? Math.abs(routeHs - wantHs) < 1e-9
+          : route.query.hs === hs;
+      return tempOk && hsOk;
+    });
+    if (hit) return hit;
+  }
+
   if (nps && sch) {
+    const withMat =
+      material !== ""
+        ? routes.find(
+            (route) =>
+              route.query.nps === nps &&
+              route.query.sch === sch &&
+              route.query.material === material,
+          )
+        : undefined;
+    if (withMat) return withMat;
+    const plain = routes.find(
+      (route) =>
+        route.query.nps === nps &&
+        route.query.sch === sch &&
+        !route.query.material,
+    );
+    if (plain) return plain;
     const hit = routes.find(
       (route) => route.query.nps === nps && route.query.sch === sch,
     );
@@ -545,6 +816,72 @@ export function buildSpecSeoCopy(
     };
   }
 
+  if (q.bnps && q.hnps) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus} | ${brand}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `Pipe coping / branch cut layout template for ${focus} with unwrapped ordinate marking table (ASME B31.3 fabrication screening).`;
+    return {
+      title,
+      description,
+      // Page H1 stays the clean tool name; focus lives in <title> + Spec panel.
+      h1: shortTitle,
+      h2: "Branch Cut Layout Summary",
+    };
+  }
+
+  if (
+    q.material &&
+    THERMAL_EXPANSION_PSEO_MATERIALS.includes(q.material as ExpansionMaterial) &&
+    q.nps &&
+    q.sch
+  ) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus} | ${brand}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `ASME B31.3 thermal expansion ΔL, expansion loop H/W, and F_anchor screening for ${focus}.`;
+    return {
+      title,
+      description,
+      h1: shortTitle,
+      h2: "Expansion & Anchor Load Summary",
+    };
+  }
+
+  if (q.pt && q.vol) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus} | ${brand}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `ASME PCC-2 Article 501 pneumatic test safety distance for ${focus} (stored-energy exclusion radius screening).`;
+    return {
+      title,
+      description,
+      h1: shortTitle,
+      h2: "Pneumatic Safety Distance Summary",
+    };
+  }
+
+  if (q.fluid && q.temp && q.arr && q.hs) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus} | ${brand}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `Pump NPSHa / cavitation margin screening for ${focus} (HI 9.6.1 · ASME B73.1 · API 610).`;
+    return {
+      title,
+      description,
+      h1: shortTitle,
+      h2: "NPSH & Cavitation Summary",
+    };
+  }
+
   if (q.nps && q.sch) {
     const size = humanNps(q.nps);
     const schedule = humanSch(q.sch);
@@ -593,6 +930,16 @@ export function buildSpecSeoCopy(
 
   if (q.material) {
     const focus = route.label;
+    if (calculatorType === "alloy-weight") {
+      return {
+        title: `${shortTitle} — ${focus} | ${brand}`,
+        description:
+          metaDescription ??
+          `${focus} plate, pipe, and bar weight from catalog density for MTO / procurement screening.`,
+        h1: `${shortTitle} — ${focus}`,
+        h2: "Material Weight & Cost Summary",
+      };
+    }
     return {
       title: `${shortTitle} — ${focus} | ${brand}`,
       description:
@@ -642,6 +989,18 @@ export function buildSpecFactRows(route: SpecRoute): SpecFactRow[] {
   if (q.bolts) {
     rows.push({ label: "Bolt count", value: q.bolts });
   }
+  if (q.hnps) {
+    rows.push({ label: "Header NPS", value: `${q.hnps}"` });
+  }
+  if (q.bnps) {
+    rows.push({ label: "Branch NPS", value: `${q.bnps}"` });
+  }
+  if (q.hsch) {
+    rows.push({ label: "Schedule", value: `Sch ${q.hsch}` });
+  }
+  if (q.theta) {
+    rows.push({ label: "Intersection angle θ", value: `${q.theta}°` });
+  }
   if (q.pattern) {
     rows.push({
       label: "Pattern",
@@ -673,8 +1032,34 @@ export function buildSpecFactRows(route: SpecRoute): SpecFactRow[] {
       value: q.fluid.charAt(0).toUpperCase() + q.fluid.slice(1),
     });
   }
+  if (q.pt) {
+    rows.push({
+      label: "Test pressure",
+      value: `${q.pt} ${q.units === "imperial" ? "psi" : "bar"} g`,
+    });
+  }
+  if (q.vol) {
+    rows.push({
+      label: "Volume under test",
+      value: `${q.vol} ${q.units === "imperial" ? "ft³" : "m³"}`,
+    });
+  }
+  if (q.gas) {
+    rows.push({
+      label: "Test gas",
+      value: q.gas.charAt(0).toUpperCase() + q.gas.slice(1),
+    });
+  }
   if (q.material) {
-    rows.push({ label: "Material", value: route.label });
+    const thermalHit = THERMAL_EXPANSION_PSEO_MATERIALS.includes(
+      q.material as ExpansionMaterial,
+    );
+    rows.push({
+      label: "Material",
+      value: thermalHit
+        ? expansionMaterialSeoLabel(q.material as ExpansionMaterial)
+        : route.label,
+    });
     const alloy = ALLOY_MATERIAL_BY_ID[q.material as keyof typeof ALLOY_MATERIAL_BY_ID];
     if (alloy) {
       rows.push({

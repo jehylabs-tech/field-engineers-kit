@@ -119,11 +119,11 @@ export const WORKSTATION_DOMAINS: WorkstationDomain[] = [
       },
       {
         id: "thermal-expansion-loop",
-        title: "Thermal Expansion & Loop",
-        seoLabel: "ASME B31.3 Thermal Expansion and Piping Loop Sizing Calculator",
+        title: "Thermal Expansion & Anchor",
+        seoLabel: "ASME B31.3 Piping Thermal Expansion and Anchor Load Calculator",
         standard: "B31.3",
         href: "/calculator/thermal-expansion-loop",
-        keywords: ["thermal", "expansion", "loop"],
+        keywords: ["thermal", "expansion", "anchor", "cpvc", "steam", "loop"],
       },
       {
         id: "pressure-drop-friction",
@@ -141,6 +141,37 @@ export const WORKSTATION_DOMAINS: WorkstationDomain[] = [
         href: "/calculator/flow-velocity-erosion",
         keywords: ["velocity", "erosion", "api 14e"],
       },
+      {
+        id: "pipe-coping-branch-cut-layout",
+        title: "Pipe Coping & Branch Cut",
+        seoLabel:
+          "Pipe Coping & Branch Cut Layout Calculator (Header/Branch Intersect)",
+        standard: "B31.3 / PIP",
+        href: "/calculator/pipe-coping-branch-cut-layout/4-on-6-sch-40-90deg",
+        keywords: [
+          "pipe coping",
+          "branch cut",
+          "set-on",
+          "template",
+          "ordinate",
+          "miter",
+        ],
+      },
+      {
+        id: "pneumatic-test-safety-distance",
+        title: "Pneumatic Test Safety Distance",
+        seoLabel:
+          "ASME PCC-2 Article 501 Pneumatic Test Safety Distance Calculator",
+        standard: "PCC-2 Art. 501",
+        href: "/calculator/pneumatic-test-safety-distance/10-bar-2-m3",
+        keywords: [
+          "pneumatic test",
+          "safety distance",
+          "pcc-2",
+          "asme calculator",
+          "exclusion zone",
+        ],
+      },
     ],
   },
   {
@@ -156,6 +187,25 @@ export const WORKSTATION_DOMAINS: WorkstationDomain[] = [
         standard: "ISA 75.01",
         href: "/calculator/valve-cv-sizing",
         keywords: ["cv", "control valve", "isa", "iec 60534"],
+      },
+      {
+        id: "pump-npsh-cavitation",
+        title: "Pump NPSH & Cavitation",
+        seoLabel:
+          "Pump NPSHa NPSHr Cavitation Margin Calculator (HI 9.6.1 / ASME B73.1 / API 610)",
+        standard: "HI 9.6.1",
+        href: "/calculator/pump-npsh-cavitation/water-20c-flooded-2m",
+        keywords: [
+          "npsh",
+          "npsha",
+          "npshr",
+          "cavitation",
+          "pump suction",
+          "centrifugal pump",
+          "hi 9.6.1",
+          "api 610",
+          "asme b73.1",
+        ],
       },
       {
         id: "bolt-torque-tensioning",

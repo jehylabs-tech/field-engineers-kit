@@ -1,12 +1,13 @@
 import {
   DEFAULT_THERMAL_EXPANSION_INPUTS,
+  THERMAL_EXPANSION_PSEO_MATERIALS,
   type ExpansionMaterial,
   type ThermalExpansionInputs,
 } from "@/lib/calculators/engines/thermal-expansion";
 import type { UnitSystem } from "@/lib/calculators/definitions";
 import { urlSyncHelpers, type ParamConfig } from "@/lib/calculators/url-sync";
 
-const MATERIALS: ExpansionMaterial[] = ["cs", "304ss", "316ss", "alloy"];
+const MATERIALS: ExpansionMaterial[] = [...THERMAL_EXPANSION_PSEO_MATERIALS];
 
 export const THERMAL_EXPANSION_URL_CONFIG: ParamConfig<ThermalExpansionInputs> =
   {

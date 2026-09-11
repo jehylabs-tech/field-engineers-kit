@@ -232,7 +232,19 @@
       "type": "hydro-test",
       "standard": "ASME B31.3",
       "subtitle": "ASME B31.3 St/S stress ratio & yield limit check",
-      "formulaBasis": "Hydrostatic Pt = 1.5 × P × (St/S). Pneumatic Pt = 1.1 × P × (St/S) per ASME B31.3 para. 345.4.2. St is allowable at test temperature; S at design temperature. Default St/S = 1.0; field guide cap 6.5. Ambient CS binding 138 MPa / 20,000 psi. NPS holding-time guide: ≤2\" → 10 min, 2½\"–4\" → 30 min, ≥6\" → 60 min. Hoop vs 0.90 Sy is a site check — not computed in-app."
+      "formulaBasis": "Hydrostatic Pt = 1.5 × P × (St/S). Pneumatic Pt = 1.1 × P × (St/S) per ASME B31.3 para. 345.4.2. St is allowable at test temperature; S at design temperature. Default St/S = 1.0; field guide cap 6.5. Ambient CS binding 138 MPa / 20,000 psi. NPS holding-time guide: ≤2\" → 10 min, 2½\"–4\" → 30 min, ≥6\" → 60 min. Hoop vs 0.90 Sy is a site check — not computed in-app.",
+      "related": [
+        {
+          "slug": "pneumatic-test-safety-distance",
+          "title": "Pneumatic Safety Distance",
+          "carry": "Same pressure basis"
+        },
+        {
+          "slug": "blind-flange-thickness",
+          "title": "Blind / Test Blank",
+          "carry": "Same NPS"
+        }
+      ]
     },
     "is_published": true,
     "created_at": "2026-08-12T00:00:09.000Z"
@@ -240,18 +252,22 @@
   {
     "id": "local-thermal-expansion-loop",
     "category": "piping",
-    "title": "Thermal Expansion & Loop Sizing",
+    "title": "Piping Thermal Expansion & Anchor Load",
     "slug": "thermal-expansion-loop",
-    "meta_description": "ASME B31.3 thermal growth ΔL = α L ΔT with guided-cantilever loop H, W = H/2, guides G₁/G₂, and F_anchor screening.",
+    "meta_description": "ASME B31.3 ΔL = αLΔT with guided-cantilever loop H/W and F_anchor for CS, steam pipe, CPVC, stainless, and Cr-Mo — field screening, not CAESAR II.",
     "formula_json": {
       "type": "thermal-expansion",
       "standard": "ASME B31.3 · Appendix C (screening)",
-      "subtitle": "ΔL = α L ΔT · H = √(3 E_h D · ΔL/2 / S_A) · W = H/2 · F_anchor = F_bending + μ W_pipe. Not CAESAR II.",
-      "formulaBasis": "ΔL = α × L × (T2 − T1). Guided-cantilever H = √(3 E_h D · (ΔL/2) / S_A); U-loop W = H/2; F_anchor = 12 E_h I ΔL / H³ + μ W_pipe. Screening only.",
+      "subtitle": "ΔL = α L ΔT · H = √(3 E_h D · ΔL/2 / S_A) · W = H/2 · F_anchor = F_bending + μ W_pipe. Materials: CS, steam, CPVC, 304/316SS, Cr-Mo.",
+      "formulaBasis": "ΔL = α × L × (T2 − T1). Guided-cantilever H = √(3 E_h D · (ΔL/2) / S_A); U-loop W = H/2; F_anchor = 12 E_h I ΔL / H³ + μ W_pipe. CPVC uses thermoplastic α/E/S_A screening. Steam uses CS properties at elevated T2.",
       "faq": [
         {
           "q": "Does this replace a flexibility analysis?",
-          "a": "No. It is a field screening estimate for expansion loop size. Formal analysis is required where B31.3 flexibility rules are not obviously satisfied."
+          "a": "No. It is a field screening estimate for expansion loop size and anchor load. Formal analysis is required where B31.3 flexibility rules are not obviously satisfied."
+        },
+        {
+          "q": "How is CPVC handled vs steel?",
+          "a": "CPVC uses a much higher α (~66.6×10⁻⁶ /°C) and low E with a thermoplastic screening S_A. Confirm manufacturer ratings above ~60–93 °C."
         }
       ],
       "related": [
@@ -306,6 +322,7 @@
       ],
       "related": [
         { "slug": "pressure-drop-friction", "title": "Pressure Drop", "carry": "Same NPS / flow" },
+        { "slug": "pump-npsh-cavitation", "title": "Pump NPSH", "carry": "Suction check" },
         { "slug": "pipe-schedule-dimension", "title": "Pipe Schedule", "carry": "Same NPS / Sch" }
       ]
     },
@@ -358,5 +375,142 @@
     },
     "is_published": true,
     "created_at": "2026-09-08T00:00:00.000Z"
+  },
+  {
+    "id": "local-pipe-coping-branch-cut-layout",
+    "category": "piping",
+    "title": "Pipe Coping & Branch Cut Layout",
+    "slug": "pipe-coping-branch-cut-layout",
+    "meta_description": "Free online pipe coping and branch cut layout calculator. Generate unwrapped flat-pattern templates and 16/32-point ordinate tables for set-on, set-in, and miter branch joints per ASME B31.3 fabrication practice.",
+    "formula_json": {
+      "type": "pipe-coping",
+      "standard": "ASME B31.3 / PIP",
+      "subtitle": "Header × branch intersect · unwrapped cut template · shop ordinate table",
+      "formulaLatex": "z_{\\text{cut}}(\\phi)=\\frac{\\sqrt{R_H^2-x(\\phi)^2}}{\\sin\\theta}-y(\\phi)\\cot\\theta,\\quad x=r_B\\sin\\phi+e,\\; y=r_B\\cos\\phi",
+      "formulaBasis": "3D envelope intersection of branch OD with header OD (set-on/miter) or header ID (set-in). Unwrapped marking distance S = r_B·φ. Peak-to-valley cut depth Δz_max = max(z_cut) − min(z_cut). Confirm bevel and reinforcement per ASME B31.3 Para 304.3.",
+      "related": [
+        {
+          "slug": "pipe-schedule-dimension",
+          "title": "Pipe Schedule",
+          "carry": "Same NPS / schedule"
+        },
+        {
+          "slug": "pipe-wall-thickness",
+          "title": "Pipe Thickness",
+          "carry": "Same NPS"
+        },
+        {
+          "slug": "butt-weld-fitting-dimension",
+          "title": "BW Fitting Dimensions",
+          "carry": "Same NPS"
+        }
+      ],
+      "faq": [
+        {
+          "q": "What is a set-on vs set-in branch cut?",
+          "a": "Set-on sits on the header OD surface. Set-in opens through the header wall to the ID. This tool switches the envelope radius accordingly."
+        },
+        {
+          "q": "Does this replace shop lofting / CNC?",
+          "a": "No. It is a field screening flat-pattern and ordinate table. Verify against fabrication procedures and reinforcement calculations."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-11T00:00:00.000Z"
+  },
+  {
+    "id": "local-pneumatic-test-safety-distance",
+    "category": "piping",
+    "title": "Pneumatic Test Safety Distance",
+    "slug": "pneumatic-test-safety-distance",
+    "meta_description": "ASME PCC-2 Article 501 pneumatic test safety distance calculator. Screen stored energy and personnel exclusion radius for air/N2/He tests — field package starting point for inspection leads.",
+    "formula_json": {
+      "type": "pneumatic-safety",
+      "standard": "ASME PCC-2 Article 501",
+      "subtitle": "Stored energy E to TNT eq. to exclusion distance D — pneumatic test screening",
+      "formulaLatex": "E = [P_1 V / (\\gamma - 1)][1 - (P_0/P_1)^{(\\gamma-1)/\\gamma}],\\ D = R_0 (E/E_{TNT})^{1/3}",
+      "formulaBasis": "Ideal-gas stored energy expanding to atmosphere (gamma = 1.40 air/N2, 1.67 He). D = R0 * (E/E_TNT)^(1/3) with R0 = 45 ft per lb TNT (~1 psi side-on unprotected personnel). Volume from direct entry or pi/4*ID^2*L. Screening only — not a blast analysis or stamped PCC-2 package.",
+      "related": [
+        {
+          "slug": "hydro-test-pressure",
+          "title": "Hydro / Pneumatic Pt",
+          "carry": "Same pressure basis"
+        },
+        {
+          "slug": "blind-flange-thickness",
+          "title": "Blind / Test Blank",
+          "carry": "Same NPS"
+        },
+        {
+          "slug": "pipe-schedule-dimension",
+          "title": "Pipe Schedule",
+          "carry": "Same NPS / Sch"
+        }
+      ],
+      "faq": [
+        {
+          "q": "Does this replace a formal blast / AHJ study?",
+          "a": "No. It is ASME PCC-2 Article 501 field screening for an unprotected exclusion radius. Barriers, stepwise pressurization, and written authorization remain separate controls."
+        },
+        {
+          "q": "How is pipe-run volume calculated?",
+          "a": "V = π/4 · ID² · L using ASME B36 inside diameter for the selected NPS and schedule. Add vessel or tubing volume separately when significant."
+        },
+        {
+          "q": "What does R0 = 45 ft mean?",
+          "a": "R0 = 45 ft per lb TNT is the unprotected screening standoff for roughly ~1 psi side-on overpressure. AHJ and barrier layouts may require a larger zone."
+        },
+        {
+          "q": "Why is pneumatic riskier than hydrotest?",
+          "a": "Compressed gas stores far more elastic energy than water. Prefer hydrostatic testing when the code and process allow."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-11T12:00:00.000Z"
+  },
+  {
+    "id": "local-pump-npsh-cavitation",
+    "category": "mechanical",
+    "title": "Pump NPSH & Cavitation",
+    "slug": "pump-npsh-cavitation",
+    "meta_description": "Mechanical pump NPSHa / cavitation margin calculator. Screen available NPSH vs OEM NPSHr for water, seawater, condensate, and light hydrocarbons (HI 9.6.1 · ASME B73.1 · API 610).",
+    "formula_json": {
+      "type": "pump-npsh",
+      "standard": "HI 9.6.1 · ASME B73.1 · API 610",
+      "subtitle": "NPSHa = (Ps − Pv)/(ρ g) + zs − hf — margin vs pump NPSHr",
+      "formulaLatex": "\\mathrm{NPSHa}=(P_s-P_v)/(\\rho g)+z_s-h_f,\\quad \\mathrm{margin}=\\mathrm{NPSHa}-\\mathrm{NPSHr}",
+      "formulaBasis": "Available NPSH from absolute surface pressure, vapor pressure at pumping temperature, signed static head (flooded + / lift −), and suction losses. Compare to OEM NPSHr. HI 9.6.1 margin guidance; ASME B73.1 and API 610 expect purchaser-defined margin. Screening densities and Pv curves — not a process simulator.",
+      "related": [
+        {
+          "slug": "pressure-drop-friction",
+          "title": "Pressure Drop & Friction",
+          "carry": "Estimate suction hf"
+        },
+        {
+          "slug": "flow-velocity-erosion",
+          "title": "Flow Velocity",
+          "carry": "Suction velocity check"
+        },
+        {
+          "slug": "pipe-schedule-dimension",
+          "title": "Pipe Schedule",
+          "carry": "Same NPS / Sch"
+        }
+      ],
+      "faq": [
+        {
+          "q": "What is the difference between NPSHa and NPSHr?",
+          "a": "NPSHa is available from the suction system. NPSHr is required by the pump at the operating capacity (OEM curve). Cavitation risk rises when NPSHa < NPSHr."
+        },
+        {
+          "q": "What margin does HI 9.6.1 suggest?",
+          "a": "Margin is service-dependent. Many continuous cold-water duties target at least about 1.1× NPSHr; hot or volatile services need more. Confirm the project / API 610 purchaser margin."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-12T00:00:00.000Z"
   }
 ]

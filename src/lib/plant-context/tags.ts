@@ -26,6 +26,9 @@ export const CALCULATOR_TYPE_SLUG: Record<CalculatorType, string> = {
   "flow-velocity": "flow-velocity-erosion",
   "unit-converter": "unit-converter",
   "link-seal": "link-seal-penetration-sleeve",
+  "pipe-coping": "pipe-coping-branch-cut-layout",
+  "pneumatic-safety": "pneumatic-test-safety-distance",
+  "pump-npsh": "pump-npsh-cavitation",
 };
 
 export const SLUG_TO_CALCULATOR_TYPE: Record<string, CalculatorType> =
@@ -111,6 +114,18 @@ export const CALCULATOR_PLANT_TAGS: Record<CalculatorType, CalculatorPlantTags> 
     "link-seal": {
       consumes: ["size"],
       produces: ["size"],
+    },
+    "pipe-coping": {
+      consumes: ["size", "schedule"],
+      produces: ["size", "schedule"],
+    },
+    "pneumatic-safety": {
+      consumes: ["size", "schedule", "pressure"],
+      produces: ["size", "schedule", "pressure"],
+    },
+    "pump-npsh": {
+      consumes: ["temperature"],
+      produces: ["temperature"],
     },
   };
 

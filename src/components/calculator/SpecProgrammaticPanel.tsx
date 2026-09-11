@@ -14,26 +14,64 @@ type SpecProgrammaticPanelProps = {
 
 function panelCopy(args: {
   type?: string;
+  slug?: string;
   h2: string;
   heroLabel?: string;
 }): { title: string; blurb: string } {
-  const { type, h2, heroLabel } = args;
+  const { type, slug, h2, heroLabel } = args;
+  const isBolt =
+    type === "bolt-sequence" || slug === "flange-bolt-tightening-sequence";
+  const isAlloy =
+    type === "alloy-weight" || slug === "stainless-alloy-weight-density";
+  const isCoping =
+    type === "pipe-coping" || slug === "pipe-coping-branch-cut-layout";
 
-  if (type === "bolt-sequence") {
-    return {
-      title: heroLabel
-        ? `${heroLabel} sequence & PCC-1 rounds`
-        : h2,
-      blurb:
-        "Live inputs drive this summary. Changing bolt count or pattern updates the clean share URL (e.g. /8-bolt-star) for indexing and handoff.",
-    };
-  }
-
-  if (type === "alloy-weight") {
+  // Alloy / weight tools must never inherit bolt-sequence title templates
+  // (heroLabel is often "Total weight", which used to yield
+  // "Total weight sequence & PCC-1 rounds").
+  if (isAlloy) {
     return {
       title: "Material Weight & Cost Summary",
       blurb:
         "Live inputs drive this summary. Material selection and volume dimensions update the calculation handoff URL.",
+    };
+  }
+
+  if (isCoping) {
+    return {
+      title: "Branch Cut Layout Summary",
+      blurb:
+        "Live inputs drive this summary. Header/branch NPS, schedule, and intersection angle update the clean share URL (e.g. /4-on-6-sch-40-90deg).",
+    };
+  }
+
+  const isThermal =
+    type === "thermal-expansion" || slug === "thermal-expansion-loop";
+  if (isThermal) {
+    return {
+      title: "Expansion & Anchor Load Summary",
+      blurb:
+        "Live inputs drive this summary. Material, NPS, and schedule update the clean share URL (e.g. /cpvc-4-sch-40, /steam-6-sch-80).",
+    };
+  }
+
+  const isPneumatic =
+    type === "pneumatic-safety" || slug === "pneumatic-test-safety-distance";
+  if (isPneumatic) {
+    return {
+      title: "Pneumatic Safety Distance Summary",
+      blurb:
+        "Live inputs drive this summary. Test pressure and volume update the clean share URL (e.g. /10-bar-2-m3, /150-psi-50-ft3).",
+    };
+  }
+
+  if (isBolt) {
+    const focus =
+      heroLabel && !/weight/i.test(heroLabel) ? heroLabel : "Bolt";
+    return {
+      title: `${focus} sequence & PCC-1 rounds`,
+      blurb:
+        "Live inputs drive this summary. Changing bolt count or pattern updates the clean share URL (e.g. /8-bolt-star) for indexing and handoff.",
     };
   }
 
@@ -63,7 +101,10 @@ export default function SpecProgrammaticPanel({
       label: item.label,
       value: item.value,
     }));
-    if (meta.type === "bolt-sequence") {
+    if (
+      meta.type === "bolt-sequence" ||
+      meta.slug === "flange-bolt-tightening-sequence"
+    ) {
       const sequence = output.rows.find((row) => row.label === "Sequence");
       if (sequence && sequence.value && sequence.value !== "—") {
         rows.push({ label: "Sequence", value: sequence.value });
@@ -77,6 +118,7 @@ export default function SpecProgrammaticPanel({
 
   const { title, blurb } = panelCopy({
     type: meta.type,
+    slug: meta.slug,
     h2,
     heroLabel: output?.heroLabel,
   });
@@ -102,7 +144,7 @@ export default function SpecProgrammaticPanel({
               <th className="px-2.5 py-1.5" scope="col">
                 Parameter
               </th>
-              <th className="min-w-[12rem] px-2.5 py-1.5" scope="col">
+              <th className="min-w-[12rem] px-2.5 py-1.5 pr-4 text-right" scope="col">
                 Value
               </th>
             </tr>
@@ -113,7 +155,7 @@ export default function SpecProgrammaticPanel({
                 <td className="whitespace-nowrap px-2.5 py-1.5 font-medium text-slate-800 dark:text-slate-100">
                   {row.label}
                 </td>
-                <td className="break-words px-2.5 py-1.5 font-mono text-slate-600 dark:text-slate-300">
+                <td className="whitespace-nowrap px-2.5 py-1.5 pr-4 text-right font-mono tabular-nums text-slate-600 dark:text-slate-300">
                   {row.value}
                 </td>
               </tr>

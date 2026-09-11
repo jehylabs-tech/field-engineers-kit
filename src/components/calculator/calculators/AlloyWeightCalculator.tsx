@@ -152,11 +152,15 @@ function MaterialPicker({
       rect.left,
       Math.max(8, window.innerWidth - width - 8),
     );
+    // Always open below the trigger (bottom-start). Cap height to remaining viewport.
+    const spaceBelow = Math.max(96, window.innerHeight - rect.bottom - 12);
+    const maxHeight = Math.min(256, spaceBelow); // ~max-h-64
     setMenuStyle({
       position: "fixed",
       top: rect.bottom + 4,
       left,
       width,
+      maxHeight,
       zIndex: 50,
     });
   }, []);
@@ -413,11 +417,18 @@ export default function AlloyWeightCalculator({
             <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
               {output.heroStatus}
             </p>
+            <p className="mt-2 rounded-md border border-slate-200/80 bg-white/70 px-2 py-1.5 text-[11px] leading-snug text-slate-600 dark:border-slate-600/60 dark:bg-spec-bg/60 dark:text-slate-300">
+              Catalog screening densities (e.g. SS316 ρ = 8.00 g/cm³). Actual
+              shipping weight may vary ±1–2% with heat chemistry / mill
+              tolerances — confirm against the mill certificate.
+            </p>
           </div>
 
           <CompactResultTable rows={output.rows} />
 
-          {output.callouts?.map((callout) => (
+          {output.callouts
+            ?.filter((c) => c.title !== "Mill / heat chemistry tolerance")
+            .map((callout) => (
             <aside
               key={callout.title}
               className="rounded-lg border border-l-4 border-blue-200 border-l-blue-500 bg-blue-50 px-3.5 py-2.5 text-sm text-blue-950 dark:border-blue-500/40 dark:border-l-blue-400 dark:bg-blue-950/30 dark:text-blue-100"
@@ -506,6 +517,10 @@ export default function AlloyWeightCalculator({
                     </option>
                   ))}
                 </FieldSelect>
+                <p className="text-[11px] leading-snug text-slate-500 dark:text-slate-400">
+                  Autofilled OD {inputs.outerDiameter} {lenUnit} · wall{" "}
+                  {inputs.thickness} {lenUnit} (editable below if needed).
+                </p>
               </>
             ) : null}
             <FieldGroup
@@ -571,19 +586,40 @@ export default function AlloyWeightCalculator({
             <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">
               Cost (optional)
             </h3>
-            <FieldGroup
-              label="Unit price"
-              value={inputs.unitPrice > 0 ? String(inputs.unitPrice) : ""}
-              unit={priceUnit}
-              allowZero
-              hint="Optional procurement screen. Leave blank to skip cost."
-              onChange={(raw) =>
-                setField(
-                  "unitPrice",
-                  raw.trim() === "" ? 0 : toNumber(raw, 0),
-                )
-              }
-            />
+            <div className="calc-field mb-0 w-full max-w-[300px] min-w-0">
+              <label className={FIELD_LABEL_CLASS}>
+                <span>Unit price</span>
+                <span
+                  className="inline-flex h-4 w-4 cursor-help items-center justify-center rounded-full border border-slate-300 text-sm font-bold leading-none text-slate-500"
+                  title="Optional procurement screen. Leave blank to skip cost."
+                >
+                  ?
+                </span>
+              </label>
+              <div className="grid w-full min-w-0 grid-cols-[minmax(0,1fr)_72px] items-stretch gap-1.5">
+                <input
+                  type="text"
+                  inputMode="decimal"
+                  autoComplete="off"
+                  value={inputs.unitPrice > 0 ? String(inputs.unitPrice) : ""}
+                  placeholder="0"
+                  onChange={(event) => {
+                    const raw = event.target.value;
+                    setField(
+                      "unitPrice",
+                      raw.trim() === "" ? 0 : toNumber(raw, 0),
+                    );
+                  }}
+                  className="box-border flex h-10 min-h-10 w-full min-w-0 items-center rounded-lg border border-slate-300 bg-white px-2.5 font-mono text-sm text-slate-900 outline-none focus:border-spec-accent focus:ring-2 focus:ring-spec-accent dark:border-slate-600 dark:bg-spec-bg dark:text-spec-text"
+                />
+                <div className="box-border flex h-10 min-h-10 w-full items-center justify-center rounded-lg border border-slate-300 bg-white px-2 text-center text-sm text-slate-600 dark:border-slate-600 dark:bg-spec-bg dark:text-spec-text2">
+                  {priceUnit}
+                </div>
+              </div>
+              <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400">
+                Optional procurement screen. Leave blank to skip cost.
+              </p>
+            </div>
           </div>
         </div>
       }
