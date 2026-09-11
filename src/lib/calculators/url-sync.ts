@@ -192,7 +192,7 @@ export function useCalculatorUrlSync<T extends Record<string, unknown>>(
     const applied = applyPlantContext(options.type, next, plant);
     // SpecRoute / explicit query keys win over soft plant-context carry-over
     // (e.g. ?size=12in must not overwrite hnps=4 from /4-on-6-… path seed).
-    for (const key of explicitParams) {
+    for (const key of Array.from(explicitParams)) {
       (applied as Record<string, unknown>)[key] = (
         beforePlant as Record<string, unknown>
       )[key];
