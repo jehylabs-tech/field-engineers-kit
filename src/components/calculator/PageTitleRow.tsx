@@ -8,7 +8,7 @@ import { renderKatexHtml } from "@/lib/calculators/katex-html";
 type PageTitleRowProps = {
   title: string;
   subtitle?: string;
-  /** Optional inline KaTeX (e.g. core sizing equation next to the H1). */
+  /** Optional inline KaTeX — keep to one core equation (cheat-sheet L/D etc. belong in SEO / hints). */
   formulaLatex?: string;
   standard?: string;
   actions?: ReactNode;

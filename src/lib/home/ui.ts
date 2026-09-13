@@ -90,6 +90,16 @@ export const CATALOG_SEO_BLURBS: Record<string, string> = {
     "Pipe flow velocity v = Q/A and API RP 14E erosion velocity limit vc.",
   "pump-npsh-cavitation":
     "Mechanical pump NPSHa = (Ps−Pv)/ρg + zs − hf with HI 9.6.1 / ASME B73.1 / API 610 cavitation margin screening.",
+  "pump-tdh-power":
+    "Pump TDH = Hs + Hf + Hp and BHP = Q·TDH·SG/(3960·η) with IEC/NEMA motor recommendation (HI 14.3 screening).",
+  "pump-affinity-trimming":
+    "Pump affinity laws Q∝ND, H∝(ND)², P∝(ND)³ for VFD speed change and impeller trim with D₂/D₁ limit warnings.",
+  "pump-mcsf-thermal-protection":
+    "API 610 / HI 9.6.1 MCSF: max(thermal Q_min, hydrodynamic Q_min) with ARC Cv and bypass NPS screening.",
+  "multiple-pump-parallel-series":
+    "HI 14.3 parallel/series pump–system curve intersection with flow/head gain and runout warnings.",
+  "flange-bolt-wrench-size-lookup":
+    "ASME B16.5 / B18.2.2 heavy-hex wrench AF, stud diameter, bolt count, and stud length quick lookup.",
   "pipe-coping-branch-cut-layout":
     "Pipe coping / branch cut flat-pattern layout with 16–32 ordinate marks for set-on, set-in, and miter joints.",
   "pneumatic-test-safety-distance":

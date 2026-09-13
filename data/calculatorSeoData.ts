@@ -4336,6 +4336,1024 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
     ],
   },
 
+  "pump-tdh-power": {
+    slug: "pump-tdh-power",
+    formulaTitle: "Total Dynamic Head & Brake Power",
+    formulaHtml:
+      '<p class="font-mono text-sm not-italic leading-relaxed text-slate-800 dark:text-slate-100 md:text-base">TDH = Hs + Hf + Hp</p>' +
+      '<p class="font-mono text-sm not-italic leading-relaxed text-slate-800 dark:text-slate-100 md:text-base">BHP = Q·TDH·SG / (3960·η<sub>p</sub>) &nbsp;·&nbsp; P = ρ·g·Q·TDH / η<sub>p</sub></p>' +
+      '<p class="eng-plain">Hydraulic Institute ANSI/HI 14.3 · affinity / duty sizing (screening)</p>',
+    formulaLatex:
+      "\\mathrm{TDH}=H_s+H_f+H_p,\\quad \\mathrm{BHP}=\\frac{Q\\cdot\\mathrm{TDH}\\cdot\\mathrm{SG}}{3960\\,\\eta_p}",
+    formulaNotes:
+      "TDH is the total head the pump must develop: static elevation Hs (may be negative downhill), friction Hf (from Darcy ΔP → head), and pressure head Hp = (Pd−Ps)/(ρg). Brake power divides hydraulic power by pump efficiency η_p. Motor input divides brake power by motor efficiency η_m; the app multiplies by motor service factor SF (default 1.15) then recommends the next IEC kW or NEMA HP rating. HI 14.3 is the hydraulic performance acceptance context — not a guaranteed datasheet.",
+    formulaHighlight: true,
+    formulaBadges: [
+      { label: "Standard", value: "HI 14.3" },
+      { label: "Hero", value: "TDH" },
+      { label: "Power", value: "BHP / kW" },
+      { label: "Motor", value: "IEC · NEMA · SF" },
+    ],
+    variables: [
+      {
+        symbol: "Hs",
+        name: "Static head",
+        definition:
+          "Discharge elevation − suction elevation (negative if downhill / gravity-assisted).",
+      },
+      {
+        symbol: "Hf",
+        name: "Friction head",
+        definition: "Pipe + fittings + strainer losses (convert ΔP/(ρg) from Pressure Drop tool).",
+      },
+      {
+        symbol: "Hp",
+        name: "Pressure head",
+        definition: "(Pd − Ps)/(ρ g). Often ≈ 0 for open tanks at atmosphere.",
+      },
+      {
+        symbol: "TDH",
+        name: "Total dynamic head",
+        definition: "Hs + Hf + Hp — head the pump must develop at the duty flow.",
+      },
+      {
+        symbol: "η_p",
+        name: "Pump efficiency",
+        definition: "Hydraulic efficiency at the operating capacity from the OEM curve.",
+      },
+      {
+        symbol: "BHP",
+        name: "Brake horsepower",
+        definition: "Shaft power = Q·TDH·SG/(3960·η_p) (gpm·ft) or ρ·g·Q·H/η_p (SI).",
+      },
+      {
+        symbol: "SF",
+        name: "Motor service factor",
+        definition:
+          "Multiplier on estimated motor input before IEC/NEMA pick (typical field default 1.15).",
+      },
+    ],
+    standards: [
+      "Hydraulic Institute ANSI/HI 14.3 — Rotodynamic Pumps for Hydraulic Performance Acceptance Tests",
+      "Affinity / classical BHP sizing practice (US customary & SI)",
+      "IEC 60034 motor kW ratings · common NEMA HP frames (recommendation only)",
+    ],
+    allowancesAndTolerances: {
+      title: "Sizing notes (screening)",
+      summary:
+        "Use OEM η_p at the actual duty point. Motor recommendation = next standard rating ≥ (brake/η_m)×SF.",
+      items: [
+        {
+          label: "Friction Hf",
+          value: "From ΔP/(ρ g)",
+          description:
+            "Estimate piping ΔP with the Pressure Drop calculator, convert to head, include fittings.",
+        },
+        {
+          label: "Pump η_p",
+          value: "Curve at Q",
+          description:
+            "Do not use BEP efficiency if the duty is far off BEP — power rises when η drops.",
+        },
+        {
+          label: "Motor pick",
+          value: "Next standard ≥ input×SF",
+          description:
+            "IEC kW or NEMA HP ≥ estimated motor input × service factor (default SF 1.15).",
+        },
+        {
+          label: "Viscosity",
+          value: "No HI derate here",
+          description:
+            "Viscous services need HI / OEM viscosity correction charts — not applied in this app.",
+        },
+      ],
+    },
+    tableCaption:
+      "Illustrative water duties (this app, η_p ≈ 0.70–0.75, η_m = 0.92, SF = 1.15)",
+    tableHeaders: ["Case", "TDH", "Focus"],
+    tableAllNumeric: false,
+    tableRows: [
+      ["Water 50 m³/h · Hs 20 m · Hf 5 m", "25 m", "Default metric · ~7.5 kW IEC @ SF 1.15"],
+      ["Water 100 m³/h · Hs 40 m · Hf 10 m", "50 m", "Higher head"],
+      ["Water 100 GPM · Hs 60 ft · Hf 15 ft", "75 ft", "Default imperial case"],
+      ["Seawater 50 m³/h · Hs 15 m · Hf 5 m", "20 m", "Higher SG → more BHP"],
+      ["Light HC 40 m³/h · Hs 30 m · Hf 6 m", "36 m", "Lower SG → less BHP"],
+    ],
+    ...howTo("How to screen TDH and pump power", [
+      {
+        name: "1. Enter flow and fluid",
+        text: "Set Q and density/SG (or pick a fluid preset).",
+      },
+      {
+        name: "2. Build TDH",
+        text: "Enter Hs, Hf (from Pressure Drop → head), and Hp if needed.",
+      },
+      {
+        name: "3. Set efficiencies & SF",
+        text: "Pump η_p from the OEM curve at this Q; motor η_m from the nameplate; set motor SF (default 1.15).",
+      },
+      {
+        name: "4. Read TDH, BHP, and motor pick",
+        text: "Select the next IEC/NEMA rating ≥ (motor input × SF).",
+      },
+    ]),
+    workedExample: {
+      title: "Step-by-Step Worked Example: Water 50 m³/h · Hs 20 m · Hf 5 m",
+      scenario:
+        "Screen TDH and brake power for a fresh-water centrifugal pump at 50 m³/h, static elevation 20 m, friction 5 m, open tanks (Hp = 0), η_p = 70%, η_m = 92%, motor SF = 1.15 (HI 14.3 / affinity screening).",
+      designConditions: [
+        { label: "Flow Q", value: "50 m³/h" },
+        { label: "Fluid", value: "Water · ρ ≈ 998 kg/m³ · SG ≈ 0.998 (ref 1000)" },
+        { label: "Hs / Hf / Hp", value: "20 m / 5 m / 0 m" },
+        { label: "η_p / η_m / SF", value: "70% / 92% / 1.15" },
+      ],
+      steps: [
+        {
+          step: "Step 1",
+          name: "Form TDH",
+          formula: "\\mathrm{TDH}=H_s+H_f+H_p",
+          calculation: "TDH = 20 + 5 + 0 = 25 m.",
+          result: "TDH = 25 m",
+        },
+        {
+          step: "Step 2",
+          name: "Hydraulic & brake power",
+          formula: "P_{\\mathrm{hyd}}=\\rho g Q H,\\quad P_{\\mathrm{brake}}=P_{\\mathrm{hyd}}/\\eta_p",
+          calculation:
+            "Q = 50/3600 m³/s · ρgQH ≈ 3.40 kW hydraulic · /0.70 ≈ 4.86 kW brake (≈ 6.5 HP).",
+          result: "Brake ≈ 4.9 kW (≈ 6.5 HP)",
+        },
+        {
+          step: "Step 3",
+          name: "Motor input × SF & standard rating",
+          formula: "P_{\\mathrm{sized}}=(P_{\\mathrm{brake}}/\\eta_m)\\cdot\\mathrm{SF}",
+          calculation:
+            "4.86 / 0.92 ≈ 5.3 kW input · ×1.15 ≈ 6.1 kW sizing basis → next IEC rating 7.5 kW.",
+          result: "Recommend 7.5 kW (IEC)",
+          note: "Open /water-50m3h-hs-20m-hf-5m for the live default case. Pair with Pressure Drop for Hf and NPSH for suction margin.",
+        },
+      ],
+      conclusion:
+        "For 50 m³/h water against 25 m TDH at 70% pump efficiency, expect roughly 5 kW shaft power and a 7.5 kW IEC motor screen at SF 1.15 — confirm on the OEM curve and project motor SF.",
+    },
+    materialLimitations: {
+      title: "Applicability",
+      summary:
+        "Clean liquid centrifugal / rotodynamic screening. Not for positive-displacement volumetric power models or multiphase flow.",
+      items: [
+        {
+          materialGroup: "Water / seawater / condensate",
+          temperatureLimit: "Ambient screening densities",
+          stressLimit: "N/A — hydraulic power",
+          notes: "Use project fluid properties when temperature shifts density significantly.",
+        },
+        {
+          materialGroup: "Light hydrocarbon",
+          temperatureLimit: "Screening SG",
+          stressLimit: "Lower BHP vs water",
+          notes: "Confirm vapor pressure / NPSH separately — TDH does not check cavitation.",
+        },
+        {
+          materialGroup: "Viscous liquids",
+          temperatureLimit: "μ ≫ 1 cP",
+          stressLimit: "HI derate required",
+          notes: "This tool does not apply HI viscosity correction charts.",
+        },
+      ],
+      codeRestrictions: [
+        "Field screening only — not HI 14.3 acceptance test documentation.",
+        "Motor recommendation applies the entered service factor (default 1.15); set SF = 1.0 to size on raw motor input.",
+        "Velocity head differences and complex control-valve losses must be folded into Hf/Hp by the user.",
+        "Export / PDF is a duty sizing sheet — not a stamped pump datasheet.",
+      ],
+    },
+    faq: [
+      {
+        question: "What is TDH?",
+        answer:
+          "**Total Dynamic Head** is the head the pump must develop at the duty flow: **TDH = Hs + Hf + Hp** (static + friction + pressure head).",
+      },
+      {
+        question: "How do I get friction head Hf from piping?",
+        answer:
+          "Run the **Pressure Drop & Friction** calculator for suction + discharge ΔP, then convert **Hf = ΔP / (ρ g)**. Include fittings and strainers.",
+      },
+      {
+        question: "What does HI 14.3 cover here?",
+        answer:
+          "**ANSI/HI 14.3** is the Hydraulic Institute standard for rotodynamic pump **hydraulic performance acceptance**. This app uses the same power/η language for **field screening**, not a formal witness test.",
+      },
+      {
+        question: "How is motor size chosen?",
+        answer:
+          "Motor input ≈ brake power / η_m. The app multiplies by **service factor SF** (default **1.15**), then picks the next **IEC kW** (metric) or **NEMA HP** (imperial) ≥ that sizing basis.",
+      },
+    ],
+  },
+
+  "pump-affinity-trimming": {
+    slug: "pump-affinity-trimming",
+    formulaTitle: "Pump Affinity Laws & Impeller Trim",
+    formulaHtml:
+      '<p class="font-mono text-sm not-italic leading-relaxed text-slate-800 dark:text-slate-100 md:text-base">Q₂/Q₁ = (N₂/N₁)·(D₂/D₁)</p>' +
+      '<p class="font-mono text-sm not-italic leading-relaxed text-slate-800 dark:text-slate-100 md:text-base">H₂/H₁ = (N₂/N₁)²·(D₂/D₁)² &nbsp;·&nbsp; P₂/P₁ = (N₂/N₁)³·(D₂/D₁)³</p>' +
+      '<p class="eng-plain">Affinity screening · VFD speed change · impeller trim limits (OEM / HI guidance)</p>',
+    formulaLatex:
+      "\\frac{Q_2}{Q_1}=\\frac{N_2}{N_1}\\frac{D_2}{D_1},\\quad \\frac{H_2}{H_1}=\\left(\\frac{N_2 D_2}{N_1 D_1}\\right)^2,\\quad \\frac{P_2}{P_1}=\\left(\\frac{N_2 D_2}{N_1 D_1}\\right)^3",
+    formulaNotes:
+      "Classical affinity assumes geometric similarity and roughly constant efficiency. Use speed mode for VFD / RPM changes, diameter mode for shop impeller cuts during TA / shutdown, or combined when both change. Soft trim warning when D₂/D₁ < 0.80; hard warning below ~0.70. Confirm final duty on the OEM curve and recheck NPSH after large speed-up.",
+    formulaHighlight: true,
+    formulaBadges: [
+      { label: "Laws", value: "Q·H·P affinity" },
+      { label: "VFD", value: "N₂/N₁" },
+      { label: "Trim", value: "D₂/D₁" },
+      { label: "Warn", value: "≲ 80% D" },
+    ],
+    variables: [
+      {
+        symbol: "N",
+        name: "Rotational speed",
+        definition: "Pump shaft speed (RPM). VFD / pulley / gear changes N₂.",
+      },
+      {
+        symbol: "D",
+        name: "Impeller diameter",
+        definition: "Outside impeller diameter. Shop trim sets D₂ < D₁.",
+      },
+      {
+        symbol: "Q",
+        name: "Capacity",
+        definition: "Volumetric flow at the compared duty point (m³/h or GPM).",
+      },
+      {
+        symbol: "H",
+        name: "Head",
+        definition: "Total head at that capacity (m or ft).",
+      },
+      {
+        symbol: "P",
+        name: "Brake power",
+        definition: "Shaft / brake power at that duty (kW or HP).",
+      },
+      {
+        symbol: "D₂/D₁",
+        name: "Trim ratio",
+        definition:
+          "Diameter fraction after cut. Soft screen ~0.80; hard screen ~0.70.",
+      },
+    ],
+    standards: [
+      "Classical pump affinity laws (rotodynamic similarity)",
+      "Hydraulic Institute / OEM impeller trim guidance (screening)",
+      "Typical TA practice: confirm VFD setpoints and shop cuts on the manufacturer curve",
+    ],
+    allowancesAndTolerances: {
+      title: "Trim & speed screens",
+      summary:
+        "Affinity is a first-pass TA tool. Efficiency, NPSHr, and vibration limits are OEM-specific.",
+      items: [
+        {
+          label: "Soft trim warn",
+          value: "D₂/D₁ < 0.80",
+          description:
+            "About 20% diameter cut — common OEM ceiling for many centrifugals.",
+        },
+        {
+          label: "Hard trim warn",
+          value: "D₂/D₁ < 0.70",
+          description:
+            "Beyond typical screening envelope — do not machine without OEM approval.",
+        },
+        {
+          label: "Large speed change",
+          value: "N₂/N₁ > 1.25 or < 0.5",
+          description:
+            "Check motor power, max RPM, and NPSH after aggressive VFD moves.",
+        },
+        {
+          label: "Efficiency",
+          value: "Assumed constant",
+          description:
+            "Real η often drops slightly after trim or off-design speed — correct on the curve.",
+        },
+      ],
+    },
+    tableCaption:
+      "Illustrative affinity cases (η assumed constant — this app)",
+    tableHeaders: ["Case", "Ratio", "Focus"],
+    tableAllNumeric: false,
+    tableRows: [
+      ["Speed 1480→1780 RPM · 50 m³/h · 25 m", "N₂/N₁ ≈ 1.20", "Default VFD up-speed"],
+      ["Trim 250→230 mm · 50 m³/h · 25 m", "D₂/D₁ = 0.92", "Typical shop cut"],
+      ["Trim 280→210 mm", "D₂/D₁ = 0.75", "Soft trim warning band"],
+      ["Speed 1750→1450 RPM · 200 GPM", "N₂/N₁ ≈ 0.83", "Imperial VFD turndown"],
+      ["Combined VFD + trim", "(ND) product", "TA both-change case"],
+    ],
+    ...howTo("How to screen affinity / impeller trim", [
+      {
+        name: "1. Capture baseline duty",
+        text: "Enter known Q₁, H₁, P₁ from the OEM curve or TDH / power screen at the current speed and diameter.",
+      },
+      {
+        name: "2. Choose mode",
+        text: "Speed for VFD RPM only, diameter for shop trim only, or combined when both change in the same outage.",
+      },
+      {
+        name: "3. Enter N₂ and/or D₂",
+        text: "Watch the D₂/D₁ trim warnings before releasing a cut sheet.",
+      },
+      {
+        name: "4. Read Q₂, H₂, P₂",
+        text: "Compare to system head and motor rating; recheck NPSH after speed-up.",
+      },
+    ]),
+    workedExample: {
+      title: "Step-by-Step Worked Example: VFD 1480 → 1780 RPM",
+      scenario:
+        "During a TA review, raise a water pump from 1480 to 1780 RPM with the impeller diameter unchanged. Baseline duty: 50 m³/h, 25 m head, 5.5 kW brake power.",
+      designConditions: [
+        { label: "Mode", value: "Speed (diameter fixed)" },
+        { label: "N₁ → N₂", value: "1480 → 1780 RPM" },
+        { label: "Q₁ / H₁ / P₁", value: "50 m³/h · 25 m · 5.5 kW" },
+      ],
+      steps: [
+        {
+          step: "Step 1",
+          name: "Speed ratio",
+          formula: "r_N = N_2 / N_1",
+          calculation: "1780 / 1480 = 1.2027",
+          result: "r_N ≈ 1.203",
+        },
+        {
+          step: "Step 2",
+          name: "Capacity & head",
+          formula: "Q_2 = Q_1 r_N,\\quad H_2 = H_1 r_N^2",
+          calculation:
+            "Q₂ = 50 × 1.2027 ≈ 60.1 m³/h · H₂ = 25 × 1.446 ≈ 36.2 m",
+          result: "Q₂ ≈ 60.1 m³/h · H₂ ≈ 36.2 m",
+        },
+        {
+          step: "Step 3",
+          name: "Brake power",
+          formula: "P_2 = P_1 r_N^3",
+          calculation: "P₂ = 5.5 × 1.740 ≈ 9.57 kW",
+          result: "P₂ ≈ 9.6 kW",
+          note: "Open /speed-1480-to-1780-rpm-50m3h-25m for the live default. Pair with TDH & NPSH before locking the VFD setpoint.",
+        },
+      ],
+      conclusion:
+        "About 20% more speed raises flow ~20%, head ~45%, and power ~74% under constant-η affinity — confirm motor nameplate and NPSHa before applying the VFD setpoint.",
+    },
+    materialLimitations: {
+      title: "Applicability",
+      summary:
+        "Rotodynamic (centrifugal / mixed-flow) affinity screening. Not for PD pumps or multiphase duties.",
+      items: [
+        {
+          materialGroup: "Centrifugal water / process pumps",
+          temperatureLimit: "N/A — kinematic similarity",
+          stressLimit: "Motor / shaft limits apply",
+          notes: "Best when specific speed and geometry stay similar.",
+        },
+        {
+          materialGroup: "Deep impeller trims",
+          temperatureLimit: "N/A",
+          stressLimit: "OEM trim chart",
+          notes: "Affinity over-predicts if the cut destroys similarity.",
+        },
+        {
+          materialGroup: "VFD above nameplate RPM",
+          temperatureLimit: "N/A",
+          stressLimit: "Max continuous RPM",
+          notes: "Power rises with N³ — check driver and coupling ratings.",
+        },
+      ],
+      codeRestrictions: [
+        "Field screening only — not an HI performance acceptance document.",
+        "Efficiency assumed constant; correct power on the OEM curve.",
+        "NPSHr roughly scales with speed² — recheck suction margin after speed-up.",
+        "Export / PDF is a TA worksheet — not a stamped pump datasheet.",
+      ],
+    },
+    faq: [
+      {
+        question: "What are the pump affinity laws?",
+        answer:
+          "For similar operation: **Q ∝ N·D**, **H ∝ (N·D)²**, and **P ∝ (N·D)³**. Holding diameter fixed isolates VFD speed effects; holding speed fixed isolates impeller trim.",
+      },
+      {
+        question: "How much impeller trim is usually allowed?",
+        answer:
+          "Many OEMs screen near **20%** maximum diameter cut (**D₂/D₁ ≈ 0.80**). Toward **30%** (**≈ 0.70**) typically needs manufacturer approval. This app soft-warns below 0.80 and hard-warns below 0.70.",
+      },
+      {
+        question: "Can I use affinity for VFD turndown during TA?",
+        answer:
+          "Yes as a **first pass**. Confirm the predicted H₂ against the system curve, motor current, and NPSH. Pair with the **TDH & Pump Power** and **NPSH** calculators.",
+      },
+      {
+        question: "Why does power change faster than flow?",
+        answer:
+          "Because **P ∝ (N·D)³** while **Q ∝ N·D**. A modest speed-up can demand a much larger driver margin than the flow increase suggests.",
+      },
+    ],
+  },
+
+  "pump-mcsf-thermal-protection": {
+    slug: "pump-mcsf-thermal-protection",
+    formulaTitle: "Pump MCSF & Thermal Protection",
+    formulaHtml:
+      '<p class="font-mono text-sm not-italic leading-relaxed text-slate-800 dark:text-slate-100 md:text-base">Q<sub>MCSF</sub> = max(Q<sub>min,th</sub>, Q<sub>min,hydro</sub>)</p>' +
+      '<p class="font-mono text-sm not-italic leading-relaxed text-slate-800 dark:text-slate-100 md:text-base">Q<sub>min,th</sub> = P<sub>so</sub> / [ρ(C<sub>p</sub>·ΔT<sub>max</sub> + g·H<sub>so</sub>)] &nbsp;·&nbsp; Q<sub>min,hydro</sub> = Q<sub>BEP</sub>·f<sub>MCSF</sub></p>' +
+      '<p class="eng-plain">API 610 / ISO 13709 · HI 9.6.1 MCSF · ARC / min-flow bypass screening</p>',
+    formulaLatex:
+      "Q_{MCSF}=\\max\\!\\left(\\frac{P_{so}}{\\rho(C_p\\Delta T_{max}+g H_{so})},\\, Q_{BEP}\\cdot f_{MCSF}\\right)",
+    formulaNotes:
+      "Shut-off power defaults to 50% of rated driver power (typical API 610 centrifugal band 40–60%). Thermal minimum uses energy balance at H_so — do not divide H by η in the Q_min denominator. Hydrodynamic MCSF defaults to 35% of Q_BEP (adjust 30–60% per OEM / specific speed). High-energy pumps (>300 kW) need continuous ARC protection.",
+    formulaHighlight: true,
+    formulaBadges: [
+      { label: "Code", value: "API 610" },
+      { label: "Guide", value: "HI 9.6.1" },
+      { label: "Thermal", value: "ΔT_max" },
+      { label: "Bypass", value: "ARC Cv" },
+    ],
+    variables: [
+      {
+        symbol: "Q_BEP",
+        name: "Best efficiency flow",
+        definition: "Published BEP capacity from the OEM curve (m³/h or GPM).",
+      },
+      {
+        symbol: "H_so",
+        name: "Shut-off head",
+        definition: "Zero-flow head used for thermal energy balance (m or ft).",
+      },
+      {
+        symbol: "P_so",
+        name: "Shut-off shaft power",
+        definition: "≈ so_ratio × P_rated (default so_ratio = 0.50).",
+      },
+      {
+        symbol: "Q_min,th",
+        name: "Thermal minimum flow",
+        definition:
+          "P_so / [ρ(Cp·ΔT_max + g·H_so)] converted to m³/h or GPM.",
+      },
+      {
+        symbol: "Q_min,hydro",
+        name: "Hydrodynamic MCSF",
+        definition: "Q_BEP × mcsf_ratio (default 0.35; typical 0.30–0.60).",
+      },
+      {
+        symbol: "Cv",
+        name: "ARC bypass valve Cv",
+        definition: "US liquid Cv = Q_gpm √(SG / ΔP_psi) at Q_MCSF.",
+      },
+    ],
+    standards: [
+      "API 610 / ISO 13709 — centrifugal pumps for petroleum, petrochemical, and natural gas industries",
+      "Hydraulic Institute HI 9.6.1 — NPSH margin and low-flow / MCSF guidance",
+      "Field practice: continuous min-flow / ARC for high-energy services",
+    ],
+    allowancesAndTolerances: {
+      title: "MCSF & thermal screens",
+      summary:
+        "This app screens thermal vs hydrodynamic bounds. The published OEM MCSF always governs final setpoints.",
+      items: [
+        {
+          label: "P_so / P_rated",
+          value: "0.40–0.60 (default 0.50)",
+          description:
+            "Typical shut-off power fraction for API 610 centrifugals.",
+        },
+        {
+          label: "Hydro MCSF ratio",
+          value: "0.30–0.60 of Q_BEP",
+          description:
+            "Ns- and OEM-dependent vibration / recirculation band.",
+        },
+        {
+          label: "ΔT_max default",
+          value: "5 °C / 9 °F",
+          description:
+            "Common thermal screening rise; tighten for flashing or seal limits.",
+        },
+        {
+          label: "High-energy alert",
+          value: "> 300 kW (≈ 400 HP)",
+          description:
+            "Continuous ARC / automatic recirculation is mandatory practice.",
+        },
+      ],
+    },
+    tableCaption: "Illustrative MCSF cases (this app)",
+    tableHeaders: ["Case", "Focus", "Units"],
+    tableAllNumeric: false,
+    tableRows: [
+      ["Water 200 m³/h · H_so 150 m · 110 kW", "Default API water duty", "Metric"],
+      ["Boiler-feed 150 m³/h · H_so 300 m · 200 kW", "Hot high-head thermal check", "Metric"],
+      ["Naphtha 350 m³/h · H_so 180 m · 160 kW", "Light HC / low Cp", "Metric"],
+      ["Crude 1200 GPM · H_so 450 ft · 250 HP", "Refinery crude", "Imperial"],
+      ["Amine 800 GPM · H_so 650 ft · 300 HP", "High-pressure API 610", "Imperial"],
+    ],
+    ...howTo("How to screen pump MCSF / thermal min-flow", [
+      {
+        name: "1. Enter BEP duty and shut-off head",
+        text: "Use OEM Q_BEP and curve shut-off head H_so. Select a fluid preset or enter ρ, Cp, and SG.",
+      },
+      {
+        name: "2. Set driver power and ratios",
+        text: "Enter P_rated, keep so_ratio near 50%, and set hydrodynamic MCSF ratio from OEM guidance (often ~35%).",
+      },
+      {
+        name: "3. Review governing Q_MCSF",
+        text: "Take the larger of thermal and hydrodynamic minima. Size continuous bypass / ARC for at least that flow.",
+      },
+      {
+        name: "4. Check ARC Cv and bypass NPS",
+        text: "Enter bypass ΔP and velocity limit. Confirm vendor ARC Cv and Sch 40 line size before TA release.",
+      },
+    ]),
+    workedExample: {
+      title: "Worked example — water 200 m³/h · 110 kW",
+      scenario:
+        "Screen MCSF for an API 610 water pump at Q_BEP = 200 m³/h, H_so = 150 m, P_rated = 110 kW, ΔT_max = 5 °C, hydro ratio = 35%.",
+      designConditions: [
+        { label: "Fluid", value: "Water · ρ 992 kg/m³ · Cp 4.18 kJ/kg·°C" },
+        { label: "Q_BEP / H_so", value: "200 m³/h · 150 m" },
+        { label: "P_rated / so_ratio", value: "110 kW · 50%" },
+        { label: "ΔT_max / f_MCSF", value: "5 °C · 35% of Q_BEP" },
+      ],
+      steps: [
+        {
+          step: "Step 1",
+          name: "Shut-off power",
+          formula: "P_{so}=0.50\\cdot P_{rated}",
+          calculation: "P_so = 0.50 × 110 = 55 kW",
+          result: "P_so = 55 kW",
+        },
+        {
+          step: "Step 2",
+          name: "Thermal minimum flow",
+          formula:
+            "Q_{min,th}=P_{so}/[\\rho(C_p\\Delta T_{max}+g H_{so})]",
+          calculation:
+            "With ρ=992, Cp=4.18 kJ/kg·K, ΔT=5 °C, H_so=150 m → Q_min,th ≈ 9 m³/h",
+          result: "Q_min,th ≈ 9 m³/h",
+        },
+        {
+          step: "Step 3",
+          name: "Hydrodynamic MCSF",
+          formula: "Q_{min,hydro}=0.35\\cdot Q_{BEP}",
+          calculation: "0.35 × 200 = 70 m³/h",
+          result: "Q_min,hydro = 70 m³/h",
+        },
+        {
+          step: "Step 4",
+          name: "Governing MCSF",
+          formula: "Q_{MCSF}=\\max(Q_{min,th},Q_{min,hydro})",
+          calculation: "max(9, 70) = 70 m³/h",
+          result: "Q_MCSF = 70 m³/h",
+          note: "Open /water-200m3h-hso-150m-p-110kw for the live default.",
+        },
+      ],
+      conclusion:
+        "Hydrodynamic MCSF governs for this water duty. Size ARC / bypass for ≥ 70 m³/h and confirm the OEM published MCSF before locking trips or recycle setpoints.",
+    },
+    materialLimitations: {
+      title: "Applicability",
+      summary:
+        "Rotodynamic (centrifugal) API 610 / ISO 13709 style pumps. Not for PD pumps or multiphase slurry without OEM data.",
+      items: [
+        {
+          materialGroup: "API 610 OH / BB / VS centrifugals",
+          temperatureLimit: "Fluid Cp / ρ at duty T",
+          stressLimit: "OEM MCSF on curve",
+          notes: "Use published MCSF when available; this screen fills gaps in TA.",
+        },
+        {
+          materialGroup: "High-energy / boiler-feed",
+          temperatureLimit: "Hot water / flashing risk",
+          stressLimit: ">300 kW driver",
+          notes: "Continuous ARC is expected — intermittent bypass is not enough.",
+        },
+        {
+          materialGroup: "Light hydrocarbons",
+          temperatureLimit: "Low Cp raises ΔT risk",
+          stressLimit: "Seal / flush limits",
+          notes: "Thermal bound can approach hydro MCSF — recheck ΔT_max.",
+        },
+      ],
+      codeRestrictions: [
+        "Field screening only — not an API 610 datasheet or HI acceptance test.",
+        "P_so ratio and MCSF% are engineering estimates until OEM values are entered.",
+        "ARC Cv is liquid ISA-style sizing — confirm choked / flashing with the valve vendor.",
+        "Export / PDF is a TA worksheet — not a stamped pump or bypass design.",
+      ],
+    },
+    faq: [
+      {
+        question: "What is pump MCSF?",
+        answer:
+          "**Minimum Continuous Stable Flow** is the lowest continuous capacity allowed without unacceptable vibration, internal recirculation, or thermal rise (API 610 / HI 9.6.1). Always prefer the **OEM published MCSF** when available.",
+      },
+      {
+        question: "How is thermal minimum flow calculated?",
+        answer:
+          "From energy balance at shut-off: **Q_min,th = P_so / [ρ(Cp·ΔT_max + g·H_so)]**, with **P_so ≈ 0.5·P_rated** by default. Forms that divide head by η in the denominator under-predict thermal flow and are not used.",
+      },
+      {
+        question: "When does thermal flow exceed hydrodynamic MCSF?",
+        answer:
+          "High shut-off power, high head, low density / Cp, or a tight ΔT_max can push **Q_min,th** above the hydro band. The calculator then warns that the **thermal bound governs**.",
+      },
+      {
+        question: "How is ARC valve Cv estimated?",
+        answer:
+          "US liquid **Cv = Q_gpm √(SG / ΔP_psi)** at **Q_MCSF**. Pair with bypass NPS from **Q / v_max** on Sch 40. Confirm with the ARC vendor for flashing and control range.",
+      },
+    ],
+  },
+
+  "multiple-pump-parallel-series": {
+    slug: "multiple-pump-parallel-series",
+    formulaTitle: "Parallel & Series Pump–System Intersection",
+    formulaHtml:
+      '<p class="font-mono text-sm not-italic leading-relaxed text-slate-800 dark:text-slate-100 md:text-base">H<sub>pump</sub> = H<sub>so</sub> − a Q² &nbsp;·&nbsp; H<sub>sys</sub> = H<sub>static</sub> + k Q²</p>' +
+      '<p class="font-mono text-sm not-italic leading-relaxed text-slate-800 dark:text-slate-100 md:text-base">Parallel: Q<sub>op</sub> = √[(H<sub>so</sub>−H<sub>st</sub>)/(k+a/N²)] &nbsp;·&nbsp; Series: Q<sub>op</sub> = √[(N·H<sub>so</sub>−H<sub>st</sub>)/(k+N·a)]</p>' +
+      '<p class="eng-plain">ANSI/HI 14.3 · quadratic pump &amp; system screening · Crane TP-410 resistance style</p>',
+    formulaLatex:
+      "Q_{op,par}=\\sqrt{\\frac{H_{so}-H_{st}}{k+a/N^{2}}},\\quad Q_{op,ser}=\\sqrt{\\frac{N H_{so}-H_{st}}{k+N a}}",
+    formulaNotes:
+      "Fit a from (H_so, H_rated, Q_rated) and k from friction head at the same Q_rated. Parallel multiplies capacity at common head; series multiplies head at common flow. Flow gain = Q_op/(N·Q_alone); head gain = H_op/(N·H_alone). Warns on diminishing parallel return and runout (>1.25× Q_rated).",
+    formulaHighlight: true,
+    formulaBadges: [
+      { label: "Code", value: "HI 14.3" },
+      { label: "Parallel", value: "Q adds" },
+      { label: "Series", value: "H adds" },
+      { label: "Warn", value: "Runout 1.25×" },
+    ],
+    variables: [
+      {
+        symbol: "H_so",
+        name: "Shut-off head",
+        definition: "Single-pump zero-flow head used in the quadratic fit.",
+      },
+      {
+        symbol: "a",
+        name: "Pump curve coefficient",
+        definition: "a = (H_so − H_rated) / Q_rated².",
+      },
+      {
+        symbol: "k",
+        name: "System resistance coefficient",
+        definition: "k = ΔH_friction(Q_rated) / Q_rated².",
+      },
+      {
+        symbol: "N",
+        name: "Pump count",
+        definition: "Number of identical operating pumps (1–4).",
+      },
+      {
+        symbol: "Q_op",
+        name: "Operating flow",
+        definition: "Intersection of combined pump curve and system curve.",
+      },
+      {
+        symbol: "Q_alone",
+        name: "Single-pump operating flow",
+        definition: "Intersection with N = 1 on the same system curve.",
+      },
+    ],
+    standards: [
+      "ANSI/HI 14.3 — Rotodynamic Pumps for Design and Application",
+      "Hydraulic Institute Engineering Data Book (system / pump curve practice)",
+      "Crane TP-410 — resistance / friction head screening basis",
+    ],
+    allowancesAndTolerances: {
+      title: "Operating screens",
+      summary:
+        "Quadratic curves are a TA first pass. OEM multi-point curves and measured system resistance govern final selection.",
+      items: [
+        {
+          label: "Runout warn",
+          value: "Q > 1.25 × Q_rated",
+          description:
+            "Per-pump or single-alone duty far right of BEP — check motor and NPSH.",
+        },
+        {
+          label: "Parallel diminishing return",
+          value: "< +15% vs one pump",
+          description:
+            "Steep system friction — extra parallel pumps buy little capacity.",
+        },
+        {
+          label: "Identical pumps",
+          value: "Assumed",
+          description:
+            "Unequal parallel curves can deadhead the weaker pump.",
+        },
+        {
+          label: "Series static limit",
+          value: "N·H_so > H_static",
+          description:
+            "Otherwise no intersection — need more stages or lower static.",
+        },
+      ],
+    },
+    tableCaption: "Illustrative multi-pump cases (this app)",
+    tableHeaders: ["Case", "Mode", "Focus"],
+    tableAllNumeric: false,
+    tableRows: [
+      ["2× · 100 m³/h · H_so 60 m", "Parallel", "Default duty"],
+      ["Cooling 2× · 250 m³/h", "Parallel", "Friction-heavy loop"],
+      ["BFW 2× · 80 m³/h · H_st 150 m", "Series", "High static"],
+      ["HVAC 3× · 1500 GPM", "Parallel", "Imperial chilled water"],
+      ["Booster 2× · 800 GPM", "Series", "Pipeline boost"],
+    ],
+    ...howTo("How to screen parallel / series pump operation", [
+      {
+        name: "1. Fit the single-pump curve",
+        text: "Enter H_so, Q_rated, and H_rated from the OEM curve (two-point quadratic screen).",
+      },
+      {
+        name: "2. Enter the system curve",
+        text: "H_static from elevation / pressure head; friction head at Q_rated from Pressure Drop or test data.",
+      },
+      {
+        name: "3. Choose parallel or series and N",
+        text: "Parallel for capacity at similar head; series when one pump cannot overcome static + friction.",
+      },
+      {
+        name: "4. Read Q_op, H_op, and warnings",
+        text: "Check flow/head gain, diminishing return, and runout vs Q_rated; recheck NPSH at Q per pump.",
+      },
+    ]),
+    workedExample: {
+      title: "Worked example — 2× parallel · 100 m³/h",
+      scenario:
+        "Two identical pumps: H_so = 60 m, Q_rated = 100 m³/h, H_rated = 45 m. System: H_static = 15 m, ΔH_f = 20 m at Q_rated.",
+      designConditions: [
+        { label: "Mode / N", value: "Parallel · 2" },
+        { label: "Pump", value: "H_so 60 m · H_rated 45 m · Q_rated 100 m³/h" },
+        { label: "System", value: "H_st 15 m · ΔH_f 20 m @ Q_rated" },
+      ],
+      steps: [
+        {
+          step: "Step 1",
+          name: "Coefficients",
+          formula: "a=(H_{so}-H_r)/Q_r^{2},\\; k=\\Delta H_f/Q_r^{2}",
+          calculation: "a = 15/10000 = 0.0015 · k = 20/10000 = 0.0020",
+          result: "a = 0.0015 · k = 0.0020",
+        },
+        {
+          step: "Step 2",
+          name: "Single-pump alone",
+          formula: "Q_{alone}=\\sqrt{(H_{so}-H_{st})/(k+a)}",
+          calculation: "√(45/0.0035) ≈ 113.4 m³/h",
+          result: "Q_alone ≈ 113 m³/h",
+        },
+        {
+          step: "Step 3",
+          name: "Two pumps parallel",
+          formula: "Q_{op}=\\sqrt{(H_{so}-H_{st})/(k+a/N^{2})}",
+          calculation: "√(45/0.002375) ≈ 137.7 m³/h · H_op ≈ 53 m",
+          result: "Q_op ≈ 138 m³/h",
+          note: "Open /par-2p-100m3h-hso-60m-hr-45m-hs-15m-hf-20m for the live default.",
+        },
+      ],
+      conclusion:
+        "Two pumps raise capacity from ~113 to ~138 m³/h (~+21%), not 2× — friction dominates. Confirm motor/NPSH at ~69 m³/h per pump.",
+    },
+    materialLimitations: {
+      title: "Applicability",
+      summary:
+        "Identical rotodynamic pumps on a shared system curve. Not for PD pumps or strongly dissimilar parallel sets.",
+      items: [
+        {
+          materialGroup: "Cooling / HVAC parallel",
+          temperatureLimit: "N/A — hydraulic screen",
+          stressLimit: "Motor at runout",
+          notes: "Watch diminishing return on high-friction loops.",
+        },
+        {
+          materialGroup: "Boiler-feed / pipeline series",
+          temperatureLimit: "N/A",
+          stressLimit: "N·H_so vs H_static",
+          notes: "Series needed when static exceeds one-pump shut-off.",
+        },
+        {
+          materialGroup: "One-pump trip on multi-train",
+          temperatureLimit: "N/A",
+          stressLimit: "Runout 1.25× Q_rated",
+          notes: "Q_alone on the multi-pump system can overload the survivor.",
+        },
+      ],
+      codeRestrictions: [
+        "Field screening only — not an HI performance acceptance test.",
+        "Quadratic fit ignores multi-hump / flat OEM curves.",
+        "Assumes matched pumps; unequal parallel not solved.",
+        "Export / PDF is a TA worksheet — not a stamped pump datasheet.",
+      ],
+    },
+    faq: [
+      {
+        question: "Why don't two parallel pumps double the flow?",
+        answer:
+          "System head rises with **Q²**. The combined pump curve intersects the system at **less than 2×** the single-pump operating flow — often only **+15–40%** on friction-heavy loops.",
+      },
+      {
+        question: "What is flow gain %?",
+        answer:
+          "**Flow gain = Q_op / (N · Q_alone) × 100%**. It shows how efficiently parallel capacity multiplies versus running N independent single-pump duties.",
+      },
+      {
+        question: "When should I use series pumps?",
+        answer:
+          "When **H_static + friction** exceeds what one pump can develop (boosters, multi-stage trains). Series needs **N·H_so > H_static** for an intersection.",
+      },
+      {
+        question: "What is runout risk?",
+        answer:
+          "If per-pump or single-alone flow exceeds about **1.25 × Q_rated**, the duty is far right of BEP — check **motor amps, NPSHa, and vibration** before relying on one-pump contingency.",
+      },
+    ],
+  },
+
+  "flange-bolt-wrench-size-lookup": {
+    slug: "flange-bolt-wrench-size-lookup",
+    formulaTitle: "Core Formula & Variable Definitions",
+    formulaHtml:
+      '<p class="eng-eq"><i>W</i><sub>in</sub> = 1.5 · <i>d</i><sub>b</sub> + 1/8&nbsp;in &nbsp;(heavy hex nut AF)</p>' +
+      '<p class="eng-eq"><i>W</i><sub>mm</sub> ≈ round-up(<i>W</i><sub>in</sub> × 25.4) &nbsp;(nearest metric socket)</p>' +
+      '<p class="eng-eq"><i>P</i><sub>c</sub> = π · BCD / <i>N</i><sub>bolts</sub></p>' +
+      '<p class="eng-plain">Live values use ASME B16.5 flangeDimension.json rows (stud Ø, N, BCD, tabulated heavy-hex AF).</p>',
+    formulaLatex:
+      "W_{in}=1.5 d_b+1/8\\,\\mathrm{in},\\quad P_c=\\pi\\cdot BCD/N",
+    formulaNotes:
+      "Field wrench / spanner quick lookup for ASME B16.5 flanges (NPS ½–24). Hero output is heavy-hex nut across-flats (ASME B18.2.2) from the FEK flange table — not commercial standard hex. Stud length starts from the RF table length and applies FF/RTJ deltas. B16.47 NPS 26–60 is not tabulated here.",
+    formulaBadges: [
+      { label: "Scope", value: "B16.5 NPS ½–24" },
+      { label: "Nuts", value: "Heavy hex AF" },
+      { label: "Hero", value: "Wrench size" },
+      { label: "Pitch", value: "P_c = π·BCD/N" },
+    ],
+    variables: [
+      {
+        symbol: "d_b",
+        name: "Stud bolt diameter",
+        definition: "Nominal stud diameter from B16.5 bolting table (in / mm).",
+      },
+      {
+        symbol: "W",
+        name: "Heavy hex wrench AF",
+        definition:
+          "Across-flats width of ASME B18.2.2 heavy hex nut; tabulated and checked vs W≈1.5·d_b+1/8\".",
+      },
+      {
+        symbol: "N",
+        name: "Bolt count",
+        definition: "Number of flange bolt holes / studs.",
+      },
+      {
+        symbol: "BCD",
+        name: "Bolt circle diameter",
+        definition: "Pitch circle through bolt-hole centers.",
+      },
+      {
+        symbol: "P_c",
+        name: "Circumferential pitch",
+        definition: "Arc spacing between adjacent bolts: π·BCD/N.",
+      },
+      {
+        symbol: "L_stud",
+        name: "Stud length",
+        definition:
+          "Screening stud length for two-flange joint with facing allowance (RF / FF / RTJ).",
+      },
+    ],
+    standards: [
+      "ASME B16.5 (Pipe Flanges and Flanged Fittings)",
+      "ASME B16.47 (Large Diameter Steel Flanges) — reference only; not tabulated here",
+      "ASME B18.2.1 (Square and Hex Bolts and Screws)",
+      "ASME B18.2.2 (Nuts for General Applications) — heavy hex",
+    ],
+    allowancesAndTolerances: {
+      title: "Field Tool & Joint Rules",
+      summary:
+        "Use heavy-hex AF only. Metric sockets are equivalents — confirm hub clearance before impact guns.",
+      items: [
+        {
+          label: "Heavy hex vs standard hex",
+          value: "B16.5 requires heavy hex",
+          description:
+            "Standard commercial hex AF is undersized for B16.5 studs — wrong wrench and under-torqued joints.",
+        },
+        {
+          label: "Metric socket rounding",
+          value: "Nearest mm AF from table",
+          description:
+            "e.g. 1-1/16\" → 27 mm. Verify socket clearance around the flange hub.",
+        },
+        {
+          label: "RTJ stud length",
+          value: "+ groove allowance vs RF",
+          description:
+            "RTJ facing lengthens studs vs RF table length. Confirm B16.5 Appendix / vendor charts before PO.",
+        },
+      ],
+    },
+    tableCaption:
+      "ASME B16.5 Class 150 & 300 — heavy hex wrench AF by NPS (flangeDimension.json)",
+    tableHeaders: [
+      "NPS",
+      "Cl 150 bolts",
+      "Cl 150 AF",
+      "Cl 300 bolts",
+      "Cl 300 AF",
+    ],
+    tableRows: [
+      ['2"', '4 × 5/8"', '1-1/16" (27)', '8 × 5/8"', '1-1/16" (27)'],
+      ['3"', '4 × 5/8"', '1-1/16" (27)', '8 × 3/4"', '1-1/4" (32)'],
+      ['4"', '8 × 5/8"', '1-1/16" (27)', '8 × 3/4"', '1-1/4" (32)'],
+      ['6"', '8 × 3/4"', '1-1/4" (32)', '12 × 3/4"', '1-1/4" (32)'],
+      ['8"', '8 × 3/4"', '1-1/4" (32)', '12 × 7/8"', '1-7/16" (36)'],
+      ['10"', '12 × 7/8"', '1-7/16" (36)', '16 × 1"', '1-5/8" (41)'],
+      ['12"', '12 × 7/8"', '1-7/16" (36)', '16 × 1-1/8"', '1-13/16" (46)'],
+    ],
+    tableFootnote:
+      "AF = heavy hex across-flats (in) with nearest metric mm in parentheses. Live calculator chart covers all tabulated classes for the selected Class. Stud length adjusts for RF / FF / RTJ.",
+    materialLimitations: {
+      title: "Coverage & Procurement Limits",
+      summary:
+        "Dimension & tool sizes only — not MAWP. Pressure-temperature ratings follow B16.5 Table 2 by material group.",
+      items: [
+        {
+          materialGroup: "B16.5 NPS ½–24",
+          temperatureLimit: "Per material group Table 2",
+          stressLimit: "Class is not a constant psi rating",
+          notes: "Full FEK flange table coverage for this calculator.",
+        },
+        {
+          materialGroup: "B16.47 NPS 26–60",
+          temperatureLimit: "N/A in this tool",
+          stressLimit: "Series A ≠ Series B",
+          notes: "Large-diameter flanges are out of scope — use OEM / B16.47 charts.",
+        },
+      ],
+      codeRestrictions: [
+        "Screening lookup only — not a stamped bolting procedure.",
+        "Heavy hex AF from FEK table; confirm OEM nut / stud PO.",
+        "PDF / export is a field worksheet, not a torque procedure (use Bolt Torque / Sequence).",
+      ],
+    },
+    ...howTo("How to look up flange bolt & wrench size", [
+      {
+        name: "1. Select NPS and pressure class",
+        text: "Choose the flange NPS and Class (150–2500 as tabulated). Facing (RF / FF / RTJ≥300) adjusts stud length only — not wrench AF.",
+      },
+      {
+        name: "2. Read heavy-hex wrench AF",
+        text: "Hero output is the ASME B18.2.2 heavy hex across-flats from the B16.5 bolting row (imperial AF and nearest metric mm). Do not use commercial standard-hex sizes.",
+      },
+      {
+        name: "3. Confirm stud diameter, count, and pitch",
+        text: "Note stud Ø, bolt count N, BCD, hole diameter, and circumferential pitch P_c = π·BCD/N for field layout and sequence tools.",
+      },
+      {
+        name: "4. Check stud length for facing",
+        text: "Recommended stud length starts from the RF table length with FF/RTJ deltas. Confirm B16.5 Appendix / vendor stud charts before PO.",
+      },
+      {
+        name: "5. Continue to torque and sequence",
+        text: "Open Bolt Torque & Tensioning for target T and Flange Bolt Tightening Sequence for star/circular order using the same NPS / class / bolt count.",
+      },
+    ]),
+    faq: [
+      {
+        question: "Why is the wrench larger than a hardware-store hex?",
+        answer:
+          "ASME **B16.5** flanges use **heavy hex nuts** (B18.2.2). Commercial standard hex AF is smaller and will not match the tabulated spanner size.",
+      },
+      {
+        question: "How is metric socket size chosen?",
+        answer:
+          "The app shows the **tabulated heavy-hex AF in mm** (nearest practical socket). Always check **hub clearance** before using an impact gun.",
+      },
+      {
+        question: "Does facing change wrench size?",
+        answer:
+          "**No** — wrench AF follows stud diameter. Facing mainly changes **stud length** (FF shorter, RTJ longer vs RF).",
+      },
+      {
+        question: "What related calculators should I open next?",
+        answer:
+          "Use **Bolt Torque & Tensioning** for target T, **Bolt Tightening Sequence** for star/circular order, and **Flange Dimension & Weight** for OD / T / pair mass.",
+      },
+    ],
+  },
+
 };
 
 export function getCalculatorSeo(slug: string): CalculatorSeoEntry | undefined {

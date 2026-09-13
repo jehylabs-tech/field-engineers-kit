@@ -16,6 +16,11 @@ import {
 } from "@/lib/calculators/engines/thermal-expansion";
 import { listPneumaticSafetyPseoRoutes } from "@/lib/calculators/pseo/pneumatic-safety-routes";
 import { listPumpNpshPseoRoutes } from "@/lib/calculators/pseo/pump-npsh-routes";
+import { listPumpTdhPseoRoutes } from "@/lib/calculators/pseo/pump-tdh-routes";
+import { listPumpAffinityPseoRoutes } from "@/lib/calculators/pseo/pump-affinity-routes";
+import { listPumpMcsfPseoRoutes } from "@/lib/calculators/pseo/pump-mcsf-routes";
+import { listMultiPumpPseoRoutes } from "@/lib/calculators/pseo/multi-pump-routes";
+import { listBoltWrenchLookupPseoRoutes } from "@/lib/calculators/pseo/bolt-wrench-lookup-routes";
 import {
   getPipeScheduleEntry,
   listAvailableNps,
@@ -151,6 +156,16 @@ export function parseSpecToQuery(spec: string): Record<string, string> | null {
     return classQuery(inchLb[1], inchLb[2]);
   }
 
+  const inchLbFacing = value.match(
+    /^(\d+(?:\.\d+)?)inch-(\d+)lb-(rf|rtj|ff)$/,
+  );
+  if (inchLbFacing) {
+    return {
+      ...classQuery(inchLbFacing[1], inchLbFacing[2]),
+      facing: inchLbFacing[3],
+    };
+  }
+
   // Sch tokens may be numeric or STD/XS (case-insensitive in URL).
   const inchSch = value.match(
     /^(?:nps-)?(\d+(?:\.\d+)?)(?:-inch)?-sch-?([a-z0-9]+)$/i,
@@ -251,6 +266,126 @@ export function parseSpecToQuery(spec: string): Record<string, string> | null {
     };
   }
 
+  // Pump TDH: `{fluid}-{flow}{m3h|gpm}-hs-{H}{m|ft}-hf-{F}{m|ft}`
+  const tdh = value.match(
+    /^(water|seawater|condensate|light-hc)-(\d+(?:p\d+)?)(m3h|gpm)-hs-(\d+(?:p\d+)?)(m|ft)-hf-(\d+(?:p\d+)?)(m|ft)$/i,
+  );
+  if (tdh) {
+    const flowRaw = tdh[2].replace("p", ".");
+    const hsRaw = tdh[4].replace("p", ".");
+    const hfRaw = tdh[6].replace("p", ".");
+    const qunit = tdh[3].toLowerCase();
+    const lenUnit = tdh[5].toLowerCase();
+    const imperial = qunit === "gpm" || lenUnit === "ft";
+    return {
+      units: imperial ? "imperial" : "metric",
+      fluid: tdh[1].toLowerCase(),
+      q: flowRaw,
+      qunit,
+      hs: hsRaw,
+      hf: hfRaw,
+      hp: "0",
+    };
+  }
+
+  // Pump affinity — speed: `speed-{N1}-to-{N2}-rpm-{Q}{m3h|gpm}-{H}{m|ft}`
+  const affSpeed = value.match(
+    /^speed-(\d+(?:p\d+)?)-to-(\d+(?:p\d+)?)-rpm-(\d+(?:p\d+)?)(m3h|gpm)-(\d+(?:p\d+)?)(m|ft)$/i,
+  );
+  if (affSpeed) {
+    const qunit = affSpeed[4].toLowerCase();
+    const imperial = qunit === "gpm" || affSpeed[6].toLowerCase() === "ft";
+    return {
+      units: imperial ? "imperial" : "metric",
+      mode: "speed",
+      n1: affSpeed[1].replace("p", "."),
+      n2: affSpeed[2].replace("p", "."),
+      q: affSpeed[3].replace("p", "."),
+      qunit,
+      head: affSpeed[5].replace("p", "."),
+    };
+  }
+
+  // Pump affinity — trim: `trim-{D1}-to-{D2}{mm|in}-{Q}{m3h|gpm}-{H}{m|ft}`
+  const affTrim = value.match(
+    /^trim-(\d+(?:p\d+)?)-to-(\d+(?:p\d+)?)(mm|in)-(\d+(?:p\d+)?)(m3h|gpm)-(\d+(?:p\d+)?)(m|ft)$/i,
+  );
+  if (affTrim) {
+    const dimUnit = affTrim[3].toLowerCase();
+    const qunit = affTrim[5].toLowerCase();
+    const imperial = dimUnit === "in" || qunit === "gpm";
+    return {
+      units: imperial ? "imperial" : "metric",
+      mode: "diameter",
+      d1: affTrim[1].replace("p", "."),
+      d2: affTrim[2].replace("p", "."),
+      q: affTrim[4].replace("p", "."),
+      qunit,
+      head: affTrim[6].replace("p", "."),
+    };
+  }
+
+  // Pump affinity — combined: `combined-{N1}-to-{N2}-rpm-d-{D1}-to-{D2}{mm|in}-{Q}{m3h|gpm}`
+  const affComb = value.match(
+    /^combined-(\d+(?:p\d+)?)-to-(\d+(?:p\d+)?)-rpm-d-(\d+(?:p\d+)?)-to-(\d+(?:p\d+)?)(mm|in)-(\d+(?:p\d+)?)(m3h|gpm)$/i,
+  );
+  if (affComb) {
+    const dimUnit = affComb[5].toLowerCase();
+    const qunit = affComb[7].toLowerCase();
+    const imperial = dimUnit === "in" || qunit === "gpm";
+    return {
+      units: imperial ? "imperial" : "metric",
+      mode: "combined",
+      n1: affComb[1].replace("p", "."),
+      n2: affComb[2].replace("p", "."),
+      d1: affComb[3].replace("p", "."),
+      d2: affComb[4].replace("p", "."),
+      q: affComb[6].replace("p", "."),
+      qunit,
+    };
+  }
+
+  // Pump MCSF: `{fluid}-{Q}{m3h|gpm}-hso-{H}{m|ft}-p-{P}{kw|hp}`
+  const mcsf = value.match(
+    /^(water-hot|water|naphtha|crude|amine)-(\d+(?:p\d+)?)(m3h|gpm)-hso-(\d+(?:p\d+)?)(m|ft)-p-(\d+(?:p\d+)?)(kw|hp)$/i,
+  );
+  if (mcsf) {
+    const qunit = mcsf[3].toLowerCase();
+    const lenUnit = mcsf[5].toLowerCase();
+    const pUnit = mcsf[7].toLowerCase();
+    const imperial =
+      qunit === "gpm" || lenUnit === "ft" || pUnit === "hp";
+    return {
+      units: imperial ? "imperial" : "metric",
+      fluid: mcsf[1].toLowerCase(),
+      q: mcsf[2].replace("p", "."),
+      qunit,
+      hso: mcsf[4].replace("p", "."),
+      pwr: mcsf[6].replace("p", "."),
+    };
+  }
+
+  // Multi-pump: `{par|ser}-{N}p-{Q}{m3h|gpm}-hso-{Hso}{m|ft}-hr-{Hr}{m|ft}-hs-{Hs}{m|ft}-hf-{Hf}{m|ft}`
+  const multi = value.match(
+    /^(par|ser)-(\d+)p-(\d+(?:p\d+)?)(m3h|gpm)-hso-(\d+(?:p\d+)?)(m|ft)-hr-(\d+(?:p\d+)?)(m|ft)-hs-(\d+(?:p\d+)?)(m|ft)-hf-(\d+(?:p\d+)?)(m|ft)$/i,
+  );
+  if (multi) {
+    const qunit = multi[4].toLowerCase();
+    const lenUnit = multi[6].toLowerCase();
+    const imperial = qunit === "gpm" || lenUnit === "ft";
+    return {
+      units: imperial ? "imperial" : "metric",
+      mode: multi[1].toLowerCase() === "ser" ? "series" : "parallel",
+      n: multi[2],
+      q: multi[3].replace("p", "."),
+      qunit,
+      hso: multi[5].replace("p", "."),
+      hr: multi[7].replace("p", "."),
+      hs: multi[9].replace("p", "."),
+      hf: multi[11].replace("p", "."),
+    };
+  }
+
   if (value === "liquid" || value === "gas") {
     return { fluid: value };
   }
@@ -326,6 +461,34 @@ export function specLabelFromQuery(
     const tUnit = query.units === "imperial" ? "°F" : "°C";
     const hUnit = query.units === "imperial" ? "ft" : "m";
     return `${fluid} ${query.temp} ${tUnit} · ${query.arr} ${query.hs} ${hUnit}`;
+  }
+  if (query.fluid && query.q && query.hs && query.hf && query.qunit) {
+    const fluid =
+      query.fluid === "seawater"
+        ? "Seawater"
+        : query.fluid === "condensate"
+          ? "Condensate"
+          : query.fluid === "light-hc"
+            ? "Light HC"
+            : "Water";
+    const qLabel = query.qunit === "gpm" ? `${query.q} GPM` : `${query.q} m³/h`;
+    const hUnit = query.units === "imperial" ? "ft" : "m";
+    return `${fluid} ${qLabel} · Hs ${query.hs} ${hUnit} · Hf ${query.hf} ${hUnit}`;
+  }
+  if (query.mode === "speed" && query.n1 && query.n2) {
+    const qLabel =
+      query.qunit === "gpm"
+        ? `${query.q} GPM`
+        : query.q
+          ? `${query.q} m³/h`
+          : "";
+    return `Speed ${query.n1}→${query.n2} RPM${qLabel ? ` · ${qLabel}` : ""}`;
+  }
+  if (query.mode === "diameter" && query.d1 && query.d2) {
+    return `Trim ${query.d1}→${query.d2} · Q ${query.q ?? ""}`;
+  }
+  if (query.mode === "combined" && query.n1 && query.d1) {
+    return `VFD+trim ${query.n1}→${query.n2} · D ${query.d1}→${query.d2}`;
   }
   if (query.class && query.nps) return `${query.nps}" Class ${query.class}`;
   if (query.sch && query.nps) return `${query.nps}" Sch ${query.sch}`;
@@ -433,6 +596,16 @@ export function listSpecRoutesForSlug(slug: string): SpecRoute[] {
       return listPneumaticSafetyPseoRoutes(slug);
     case "pump-npsh":
       return listPumpNpshPseoRoutes(slug);
+    case "pump-tdh":
+      return listPumpTdhPseoRoutes(slug);
+    case "pump-affinity":
+      return listPumpAffinityPseoRoutes(slug);
+    case "pump-mcsf":
+      return listPumpMcsfPseoRoutes(slug);
+    case "multi-pump":
+      return listMultiPumpPseoRoutes(slug);
+    case "bolt-wrench-lookup":
+      return listBoltWrenchLookupPseoRoutes(slug);
     case "unit-converter":
       return [
         {
@@ -573,6 +746,10 @@ export function findSpecRouteForInputs(
     partial.pattern != null && partial.pattern !== ""
       ? String(partial.pattern)
       : "";
+  const facing =
+    partial.facing != null && partial.facing !== ""
+      ? String(partial.facing).toLowerCase()
+      : "";
   const hnps =
     partial.hnps != null && partial.hnps !== ""
       ? String(partial.hnps)
@@ -624,6 +801,84 @@ export function findSpecRouteForInputs(
       ? String(partial.hs)
       : partial.staticHeight != null && partial.staticHeight !== ""
         ? String(partial.staticHeight)
+        : partial.staticHead != null && partial.staticHead !== ""
+          ? String(partial.staticHead)
+          : "";
+  const hf =
+    partial.hf != null && partial.hf !== ""
+      ? String(partial.hf)
+      : partial.frictionLoss != null && partial.frictionLoss !== ""
+        ? String(partial.frictionLoss)
+        : partial.frictionHead != null && partial.frictionHead !== ""
+          ? String(partial.frictionHead)
+          : "";
+  const qFlow =
+    partial.q != null && partial.q !== ""
+      ? String(partial.q)
+      : partial.flow != null && partial.flow !== ""
+        ? String(partial.flow)
+        : "";
+  const qunit =
+    partial.qunit != null && partial.qunit !== ""
+      ? String(partial.qunit)
+      : partial.flowUnit != null && partial.flowUnit !== ""
+        ? String(partial.flowUnit)
+        : "";
+  const mode =
+    partial.mode != null && partial.mode !== "" ? String(partial.mode) : "";
+  const n1 =
+    partial.n1 != null && partial.n1 !== ""
+      ? String(partial.n1)
+      : partial.speed1 != null && partial.speed1 !== ""
+        ? String(partial.speed1)
+        : "";
+  const n2 =
+    partial.n2 != null && partial.n2 !== ""
+      ? String(partial.n2)
+      : partial.speed2 != null && partial.speed2 !== ""
+        ? String(partial.speed2)
+        : "";
+  const d1 =
+    partial.d1 != null && partial.d1 !== ""
+      ? String(partial.d1)
+      : partial.diameter1 != null && partial.diameter1 !== ""
+        ? String(partial.diameter1)
+        : "";
+  const d2 =
+    partial.d2 != null && partial.d2 !== ""
+      ? String(partial.d2)
+      : partial.diameter2 != null && partial.diameter2 !== ""
+        ? String(partial.diameter2)
+        : "";
+  const head =
+    partial.head != null && partial.head !== ""
+      ? String(partial.head)
+      : partial.head1 != null && partial.head1 !== ""
+        ? String(partial.head1)
+        : "";
+  const hso =
+    partial.hso != null && partial.hso !== ""
+      ? String(partial.hso)
+      : partial.headShutoff != null && partial.headShutoff !== ""
+        ? String(partial.headShutoff)
+        : "";
+  const pwr =
+    partial.pwr != null && partial.pwr !== ""
+      ? String(partial.pwr)
+      : partial.powerRated != null && partial.powerRated !== ""
+        ? String(partial.powerRated)
+        : "";
+  const hr =
+    partial.hr != null && partial.hr !== ""
+      ? String(partial.hr)
+      : partial.headRated != null && partial.headRated !== ""
+        ? String(partial.headRated)
+        : "";
+  const nPumps =
+    partial.n != null && partial.n !== ""
+      ? String(partial.n)
+      : partial.pumpCount != null && partial.pumpCount !== ""
+        ? String(partial.pumpCount)
         : "";
 
   if (bolts && pattern) {
@@ -716,6 +971,184 @@ export function findSpecRouteForInputs(
     if (hit) return hit;
   }
 
+  if (fluid && qFlow && hs && hf) {
+    const hit = routes.find((route) => {
+      if (route.query.fluid !== fluid) return false;
+      if (units && route.query.units && route.query.units !== units) {
+        return false;
+      }
+      if (qunit && route.query.qunit && route.query.qunit !== qunit) {
+        return false;
+      }
+      const routeQ = Number(route.query.q);
+      const wantQ = Number(qFlow);
+      const routeHs = Number(route.query.hs);
+      const wantHs = Number(hs);
+      const routeHf = Number(route.query.hf);
+      const wantHf = Number(hf);
+      const qOk =
+        Number.isFinite(routeQ) && Number.isFinite(wantQ)
+          ? Math.abs(routeQ - wantQ) < 1e-9
+          : route.query.q === qFlow;
+      const hsOk =
+        Number.isFinite(routeHs) && Number.isFinite(wantHs)
+          ? Math.abs(routeHs - wantHs) < 1e-9
+          : route.query.hs === hs;
+      const hfOk =
+        Number.isFinite(routeHf) && Number.isFinite(wantHf)
+          ? Math.abs(routeHf - wantHf) < 1e-9
+          : route.query.hf === hf;
+      return qOk && hsOk && hfOk;
+    });
+    if (hit) return hit;
+  }
+
+  // Pump affinity — speed / trim / combined (Pattern B)
+  if (mode === "speed" && n1 && n2 && qFlow) {
+    const hit = routes.find((route) => {
+      if (route.query.mode !== "speed") return false;
+      if (units && route.query.units && route.query.units !== units) {
+        return false;
+      }
+      if (qunit && route.query.qunit && route.query.qunit !== qunit) {
+        return false;
+      }
+      const numEq = (a: string, b: string) => {
+        const na = Number(a);
+        const nb = Number(b);
+        return Number.isFinite(na) && Number.isFinite(nb)
+          ? Math.abs(na - nb) < 1e-9
+          : a === b;
+      };
+      if (!numEq(route.query.n1 ?? "", n1) || !numEq(route.query.n2 ?? "", n2)) {
+        return false;
+      }
+      if (!numEq(route.query.q ?? "", qFlow)) return false;
+      if (head && route.query.head && !numEq(route.query.head, head)) {
+        return false;
+      }
+      return true;
+    });
+    if (hit) return hit;
+  }
+
+  if (mode === "diameter" && d1 && d2 && qFlow) {
+    const hit = routes.find((route) => {
+      if (route.query.mode !== "diameter") return false;
+      if (units && route.query.units && route.query.units !== units) {
+        return false;
+      }
+      if (qunit && route.query.qunit && route.query.qunit !== qunit) {
+        return false;
+      }
+      const numEq = (a: string, b: string) => {
+        const na = Number(a);
+        const nb = Number(b);
+        return Number.isFinite(na) && Number.isFinite(nb)
+          ? Math.abs(na - nb) < 1e-9
+          : a === b;
+      };
+      if (!numEq(route.query.d1 ?? "", d1) || !numEq(route.query.d2 ?? "", d2)) {
+        return false;
+      }
+      if (!numEq(route.query.q ?? "", qFlow)) return false;
+      if (head && route.query.head && !numEq(route.query.head, head)) {
+        return false;
+      }
+      return true;
+    });
+    if (hit) return hit;
+  }
+
+  if (mode === "combined" && n1 && n2 && d1 && d2 && qFlow) {
+    const hit = routes.find((route) => {
+      if (route.query.mode !== "combined") return false;
+      if (units && route.query.units && route.query.units !== units) {
+        return false;
+      }
+      if (qunit && route.query.qunit && route.query.qunit !== qunit) {
+        return false;
+      }
+      const numEq = (a: string, b: string) => {
+        const na = Number(a);
+        const nb = Number(b);
+        return Number.isFinite(na) && Number.isFinite(nb)
+          ? Math.abs(na - nb) < 1e-9
+          : a === b;
+      };
+      return (
+        numEq(route.query.n1 ?? "", n1) &&
+        numEq(route.query.n2 ?? "", n2) &&
+        numEq(route.query.d1 ?? "", d1) &&
+        numEq(route.query.d2 ?? "", d2) &&
+        numEq(route.query.q ?? "", qFlow)
+      );
+    });
+    if (hit) return hit;
+  }
+
+  // Pump MCSF — `{fluid}-{Q}-hso-{H}-p-{P}`
+  if (fluid && qFlow && hso && pwr) {
+    const hit = routes.find((route) => {
+      if (!route.query.hso || !route.query.pwr) return false;
+      if (route.query.fluid !== fluid) return false;
+      if (units && route.query.units && route.query.units !== units) {
+        return false;
+      }
+      if (qunit && route.query.qunit && route.query.qunit !== qunit) {
+        return false;
+      }
+      const numEq = (a: string, b: string) => {
+        const na = Number(a);
+        const nb = Number(b);
+        return Number.isFinite(na) && Number.isFinite(nb)
+          ? Math.abs(na - nb) < 1e-9
+          : a === b;
+      };
+      return (
+        numEq(route.query.q ?? "", qFlow) &&
+        numEq(route.query.hso, hso) &&
+        numEq(route.query.pwr, pwr)
+      );
+    });
+    if (hit) return hit;
+  }
+
+  // Multi-pump parallel / series
+  if (
+    (mode === "parallel" || mode === "series") &&
+    nPumps &&
+    qFlow &&
+    hso &&
+    hr
+  ) {
+    const hit = routes.find((route) => {
+      if (route.query.mode !== mode) return false;
+      if (units && route.query.units && route.query.units !== units) {
+        return false;
+      }
+      if (qunit && route.query.qunit && route.query.qunit !== qunit) {
+        return false;
+      }
+      const numEq = (a: string, b: string) => {
+        const na = Number(a);
+        const nb = Number(b);
+        return Number.isFinite(na) && Number.isFinite(nb)
+          ? Math.abs(na - nb) < 1e-9
+          : a === b;
+      };
+      return (
+        numEq(route.query.n ?? "", nPumps) &&
+        numEq(route.query.q ?? "", qFlow) &&
+        numEq(route.query.hso ?? "", hso) &&
+        numEq(route.query.hr ?? "", hr) &&
+        (!hs || !route.query.hs || numEq(route.query.hs, hs)) &&
+        (!hf || !route.query.hf || numEq(route.query.hf, hf))
+      );
+    });
+    if (hit) return hit;
+  }
+
   if (nps && sch) {
     const withMat =
       material !== ""
@@ -740,10 +1173,35 @@ export function findSpecRouteForInputs(
     if (hit) return hit;
   }
   if (nps && pressureClass) {
-    const hit = routes.find(
-      (route) => route.query.nps === nps && route.query.class === pressureClass,
+    if (facing) {
+      const withFacing = routes.find(
+        (route) =>
+          route.query.nps === nps &&
+          route.query.class === pressureClass &&
+          (route.query.facing ?? "").toLowerCase() === facing,
+      );
+      if (withFacing) return withFacing;
+      // Faced routes exist for this tool — do not fall back to a different face.
+      if (routes.some((route) => Boolean(route.query.facing))) {
+        return undefined;
+      }
+    }
+    const plain = routes.find(
+      (route) =>
+        route.query.nps === nps &&
+        route.query.class === pressureClass &&
+        !route.query.facing,
     );
-    if (hit) return hit;
+    if (plain) return plain;
+    if (!facing || facing === "rf") {
+      const rfHit = routes.find(
+        (route) =>
+          route.query.nps === nps &&
+          route.query.class === pressureClass &&
+          (!route.query.facing || route.query.facing === "rf"),
+      );
+      if (rfHit) return rfHit;
+    }
   }
   if (fluid) {
     const hit = routes.find((route) => route.query.fluid === fluid);
@@ -765,11 +1223,16 @@ export function findSpecRouteForInputs(
         route.query.nps === nps && !route.query.sch && !route.query.class,
     );
     if (hit) return hit;
-    // Tools without a schedule control still land on Sch 40 pSEO pages.
-    const sch40 = routes.find(
-      (route) => route.query.nps === nps && route.query.sch === "40",
-    );
-    if (sch40) return sch40;
+    // Default to Sch 40 only when the UI did not supply a schedule (tools
+    // without a schedule control). If sch is set but unmatched (e.g. Sch 10
+    // outside the Pattern B SCH_SPECS list), return undefined so url-sync
+    // drops the stale /…/4-inch-sch-40 path instead of advertising Sch 40.
+    if (!sch) {
+      const sch40 = routes.find(
+        (route) => route.query.nps === nps && route.query.sch === "40",
+      );
+      if (sch40) return sch40;
+    }
   }
   return undefined;
 }
@@ -882,6 +1345,72 @@ export function buildSpecSeoCopy(
     };
   }
 
+  if (q.fluid && q.q && q.hs && q.hf && q.qunit) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus} | ${brand}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `Pump TDH and brake power screening for ${focus} (HI 14.3 · BHP = Q·TDH·SG/(3960·η)).`;
+    return {
+      title,
+      description,
+      h1: shortTitle,
+      h2: "TDH & Pump Power Summary",
+    };
+  }
+
+  if (q.mode && (q.n1 || q.d1) && q.q) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus} | ${brand}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `Pump affinity / impeller trim screening for ${focus} (Q∝ND, H∝(ND)², P∝(ND)³).`;
+    return {
+      title,
+      description,
+      h1: shortTitle,
+      h2: "Affinity & Impeller Trim Summary",
+    };
+  }
+
+  if (q.fluid && q.q && q.hso && q.pwr) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus} | ${brand}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `Pump MCSF / thermal min-flow screening for ${focus} (API 610 · HI 9.6.1).`;
+    return {
+      title,
+      description,
+      h1: shortTitle,
+      h2: "MCSF & Thermal Protection Summary",
+    };
+  }
+
+  if (
+    (q.mode === "parallel" || q.mode === "series") &&
+    q.n &&
+    q.q &&
+    q.hso &&
+    q.hr
+  ) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus} | ${brand}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `Parallel / series pump–system curve intersection for ${focus} (HI 14.3).`;
+    return {
+      title,
+      description,
+      h1: shortTitle,
+      h2: "Parallel & Series Pump Summary",
+    };
+  }
+
   if (q.nps && q.sch) {
     const size = humanNps(q.nps);
     const schedule = humanSch(q.sch);
@@ -896,6 +1425,24 @@ export function buildSpecSeoCopy(
       description,
       h1: `${shortTitle} — ${focus}`,
       h2: `${focus} specification summary`,
+    };
+  }
+
+  if (q.nps && q.class && q.facing) {
+    const size = humanNps(q.nps);
+    const cls = humanClass(q.class);
+    const face = String(q.facing).toUpperCase();
+    const focus = `${size} ${cls} ${face}`;
+    const title = `${shortTitle} — ${focus} | ${brand}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `ASME B16.5 / B18.2.2 heavy-hex wrench AF, stud diameter, bolt count, and stud length for ${focus}.`;
+    return {
+      title,
+      description,
+      h1: shortTitle,
+      h2: "Bolt & Wrench Size Summary",
     };
   }
 

@@ -63,6 +63,23 @@ const CALCULATOR_VIEWS: Record<
   "pump-npsh": dynamic(() => import("./calculators/PumpNpshCalculator"), {
     loading: loadingFallback,
   }),
+  "pump-tdh": dynamic(() => import("./calculators/PumpTdhCalculator"), {
+    loading: loadingFallback,
+  }),
+  "pump-affinity": dynamic(
+    () => import("./calculators/PumpAffinityCalculator"),
+    { loading: loadingFallback },
+  ),
+  "pump-mcsf": dynamic(() => import("./calculators/PumpMcsfCalculator"), {
+    loading: loadingFallback,
+  }),
+  "multi-pump": dynamic(() => import("./calculators/MultiPumpCalculator"), {
+    loading: loadingFallback,
+  }),
+  "bolt-wrench-lookup": dynamic(
+    () => import("./calculators/BoltWrenchLookupCalculator"),
+    { loading: loadingFallback },
+  ),
   "pipe-schedule": dynamic(() => import("./calculators/PipeScheduleCalculator"), {
     loading: loadingFallback,
   }),
@@ -122,9 +139,6 @@ type CalculatorShellProps = {
   allCalculators: Calculator[];
   children?: ReactNode;
   specSeed?: Record<string, string>;
-  specLabel?: string;
-  /** Programmatic SEO H1 override (spec pages). */
-  pageHeading?: string;
 };
 
 function CalculatorBody({
@@ -155,14 +169,13 @@ function CalculatorMain({
   allCalculators,
   definition,
   children,
-  specLabel,
-  pageHeading,
 }: CalculatorShellProps & { definition: CalculatorDefinition }) {
   const { output } = useCalculatorOutput();
   const [navOpen, setNavOpen] = useState(false);
-  const title =
-    pageHeading ??
-    (specLabel ? `${specLabel} · ${calculator.title}` : calculator.title);
+  // Visible H1 is always the tool name. Spec focus belongs in <title>/meta,
+  // “Current spec”, and SpecProgrammaticPanel — not mashed into the H1
+  // (avoids stale Sch 40 titles when inputs diverge from the path).
+  const title = calculator.title;
   const navCalculators = allCalculators.map((item) => ({
     slug: item.slug,
     title: item.title,

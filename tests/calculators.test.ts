@@ -18,6 +18,14 @@ import {
   generateStarSequence,
 } from "@/lib/calculators/engines/bolt-sequence";
 import {
+  boltCirclePitchMm,
+  calculateBoltWrenchLookup,
+  DEFAULT_BOLT_WRENCH_LOOKUP_INPUTS,
+  heavyHexWrenchIn,
+  listBoltWrenchChartForClass,
+  parseInchFraction,
+} from "@/lib/calculators/engines/bolt-wrench-lookup";
+import {
   calculateAlloyWeight,
   densityGPerCm3,
   DEFAULT_ALLOY_WEIGHT_INPUTS,
@@ -39,6 +47,30 @@ import {
   computePumpNpsh,
   DEFAULT_PUMP_NPSH_INPUTS,
 } from "@/lib/calculators/engines/pump-npsh";
+import {
+  calculatePumpTdh,
+  computePumpTdh,
+  DEFAULT_PUMP_TDH_INPUTS,
+  recommendIecKw,
+} from "@/lib/calculators/engines/pump-tdh";
+import {
+  applyAffinityMode,
+  calculatePumpAffinity,
+  computePumpAffinity,
+  DEFAULT_PUMP_AFFINITY_INPUTS,
+  TRIM_HARD_LIMIT,
+  TRIM_SOFT_LIMIT,
+} from "@/lib/calculators/engines/pump-affinity";
+import {
+  calculatePumpMcsf,
+  computePumpMcsf,
+  DEFAULT_PUMP_MCSF_INPUTS,
+} from "@/lib/calculators/engines/pump-mcsf";
+import {
+  calculateMultiPump,
+  computeMultiPump,
+  DEFAULT_MULTI_PUMP_INPUTS,
+} from "@/lib/calculators/engines/multi-pump";
 import {
   calculateFittingValveDimension,
   DEFAULT_FITTING_VALVE_DIMENSION_INPUTS,
@@ -1729,6 +1761,13 @@ describe("pSEO spec routes", () => {
     expect(
       findSpecRouteForInputs("pipe-wall-thickness", { nps: "4" })?.spec,
     ).toBe("4-inch-sch-40");
+    // Explicit non-listed schedule must not silently advertise Sch 40.
+    expect(
+      findSpecRouteForInputs("pressure-drop-friction", {
+        nps: "4",
+        sch: "10",
+      }),
+    ).toBeUndefined();
   });
 
   it("keeps total SpecRoute count within a sane SSG ceiling", () => {
@@ -2215,5 +2254,519 @@ describe("pump NPSH & cavitation (HI 9.6.1 screening)", () => {
         hs: "2",
       })?.spec,
     ).toBe("water-20c-flooded-2m");
+  });
+});
+
+describe("pump TDH & power (HI 14.3 screening)", () => {
+  it("computes TDH and brake power for default water duty", () => {
+    const c = computePumpTdh(DEFAULT_PUMP_TDH_INPUTS);
+    expect(c.tdhM).toBeCloseTo(25, 5);
+    expect(c.sg).toBeCloseTo(0.998, 3);
+    expect(c.brakeKw).toBeGreaterThan(4);
+    expect(c.brakeKw).toBeLessThan(6);
+    expect(c.serviceFactor).toBeCloseTo(1.15, 5);
+    // Motor pick uses input × SF (≈6.1 kW) → next IEC 7.5 kW
+    expect(c.recommendedKw).toBe(7.5);
+    expect(recommendIecKw(c.motorInputKw)).toBe(5.5);
+    expect(recommendIecKw(c.sizedKw)).toBe(7.5);
+    const out = calculatePumpTdh(DEFAULT_PUMP_TDH_INPUTS);
+    expect(out.heroLabel).toMatch(/TDH/i);
+    expect(out.heroValue).toMatch(/m/);
+    expect(out.heroBadges?.some((b) => b.label === "Recommend")).toBe(true);
+    expect(out.heroBadges?.some((b) => b.label === "SF")).toBe(true);
+    expectNoPoison(out);
+  });
+
+  it("allows negative static head and clamps friction ≥ 0", () => {
+    const c = computePumpTdh({
+      ...DEFAULT_PUMP_TDH_INPUTS,
+      staticHead: -5,
+      frictionHead: -2,
+      pressureHead: 10,
+    });
+    expect(c.staticM).toBeCloseTo(-5, 5);
+    expect(c.frictionM).toBe(0);
+    expect(c.tdhM).toBeCloseTo(5, 5);
+  });
+
+  it("warns on high viscosity without applying HI derate", () => {
+    const out = calculatePumpTdh({
+      ...DEFAULT_PUMP_TDH_INPUTS,
+      viscosityCp: 50,
+    });
+    expect(out.heroStatusLevel).toBe("warn");
+    expect(out.heroStatus).toMatch(/viscosity/i);
+  });
+
+  it("lists water-50m3h-hs-20m-hf-5m and water-100gpm-hs-60ft-hf-15ft pSEO paths", () => {
+    expect(
+      resolveSpecRoute("pump-tdh-power", "water-50m3h-hs-20m-hf-5m")?.query,
+    ).toMatchObject({
+      units: "metric",
+      fluid: "water",
+      q: "50",
+      hs: "20",
+      hf: "5",
+    });
+    expect(
+      resolveSpecRoute("pump-tdh-power", "water-100gpm-hs-60ft-hf-15ft")?.query,
+    ).toMatchObject({
+      units: "imperial",
+      fluid: "water",
+      q: "100",
+      qunit: "gpm",
+      hs: "60",
+      hf: "15",
+    });
+    expect(
+      findSpecRouteForInputs("pump-tdh-power", {
+        units: "metric",
+        fluid: "water",
+        q: "50",
+        hs: "20",
+        hf: "5",
+      })?.spec,
+    ).toBe("water-50m3h-hs-20m-hf-5m");
+  });
+});
+
+describe("pump affinity & impeller trim", () => {
+  it("scales Q/H/P with speed ratio for default VFD case", () => {
+    const c = computePumpAffinity(DEFAULT_PUMP_AFFINITY_INPUTS);
+    const r = 1780 / 1480;
+    expect(c.speedRatio).toBeCloseTo(r, 5);
+    expect(c.diameterRatio).toBeCloseTo(1, 5);
+    expect(c.capacityRatio).toBeCloseTo(r, 5);
+    expect(c.flow2).toBeCloseTo(50 * r, 3);
+    expect(c.head2).toBeCloseTo(25 * r * r, 3);
+    expect(c.power2).toBeCloseTo(5.5 * r ** 3, 3);
+    expect(c.flowDeltaPct).toBeCloseTo((r - 1) * 100, 2);
+    expect(c.headDeltaPct).toBeCloseTo((r * r - 1) * 100, 2);
+    expect(c.powerDeltaPct).toBeCloseTo((r ** 3 - 1) * 100, 2);
+    expect(c.trimHardWarn).toBe(false);
+    const out = calculatePumpAffinity(DEFAULT_PUMP_AFFINITY_INPUTS);
+    expect(out.heroLabel).toMatch(/Q₂|Q2|capacity/i);
+    expect(out.heroBadges?.some((b) => b.label === "H₂")).toBe(true);
+    expect(out.heroBadges?.some((b) => b.label === "ΔP")).toBe(true);
+    expect(out.rows.some((row) => row.label === "ΔQ")).toBe(true);
+    expectNoPoison(out);
+  });
+
+  it("applies diameter affinity and soft/hard trim warnings", () => {
+    const soft = computePumpAffinity({
+      ...DEFAULT_PUMP_AFFINITY_INPUTS,
+      mode: "diameter",
+      speed2: 1480,
+      diameter1: 250,
+      diameter2: 250 * 0.75,
+    });
+    expect(soft.diameterFraction).toBeCloseTo(0.75, 5);
+    expect(soft.diameterFraction).toBeLessThan(TRIM_SOFT_LIMIT);
+    expect(soft.trimSoftWarn).toBe(true);
+    expect(soft.trimHardWarn).toBe(false);
+
+    const hard = computePumpAffinity({
+      ...DEFAULT_PUMP_AFFINITY_INPUTS,
+      mode: "diameter",
+      speed2: 1480,
+      diameter1: 250,
+      diameter2: 250 * TRIM_HARD_LIMIT * 0.95,
+    });
+    expect(hard.trimHardWarn).toBe(true);
+    const out = calculatePumpAffinity({
+      ...DEFAULT_PUMP_AFFINITY_INPUTS,
+      mode: "diameter",
+      speed2: 1480,
+      diameter1: 250,
+      diameter2: 250 * TRIM_HARD_LIMIT * 0.95,
+    });
+    expect(out.heroStatusLevel).toBe("fail");
+    expect(out.heroStatus).toMatch(/trim|70%/i);
+  });
+
+  it("combines speed and diameter ratios and syncs locked companions", () => {
+    const c = computePumpAffinity({
+      ...DEFAULT_PUMP_AFFINITY_INPUTS,
+      mode: "combined",
+      speed1: 1480,
+      speed2: 1780,
+      diameter1: 250,
+      diameter2: 230,
+    });
+    const n = 1780 / 1480;
+    const d = 230 / 250;
+    const scale = n * d;
+    expect(c.capacityRatio).toBeCloseTo(scale, 5);
+    expect(c.flow2).toBeCloseTo(50 * scale, 3);
+    expect(c.head2).toBeCloseTo(25 * scale * scale, 3);
+    expect(c.power2).toBeCloseTo(5.5 * scale ** 3, 3);
+
+    const toSpeed = applyAffinityMode("speed", {
+      ...DEFAULT_PUMP_AFFINITY_INPUTS,
+      mode: "combined",
+      diameter1: 250,
+      diameter2: 230,
+    });
+    expect(toSpeed.mode).toBe("speed");
+    expect(toSpeed.diameter2).toBe(250);
+
+    const toDiameter = applyAffinityMode("diameter", {
+      ...DEFAULT_PUMP_AFFINITY_INPUTS,
+      mode: "speed",
+      speed1: 1480,
+      speed2: 1780,
+    });
+    expect(toDiameter.mode).toBe("diameter");
+    expect(toDiameter.speed2).toBe(1480);
+  });
+
+  it("lists speed and trim Pattern B pSEO paths", () => {
+    expect(
+      resolveSpecRoute(
+        "pump-affinity-trimming",
+        "speed-1480-to-1780-rpm-50m3h-25m",
+      )?.query,
+    ).toMatchObject({
+      units: "metric",
+      mode: "speed",
+      n1: "1480",
+      n2: "1780",
+      q: "50",
+    });
+    expect(
+      resolveSpecRoute(
+        "pump-affinity-trimming",
+        "trim-250-to-230mm-50m3h-25m",
+      )?.query,
+    ).toMatchObject({
+      mode: "diameter",
+      d1: "250",
+      d2: "230",
+    });
+    expect(
+      findSpecRouteForInputs("pump-affinity-trimming", {
+        units: "metric",
+        mode: "speed",
+        n1: "1480",
+        n2: "1780",
+        q: "50",
+        qunit: "m3h",
+        head: "25",
+      })?.spec,
+    ).toBe("speed-1480-to-1780-rpm-50m3h-25m");
+  });
+});
+
+describe("pump MCSF & thermal protection", () => {
+  it("takes max of thermal and hydro minima for default water duty", () => {
+    const c = computePumpMcsf(DEFAULT_PUMP_MCSF_INPUTS);
+    expect(c.invalid).toBe(false);
+    expect(c.powerSoW).toBeCloseTo(55_000, 0);
+    expect(c.qMinHydroM3h).toBeCloseTo(70, 5);
+    expect(c.qMinThermalM3h).toBeGreaterThan(5);
+    expect(c.qMinThermalM3h).toBeLessThan(20);
+    expect(c.qMcsfM3h).toBeCloseTo(c.qMinHydroM3h, 5);
+    expect(c.governing).toBe("hydro");
+    expect(c.arcCv).toBeGreaterThan(0);
+    expect(c.bypassNps).toBeTruthy();
+    const out = calculatePumpMcsf(DEFAULT_PUMP_MCSF_INPUTS);
+    expect(out.heroLabel).toMatch(/MCSF/i);
+    expect(out.heroBadges?.some((b) => b.label === "ARC Cv")).toBe(true);
+    expect(out.heroBadges?.some((b) => b.label === "Governs")).toBe(true);
+    expectNoPoison(out);
+  });
+
+  it("flags high-energy drivers and thermal-governed cases", () => {
+    const high = computePumpMcsf({
+      ...DEFAULT_PUMP_MCSF_INPUTS,
+      powerRated: 350,
+    });
+    expect(high.highEnergy).toBe(true);
+    expect(calculatePumpMcsf({
+      ...DEFAULT_PUMP_MCSF_INPUTS,
+      powerRated: 350,
+    }).heroStatusLevel).toBe("warn");
+
+    const thermal = computePumpMcsf({
+      ...DEFAULT_PUMP_MCSF_INPUTS,
+      flowBep: 40,
+      mcsfRatio: 0.3,
+      powerRated: 200,
+      headShutoff: 250,
+      density: 720,
+      cp: 2.1,
+      sg: 0.72,
+      fluid: "naphtha",
+      deltaTMax: 3,
+    });
+    expect(thermal.qMinThermalM3h).toBeGreaterThan(thermal.qMinHydroM3h);
+    expect(thermal.governing).toBe("thermal");
+  });
+
+  it("flags operating flow below MCSF and prefers thermal status over high-energy", () => {
+    const below = computePumpMcsf({
+      ...DEFAULT_PUMP_MCSF_INPUTS,
+      flowOp: 40,
+    });
+    expect(below.belowMcsf).toBe(true);
+    expect(below.qMcsfM3h).toBeCloseTo(70, 5);
+    expect(
+      calculatePumpMcsf({
+        ...DEFAULT_PUMP_MCSF_INPUTS,
+        flowOp: 40,
+      }).heroStatusLevel,
+    ).toBe("fail");
+
+    const thermalHigh = calculatePumpMcsf({
+      ...DEFAULT_PUMP_MCSF_INPUTS,
+      flowBep: 40,
+      mcsfRatio: 0.3,
+      powerRated: 350,
+      headShutoff: 250,
+      density: 720,
+      cp: 2.1,
+      sg: 0.72,
+      fluid: "naphtha",
+      deltaTMax: 3,
+    });
+    expect(thermalHigh.heroStatus).toMatch(/thermal/i);
+  });
+
+  it("lists Pattern B pSEO paths for MCSF duties", () => {
+    expect(
+      resolveSpecRoute(
+        "pump-mcsf-thermal-protection",
+        "water-200m3h-hso-150m-p-110kw",
+      )?.query,
+    ).toMatchObject({
+      units: "metric",
+      fluid: "water",
+      q: "200",
+      hso: "150",
+      pwr: "110",
+    });
+    expect(
+      resolveSpecRoute(
+        "pump-mcsf-thermal-protection",
+        "crude-1200gpm-hso-450ft-p-250hp",
+      )?.query,
+    ).toMatchObject({
+      units: "imperial",
+      fluid: "crude",
+      q: "1200",
+      qunit: "gpm",
+    });
+    expect(
+      findSpecRouteForInputs("pump-mcsf-thermal-protection", {
+        units: "metric",
+        fluid: "water",
+        q: "200",
+        qunit: "m3h",
+        hso: "150",
+        pwr: "110",
+      })?.spec,
+    ).toBe("water-200m3h-hso-150m-p-110kw");
+  });
+});
+
+describe("multiple pump parallel & series", () => {
+  it("intersects parallel duty and reports flow gain vs alone", () => {
+    const c = computeMultiPump(DEFAULT_MULTI_PUMP_INPUTS);
+    const a = (60 - 45) / 100 ** 2;
+    const k = 20 / 100 ** 2;
+    const qAlone = Math.sqrt((60 - 15) / (k + a));
+    const qOp = Math.sqrt((60 - 15) / (k + a / 4));
+    expect(c.invalid).toBe(false);
+    expect(c.noIntersection).toBe(false);
+    expect(c.qAloneM3h).toBeCloseTo(qAlone, 3);
+    expect(c.qOpM3h).toBeCloseTo(qOp, 3);
+    expect(c.qPerPumpM3h).toBeCloseTo(qOp / 2, 3);
+    expect(c.flowGainPercent).toBeCloseTo((qOp / (2 * qAlone)) * 100, 1);
+    expect(c.qOpM3h).toBeGreaterThan(c.qAloneM3h);
+    expect(c.qOpM3h).toBeLessThan(2 * c.qAloneM3h);
+    const out = calculateMultiPump(DEFAULT_MULTI_PUMP_INPUTS);
+    expect(out.heroLabel).toMatch(/Q_op|flow/i);
+    expect(out.heroBadges?.some((b) => b.label === "Q/Q_r")).toBe(true);
+    expect(out.rows.some((r) => r.label.includes("k / a"))).toBe(true);
+    expectNoPoison(out);
+  });
+
+  it("solves series when N·H_so exceeds static and flags no intersection otherwise", () => {
+    const ser = computeMultiPump({
+      ...DEFAULT_MULTI_PUMP_INPUTS,
+      mode: "series",
+      pumpCount: 2,
+      headShutoff: 120,
+      flowRated: 80,
+      headRated: 100,
+      headStatic: 150,
+      headFrictionRated: 40,
+    });
+    expect(ser.noIntersection).toBe(false);
+    expect(ser.qOpM3h).toBeGreaterThan(0);
+    expect(ser.headGainPercent).toBeGreaterThan(0);
+    expect(ser.headGainUsesShutoffStack).toBe(true);
+    expect(Math.abs(ser.hOpM - ser.hPumpCurveM)).toBeLessThan(0.05);
+
+    const none = computeMultiPump({
+      ...DEFAULT_MULTI_PUMP_INPUTS,
+      mode: "series",
+      pumpCount: 1,
+      headShutoff: 60,
+      headStatic: 70,
+      headFrictionRated: 10,
+    });
+    expect(none.noIntersection).toBe(true);
+    expect(calculateMultiPump({
+      ...DEFAULT_MULTI_PUMP_INPUTS,
+      mode: "series",
+      pumpCount: 1,
+      headShutoff: 60,
+      headStatic: 70,
+    }).heroStatusLevel).toBe("fail");
+  });
+
+  it("flags steep friction / diminishing parallel return", () => {
+    const steep = computeMultiPump({
+      ...DEFAULT_MULTI_PUMP_INPUTS,
+      mode: "parallel",
+      pumpCount: 2,
+      headShutoff: 50,
+      headRated: 48,
+      flowRated: 100,
+      headStatic: 5,
+      headFrictionRated: 40,
+    });
+    expect(steep.kOverA).toBeGreaterThan(2);
+    expect(steep.steepSystem).toBe(true);
+    expect(steep.extraFlowVsAlonePercent).toBeLessThan(15);
+    expect(steep.diminishingReturn).toBe(true);
+  });
+
+  it("lists Pattern B pSEO paths for multi-pump duties", () => {
+    expect(
+      resolveSpecRoute(
+        "multiple-pump-parallel-series",
+        "par-2p-100m3h-hso-60m-hr-45m-hs-15m-hf-20m",
+      )?.query,
+    ).toMatchObject({
+      mode: "parallel",
+      n: "2",
+      q: "100",
+      hso: "60",
+      hr: "45",
+    });
+    expect(
+      resolveSpecRoute(
+        "multiple-pump-parallel-series",
+        "ser-2p-80m3h-hso-120m-hr-100m-hs-150m-hf-40m",
+      )?.query,
+    ).toMatchObject({
+      mode: "series",
+      n: "2",
+    });
+    expect(
+      findSpecRouteForInputs("multiple-pump-parallel-series", {
+        units: "metric",
+        mode: "parallel",
+        n: "2",
+        q: "100",
+        qunit: "m3h",
+        hso: "60",
+        hr: "45",
+        hs: "15",
+        hf: "20",
+      })?.spec,
+    ).toBe("par-2p-100m3h-hso-60m-hr-45m-hs-15m-hf-20m");
+  });
+});
+
+describe("bolt-wrench-lookup", () => {
+  it("looks up 4\" Class 300 RF heavy-hex wrench AF", () => {
+    const out = calculateBoltWrenchLookup({
+      ...DEFAULT_BOLT_WRENCH_LOOKUP_INPUTS,
+      nps: "4",
+      pressureClass: "300",
+      facing: "rf",
+    });
+    expect(out.heroValue).toContain("1-1/4");
+    expect(out.heroValue).toContain("32 mm");
+    expect(out.exportRows.find((r) => r.label === "Wrench AF (mm)")?.value).toBe(
+      "32",
+    );
+    expect(out.exportRows.find((r) => r.label === "Bolt count")?.value).toBe("8");
+    expect(
+      out.exportRows.find((r) => r.label === "Stud diameter")?.value,
+    ).toContain("3/4");
+  });
+
+  it("builds a Class wrench chart with selectable NPS rows", () => {
+    const chart = listBoltWrenchChartForClass("300");
+    expect(chart.length).toBeGreaterThan(8);
+    const nps4 = chart.find((row) => row.nps === "4");
+    expect(nps4?.wrenchAfIn).toBe("1-1/4");
+    expect(nps4?.wrenchAfMm).toBe(32);
+    expect(nps4?.boltCount).toBe(8);
+  });
+
+  it("matches prompt duty cases for wrench AF", () => {
+    const cases = [
+      { nps: "6", cls: "150", afIn: "1-1/4", afMm: "32", bolts: "8" },
+      { nps: "8", cls: "600", afIn: "1-5/8", afMm: "41", bolts: "12" },
+      { nps: "12", cls: "150", afIn: "1-7/16", afMm: "36", bolts: "12" },
+      { nps: "2", cls: "1500", afIn: "1-7/16", afMm: "36", bolts: "8" },
+    ] as const;
+    for (const c of cases) {
+      const out = calculateBoltWrenchLookup({
+        ...DEFAULT_BOLT_WRENCH_LOOKUP_INPUTS,
+        nps: c.nps,
+        pressureClass: c.cls,
+        facing: "rf",
+      });
+      expect(out.exportRows.find((r) => r.label === "Wrench AF (in)")?.value).toBe(
+        c.afIn,
+      );
+      expect(out.exportRows.find((r) => r.label === "Wrench AF (mm)")?.value).toBe(
+        c.afMm,
+      );
+      expect(out.exportRows.find((r) => r.label === "Bolt count")?.value).toBe(
+        c.bolts,
+      );
+    }
+  });
+
+  it("computes heavy hex AF and bolt pitch helpers", () => {
+    expect(parseInchFraction("3/4")).toBeCloseTo(0.75);
+    expect(parseInchFraction("1-1/4")).toBeCloseTo(1.25);
+    expect(heavyHexWrenchIn(0.75)).toBeCloseTo(1.25);
+    expect(boltCirclePitchMm(200, 8)).toBeCloseTo((Math.PI * 200) / 8);
+  });
+
+  it("lists Pattern B paths and matches facing-aware inputs", () => {
+    expect(parseSpecToQuery("4inch-300lb-rf")).toMatchObject({
+      nps: "4",
+      class: "300",
+      facing: "rf",
+    });
+    expect(
+      resolveSpecRoute("flange-bolt-wrench-size-lookup", "4inch-300lb-rf")?.query,
+    ).toMatchObject({ nps: "4", class: "300", facing: "rf" });
+    expect(
+      findSpecRouteForInputs("flange-bolt-wrench-size-lookup", {
+        nps: "4",
+        class: "300",
+        facing: "rf",
+      })?.spec,
+    ).toBe("4inch-300lb-rf");
+    expect(
+      findSpecRouteForInputs("flange-bolt-wrench-size-lookup", {
+        nps: "8",
+        class: "600",
+        facing: "rtj",
+      })?.spec,
+    ).toBe("8inch-600lb-rtj");
+    expect(
+      listSpecRoutesForSlug("flange-bolt-wrench-size-lookup").length,
+    ).toBeGreaterThan(10);
   });
 });

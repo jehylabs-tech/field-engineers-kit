@@ -1,0 +1,242 @@
+---
+title: "Pipe Penetration Sleeve & Link-Seal Sizing Selection Guide: Annular Clearance & Hydrostatic Seals"
+description: "Master pipe penetration sleeve calculations and Link-Seal modular sizing rules. Learn annular clearance formulas, wall sleeve specs, and hydrostatic sealing limits."
+date: "2026-09-13"
+category: "Piping Engineering"
+tags:
+  - Link-Seal
+  - Pipe Penetration
+  - Wall Sleeve
+  - Annular Clearance
+  - Hydrostatic Seal
+relatedCalculatorUrl: "/calculator/link-seal-penetration-sleeve"
+relatedCalculatorName: "Link-Seal & Sleeve Sizing Calculator"
+---
+
+Sealing pipe penetrations through foundation walls, vaults, concrete floors, and bulkhead dikes is a civil–mechanical interface problem. Undersized wall sleeves crush modular links; oversized openings leave the elastomeric belt under-compressed and leak under groundwater head. Differential settlement and carrier-pipe thermal growth make the geometry even less forgiving if the annular gap was never sized correctly.
+
+**Link-Seal®** modular seal assemblies (GPT Industries) use interlocking EPDM, Nitrile, or Silicone rubber links with pressure plates and metallic bolts. When torqued, the free rubber thickness expands radially to form a continuous hydrostatic seal against both the **carrier pipe outside diameter** ($D_{\text{pipe, OD}}$) and the **sleeve or core-drilled hole inside diameter** ($D_{\text{sleeve, ID}}$).
+
+Correct selection is geometric first — annular clearance, LS series, link count $N$, and ideal bore — then elastomer / hardware for chemistry and temperature. Calculate model, sleeve ID, and link counts with the interactive [Link-Seal & Sleeve Sizing Calculator](/calculator/link-seal-penetration-sleeve). Confirm the final bill of materials against the current GPT Link-Seal sizing chart before purchase; this guide and tool are independent screening aids and are **not affiliated with or endorsed by GPT Industries**.
+
+<Callout title="Screening vs. manufacturer chart" variant="info">
+FieldEngineersKit uses published series free thickness and belt pitch with a screening annular envelope ($\approx 0.80$–$1.20\times t_{\text{free}}$). Always verify model, $N$, and pressure rating on the **current GPT chart** for the exact OD / opening combination.
+</Callout>
+
+## Quick Summary (TL;DR)
+
+| Item | Rule of thumb |
+| :--- | :--- |
+| **Annular clearance** | $C = A_s = (D_{\text{sleeve, ID}} - D_{\text{pipe, OD}}) / 2$ |
+| **Model match** | Pick LS series where $t_{\text{free}} \lesssim C$ and $C$ lies in the series screening envelope |
+| **Pitch diameter** | $D_p = D_{\text{pipe, OD}} + 2\,t_{\text{free}}$ (link-bolt centerline) |
+| **Link count** | $N = \max\!\big(3,\ \mathrm{round}(\pi D_p / w_{\text{belt}})\big)$ |
+| **Ideal sleeve ID** | $D_{\text{ideal}} = D_{\text{pipe, OD}} + 2\,t_{\text{free}}$ (seats $C \approx t_{\text{free}}$) |
+| **Hydrostatic screen** | Continuous service $\approx 20\text{ psig}$ ($\approx 40\text{ ft}$ / $12.2\text{ m}$ water head) — confirm GPT chart |
+
+---
+
+## 1. Core Engineering Formulas & Parameter Definitions
+
+Pipe OD must be the **actual outside diameter** from ASME B36.10M / B36.19M (or ductile-iron / PE manufacturer OD), not the nominal NPS label. Sleeve ID is the **inside bore** of the steel sleeve, Century-Line sleeve, or finished core-drilled hole.
+
+### 1.1 Annular Clearance
+
+The radial gap between the carrier pipe outer surface and the sleeve / hole bore is:
+
+$$
+C = A_s = \frac{D_{\text{sleeve, ID}} - D_{\text{pipe, OD}}}{2}
+$$
+
+For a match in the FEK screening catalog, $C$ must sit in the model envelope and free thickness must be able to enter the gap:
+
+$$
+C_{\min} \le C \le C_{\max}
+\quad\text{and}\quad
+t_{\text{free}} \le C + 0.5\text{ mm}
+$$
+
+(The $0.5\text{ mm}$ allowance matches the FieldEngineersKit matcher tolerance for seating free thickness just under clearance.)
+
+### 1.2 Pitch Diameter and Link Count
+
+Links close around the **bolt centerline at free thickness**, not around the arithmetic mean of OD and ID:
+
+$$
+D_p = D_{\text{pipe, OD}} + 2\,t_{\text{free}}
+$$
+
+$$
+N = \max\!\left(3,\ \mathrm{round}\!\left(\frac{\pi\,D_p}{w_{\text{belt}}}\right)\right)
+$$
+
+where $w_{\text{belt}}$ is the series belt / pitch width. Rounding to the nearest integer follows modular-belt practice; always confirm $N$ on the GPT chart for that OD.
+
+### 1.3 Ideal Minimum Sleeve / Hole ID
+
+$$
+D_{\text{ideal}} = D_{\text{pipe, OD}} + 2\,t_{\text{free}}
+$$
+
+Setting the opening near $D_{\text{ideal}}$ places $C \approx t_{\text{free}}$ — the preferred seating condition. Oversized holes (stale sleeves from a larger NPS) push $C$ outside every envelope; resize the sleeve or use a Century-Line product sized for the carrier.
+
+### 1.4 Hydrostatic Screening Capacity
+
+Standard continuous-service Link-Seal assemblies are commonly screened at **$20\text{ psig}$** ($\approx 0.14\text{ MPa}$ / $1.38\text{ bar}$). Manufacturer field literature and the [calculator](/calculator/link-seal-penetration-sleeve) commonly quote about **$40\text{ ft}$** ($\approx 12.2\text{ m}$) of water head for that rating.
+
+A pure hydrostatic conversion of $20\text{ psig}$ with $\rho = 62.4\text{ lb/ft}^3$ yields a slightly higher theoretical column:
+
+$$
+H_w = \frac{20\,\text{lbf/in}^2 \times 144\,\text{in}^2/\text{ft}^2}{62.4\,\text{lb/ft}^3} \approx 46\text{ ft}\ (14.0\text{ m})
+$$
+
+Use **$40\text{ ft}$ / $12.2\text{ m}$** for FEK screening consistency with GPT continuous-service wording, and treat higher heads as a chart / PE confirmation item.
+
+### Parameter Definitions
+
+| Parameter | Symbol | Engineering Unit | Description |
+| :--- | :---: | :---: | :--- |
+| **Annular clearance** | $C$ ($A_s$) | $\text{mm}$, $\text{in}$ | Radial gap between carrier OD and sleeve / hole ID |
+| **Carrier pipe OD** | $D_{\text{pipe, OD}}$ | $\text{mm}$, $\text{in}$ | Actual OD (B36.10M / manufacturer) |
+| **Sleeve / hole ID** | $D_{\text{sleeve, ID}}$ | $\text{mm}$, $\text{in}$ | Steel sleeve bore, Century-Line ID, or core drill |
+| **Free thickness** | $t_{\text{free}}$ | $\text{mm}$, $\text{in}$ | Unexpanded rubber thickness of the LS series |
+| **Belt / pitch width** | $w_{\text{belt}}$ | $\text{mm}$, $\text{in}$ | Pitch used in $N = \pi D_p / w_{\text{belt}}$ |
+| **Pitch diameter** | $D_p$ | $\text{mm}$, $\text{in}$ | $OD + 2\,t_{\text{free}}$ |
+| **Link count** | $N$ | — | Number of modules for $360^\circ$ closure |
+| **Ideal sleeve ID** | $D_{\text{ideal}}$ | $\text{mm}$, $\text{in}$ | Bore that seats $C \approx t_{\text{free}}$ |
+| **Screening pressure** | $P$ | $\text{psig}$, $\text{bar}$ | Continuous service $\approx 20\text{ psig}$ |
+
+---
+
+## 2. Standard Elastomer Materials & Model Sizing Tables
+
+### 2.1 Link-Seal Elastomer Material Selection Matrix
+
+| Material Type | Typical color | Temperature range | Chemical & field application |
+| :--- | :---: | :---: | :--- |
+| **EPDM (Type C / S316 path)** | Black | $-40^\circ\text{C}$ to $+121^\circ\text{C}$ | Potable water, wastewater, atmospheric air, mild acid/alkali |
+| **Nitrile / NBR (Type T path)** | Blue | $-40^\circ\text{C}$ to $+100^\circ\text{C}$ | Hydrocarbons, oils, jet fuel, gasoline, organic solvents |
+| **Silicone (high-temp path)** | Grey | $-55^\circ\text{C}$ to $+204^\circ\text{C}$ | High-temperature steam / specialty fire-rated penetrations — confirm GPT Type L / T chart |
+
+Pair elastomer chemistry with calculator hardware options (**C** zinc-plated CS, **S316**, **T** high-temp) per the project fluid and owner specification.
+
+### 2.2 Screening Model Table (FEK Catalog)
+
+Free thickness and belt width follow published series data. Annular min/max are **screening envelopes** ($\approx 0.80$–$1.20\times t_{\text{free}}$), not a substitute for the GPT chart.
+
+| Model | $t_{\text{free}}$ | $w_{\text{belt}}$ | Screening $C$ range |
+| :--- | ---: | ---: | ---: |
+| **LS-200** | $12.7\text{ mm}$ ($0.500\text{ in}$) | $31.8\text{ mm}$ | $10.2$–$15.2\text{ mm}$ |
+| **LS-300** | $18.0\text{ mm}$ ($0.709\text{ in}$) | $38.1\text{ mm}$ | $14.4$–$21.6\text{ mm}$ |
+| **LS-315** | $21.1\text{ mm}$ ($0.831\text{ in}$) | $38.1\text{ mm}$ | $16.9$–$25.3\text{ mm}$ |
+| **LS-400** | $36.3\text{ mm}$ ($1.429\text{ in}$) | $63.5\text{ mm}$ | $29.0$–$43.6\text{ mm}$ |
+| **LS-425** | $28.4\text{ mm}$ ($1.118\text{ in}$) | $73.0\text{ mm}$ | $22.7$–$34.1\text{ mm}$ |
+| **LS-475** | $41.3\text{ mm}$ ($1.626\text{ in}$) | $68.6\text{ mm}$ | $33.0$–$49.6\text{ mm}$ |
+| **LS-500** | $60.3\text{ mm}$ ($2.374\text{ in}$) | $98.4\text{ mm}$ | $48.2$–$72.4\text{ mm}$ |
+| **LS-525** | $55.6\text{ mm}$ ($2.189\text{ in}$) | $98.4\text{ mm}$ | $44.5$–$66.7\text{ mm}$ |
+| **LS-575** | $80.0\text{ mm}$ ($3.150\text{ in}$) | $98.4\text{ mm}$ | $64.0$–$96.0\text{ mm}$ |
+
+Outside roughly **$12$–$85\text{ mm}$** annular clearance, treat the geometry as out of the modular screening window and resize the opening or consult Century-Line / specialty products.
+
+### 2.3 Steel Sleeve vs Core-Drilled vs Century-Line
+
+| Opening type | When to use | Notes |
+| :--- | :--- | :--- |
+| **Steel pipe sleeve** | Cast-in or block-out with welded waterstop collar | ID from B36.10M (e.g. **14" STD** ID $= 13.250\text{ in}$ / $336.54\text{ mm}$; **14" Sch 40** ID $= 13.124\text{ in}$ / $333.34\text{ mm}$) |
+| **Core-drilled hole** | Retrofit through existing concrete | Smooth, sound concrete; coat if porous |
+| **Century-Line (HDPE)** | Cast-in thermoplastic sleeves | Lightweight, integral waterstop; size to carrier OD |
+
+---
+
+## 3. Step-by-Step Worked Example
+
+### Field Scenario
+
+Size a modular seal for an **NPS 10 Schedule 40** carbon-steel potable-water line through a reinforced concrete basement wall with **$15\text{ ft}$** ($4.6\text{ m}$) external water head.
+
+| Input | Value |
+| :--- | :--- |
+| **Carrier** | NPS 10 Sch 40 CS — $D_{\text{pipe, OD}} = 10.750\text{ in}$ ($273.05\text{ mm}$) per ASME B36.10M |
+| **Opening** | Steel wall sleeve from **14" STD** pipe — $D_{\text{sleeve, ID}} = 13.250\text{ in}$ ($336.54\text{ mm}$) |
+| **Service** | Potable water · EPDM · hardware **C** |
+| **Head** | $15\text{ ft}$ ($4.6\text{ m}$) vs screening $40\text{ ft}$ ($12.2\text{ m}$) |
+
+> **B36 note:** A **14" Sch 40** sleeve has ID $333.34\text{ mm}$ ($13.124\text{ in}$), not $13.250\text{ in}$. The $13.250\text{ in}$ bore used below is **14" STD**.
+
+### Step 1 — Annular Clearance
+
+$$
+C = A_s = \frac{13.250 - 10.750}{2} = 1.250\text{ in} = 31.75\text{ mm}
+$$
+
+### Step 2 — Model Match (FEK Screening Catalog)
+
+| Candidate | $t_{\text{free}}$ | Envelope | Seats $t_{\text{free}} \le C + 0.5\text{ mm}$? |
+| :--- | ---: | :---: | :---: |
+| LS-400 | $36.3\text{ mm}$ | $29.0$–$43.6\text{ mm}$ | No ($36.3 > 32.25$) |
+| **LS-425** | **$28.4\text{ mm}$** | **$22.7$–$34.1\text{ mm}$** | **Yes** |
+| LS-475 | $41.3\text{ mm}$ | $33.0$–$49.6\text{ mm}$ | No |
+
+**Selected model: LS-425** (screening). Do not assume “14" sleeve ⇒ LS-400” — free thickness must fit the actual gap. Generic catalog tables that list LS-400 free thickness as $1.00\text{ in}$ are **not** the FEK / published series values used here.
+
+### Step 3 — Pitch Diameter and Link Count
+
+$$
+D_p = 273.05 + 2\times 28.4 = 329.85\text{ mm}
+$$
+
+$$
+N = \mathrm{round}\!\left(\frac{\pi \times 329.85}{73.0}\right) = \mathrm{round}(14.20) = 14
+$$
+
+### Step 4 — Ideal Sleeve ID (Optional Resize Check)
+
+For an LS-475 mid-range preference on this OD class, ideal bore would be:
+
+$$
+D_{\text{ideal, LS-475}} = 273.05 + 2\times 41.3 = 355.65\text{ mm}\ (14.002\text{ in})
+$$
+
+The 14" STD sleeve ($13.250\text{ in}$ ID) is **tighter** than that ideal LS-475 seat; LS-425 is the matching series for the as-built ID. If the designer can still choose the sleeve, targeting $D_{\text{ideal}}$ for the preferred series simplifies procurement.
+
+### Step 5 — Hydrostatic Check & Field Callout
+
+$$
+15\text{ ft head} < 40\text{ ft screening head}\quad\Rightarrow\quad \textbf{Pass (screening)}
+$$
+
+**Field callout:** **14 links of LS-425-C** (verify GPT chart), sleeve ID $13.250\text{ in}$, carrier OD $10.750\text{ in}$, $C = 1.250\text{ in}$.
+
+Reproduce OD, sleeve ID, model, and $N$ live in the [Link-Seal & Sleeve Sizing Calculator](/calculator/link-seal-penetration-sleeve) (imperial: `od=10.75`, `sleeve=13.25`).
+
+---
+
+## 4. Interactive Engineering Tool
+
+<Callout title="Open the calculator" variant="tip">
+**[Link-Seal & Sleeve Sizing Calculator](/calculator/link-seal-penetration-sleeve)** — enter pipe OD (NPS autofill), steel sleeve or core-drilled ID, and hardware C / S316 / T; returns annular $C$, LS model, $N$, pitch diameter, and ideal minimum sleeve ID. Pair with [Pipe Schedule & Dimensions](/calculator/pipe-schedule-dimension) when you need B36.10M OD / ID for the carrier or sleeve pipe.
+</Callout>
+
+---
+
+## 5. Frequently Asked Questions (FAQ)
+
+### Q1. Can Link-Seal modular seals be installed in diamond core-drilled holes without a steel sleeve?
+
+Yes, when the core is circular, smooth, and free of deep spalling, honeycombing, or exposed rebar. Porous concrete often needs an approved epoxy or liner so the elastomer seals against a sound surface. Enter the finished hole ID as $D_{\text{sleeve, ID}}$ in the [calculator](/calculator/link-seal-penetration-sleeve) with opening type “core drilled.”
+
+### Q2. How much axial thermal expansion or pipe movement can a Link-Seal absorb?
+
+Modular seals are **hydrostatic seals**, not expansion joints. They tolerate small radial / vibration motions (on the order of $\pm 1/16\text{ in}$ radial) but are not intended for large axial thermal growth. Place guides and expansion joints so the penetration is not the flexible element. Excessive longitudinal travel can tear links or unload the seal face.
+
+### Q3. What is the difference between Century-Line thermoplastic sleeves and steel wall sleeves?
+
+**Century-Line (HDPE)** sleeves are light, non-corrosive, and cast with integral waterstops — preferred for many new concrete walls when diameters match the catalog. **Steel sleeves** (schedule / STD pipe + welded waterstop) suit fire-rated assemblies, custom IDs, or higher structural stiffness. Both still require $C$ and $N$ sizing against the seal chart.
+
+### Q4. Why does $20\text{ psig}$ sometimes map to $40\text{ ft}$ and sometimes to $\approx 46\text{ ft}$?
+
+$20\text{ psig}$ converts hydrostatically to about **$46\text{ ft}$** of fresh water. Manufacturer continuous-service literature and this site’s screening badge commonly state **$40\text{ ft}$** ($\approx 12.2\text{ m}$). Use the chart rating for design acceptance; treat the pure conversion as physics context only.
+
+### Q5. Why did this guide select LS-425 instead of LS-400 for a 10" pipe in a 14" sleeve?
+
+Because $C = 31.75\text{ mm}$ sits in the **LS-425** envelope ($22.7$–$34.1\text{ mm}$) while LS-400 free thickness ($36.3\text{ mm}$) does not seat in that gap under the FEK matcher. “LS-400 for 10×14” folklore often assumes different free-thickness tables — always run $C$ against the series you are buying.

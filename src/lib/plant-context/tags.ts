@@ -29,6 +29,11 @@ export const CALCULATOR_TYPE_SLUG: Record<CalculatorType, string> = {
   "pipe-coping": "pipe-coping-branch-cut-layout",
   "pneumatic-safety": "pneumatic-test-safety-distance",
   "pump-npsh": "pump-npsh-cavitation",
+  "pump-tdh": "pump-tdh-power",
+  "pump-affinity": "pump-affinity-trimming",
+  "pump-mcsf": "pump-mcsf-thermal-protection",
+  "multi-pump": "multiple-pump-parallel-series",
+  "bolt-wrench-lookup": "flange-bolt-wrench-size-lookup",
 };
 
 export const SLUG_TO_CALCULATOR_TYPE: Record<string, CalculatorType> =
@@ -126,6 +131,27 @@ export const CALCULATOR_PLANT_TAGS: Record<CalculatorType, CalculatorPlantTags> 
     "pump-npsh": {
       consumes: ["temperature"],
       produces: ["temperature"],
+    },
+    "pump-tdh": {
+      // Carry pipe size from Pressure Drop → enter Hf here; TDH itself does not invent size.
+      consumes: ["size", "schedule"],
+      produces: [],
+    },
+    "pump-affinity": {
+      consumes: [],
+      produces: [],
+    },
+    "pump-mcsf": {
+      consumes: [],
+      produces: [],
+    },
+    "multi-pump": {
+      consumes: [],
+      produces: [],
+    },
+    "bolt-wrench-lookup": {
+      consumes: ["size", "class_rating"],
+      produces: ["size", "class_rating"],
     },
   };
 

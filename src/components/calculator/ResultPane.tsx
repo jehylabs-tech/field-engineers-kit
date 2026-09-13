@@ -114,6 +114,8 @@ type ResultPaneProps = {
   /** Place View CAD Diagram on this result section header instead of the hero. */
   diagramSection?: string;
   diagramVariant?: "drawer" | "modal";
+  /** Optional block directly under the hero (e.g. Class wrench chart). */
+  afterHero?: ReactNode;
 };
 
 const statusColor: Record<StatusLevel, string> = {
@@ -330,6 +332,7 @@ export default function ResultPane({
   embedDiagram = false,
   diagramSection,
   diagramVariant = "drawer",
+  afterHero,
 }: ResultPaneProps) {
   const meta = useCalculatorMeta();
   const [diagramOpen, setDiagramOpen] = useState(false);
@@ -587,6 +590,7 @@ export default function ResultPane({
     return (
       <div className={`relative flex w-full flex-col space-y-4 p-5 ${cardMax}`}>
         {hero}
+        {afterHero}
         {tables}
         {callouts}
         {embedDiagram && visual ? (
@@ -621,6 +625,7 @@ export default function ResultPane({
       } ${panePad} ${cardMax}`}
     >
       {hero}
+      {afterHero}
       {tables}
       {callouts}
       {embedDiagram && visual ? (

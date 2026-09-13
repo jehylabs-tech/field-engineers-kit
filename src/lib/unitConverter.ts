@@ -310,10 +310,20 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
     "installTemp",
     "operatingTemp",
     "designTemperature",
+    "fluidTemp",
   ]) {
     if (typeof next[key] === "number" && Number.isFinite(next[key] as number)) {
       convertNum(key, toImperial ? cToF : fToC, 0);
     }
+  }
+
+  // Temperature rise ΔT: °C ↔ °F (scale only)
+  if (typeof next.deltaTMax === "number" && Number.isFinite(next.deltaTMax)) {
+    convertNum(
+      "deltaTMax",
+      toImperial ? (dt) => dt * 1.8 : (dt) => dt / 1.8,
+      2,
+    );
   }
 
   // Fluid density only (flow-velocity). Metal weight uses material presets in kg/m³.
@@ -326,13 +336,45 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
   }
 
   // Volumetric flow companion unit (leave kg/h alone)
-  if (typeof next.flowUnit === "string" && typeof next.flow === "number") {
-    if (toImperial && next.flowUnit === "m3h") {
-      next.flow = Number(m3hToGpm(next.flow).toFixed(4));
-      next.flowUnit = "gpm";
-    } else if (!toImperial && next.flowUnit === "gpm") {
-      next.flow = Number(gpmToM3h(next.flow).toFixed(4));
-      next.flowUnit = "m3h";
+  // Supports `flow` (TDH), `flow1` (affinity), `flowBep` (MCSF) with shared `flowUnit`.
+  if (typeof next.flowUnit === "string") {
+    const hasFlow = typeof next.flow === "number" && Number.isFinite(next.flow);
+    const hasFlow1 =
+      typeof next.flow1 === "number" && Number.isFinite(next.flow1);
+    const hasFlowBep =
+      typeof next.flowBep === "number" && Number.isFinite(next.flowBep);
+    const hasFlowOp =
+      typeof next.flowOp === "number" && Number.isFinite(next.flowOp);
+    const hasFlowRated =
+      typeof next.flowRated === "number" && Number.isFinite(next.flowRated);
+    if (hasFlow || hasFlow1 || hasFlowBep || hasFlowOp || hasFlowRated) {
+      if (toImperial && next.flowUnit === "m3h") {
+        if (hasFlow) next.flow = Number(m3hToGpm(next.flow as number).toFixed(4));
+        if (hasFlow1)
+          next.flow1 = Number(m3hToGpm(next.flow1 as number).toFixed(4));
+        if (hasFlowBep)
+          next.flowBep = Number(m3hToGpm(next.flowBep as number).toFixed(4));
+        if (hasFlowOp && (next.flowOp as number) > 0)
+          next.flowOp = Number(m3hToGpm(next.flowOp as number).toFixed(4));
+        if (hasFlowRated)
+          next.flowRated = Number(
+            m3hToGpm(next.flowRated as number).toFixed(4),
+          );
+        next.flowUnit = "gpm";
+      } else if (!toImperial && next.flowUnit === "gpm") {
+        if (hasFlow) next.flow = Number(gpmToM3h(next.flow as number).toFixed(4));
+        if (hasFlow1)
+          next.flow1 = Number(gpmToM3h(next.flow1 as number).toFixed(4));
+        if (hasFlowBep)
+          next.flowBep = Number(gpmToM3h(next.flowBep as number).toFixed(4));
+        if (hasFlowOp && (next.flowOp as number) > 0)
+          next.flowOp = Number(gpmToM3h(next.flowOp as number).toFixed(4));
+        if (hasFlowRated)
+          next.flowRated = Number(
+            gpmToM3h(next.flowRated as number).toFixed(4),
+          );
+        next.flowUnit = "m3h";
+      }
     }
   }
 
@@ -363,14 +405,27 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
     "outletPressure",
     "testPressure",
     "surfacePressureAbs",
+    "bypassDp",
   ]) {
     if (typeof next[key] === "number" && Number.isFinite(next[key] as number)) {
       convertNum(key, toImperial ? barToPsi : psiToBar, 3);
     }
   }
 
-  // Pump NPSH head terms: m ↔ ft
-  for (const key of ["staticHeight", "frictionLoss", "npshr"]) {
+  // Pump NPSH / TDH / affinity head terms: m ↔ ft
+  for (const key of [
+    "staticHeight",
+    "frictionLoss",
+    "npshr",
+    "staticHead",
+    "frictionHead",
+    "pressureHead",
+    "head1",
+    "headShutoff",
+    "headRated",
+    "headStatic",
+    "headFrictionRated",
+  ]) {
     if (typeof next[key] === "number" && Number.isFinite(next[key] as number)) {
       convertNum(key, toImperial ? mToFt : ftToM, 3);
     }
@@ -428,6 +483,8 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
     "pipeOd",
     "sleeveId",
     "offset",
+    "diameter1",
+    "diameter2",
   ]) {
     if (typeof next[key] === "number" && Number.isFinite(next[key] as number)) {
       convertNum(key, toImperial ? mmToIn : inToMm, 4);
@@ -468,6 +525,31 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
       "insideDiameter",
       toImperial ? mmToIn : inToMm,
       toImperial ? 3 : 1,
+    );
+  }
+
+  // Pump affinity brake power / MCSF rated power: kW ↔ HP
+  for (const key of ["power1", "powerRated"]) {
+    if (typeof next[key] === "number" && Number.isFinite(next[key] as number)) {
+      const kwToHp = (kw: number) => kw / 0.745699872;
+      const hpToKw = (hp: number) => hp * 0.745699872;
+      convertNum(key, toImperial ? kwToHp : hpToKw, 3);
+    }
+  }
+
+  // MCSF Cp: kJ/(kg·K) ↔ Btu/(lb·°F)
+  if (typeof next.cp === "number" && Number.isFinite(next.cp)) {
+    const kjToBtu = (kj: number) => kj / 4.1868;
+    const btuToKj = (btu: number) => btu * 4.1868;
+    convertNum("cp", toImperial ? kjToBtu : btuToKj, 3);
+  }
+
+  // Bypass design velocity: m/s ↔ ft/s
+  if (typeof next.bypassVmax === "number" && Number.isFinite(next.bypassVmax)) {
+    convertNum(
+      "bypassVmax",
+      toImperial ? (v) => v / 0.3048 : (v) => v * 0.3048,
+      2,
     );
   }
 

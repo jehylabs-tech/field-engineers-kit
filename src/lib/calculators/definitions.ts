@@ -19,7 +19,12 @@ export type CalculatorType =
   | "link-seal"
   | "pipe-coping"
   | "pneumatic-safety"
-  | "pump-npsh";
+  | "pump-npsh"
+  | "pump-tdh"
+  | "pump-affinity"
+  | "pump-mcsf"
+  | "multi-pump"
+  | "bolt-wrench-lookup";
 
 export type FaqItem = {
   q: string;

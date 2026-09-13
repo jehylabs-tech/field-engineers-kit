@@ -117,8 +117,6 @@ export default async function CalculatorSpecPage({ params }: SpecPageProps) {
       calculator={calculator}
       allCalculators={allCalculators}
       specSeed={specRoute.query}
-      specLabel={specRoute.label}
-      pageHeading={copy.h1}
     >
       <p className="mb-3 text-sm text-slate-600 dark:text-slate-400">
         <Link

@@ -52,7 +52,7 @@ export default function CalculatorSeoContent({
   const isFittingValve = slug === "fitting-valve-dimension";
   const useDynamicReference = isUnitConverter || isFittingValve;
 
-  const faqMainEntity = data.faq.map((item) => ({
+  const faqMainEntity = (data.faq ?? []).map((item) => ({
     "@type": "Question",
     name: item.question,
     acceptedAnswer: {
@@ -60,6 +60,8 @@ export default function CalculatorSeoContent({
       text: stripFaqMarkdown(item.answer),
     },
   }));
+
+  const howToSteps = data.howToSteps ?? [];
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -72,7 +74,7 @@ export default function CalculatorSeoContent({
         articleSection: "Engineering Calculators",
         url: pageUrl,
         inLanguage: "en-US",
-        about: data.standards.map((s) => ({
+        about: (data.standards ?? []).map((s) => ({
           "@type": "Thing",
           name: s,
         })),
@@ -93,9 +95,9 @@ export default function CalculatorSeoContent({
       },
       {
         "@type": "HowTo",
-        name: data.howToName,
+        name: data.howToName ?? `How to use ${title}`,
         description: `Step-by-step field engineering guide and calculation procedure for ${title}.`,
-        step: data.howToSteps.map((step, index) => ({
+        step: howToSteps.map((step, index) => ({
           "@type": "HowToStep",
           position: index + 1,
           name: stripStepNumber(step.name),
@@ -551,7 +553,7 @@ export default function CalculatorSeoContent({
               3. How to use this calculator
             </h2>
             <ol className="space-y-2.5">
-              {data.howToSteps.map((step, index) => (
+              {howToSteps.map((step, index) => (
                 <li key={step.name} className="flex gap-2.5">
                   <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded border border-slate-200 bg-slate-50 text-xs font-semibold text-slate-700 dark:border-spec-border dark:bg-spec-bg dark:text-slate-300">
                     {index + 1}

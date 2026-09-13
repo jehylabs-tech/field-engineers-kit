@@ -16,6 +16,11 @@ type ExportButtonsProps = {
   inputRows: { label: string; value: string }[];
   resultRows: { label: string; value: string }[];
   variant?: "stack" | "inline";
+  /** Optional diagram for PDF (e.g. bolt numbering circle). */
+  getDiagramImage?: () => Promise<{
+    dataUrl: string;
+    caption?: string;
+  } | null>;
 };
 
 function FileIcon({ className }: { className?: string }) {
@@ -44,19 +49,36 @@ export default function ExportButtons({
   inputRows,
   resultRows,
   variant = "stack",
+  getDiagramImage,
 }: ExportButtonsProps) {
   const { showToast } = useToast();
   const meta = useCalculatorMeta();
   const fileBase = title.toLowerCase().replace(/[^a-z0-9]+/g, "-");
   const calcId = meta.slug || meta.type || fileBase;
 
-  function handlePdf() {
+  async function handlePdf() {
+    let diagramImageDataUrl: string | undefined;
+    let diagramCaption: string | undefined;
+    if (getDiagramImage) {
+      try {
+        const diagram = await getDiagramImage();
+        if (diagram?.dataUrl) {
+          diagramImageDataUrl = diagram.dataUrl;
+          diagramCaption = diagram.caption;
+        }
+      } catch {
+        /* PDF still exports without diagram */
+      }
+    }
+
     downloadCalculatorPdf({
       title,
       standard,
       generatedAt: new Date().toLocaleString(),
       inputs: inputRows,
       results: resultRows,
+      diagramImageDataUrl,
+      diagramCaption,
     });
     trackExport(calcId, "pdf", `${fileBase}-report.pdf`);
     trackEvent("file_download", {

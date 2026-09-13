@@ -8,6 +8,7 @@
     "formula_json": {
       "type": "pipe-thickness",
       "standard": "ASME B31.3",
+      "formulaLatex": "t = \\frac{P D}{2(S E + P Y)} + c",
       "formulaBasis": "Required thickness t = P D / [2(S E + P Y)] + c per ASME B31.3 para. 304.1.2. Ferritic steels through 482 °C use Y = 0.4."
     },
     "is_published": true,
@@ -22,6 +23,7 @@
     "formula_json": {
       "type": "pipe-schedule",
       "standard": "ASME B36.10M / B36.19M",
+      "subtitle": "OD · t · ID · W_m lookup",
       "formulaBasis": "Lookup OD, t, ID, W_m from B36.10M / B36.19M. Hero = t. W_tot = W_m × L × n."
     },
     "is_published": true,
@@ -36,6 +38,7 @@
     "formula_json": {
       "type": "flange-dimension",
       "standard": "ASME B16.5",
+      "formulaLatex": "W_{\\mathrm{pair}} = 2 W_f + W_g + n(W_{\\mathrm{stud}}+2 W_{\\mathrm{nut}})",
       "formulaBasis": "W_pair = 2 W_f + W_g + n(W_stud + 2 W_nut). WN RF table lookup with type/facing factors; WN hub bore = Sch 40/STD ID (B36.10M)."
     },
     "is_published": true,
@@ -64,6 +67,7 @@
     "formula_json": {
       "type": "butt-weld-fitting",
       "standard": "ASME B16.9",
+      "formulaLatex": "A_{\\mathrm{LR}} = 1.5\\times\\mathrm{NPS}",
       "formulaBasis": "90° LR A = 1.5 × NPS(in) = 38.1 × NPS(mm basis). SR A = 1.0 × NPS(in). Bevel 37.5°."
     },
     "is_published": true,
@@ -92,7 +96,7 @@
     "formula_json": {
       "type": "valve-cv",
       "standard": "ISA / IEC 60534",
-      "subtitle": "US Cv screening · liquid gpm/psi path · gas absolute P · Cv ≤ Cv,sel",
+      "formulaLatex": "C_v = Q\\sqrt{\\mathrm{SG}/\\Delta P}",
       "formulaBasis": "Liquid: convert m³/h & bar to gpm/psi, Cv = Q_gpm √(SG/ΔP_psi). Gas: gauge→absolute (+1 atm), simplified non-choked screening. Adequate when calculated Cv ≤ catalog Cv,sel. Choked FL/xT not solved in-app."
     },
     "is_published": true,
@@ -107,7 +111,7 @@
     "formula_json": {
       "type": "bolt-torque",
       "standard": "ASME PCC-1",
-      "subtitle": "PCC-1 screening torque · B16.5 studs · K & grade rescale · Round 1–4",
+      "formulaLatex": "T = T_{\\mathrm{table}}\\times(K/0.13)\\times f_{\\mathrm{grade}}",
       "formulaBasis": "Lookup ASME B16.5 stud size/count and PCC-1-style moly T_table (K_ref = 0.13, A193 B7). Scale T = T_table × (K/0.13) × f_grade (B8/B8M Class 2 = 0.85). Four-round targets: 30% / 60% / 100% / circular 100%. Confirm against the owner’s PCC-1 appendix."
     },
     "is_published": true,
@@ -122,7 +126,7 @@
     "formula_json": {
       "type": "bolt-sequence",
       "standard": "ASME PCC-1",
-      "subtitle": "Star/cross & circular sequences · B16.5 bolt-count helper · Round 1–4 guide",
+      "subtitle": "Star / circular bolt sequence",
       "formulaBasis": "ASME PCC-1 legacy cross-pattern (star) sequences for even bolt counts 4–64, numbered clockwise from bolt 1 at top. Optional NPS × class helper fills bolt count from the same ASME B16.5 / B16.47 joint table as the Bolt Torque tool. Assembly rounds: 30% / 60% / 100% star, then 100% circular check — aligned with FEK torque screening.",
       "related": [
         {
@@ -163,10 +167,9 @@
     "meta_description": "Calculate ASME B31.3 / VIII-1 UG-34 flat blind thickness t = d × √(0.3P / SE) + c from diameter, design pressure, and corrosion allowance.",
     "formula_json": {
       "type": "blind-flange",
-      "standard": "ASME B31.3",
-      "subtitle": "Attachment factor C = 0.30 (B31.3 304.4.1 / VIII-1 UG-34).",
-      "formulaLatex": "t_m = d \\times \\sqrt{\\frac{0.30 P}{S E}} + c \\quad (\\text{hydro: omit } c,\\; P \\to P_t)",
-      "formulaBasis": "Required thickness uses t = d × √(0.3P / SE) + c. C = 0.30 is the ASME Section VIII Division 1 UG-34 / B31.3 para. 304.4.1 bolted flat-cover factor. d is inside or gasket contact diameter; P and S share stress units; c is corrosion allowance."
+      "standard": "ASME B31.3 / UG-34",
+      "formulaLatex": "t_m = d \\sqrt{0.30 P / (S E)} + c",
+      "formulaBasis": "Required thickness uses t = d × √(0.3P / SE) + c. C = 0.30 is the ASME Section VIII Division 1 UG-34 / B31.3 para. 304.4.1 bolted flat-cover factor. d is inside or gasket contact diameter; P and S share stress units; c is corrosion allowance. Hydro blanks often omit c and use Pt."
     },
     "is_published": true,
     "created_at": "2026-08-12T00:00:07.000Z"
@@ -180,6 +183,7 @@
     "formula_json": {
       "type": "metal-weight",
       "standard": "Procurement Estimate",
+      "formulaLatex": "m = \\rho \\times V",
       "formulaBasis": "Mass = density × volume for plate, pipe, and bar. Densities are typical CS / 304 / Al / Cu screening values."
     },
     "is_published": true,
@@ -193,8 +197,8 @@
     "meta_description": "Calculate weight and volume for SS304, SS316L, Duplex, Inconel, and Titanium plates, pipes, and bars. Includes material density reference tables.",
     "formula_json": {
       "type": "alloy-weight",
-      "standard": "Procurement screening · catalog densities",
-      "subtitle": "SS / Duplex / Nickel alloy mass = ρ × V · plate, pipe, bar",
+      "standard": "Procurement · catalog densities",
+      "formulaLatex": "m = \\rho \\times V",
       "formulaBasis": "Mass = density × volume. Densities are typical catalog values (e.g. SS304 7930 kg/m³, SS316 8000 kg/m³). Pipe volume uses OD and wall; plate/rect use L×W×t; round bar uses π/4·D²·L. Optional unit price screens material cost. Not a mill certificate substitute.",
       "related": [
         {
@@ -231,7 +235,7 @@
     "formula_json": {
       "type": "hydro-test",
       "standard": "ASME B31.3",
-      "subtitle": "ASME B31.3 St/S stress ratio & yield limit check",
+      "formulaLatex": "P_t = 1.5\\,P\\,(S_t/S)\\ \\text{(hydro)}",
       "formulaBasis": "Hydrostatic Pt = 1.5 × P × (St/S). Pneumatic Pt = 1.1 × P × (St/S) per ASME B31.3 para. 345.4.2. St is allowable at test temperature; S at design temperature. Default St/S = 1.0; field guide cap 6.5. Ambient CS binding 138 MPa / 20,000 psi. NPS holding-time guide: ≤2\" → 10 min, 2½\"–4\" → 30 min, ≥6\" → 60 min. Hoop vs 0.90 Sy is a site check — not computed in-app.",
       "related": [
         {
@@ -258,8 +262,8 @@
     "formula_json": {
       "type": "thermal-expansion",
       "standard": "ASME B31.3 · Appendix C (screening)",
-      "subtitle": "ΔL = α L ΔT · H = √(3 E_h D · ΔL/2 / S_A) · W = H/2 · F_anchor = F_bending + μ W_pipe. Materials: CS, steam, CPVC, 304/316SS, Cr-Mo.",
-      "formulaBasis": "ΔL = α × L × (T2 − T1). Guided-cantilever H = √(3 E_h D · (ΔL/2) / S_A); U-loop W = H/2; F_anchor = 12 E_h I ΔL / H³ + μ W_pipe. CPVC uses thermoplastic α/E/S_A screening. Steam uses CS properties at elevated T2.",
+      "formulaLatex": "\\Delta L = \\alpha L \\Delta T",
+      "formulaBasis": "ΔL = α × L × (T2 − T1). Guided-cantilever H = √(3 E_h D · (ΔL/2) / S_A); U-loop W = H/2; F_anchor = 12 E_h I ΔL / H³ + μ W_pipe. CPVC uses thermoplastic α/E/S_A screening. Steam uses CS properties at elevated T2. Materials: CS, steam, CPVC, 304/316SS, Cr-Mo.",
       "faq": [
         {
           "q": "Does this replace a flexibility analysis?",
@@ -286,8 +290,8 @@
     "meta_description": "Darcy–Weisbach ΔP with Haaland f, B36 ID, Crane L/D fittings, and ΔP/100 gradient. Hero includes L + Σ L_eq.",
     "formula_json": {
       "type": "pressure-drop",
-      "standard": "Darcy–Weisbach / Haaland · Crane TP-410",
-      "subtitle": "ΔP = f ((L+ΣL_eq)/D) (½ρv²). Haaland f. Elbow 30 / gate 8 / globe 340 L/D.",
+      "standard": "Darcy–Weisbach · Crane TP-410",
+      "formulaLatex": "\\Delta P = f\\,\\frac{L+\\sum L_{\\mathrm{eq}}}{D}\\,\\tfrac{1}{2}\\rho v^{2}",
       "formulaBasis": "Darcy–Weisbach with Haaland friction factor. Fitting equivalent lengths use Crane TP-410 L/D (elbow 30, gate 8, globe 340). ΔP/100 is straight-only; hero ΔP includes fittings.",
       "faq": [
         {
@@ -297,6 +301,7 @@
       ],
       "related": [
         { "slug": "flow-velocity-erosion", "title": "Flow Velocity", "carry": "Same Q / NPS" },
+        { "slug": "pump-tdh-power", "title": "TDH & Pump Power", "carry": "Convert ΔP → Hf" },
         { "slug": "pipe-schedule-dimension", "title": "Pipe Schedule", "carry": "Same NPS / Sch" }
       ]
     },
@@ -312,8 +317,8 @@
     "formula_json": {
       "type": "flow-velocity",
       "standard": "API RP 14E",
-      "subtitle": "v = Q/A vs vc = C/√ρ. Safe / Warning / Erosion Risk. CS cap 3.5 m/s · SS cap 5.0 m/s.",
-      "formulaBasis": "v = Q/A from schedule ID (B36.10M CS / B36.19M SS). vc = C/√ρ with ρ in lb/ft³ per API RP 14E. Default C = 100 (CS) or 150 (SS). Warning if v ≥ 0.8·vc or liquid v exceeds material cap.",
+      "formulaLatex": "v = Q/A,\\quad v_c = C/\\sqrt{\\rho}",
+      "formulaBasis": "v = Q/A from schedule ID (B36.10M CS / B36.19M SS). vc = C/√ρ with ρ in lb/ft³ per API RP 14E. Default C = 100 (CS) or 150 (SS). Warning if v ≥ 0.8·vc or liquid v exceeds material cap (CS ~3.5 m/s, SS ~5.0 m/s).",
       "faq": [
         {
           "q": "What C factor should I use?",
@@ -322,6 +327,7 @@
       ],
       "related": [
         { "slug": "pressure-drop-friction", "title": "Pressure Drop", "carry": "Same NPS / flow" },
+        { "slug": "pump-tdh-power", "title": "TDH & Pump Power", "carry": "Same Q" },
         { "slug": "pump-npsh-cavitation", "title": "Pump NPSH", "carry": "Suction check" },
         { "slug": "pipe-schedule-dimension", "title": "Pipe Schedule", "carry": "Same NPS / Sch" }
       ]
@@ -338,8 +344,8 @@
     "formula_json": {
       "type": "unit-converter",
       "standard": "SI conversion",
-      "subtitle": "Seven categories: pressure, dimension, temperature, flow, torque, weight, and velocity. Also available from the floating Quick Unit dock.",
-      "formulaBasis": "Exact SI conversion factors. Torque uses 1 ft·lb = 1.355817948 N·m and 1 kgf·m = 9.80665 N·m. Mass uses the avoirdupois pound and metric tonne (1000 kg). Velocity uses 1 ft = 0.3048 m. Mass/volume flow uses the entered density (default 1000 kg/m³ water).",
+      "subtitle": "Pressure · dimension · temperature · flow · torque · weight · velocity",
+      "formulaBasis": "Exact SI conversion factors. Torque uses 1 ft·lb = 1.355817948 N·m and 1 kgf·m = 9.80665 N·m. Mass uses the avoirdupois pound and metric tonne (1000 kg). Velocity uses 1 ft = 0.3048 m. Mass/volume flow uses the entered density (default 1000 kg/m³ water). Also available from the floating Quick Unit dock.",
       "faq": [
         {
           "q": "Where is the floating converter?",
@@ -358,10 +364,9 @@
     "meta_description": "Link-Seal modular seal sizing calculator: annular clearance C, LS model (LS-300–LS-575), link count N, and sleeve / core-drill ID from pipe OD.",
     "formula_json": {
       "type": "link-seal",
-      "standard": "GPT Link-Seal / Modular Mechanical Seal",
-      "subtitle": "C = (Sleeve ID − Pipe OD)/2 · Model by free thickness · N = round(π·Dp / belt)",
+      "standard": "GPT Link-Seal (screening)",
+      "formulaLatex": "C = (ID_{\\mathrm{sleeve}} - OD_{\\mathrm{pipe}}) / 2",
       "formulaBasis": "Annular clearance C = (Sleeve ID − Pipe OD)/2. Select Link-Seal model whose free thickness seals C. Pitch diameter Dp = OD + 2·FT (bolt centerline for N). Ideal min sleeve ID = OD + 2·FT. Link count N = round(π·Dp / belt width). Screening ≈ 0.14 MPa / 20 psig. Independent tool — verify GPT chart; not affiliated with GPT Industries.",
-      "formulaLatex": "C = \\frac{ID_{sleeve} - OD_{pipe}}{2},\\quad D_p = OD + 2 t_{free},\\quad N = \\mathrm{round}\\!\\left(\\frac{\\pi D_p}{w_{belt}}\\right)",
       "faq": [
         {
           "q": "How tight should Link-Seal bolts be?",
@@ -385,9 +390,8 @@
     "formula_json": {
       "type": "pipe-coping",
       "standard": "ASME B31.3 / PIP",
-      "subtitle": "Header × branch intersect · unwrapped cut template · shop ordinate table",
-      "formulaLatex": "z_{\\text{cut}}(\\phi)=\\frac{\\sqrt{R_H^2-x(\\phi)^2}}{\\sin\\theta}-y(\\phi)\\cot\\theta,\\quad x=r_B\\sin\\phi+e,\\; y=r_B\\cos\\phi",
-      "formulaBasis": "3D envelope intersection of branch OD with header OD (set-on/miter) or header ID (set-in). Unwrapped marking distance S = r_B·φ. Peak-to-valley cut depth Δz_max = max(z_cut) − min(z_cut). Confirm bevel and reinforcement per ASME B31.3 Para 304.3.",
+      "formulaLatex": "S = r_B\\,\\phi",
+      "formulaBasis": "3D envelope intersection of branch OD with header OD (set-on/miter) or header ID (set-in). Unwrapped marking distance S = r_B·φ. Peak-to-valley cut depth Δz_max = max(z_cut) − min(z_cut). Confirm bevel and reinforcement per ASME B31.3 Para 304.3. Cut surface: z_cut(φ) from header/branch geometry.",
       "related": [
         {
           "slug": "pipe-schedule-dimension",
@@ -428,9 +432,8 @@
     "formula_json": {
       "type": "pneumatic-safety",
       "standard": "ASME PCC-2 Article 501",
-      "subtitle": "Stored energy E to TNT eq. to exclusion distance D — pneumatic test screening",
-      "formulaLatex": "E = [P_1 V / (\\gamma - 1)][1 - (P_0/P_1)^{(\\gamma-1)/\\gamma}],\\ D = R_0 (E/E_{TNT})^{1/3}",
-      "formulaBasis": "Ideal-gas stored energy expanding to atmosphere (gamma = 1.40 air/N2, 1.67 He). D = R0 * (E/E_TNT)^(1/3) with R0 = 45 ft per lb TNT (~1 psi side-on unprotected personnel). Volume from direct entry or pi/4*ID^2*L. Screening only — not a blast analysis or stamped PCC-2 package.",
+      "formulaLatex": "D = R_0 (E/E_{\\mathrm{TNT}})^{1/3}",
+      "formulaBasis": "Ideal-gas stored energy expanding to atmosphere (gamma = 1.40 air/N2, 1.67 He): E = [P1 V /(γ−1)][1−(P0/P1)^((γ−1)/γ)]. D = R0 * (E/E_TNT)^(1/3) with R0 = 45 ft per lb TNT (~1 psi side-on unprotected personnel). Volume from direct entry or pi/4*ID^2*L. Screening only — not a blast analysis or stamped PCC-2 package.",
       "related": [
         {
           "slug": "hydro-test-pressure",
@@ -479,10 +482,19 @@
     "formula_json": {
       "type": "pump-npsh",
       "standard": "HI 9.6.1 · ASME B73.1 · API 610",
-      "subtitle": "NPSHa = (Ps − Pv)/(ρ g) + zs − hf — margin vs pump NPSHr",
-      "formulaLatex": "\\mathrm{NPSHa}=(P_s-P_v)/(\\rho g)+z_s-h_f,\\quad \\mathrm{margin}=\\mathrm{NPSHa}-\\mathrm{NPSHr}",
-      "formulaBasis": "Available NPSH from absolute surface pressure, vapor pressure at pumping temperature, signed static head (flooded + / lift −), and suction losses. Compare to OEM NPSHr. HI 9.6.1 margin guidance; ASME B73.1 and API 610 expect purchaser-defined margin. Screening densities and Pv curves — not a process simulator.",
+      "formulaLatex": "\\mathrm{NPSHa}=(P_s-P_v)/(\\rho g)+z_s-h_f",
+      "formulaBasis": "Available NPSH from absolute surface pressure, vapor pressure at pumping temperature, signed static head (flooded + / lift −), and suction losses. Margin = NPSHa − NPSHr. HI 9.6.1 margin guidance; ASME B73.1 and API 610 expect purchaser-defined margin. Screening densities and Pv curves — not a process simulator.",
       "related": [
+        {
+          "slug": "pump-tdh-power",
+          "title": "TDH & Pump Power",
+          "carry": "Same fluid duty"
+        },
+        {
+          "slug": "pump-affinity-trimming",
+          "title": "Affinity & Impeller Trim",
+          "carry": "VFD / trim after NPSH OK"
+        },
         {
           "slug": "pressure-drop-friction",
           "title": "Pressure Drop & Friction",
@@ -492,11 +504,6 @@
           "slug": "flow-velocity-erosion",
           "title": "Flow Velocity",
           "carry": "Suction velocity check"
-        },
-        {
-          "slug": "pipe-schedule-dimension",
-          "title": "Pipe Schedule",
-          "carry": "Same NPS / Sch"
         }
       ],
       "faq": [
@@ -512,5 +519,234 @@
     },
     "is_published": true,
     "created_at": "2026-09-12T00:00:00.000Z"
+  },
+  {
+    "id": "local-pump-tdh-power",
+    "category": "mechanical",
+    "title": "Total Dynamic Head (TDH) & Pump Power",
+    "slug": "pump-tdh-power",
+    "meta_description": "Pump TDH and brake horsepower calculator. Screen Hs + Hf + Hp, BHP = Q·TDH·SG/(3960·η), and IEC/NEMA motor rating recommendations (HI 14.3 screening).",
+    "formula_json": {
+      "type": "pump-tdh",
+      "standard": "HI 14.3 · Affinity BHP",
+      "formulaLatex": "\\mathrm{TDH}=H_s+H_f+H_p",
+      "formulaBasis": "Total dynamic head from static elevation (signed), friction (Darcy ΔP→head), and differential pressure head. Brake power from hydraulic power / pump η (SI) or US BHP form BHP = Q·TDH·SG/(3960·η_p) (imperial). Motor input / η_m, then × service factor SF (default 1.15) before next IEC kW or NEMA HP pick. HI 14.3 is the performance-acceptance context — screening only.",
+      "related": [
+        {
+          "slug": "pressure-drop-friction",
+          "title": "Pressure Drop & Friction",
+          "carry": "Estimate Hf"
+        },
+        {
+          "slug": "pump-npsh-cavitation",
+          "title": "Pump NPSH",
+          "carry": "Suction check"
+        },
+        {
+          "slug": "pump-affinity-trimming",
+          "title": "Affinity & Impeller Trim",
+          "carry": "VFD / trim what-if"
+        }
+      ],
+      "faq": [
+        {
+          "q": "How do I get friction head Hf?",
+          "a": "Use the Pressure Drop calculator for ΔP, then convert Hf = ΔP / (ρ g). Include fittings and strainers."
+        },
+        {
+          "q": "Does this apply HI viscosity corrections?",
+          "a": "No. Viscosity is shown for screening awareness. Confirm viscous duties on OEM / HI correction charts."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-12T12:00:00.000Z"
+  },
+  {
+    "id": "local-pump-affinity-trimming",
+    "category": "mechanical",
+    "title": "Pump Affinity Laws & Impeller Trimming",
+    "slug": "pump-affinity-trimming",
+    "meta_description": "Pump affinity laws and impeller trim calculator. Predict Q₂, H₂, P₂ from speed (VFD) or diameter cut with D₂/D₁ trimming limit warnings for TA / shutdown reviews.",
+    "formula_json": {
+      "type": "pump-affinity",
+      "standard": "Affinity · HI / OEM",
+      "formulaLatex": "\\frac{Q_2}{Q_1}=\\frac{N_2}{N_1}\\frac{D_2}{D_1}",
+      "formulaBasis": "Classical pump affinity for geometrically similar operation at constant efficiency: Q ∝ N·D, H ∝ (N·D)², P ∝ (N·D)³. Speed mode for VFD RPM changes; diameter mode for shop impeller cuts; combined when both change. Soft trim warning when D₂/D₁ < 0.80; hard warning below ~0.70. Screening only — confirm OEM curves, NPSHr, and motor limits after TA cuts or VFD setpoints.",
+      "related": [
+        {
+          "slug": "pump-tdh-power",
+          "title": "TDH & Pump Power",
+          "carry": "Baseline H₁ / P₁"
+        },
+        {
+          "slug": "pump-npsh-cavitation",
+          "title": "Pump NPSH",
+          "carry": "Recheck after speed-up"
+        },
+        {
+          "slug": "pressure-drop-friction",
+          "title": "Pressure Drop & Friction",
+          "carry": "System curve context"
+        }
+      ],
+      "faq": [
+        {
+          "q": "How much can I trim an impeller?",
+          "a": "Many centrifugal OEMs screen near 20% maximum cut (D₂/D₁ ≈ 0.80). Cuts toward 30% (D₂/D₁ ≈ 0.70) usually need manufacturer approval. Always verify the OEM trim chart."
+        },
+        {
+          "q": "Do affinity laws keep efficiency constant?",
+          "a": "The simple affinity screen assumes η is unchanged. Real pumps often lose a few points of efficiency after a large trim or far-off-speed operation — use the OEM curve for final power."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-13T00:00:00.000Z"
+  },
+  {
+    "id": "local-pump-mcsf-thermal-protection",
+    "category": "mechanical",
+    "title": "Pump Minimum Continuous Stable Flow (MCSF) & Thermal Protection",
+    "slug": "pump-mcsf-thermal-protection",
+    "meta_description": "API 610 / HI 9.6.1 pump MCSF calculator. Compare thermal and hydrodynamic minimum continuous flow, estimate shut-off power, ΔT, ARC valve Cv, and bypass NPS.",
+    "formula_json": {
+      "type": "pump-mcsf",
+      "standard": "API 610 · HI 9.6.1",
+      "formulaLatex": "Q_{MCSF}=\\max(Q_{min,th},Q_{min,hydro})",
+      "formulaBasis": "Governing MCSF is the larger of thermal and hydrodynamic minima. Thermal Q_min from energy balance Q = P_so / [ρ(Cp·ΔT_max + g·H_so)] with P_so ≈ 0.5·P_rated. Hydrodynamic Q_min ≈ (0.30–0.60)·Q_BEP. ARC liquid Cv = Q_gpm√(SG/ΔP_psi). Screening only — confirm OEM MCSF and ARC vendor data.",
+      "related": [
+        {
+          "slug": "pump-npsh-cavitation",
+          "title": "Pump NPSH",
+          "carry": "Suction margin after recycle"
+        },
+        {
+          "slug": "pump-tdh-power",
+          "title": "TDH & Pump Power",
+          "carry": "Duty / driver context"
+        },
+        {
+          "slug": "pressure-drop-friction",
+          "title": "Pressure Drop & Friction",
+          "carry": "Bypass line ΔP"
+        },
+        {
+          "slug": "flow-velocity-erosion",
+          "title": "Flow Velocity & Erosion",
+          "carry": "Bypass velocity check"
+        }
+      ],
+      "faq": [
+        {
+          "q": "What is pump MCSF?",
+          "a": "Minimum Continuous Stable Flow is the lowest continuous capacity the OEM allows without unacceptable vibration, recirculation, or thermal rise (API 610 / HI 9.6.1). This tool screens thermal and hydrodynamic bounds; the published curve value governs."
+        },
+        {
+          "q": "Why not use η in the thermal Q_min denominator?",
+          "a": "Energy balance at shut-off is Heat = P_so − ρgQH. Dividing H by η under-predicts thermal flow. η_min is shown only for the HI-style ΔT = gH(1−η)/(Cpη) check."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-13T12:00:00.000Z"
+  },
+  {
+    "id": "local-multiple-pump-parallel-series",
+    "category": "mechanical",
+    "title": "Multiple Pump Parallel & Series Operation",
+    "slug": "multiple-pump-parallel-series",
+    "meta_description": "HI 14.3 parallel and series pump calculator. Intersect quadratic pump and system curves for Q_op, H_op, flow/head gain, and runout warnings.",
+    "formula_json": {
+      "type": "multi-pump",
+      "standard": "ANSI/HI 14.3",
+      "formulaLatex": "H=H_{so}-aQ^{2},\\; H_{sys}=H_{st}+kQ^{2}",
+      "formulaBasis": "Quadratic pump curve H = H_so − aQ² with a = (H_so − H_rated)/Q_rated². System H = H_static + kQ² with k from friction at Q_rated. Parallel: Q_op = √((H_so − H_st)/(k + a/N²)). Series: Q_op = √((N·H_so − H_st)/(k + N·a)). Screening only — confirm OEM curves and NPSH.",
+      "related": [
+        {
+          "slug": "pump-tdh-power",
+          "title": "TDH & Pump Power",
+          "carry": "Static / friction heads"
+        },
+        {
+          "slug": "pressure-drop-friction",
+          "title": "Pressure Drop & Friction",
+          "carry": "System ΔH_f"
+        },
+        {
+          "slug": "pump-npsh-cavitation",
+          "title": "Pump NPSH",
+          "carry": "Recheck at Q/pump"
+        },
+        {
+          "slug": "pump-mcsf-thermal-protection",
+          "title": "MCSF & Thermal",
+          "carry": "Low-flow / one-pump trips"
+        }
+      ],
+      "faq": [
+        {
+          "q": "Why doesn't 2 parallel pumps double the flow?",
+          "a": "System friction rises with Q². The combined pump curve intersects the system at less than 2× the single-pump operating flow — often only +15–40% on friction-dominated loops."
+        },
+        {
+          "q": "When do I use series instead of parallel?",
+          "a": "Series when static + friction head exceeds one pump's shut-off / rated head (pipeline boosters, multi-stage trains). Parallel when you need more capacity at roughly the same head."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-13T14:00:00.000Z"
+  },
+  {
+    "id": "local-flange-bolt-wrench-size-lookup",
+    "category": "mechanical",
+    "title": "Flange Bolt & Wrench Size Quick Lookup",
+    "slug": "flange-bolt-wrench-size-lookup",
+    "meta_description": "ASME B16.5 / B18.2.2 heavy-hex wrench AF, stud diameter, bolt count, BCD pitch, and stud length quick lookup for field spanner / socket selection.",
+    "formula_json": {
+      "type": "bolt-wrench-lookup",
+      "standard": "ASME B16.5 · B18.2.2",
+      "formulaLatex": "W_{in}=1.5 d_b+1/8\\,\\mathrm{in},\\quad P_c=\\pi\\cdot BCD/N",
+      "formulaBasis": "Heavy hex nut AF from B16.5 flange bolting table (checked vs W=1.5·d_b+1/8 in). Metric AF from table mm. Stud length = RF table ± FF/RTJ delta. Pitch P_c=π·BCD/N.",
+      "related": [
+        {
+          "slug": "flange-bolt-tightening-sequence",
+          "title": "Bolt Tightening Sequence",
+          "carry": "Bolt count → sequence"
+        },
+        {
+          "slug": "bolt-torque-tensioning",
+          "title": "Bolt Torque & Tensioning",
+          "carry": "NPS / class → torque"
+        },
+        {
+          "slug": "flange-dimension-weight",
+          "title": "Flange Dimension & Weight",
+          "carry": "NPS / class → OD / T"
+        },
+        {
+          "slug": "gasket-dimension-selection",
+          "title": "Spiral Wound & RTJ Lookup",
+          "carry": "NPS / class → gasket"
+        }
+      ],
+      "faq": [
+        {
+          "q": "Why heavy hex instead of standard hex?",
+          "a": "ASME B16.5 flanges require heavy hex nuts (B18.2.2). Standard commercial hex AF is smaller — wrong wrench and under-torqued joints."
+        },
+        {
+          "q": "Does facing change the wrench size?",
+          "a": "No. Wrench AF follows stud diameter. Facing mainly changes recommended stud length (FF shorter, RTJ longer vs RF)."
+        },
+        {
+          "q": "Is B16.47 (26–60\") included?",
+          "a": "Not in this table. This lookup covers ASME B16.5 NPS ½–24 from the FEK flangeDimension.json rows."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-14T00:00:00.000Z"
   }
 ]

@@ -60,6 +60,7 @@ type FieldGroupProps = {
   autoFocus?: boolean;
   allowNegative?: boolean;
   allowZero?: boolean;
+  disabled?: boolean;
 };
 
 export default function FieldGroup({
@@ -74,6 +75,7 @@ export default function FieldGroup({
   autoFocus,
   allowNegative,
   allowZero,
+  disabled,
 }: FieldGroupProps) {
   const carryOver = useCarryOver();
   const schematic = useSchematicHighlight();
@@ -148,8 +150,9 @@ export default function FieldGroup({
           type="text"
           inputMode="decimal"
           autoComplete="off"
-          tabIndex={0}
+          tabIndex={disabled ? -1 : 0}
           autoFocus={autoFocus}
+          disabled={disabled}
           value={value}
           onChange={(event) => handleInputChange(event.target.value)}
           onFocus={() => {
@@ -158,7 +161,11 @@ export default function FieldGroup({
           onBlur={() => {
             if (highlight) schematic?.setActive(null);
           }}
-          className="box-border flex h-10 min-h-10 w-full min-w-0 items-center rounded-lg border border-slate-300 bg-white px-2.5 font-mono text-sm text-slate-900 outline-none focus:border-spec-accent focus:ring-2 focus:ring-spec-accent dark:border-slate-600 dark:bg-spec-bg dark:text-spec-text"
+          className={`box-border flex h-10 min-h-10 w-full min-w-0 items-center rounded-lg border border-slate-300 bg-white px-2.5 font-mono text-sm text-slate-900 outline-none focus:border-spec-accent focus:ring-2 focus:ring-spec-accent dark:border-slate-600 dark:bg-spec-bg dark:text-spec-text ${
+            disabled
+              ? "cursor-not-allowed bg-slate-50 text-slate-500 dark:bg-slate-900/50 dark:text-slate-400"
+              : ""
+          }`}
         />
         <select
           disabled

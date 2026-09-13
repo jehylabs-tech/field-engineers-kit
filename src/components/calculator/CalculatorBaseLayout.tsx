@@ -21,6 +21,8 @@ type CalculatorBaseLayoutProps = {
   inputRows: { label: string; value: string }[];
   visual?: ReactNode;
   chart?: ReactNode;
+  /** Rendered inside ResultPane immediately after the hero (before detail tables). */
+  afterHero?: ReactNode;
   /** When set, replaces the default ResultPane inside card 2. */
   resultPanel?: ReactNode;
   /** Extra controls aligned with the "2. Calculation Results" title (e.g. export). */
@@ -50,6 +52,7 @@ export default function CalculatorBaseLayout({
   inputRows,
   visual,
   chart,
+  afterHero,
   resultPanel,
   resultHeaderActions,
   columnRatio = "5-7",
@@ -233,6 +236,7 @@ export default function CalculatorBaseLayout({
                     embedDiagram={false}
                     diagramSection={diagramSection}
                     diagramVariant={diagramSection ? "modal" : "drawer"}
+                    afterHero={afterHero}
                   />
                 )}
                 {chart}

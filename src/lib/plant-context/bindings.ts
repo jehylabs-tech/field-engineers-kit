@@ -127,6 +127,7 @@ export function applyPlantContext<T extends Record<string, unknown>>(
       return applySchedule(applyClass(applyNps(inputs, ctx), ctx), ctx) as T;
     case "fitting-valve-dimension":
     case "bolt-torque":
+    case "bolt-wrench-lookup":
     case "gasket-dimension":
       return applyClass(applyNps(inputs, ctx), ctx) as T;
     case "bolt-sequence": {

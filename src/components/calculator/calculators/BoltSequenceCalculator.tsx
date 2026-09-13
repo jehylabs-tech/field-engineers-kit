@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import BoltCircleDiagram from "@/components/calculator/BoltCircleDiagram";
+import BoltCircleDiagram, {
+  boltNumberingDiagramPngDataUrl,
+} from "@/components/calculator/BoltCircleDiagram";
 import CalculatorBaseLayout from "@/components/calculator/CalculatorBaseLayout";
 import CopyValueButton from "@/components/calculator/CopyValueButton";
 import ExportButtons from "@/components/calculator/ExportButtons";
@@ -236,6 +238,16 @@ export default function BoltSequenceCalculator({
                   standard={standard}
                   inputRows={inputRows}
                   resultRows={output.exportRows}
+                  getDiagramImage={async () => {
+                    const dataUrl = await boltNumberingDiagramPngDataUrl(
+                      inputs.boltCount,
+                    );
+                    if (!dataUrl) return null;
+                    return {
+                      dataUrl,
+                      caption: "Bolt numbering (clockwise from top)",
+                    };
+                  }}
                 />
                 <CopyValueButton
                   text={`${headline}: ${arrowText}`}
