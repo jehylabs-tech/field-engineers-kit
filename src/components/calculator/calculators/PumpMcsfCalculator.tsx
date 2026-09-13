@@ -168,11 +168,24 @@ export default function PumpMcsfCalculator({ title, standard }: Props) {
     }));
   }
 
-  function applyPreset(preset: (typeof METRIC_PRESETS)[number]) {
+  function applyPreset(
+    preset: (typeof METRIC_PRESETS)[number] | (typeof IMPERIAL_PRESETS)[number],
+  ) {
     setInputs((current) => {
       const withDuty: PumpMcsfInputs = {
         ...current,
-        ...preset,
+        unitSystem: preset.flowUnit === "gpm" ? "imperial" : "metric",
+        fluid: preset.fluid,
+        flowBep: preset.flowBep,
+        flowUnit: preset.flowUnit,
+        headShutoff: preset.headShutoff,
+        powerRated: preset.powerRated,
+        deltaTMax: preset.deltaTMax,
+        mcsfRatio: preset.mcsfRatio,
+        soPowerRatio: preset.soPowerRatio,
+        bypassDp: preset.bypassDp,
+        bypassVmax: preset.bypassVmax,
+        flowOp: preset.flowOp,
       };
       return applyMcsfFluidPreset(preset.fluid, withDuty);
     });

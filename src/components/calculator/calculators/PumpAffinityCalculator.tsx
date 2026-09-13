@@ -147,10 +147,21 @@ export default function PumpAffinityCalculator({ title, standard }: Props) {
     }));
   }
 
-  function applyPreset(preset: (typeof METRIC_PRESETS)[number]) {
+  function applyPreset(
+    preset: (typeof METRIC_PRESETS)[number] | (typeof IMPERIAL_PRESETS)[number],
+  ) {
     setInputs((current) => ({
       ...current,
-      ...preset,
+      unitSystem: preset.flowUnit === "gpm" ? "imperial" : "metric",
+      mode: preset.mode,
+      speed1: preset.speed1,
+      speed2: preset.speed2,
+      diameter1: preset.diameter1,
+      diameter2: preset.diameter2,
+      flow1: preset.flow1,
+      flowUnit: preset.flowUnit,
+      head1: preset.head1,
+      power1: preset.power1,
     }));
   }
 

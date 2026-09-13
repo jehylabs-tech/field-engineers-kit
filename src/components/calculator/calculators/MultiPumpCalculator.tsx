@@ -124,10 +124,20 @@ export default function MultiPumpCalculator({ title, standard }: Props) {
     }));
   }
 
-  function applyPreset(preset: (typeof METRIC_PRESETS)[number]) {
+  function applyPreset(
+    preset: (typeof METRIC_PRESETS)[number] | (typeof IMPERIAL_PRESETS)[number],
+  ) {
     setInputs((current) => ({
       ...current,
-      ...preset,
+      unitSystem: preset.flowUnit === "gpm" ? "imperial" : "metric",
+      mode: preset.mode,
+      pumpCount: preset.pumpCount,
+      headShutoff: preset.headShutoff,
+      flowRated: preset.flowRated,
+      flowUnit: preset.flowUnit,
+      headRated: preset.headRated,
+      headStatic: preset.headStatic,
+      headFrictionRated: preset.headFrictionRated,
     }));
   }
 

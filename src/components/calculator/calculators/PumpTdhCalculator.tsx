@@ -143,10 +143,14 @@ export default function PumpTdhCalculator({ title, standard }: Props) {
     }));
   }
 
-  function applyPreset(preset: (typeof METRIC_PRESETS)[number]) {
-    const fluidPreset = applyFluidPreset(preset.fluid, inputs.unitSystem);
+  function applyPreset(
+    preset: (typeof METRIC_PRESETS)[number] | (typeof IMPERIAL_PRESETS)[number],
+  ) {
+    const unitSystem = preset.flowUnit === "gpm" ? "imperial" : "metric";
+    const fluidPreset = applyFluidPreset(preset.fluid, unitSystem);
     setInputs((current) => ({
       ...current,
+      unitSystem,
       fluid: preset.fluid,
       flow: preset.flow,
       flowUnit: preset.flowUnit,
