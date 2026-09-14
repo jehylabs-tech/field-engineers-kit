@@ -294,10 +294,13 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
     next[key] = Number(forward(value).toFixed(digits));
   };
 
-  // Metal weight stores small dims in mm/in; other length fields are m/ft.
+  // Metal weight stores small dims in mm/in; tank vessel uses mm/in for length;
+  // other length fields (thermal etc.) are m/ft.
   const isMetalWeight = typeof next.shape === "string";
+  const isTankVessel =
+    "orientation" in next && "headType" in next;
   if (typeof next.length === "number" && Number.isFinite(next.length)) {
-    if (isMetalWeight) {
+    if (isMetalWeight || isTankVessel) {
       convertNum("length", toImperial ? mmToIn : inToMm, 3);
     } else {
       convertNum("length", toImperial ? mToFt : ftToM, 3);
@@ -309,6 +312,7 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
     "temperature",
     "installTemp",
     "operatingTemp",
+    "ambientTemp",
     "designTemperature",
     "fluidTemp",
   ]) {
@@ -467,6 +471,27 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
     convertNum("allowableSa", toImperial ? mpaToKsi : ksiToMpa, 3);
   }
 
+  // Insulation thickness: mm ↔ in
+  if (
+    typeof next.insulationThickness === "number" &&
+    Number.isFinite(next.insulationThickness)
+  ) {
+    convertNum(
+      "insulationThickness",
+      toImperial ? mmToIn : inToMm,
+      toImperial ? 3 : 1,
+    );
+  }
+
+  // Wind speed: m/s ↔ mph
+  if (typeof next.windSpeed === "number" && Number.isFinite(next.windSpeed)) {
+    convertNum(
+      "windSpeed",
+      toImperial ? (v) => v * 2.23694 : (v) => v / 2.23694,
+      2,
+    );
+  }
+
   // Small dimensions: mm ↔ in
   for (const key of [
     "outsideDiameter",
@@ -485,6 +510,7 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
     "offset",
     "diameter1",
     "diameter2",
+    "liquidLevel",
   ]) {
     if (typeof next[key] === "number" && Number.isFinite(next[key] as number)) {
       convertNum(key, toImperial ? mmToIn : inToMm, 4);

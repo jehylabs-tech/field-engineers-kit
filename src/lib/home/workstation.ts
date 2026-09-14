@@ -126,6 +126,21 @@ export const WORKSTATION_DOMAINS: WorkstationDomain[] = [
         keywords: ["thermal", "expansion", "anchor", "cpvc", "steam", "loop"],
       },
       {
+        id: "insulation-heat-loss",
+        title: "Insulation Thickness & Heat Loss",
+        seoLabel:
+          "ASTM C680 Piping Insulation Thickness Heat Loss and Surface Temperature Calculator",
+        standard: "C680 / ISO 12241",
+        href: "/calculator/insulation-heat-loss/4inch-mineral-wool-50mm",
+        keywords: [
+          "insulation",
+          "heat loss",
+          "astm c680",
+          "surface temperature",
+          "personnel protection",
+        ],
+      },
+      {
         id: "pressure-drop-friction",
         title: "Pressure Drop & Friction",
         seoLabel: "Darcy-Weisbach Pipe Pressure Drop and Friction Loss Calculator",
@@ -276,6 +291,24 @@ export const WORKSTATION_DOMAINS: WorkstationDomain[] = [
           "multi pump",
           "flow gain",
           "runout",
+        ],
+      },
+      {
+        id: "tank-vessel-volume",
+        title: "Tank & Vessel Volume",
+        seoLabel:
+          "ASME VIII Tank and Pressure Vessel Volume Level Capacity Calculator",
+        standard: "VIII-1 · API 650",
+        href: "/calculator/tank-vessel-volume/horizontal-2inch1-ellipsoidal-2000mm-6000mm",
+        keywords: [
+          "tank volume",
+          "pressure vessel volume",
+          "asme viii",
+          "api 650",
+          "dipstick",
+          "ullage",
+          "ellipsoidal head",
+          "level capacity",
         ],
       },
       {

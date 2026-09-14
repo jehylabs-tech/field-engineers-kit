@@ -3,10 +3,6 @@ import {
   ALLOY_MATERIAL_BY_ID,
   ALLOY_PSEO_MATERIALS,
 } from "@/lib/calculators/engines/alloy-weight";
-import {
-  formatSequenceArrowText,
-  generateBoltSequence,
-} from "@/lib/calculators/engines/bolt-sequence";
 import { listPipeCopingPseoRoutes } from "@/lib/calculators/engines/pipe-coping";
 import {
   expansionMaterialSeoLabel,
@@ -21,8 +17,9 @@ import { listPumpAffinityPseoRoutes } from "@/lib/calculators/pseo/pump-affinity
 import { listPumpMcsfPseoRoutes } from "@/lib/calculators/pseo/pump-mcsf-routes";
 import { listMultiPumpPseoRoutes } from "@/lib/calculators/pseo/multi-pump-routes";
 import { listBoltWrenchLookupPseoRoutes } from "@/lib/calculators/pseo/bolt-wrench-lookup-routes";
+import { listInsulationHeatLossPseoRoutes } from "@/lib/calculators/pseo/insulation-heat-loss-routes";
+import { listTankVesselVolumePseoRoutes } from "@/lib/calculators/pseo/tank-vessel-volume-routes";
 import {
-  getPipeScheduleEntry,
   listAvailableNps,
   listFlangeClassesForNps,
   listFlangeNps,
@@ -386,6 +383,40 @@ export function parseSpecToQuery(spec: string): Record<string, string> | null {
     };
   }
 
+  // Insulation heat loss: `{nps}inch-{material}-{thickness}{mm|in}`
+  const insulation = value.match(
+    /^(?:nps-)?(\d+(?:\.\d+)?)inch-(mineral-wool|calcium-silicate|cellular-glass|polyurethane)-(\d+(?:p\d+)?)(mm|in)$/i,
+  );
+  if (insulation) {
+    const thickRaw = insulation[3].replace("p", ".");
+    const thickUnit = insulation[4].toLowerCase();
+    return {
+      units: thickUnit === "in" ? "imperial" : "metric",
+      nps: insulation[1],
+      material: insulation[2].toLowerCase(),
+      insulationThickness: thickRaw,
+    };
+  }
+
+  // Tank / vessel volume: `{orientation}-{head}-{Di}{mm|in}-{L}{mm|in}`
+  // Spec token `2inch1-ellipsoidal` maps to headType `2to1-ellipsoidal`.
+  const tank = value.match(
+    /^(horizontal|vertical)-(flat|2inch1-ellipsoidal|torispherical-klopper|hemispherical)-(\d+(?:p\d+)?)(mm|in)-(\d+(?:p\d+)?)(mm|in)$/i,
+  );
+  if (tank) {
+    const dimUnit = tank[4].toLowerCase();
+    const headToken = tank[2].toLowerCase();
+    const headType =
+      headToken === "2inch1-ellipsoidal" ? "2to1-ellipsoidal" : headToken;
+    return {
+      units: dimUnit === "in" ? "imperial" : "metric",
+      orientation: tank[1].toLowerCase(),
+      headType,
+      diameter: tank[3].replace("p", "."),
+      length: tank[5].replace("p", "."),
+    };
+  }
+
   if (value === "liquid" || value === "gas") {
     return { fluid: value };
   }
@@ -427,6 +458,26 @@ export function specLabelFromQuery(
     const sch = query.hsch || query.bsch || "";
     const ang = query.theta ? `${query.theta}°` : "";
     return `${query.bnps}" on ${query.hnps}"${sch ? ` Sch ${sch}` : ""}${ang ? ` · ${ang}` : ""}`;
+  }
+  if (query.insulationThickness && query.nps && query.material) {
+    const thickUnit = query.units === "imperial" ? "in" : "mm";
+    const mat = query.material
+      .split("-")
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(" ");
+    return `NPS ${query.nps} · ${mat} · ${query.insulationThickness} ${thickUnit}`;
+  }
+  if (query.orientation && query.headType && query.diameter && query.length) {
+    const dimUnit = query.units === "imperial" ? "in" : "mm";
+    const head =
+      query.headType === "2to1-ellipsoidal"
+        ? "2:1 SE"
+        : query.headType === "torispherical-klopper"
+          ? "F&D / Klöpper"
+          : query.headType === "hemispherical"
+            ? "hemi"
+            : query.headType;
+    return `${query.orientation} · ${head} · Di ${query.diameter} ${dimUnit} · L ${query.length} ${dimUnit}`;
   }
   if (
     query.material &&
@@ -606,6 +657,10 @@ export function listSpecRoutesForSlug(slug: string): SpecRoute[] {
       return listMultiPumpPseoRoutes(slug);
     case "bolt-wrench-lookup":
       return listBoltWrenchLookupPseoRoutes(slug);
+    case "insulation-heat-loss":
+      return listInsulationHeatLossPseoRoutes(slug);
+    case "tank-vessel-volume":
+      return listTankVesselVolumePseoRoutes(slug);
     case "unit-converter":
       return [
         {
@@ -880,6 +935,26 @@ export function findSpecRouteForInputs(
       : partial.pumpCount != null && partial.pumpCount !== ""
         ? String(partial.pumpCount)
         : "";
+  const insulationThickness =
+    partial.insulationThickness != null && partial.insulationThickness !== ""
+      ? String(partial.insulationThickness)
+      : "";
+  const orientation =
+    partial.orientation != null && partial.orientation !== ""
+      ? String(partial.orientation)
+      : "";
+  const headType =
+    partial.headType != null && partial.headType !== ""
+      ? String(partial.headType)
+      : "";
+  const diameter =
+    partial.diameter != null && partial.diameter !== ""
+      ? String(partial.diameter)
+      : "";
+  const length =
+    partial.length != null && partial.length !== ""
+      ? String(partial.length)
+      : "";
 
   if (bolts && pattern) {
     const hit = routes.find(
@@ -1149,6 +1224,46 @@ export function findSpecRouteForInputs(
     if (hit) return hit;
   }
 
+  // Insulation heat loss — nps + material + thickness
+  if (insulationThickness && nps && material) {
+    const hit = routes.find((route) => {
+      if (route.query.nps !== nps) return false;
+      if (route.query.material !== material) return false;
+      if (units && route.query.units && route.query.units !== units) {
+        return false;
+      }
+      const routeT = Number(route.query.insulationThickness);
+      const wantT = Number(insulationThickness);
+      return Number.isFinite(routeT) && Number.isFinite(wantT)
+        ? Math.abs(routeT - wantT) < 1e-9
+        : route.query.insulationThickness === insulationThickness;
+    });
+    if (hit) return hit;
+  }
+
+  // Tank / vessel volume — orientation + head + Di + L
+  if (orientation && headType && diameter && length) {
+    const hit = routes.find((route) => {
+      if (route.query.orientation !== orientation) return false;
+      if (route.query.headType !== headType) return false;
+      if (units && route.query.units && route.query.units !== units) {
+        return false;
+      }
+      const numEq = (a: string, b: string) => {
+        const na = Number(a);
+        const nb = Number(b);
+        return Number.isFinite(na) && Number.isFinite(nb)
+          ? Math.abs(na - nb) < 1e-9
+          : a === b;
+      };
+      return (
+        numEq(route.query.diameter ?? "", diameter) &&
+        numEq(route.query.length ?? "", length)
+      );
+    });
+    if (hit) return hit;
+  }
+
   if (nps && sch) {
     const withMat =
       material !== ""
@@ -1411,6 +1526,36 @@ export function buildSpecSeoCopy(
     };
   }
 
+  if (q.insulationThickness && q.nps && q.material) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus} | ${brand}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `Pipe insulation thickness and heat-loss screening for ${focus} (surface temperature, Q, and personnel-touch check).`;
+    return {
+      title,
+      description,
+      h1: shortTitle,
+      h2: "Insulation Heat Loss Summary",
+    };
+  }
+
+  if (q.orientation && q.headType && q.diameter && q.length) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus} | ${brand}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `Tank and pressure-vessel liquid volume / fill% screening for ${focus} (ASME vessel geometry).`;
+    return {
+      title,
+      description,
+      h1: shortTitle,
+      h2: "Tank & Vessel Volume Summary",
+    };
+  }
+
   if (q.nps && q.sch) {
     const size = humanNps(q.nps);
     const schedule = humanSch(q.sch);
@@ -1520,125 +1665,5 @@ export function buildSpecSeoCopy(
   };
 }
 
-export type SpecFactRow = {
-  label: string;
-  value: string;
-};
-
-/** Unique on-page facts for Googlebot (NPS / sch / OD / ID when available). */
-export function buildSpecFactRows(route: SpecRoute): SpecFactRow[] {
-  const rows: SpecFactRow[] = [];
-  const q = route.query;
-
-  if (q.nps) {
-    rows.push({ label: "Nominal pipe size (NPS)", value: `${q.nps}"` });
-  }
-  if (q.bolts) {
-    rows.push({ label: "Bolt count", value: q.bolts });
-  }
-  if (q.hnps) {
-    rows.push({ label: "Header NPS", value: `${q.hnps}"` });
-  }
-  if (q.bnps) {
-    rows.push({ label: "Branch NPS", value: `${q.bnps}"` });
-  }
-  if (q.hsch) {
-    rows.push({ label: "Schedule", value: `Sch ${q.hsch}` });
-  }
-  if (q.theta) {
-    rows.push({ label: "Intersection angle θ", value: `${q.theta}°` });
-  }
-  if (q.pattern) {
-    rows.push({
-      label: "Pattern",
-      value: q.pattern === "circular" ? "Circular" : "Star / cross",
-    });
-  }
-  if (q.bolts && q.pattern) {
-    const count = Number(q.bolts);
-    if (Number.isFinite(count) && count >= 4) {
-      const pattern = q.pattern === "circular" ? "circular" : "star";
-      const seq = generateBoltSequence(count, pattern);
-      if (seq.length === count) {
-        rows.push({
-          label: "Sequence",
-          value: formatSequenceArrowText(seq),
-        });
-      }
-    }
-  }
-  if (q.sch) {
-    rows.push({ label: "Schedule", value: `Sch ${q.sch}` });
-  }
-  if (q.class) {
-    rows.push({ label: "Pressure class", value: `Class ${q.class}` });
-  }
-  if (q.fluid) {
-    rows.push({
-      label: "Service fluid",
-      value: q.fluid.charAt(0).toUpperCase() + q.fluid.slice(1),
-    });
-  }
-  if (q.pt) {
-    rows.push({
-      label: "Test pressure",
-      value: `${q.pt} ${q.units === "imperial" ? "psi" : "bar"} g`,
-    });
-  }
-  if (q.vol) {
-    rows.push({
-      label: "Volume under test",
-      value: `${q.vol} ${q.units === "imperial" ? "ft³" : "m³"}`,
-    });
-  }
-  if (q.gas) {
-    rows.push({
-      label: "Test gas",
-      value: q.gas.charAt(0).toUpperCase() + q.gas.slice(1),
-    });
-  }
-  if (q.material) {
-    const thermalHit = THERMAL_EXPANSION_PSEO_MATERIALS.includes(
-      q.material as ExpansionMaterial,
-    );
-    rows.push({
-      label: "Material",
-      value: thermalHit
-        ? expansionMaterialSeoLabel(q.material as ExpansionMaterial)
-        : route.label,
-    });
-    const alloy = ALLOY_MATERIAL_BY_ID[q.material as keyof typeof ALLOY_MATERIAL_BY_ID];
-    if (alloy) {
-      rows.push({
-        label: "Density",
-        value: `${alloy.densityKgM3} kg/m³ (${(alloy.densityKgM3 / 1000).toFixed(2)} g/cm³)`,
-      });
-    }
-  }
-  if (q.cat || q.category) {
-    rows.push({ label: "Unit category", value: route.label });
-    if (q.from && q.to) {
-      rows.push({ label: "Default conversion", value: `${q.from} → ${q.to}` });
-    }
-  }
-
-  if (q.nps && q.sch) {
-    const entry = getPipeScheduleEntry(q.nps, q.sch);
-    if (entry) {
-      rows.push({
-        label: "Outside diameter (OD)",
-        value: `${entry.pipe.outsideDiameterMm.toFixed(2)} mm (${entry.pipe.outsideDiameterIn.toFixed(3)} in)`,
-      });
-      rows.push({
-        label: "Wall thickness (t)",
-        value: `${entry.row.wallThicknessMm.toFixed(2)} mm`,
-      });
-      rows.push({
-        label: "Inside diameter (ID)",
-        value: `${entry.row.insideDiameterMm.toFixed(2)} mm`,
-      });
-    }
-  }
-
-  return rows;
-}
+export type { SpecFactRow } from "@/lib/calculators/spec-fact-rows";
+export { buildSpecFactRows } from "@/lib/calculators/spec-fact-rows";

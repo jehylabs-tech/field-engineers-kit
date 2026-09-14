@@ -24,7 +24,9 @@ export type CalculatorType =
   | "pump-affinity"
   | "pump-mcsf"
   | "multi-pump"
-  | "bolt-wrench-lookup";
+  | "bolt-wrench-lookup"
+  | "insulation-heat-loss"
+  | "tank-vessel-volume";
 
 export type FaqItem = {
   q: string;

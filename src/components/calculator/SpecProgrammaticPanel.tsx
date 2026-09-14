@@ -1,11 +1,9 @@
-"use client";
+﻿"use client";
 
 import { useCalculatorOutput } from "@/components/calculator/CalculatorOutputContext";
 import { useCalculatorMeta } from "@/components/calculator/CalculatorMetaContext";
-import {
-  buildSpecFactRows,
-  type SpecRoute,
-} from "@/lib/calculators/spec-routes";
+import type { SpecRoute } from "@/lib/calculators/spec-route-types";
+import { buildSpecFactRows } from "@/lib/calculators/spec-fact-rows";
 
 type SpecProgrammaticPanelProps = {
   h2: string;
@@ -106,7 +104,7 @@ export default function SpecProgrammaticPanel({
       meta.slug === "flange-bolt-tightening-sequence"
     ) {
       const sequence = output.rows.find((row) => row.label === "Sequence");
-      if (sequence && sequence.value && sequence.value !== "—") {
+      if (sequence && sequence.value && sequence.value !== "\u2014") {
         rows.push({ label: "Sequence", value: sequence.value });
       }
     }
@@ -166,3 +164,5 @@ export default function SpecProgrammaticPanel({
     </section>
   );
 }
+
+

@@ -242,6 +242,24 @@ export function applyPlantContext<T extends Record<string, unknown>>(
       }
       return next as T;
     }
+    case "insulation-heat-loss": {
+      const next = { ...inputs } as T & {
+        nps: string;
+        operatingTemp: number;
+        unitSystem: string;
+      };
+      const nps = normalizeNps(ctx.size);
+      if (nps) next.nps = nps;
+      if (ctx.temperature) {
+        next.operatingTemp =
+          next.unitSystem === "imperial"
+            ? temperatureToF(ctx.temperature)
+            : temperatureToC(ctx.temperature);
+      }
+      return next as T;
+    }
+    case "tank-vessel-volume":
+      return inputs;
     case "pressure-drop":
     case "flow-velocity":
       return applySchedule(applyNps(inputs, ctx), ctx) as T;
@@ -404,6 +422,16 @@ export function extractPlantContext(
   }
 
   if (type === "thermal-expansion" && typeof inputs.operatingTemp === "number") {
+    ctx.temperature =
+      unitSystem === "imperial"
+        ? { value: Number(inputs.operatingTemp.toFixed(1)), unit: "F" }
+        : { value: Number(inputs.operatingTemp.toFixed(1)), unit: "C" };
+  }
+
+  if (
+    type === "insulation-heat-loss" &&
+    typeof inputs.operatingTemp === "number"
+  ) {
     ctx.temperature =
       unitSystem === "imperial"
         ? { value: Number(inputs.operatingTemp.toFixed(1)), unit: "F" }

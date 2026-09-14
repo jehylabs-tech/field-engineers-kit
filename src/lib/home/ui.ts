@@ -84,6 +84,10 @@ export const CATALOG_SEO_BLURBS: Record<string, string> = {
     "ASME B31.3 St/S stress ratio & yield limit check for 1.5× hydro / 1.1× pneumatic tests.",
   "thermal-expansion-loop":
     "ASME B31.3 thermal expansion ΔL = αLΔT, loop H/W, and F_anchor for CS, steam pipe, and CPVC.",
+  "insulation-heat-loss":
+    "ASTM C680 / ISO 12241 insulation heat loss Q, surface Ts, and C1055 60 °C personnel protection screening.",
+  "tank-vessel-volume":
+    "ASME VIII Div 1 head volumes and API 650 / ISO 7507 tank level–capacity screening with dipstick calibration.",
   "pressure-drop-friction":
     "Darcy–Weisbach / Haaland friction pressure drop for process pipe and fittings.",
   "flow-velocity-erosion":

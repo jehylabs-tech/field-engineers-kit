@@ -5354,6 +5354,547 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
     ],
   },
 
+  "insulation-heat-loss": {
+    slug: "insulation-heat-loss",
+    formulaTitle: "Core Formula & Variable Definitions",
+    formulaHtml:
+      '<p class="eng-eq"><i>Q</i> = (<i>T</i><sub>h</sub> − <i>T</i><sub>a</sub>) / <i>R</i><sub>tot</sub></p>' +
+      '<p class="eng-eq"><i>R</i><sub>tot</sub> = ln(<i>r</i><sub>2</sub>/<i>r</i><sub>1</sub>)/(2π<i>k</i>) + 1/(2π <i>r</i><sub>2</sub> <i>h</i><sub>o</sub>) &nbsp;·&nbsp; <i>h</i><sub>o</sub> = <i>h</i><sub>c</sub> + <i>h</i><sub>r</sub></p>' +
+      '<p class="eng-eq"><i>h</i><sub>c,nat</sub> = 1.32 ((<i>T</i><sub>s</sub> − <i>T</i><sub>a</sub>)/<i>d</i><sub>2</sub>)<sup>0.25</sup> &nbsp;·&nbsp; <i>h</i><sub>r</sub> = ε σ (<i>T</i><sub>s</sub><sup>4</sup> − <i>T</i><sub>a</sub><sup>4</sup>)/(<i>T</i><sub>s</sub> − <i>T</i><sub>a</sub>)</p>' +
+      '<p class="eng-plain">ASTM C680 / ISO 12241 radial screening · personnel T<sub>s</sub> ≤ 60 °C (ASTM C1055)</p>',
+    formulaLatex:
+      "Q=(T_h-T_a)/R_{tot},\\quad R_{tot}=\\ln(r_2/r_1)/(2\\pi k)+1/(2\\pi r_2 h_o),\\quad h_o=h_c+h_r",
+    formulaNotes:
+      "Pipe OD from ASME B36 schedule tables (getPipeScheduleSize). Insulation k(Tm) uses ASTM C533 / C547-style polynomials at mean insulation temperature. Outer film coefficient blends ASTM C680 natural convection with a mild outdoor wind term (Churchill cube-root) plus radiation with default jacket emissivity ε = 0.90. Iterative solve for Ts. Screening only — confirm manufacturer k(T), jacketing, and site wind.",
+    formulaBadges: [
+      { label: "Q", value: "(Th − Ta) / Rtot" },
+      { label: "Personnel", value: "Ts ≤ 60 °C (C1055)" },
+      { label: "ε default", value: "0.90" },
+      { label: "k(Tm)", value: "C533 / C547 polynomials" },
+    ],
+    variables: [
+      {
+        symbol: "Q",
+        name: "Heat Loss per Unit Length",
+        definition: "Radial heat loss through insulated pipe (W/m or Btu/hr·ft).",
+      },
+      {
+        symbol: "Ts",
+        name: "Outer Surface Temperature",
+        definition: "Jacket outer surface temperature solved iteratively (°C / °F).",
+      },
+      {
+        symbol: "R_ins",
+        name: "Insulation Resistance",
+        definition: "ln(r2/r1)/(2πk) — conduction resistance of the insulation layer.",
+      },
+      {
+        symbol: "R_conv",
+        name: "Surface Resistance",
+        definition: "1/(2π r2 ho) — outer convection + radiation film resistance.",
+      },
+      {
+        symbol: "ho",
+        name: "Combined Surface Coefficient",
+        definition: "hc + hr with natural/forced convection blend and radiative hr.",
+      },
+      {
+        symbol: "k",
+        name: "Thermal Conductivity",
+        definition: "Material k evaluated at mean insulation temperature Tm = (Th + Ts)/2.",
+      },
+    ],
+    standards: [
+      "ASTM C680 (Heat Gain/Loss — insulation thickness / surface temperature methods)",
+      "ISO 12241 (Thermal insulation for building equipment and industrial installations)",
+      "ASTM C533 / C547 / C552 / C591 (material conductivity families — screening polynomials)",
+      "ASTM C1055 (personnel protection — ~60 °C / 140 °F contact screening)",
+      "ASME B36.10M / B36.19M (pipe outside diameter for r1)",
+    ],
+    tableCaption:
+      "Insulation heat-loss screening (ε = 0.90) — engine-computed Ts and Q",
+    tableHeaders: [
+      "NPS",
+      "Material",
+      "Thickness",
+      "Th / Ta",
+      "Wind",
+      "Ts (°C)",
+      "Q (W/m)",
+      "Personnel",
+      "vs bare %",
+    ],
+    tableRows: [
+      [
+        "4",
+        "Mineral wool",
+        "50 mm",
+        "200 / 25 °C",
+        "2 m/s",
+        "34.5",
+        "78.3",
+        "Pass",
+        "94.5",
+      ],
+      [
+        "6",
+        "Calcium silicate",
+        "75 mm",
+        "350 / 25 °C",
+        "2 m/s",
+        "43.5",
+        "216.7",
+        "Pass",
+        "96.1",
+      ],
+      [
+        "3",
+        "Mineral wool",
+        "2.0 in",
+        "400 / 77 °F",
+        "4.5 mph",
+        "34.0 (93.2 °F)",
+        "67.0 (69.6 Btu/hr·ft)",
+        "Pass",
+        "94.4",
+      ],
+      [
+        "8",
+        "Cellular glass",
+        "3.0 in",
+        "500 / 77 °F",
+        "4.5 mph",
+        "36.6 (97.9 °F)",
+        "150.6 (156.6 Btu/hr·ft)",
+        "Pass",
+        "96.2",
+      ],
+      [
+        "8",
+        "Cellular glass",
+        "75 mm",
+        "150 / 20 °C",
+        "1 m/s",
+        "26.9",
+        "72.9",
+        "Pass",
+        "95.1",
+      ],
+      [
+        "2",
+        "Mineral wool",
+        "40 mm",
+        "200 / 25 °C",
+        "2 m/s",
+        "34.9",
+        "58.2",
+        "Pass",
+        "92.9",
+      ],
+      [
+        "10",
+        "Calcium silicate",
+        "100 mm",
+        "250 / 25 °C",
+        "2 m/s",
+        "35.0",
+        "157.3",
+        "Pass",
+        "96.5",
+      ],
+      [
+        "4",
+        "Polyurethane",
+        "40 mm",
+        "80 / 25 °C",
+        "1 m/s",
+        "27.7",
+        "16.3",
+        "Pass",
+        "94.3",
+      ],
+    ],
+    tableFootnote:
+      "Values from the FEK iterative solver with ε = 0.90 and mild Churchill natural/forced blend (hc,forced ≈ 2.2·v^0.6/d₂^0.4). Not certified ASTM C680 lab data — confirm manufacturer k(T) and jacket emissivity for design.",
+    allowancesAndTolerances: {
+      title: "Personnel Protection & Film Coefficients",
+      summary:
+        "Field screening uses ASTM C1055 contact guidance and ISO 12241 / C680-style film models.",
+      items: [
+        {
+          label: "Personnel limit",
+          value: "Ts ≤ 60 °C (140 °F)",
+          description:
+            "Pass/Fail badge follows ASTM C1055 ~5 s contact screening. Higher Ts requires thicker insulation or personnel guards.",
+        },
+        {
+          label: "Emissivity default",
+          value: "ε = 0.90",
+          description:
+            "Typical painted/metal jacket screening value. Shiny aluminum jackets may use lower ε — override in inputs.",
+        },
+        {
+          label: "Wind blend",
+          value: "hc = (hc,nat³ + hc,forced³)^(1/3)",
+          description:
+            "Natural cylinder convection blended with a mild outdoor forced term so light wind does not erase the ASTM C680 natural formula; still-air cases remain natural-dominated.",
+        },
+      ],
+    },
+    materialLimitations: {
+      title: "Insulation Material Service Limits",
+      summary:
+        "k(Tm) polynomials are screening approximations of published mean curves — not mill certificates.",
+      items: [
+        {
+          label: "Mineral wool (C547)",
+          value: "Hot service workhorse",
+          description:
+            "Common for process and steam lines; confirm binder and jacket for elevated Th.",
+        },
+        {
+          label: "Calcium silicate (C533)",
+          value: "High-temperature blocks",
+          description:
+            "Higher k than mineral wool; often selected for hotter pipes and fire resistance.",
+        },
+        {
+          label: "Cellular glass (C552)",
+          value: "Closed-cell / cryogenic & hot",
+          description:
+            "Moisture impermeable screening option; confirm compressive strength for supports.",
+        },
+        {
+          label: "Polyurethane (C591)",
+          value: "~120 °C continuous caution",
+          description:
+            "App warns above ~120 °C continuous service — confirm manufacturer rating.",
+        },
+      ],
+    },
+    workedExample: {
+      title: "Worked Example — NPS 4 · 50 mm Mineral Wool · 200 °C",
+      summary:
+        "Default metric duty: NPS 4, 50 mm mineral wool, Th = 200 °C, Ta = 25 °C, wind = 2 m/s, ε = 0.90.",
+      steps: [
+        "Look up B36 OD for NPS 4 (114.3 mm) → r1 = OD/2.",
+        "Set r2 = r1 + 50 mm insulation; evaluate k at Tm = (Th + Ts)/2 with mineral-wool polynomial.",
+        "Iterate Ts until Q = (Th − Ta)/Rtot matches Q = 2π r2 ho (Ts − Ta), with mild Churchill wind blend.",
+        "Result: Ts ≈ 34.5 °C (Pass vs 60 °C) and Q ≈ 78.3 W/m — ~94.5% savings vs bare pipe under the same film model.",
+      ],
+    },
+    ...howTo("How to screen piping insulation heat loss", [
+      {
+        name: "1. Select NPS and insulation thickness",
+        text: "Choose pipe NPS (B36 OD) and insulation thickness in mm or inches. Presets seed common mineral-wool / calcium-silicate / cellular-glass duties.",
+      },
+      {
+        name: "2. Enter Th, Ta, wind, and emissivity",
+        text: "Operating and ambient temperatures drive ΔT. Wind increases forced convection; ε defaults to 0.90 for painted jackets.",
+      },
+      {
+        name: "3. Pick insulation material",
+        text: "Material selects the k(Tm) polynomial (mineral wool, calcium silicate, cellular glass, or polyurethane).",
+      },
+      {
+        name: "4. Read Ts Pass/Fail and Q",
+        text: "Hero shows outer surface temperature with ASTM C1055 personnel Pass/Fail. Summary lists insulated Q, bare Q, and savings %.",
+      },
+      {
+        name: "5. Review resistances and energy",
+        text: "Detail rows report R_ins, R_conv, hc/hr, and annual kWh/m·yr for screening energy comparisons — not a contractual heat-loss report.",
+      },
+    ]),
+    faq: [
+      {
+        question: "What surface temperature limit is used for personnel protection?",
+        answer:
+          "ASTM **C1055** screening uses **Ts ≤ 60 °C (140 °F)** for brief (~5 s) contact. Higher Ts is flagged **Fail** — increase thickness or add personnel guards.",
+      },
+      {
+        question: "Why don't results match a low-ε still-air hand calc?",
+        answer:
+          "This app defaults to **ε = 0.90** and blends **natural + mild forced** convection with site wind. Lower emissivity or still air raises Ts and changes Q — adjust ε and wind to match the duty.",
+      },
+      {
+        question: "Does this replace a certified ASTM C680 report?",
+        answer:
+          "**No.** It is a field screening solver with app **k(T)** polynomials. Confirm jacket emissivity, wind turbulence, and manufacturer conductivity curves for design or contractual work.",
+      },
+      {
+        question: "How is bare-pipe savings calculated?",
+        answer:
+          "Bare Q uses the same film model on the bare OD at Th. Savings % = (Q_bare − Q_insulated) / Q_bare × 100 under identical Ta, wind, and ε assumptions.",
+      },
+    ],
+  },
+
+  "tank-vessel-volume": {
+    slug: "tank-vessel-volume",
+    formulaTitle: "Core Formula & Variable Definitions",
+    formulaHtml:
+      '<p class="eng-eq"><i>V</i><sub>shell</sub> = π <i>r</i><sup>2</sup> <i>L</i> &nbsp;·&nbsp; <i>V</i><sub>total</sub> = <i>V</i><sub>shell</sub> + 2 <i>V</i><sub>head</sub></p>' +
+      '<p class="eng-eq">2:1 SE: <i>V</i><sub>head</sub> = π/24 · <i>D</i><sub>i</sub><sup>3</sup> &nbsp;·&nbsp; Hemi: π/6 · <i>D</i><sub>i</sub><sup>3</sup> &nbsp;·&nbsp; F&amp;D/Klöpper ≈ 0.084766 · <i>D</i><sub>i</sub><sup>3</sup></p>' +
+      '<p class="eng-eq">Horizontal shell liquid: <i>L</i> · (<i>r</i><sup>2</sup> acos((<i>r</i>−<i>h</i>)/<i>r</i>) − (<i>r</i>−<i>h</i>) √(2<i>r</i><i>h</i>−<i>h</i><sup>2</sup>))</p>' +
+      '<p class="eng-plain">ASME VIII Div 1 head geometry · API 650 / ISO 7507 level–capacity screening</p>',
+    formulaLatex:
+      "V_{shell}=\\pi r^2 L,\\quad V_{total}=V_{shell}+2V_{head},\\quad V_{head,2:1}=\\pi D_i^3/24",
+    formulaNotes:
+      "Inside diameter Di and shell straight length L. Head volumes follow ASME VIII Div 1 screening (flat = 0; 2:1 SE; hemi; torispherical Klöpper / ASME F&D coefficient 0.084766). Horizontal partial fill uses circular segment on the shell plus head liquid ≈ 2·V_head·(segment area / πr²). Vertical fill stacks bottom-head cap, cylindrical shell, and top-head cap. Volumes reported in m³ / L / US gal / oil bbl. Screening only — no internals.",
+    formulaBadges: [
+      { label: "2:1 SE", value: "π/24 · Di³" },
+      { label: "Hemi", value: "π/6 · Di³" },
+      { label: "F&D", value: "≈0.084766 · Di³" },
+      { label: "1 m³", value: "264.172 US gal" },
+    ],
+    variables: [
+      {
+        symbol: "Di",
+        name: "Inside Diameter",
+        definition: "Vessel inside diameter used for shell and head geometry (mm / in).",
+      },
+      {
+        symbol: "L",
+        name: "Shell Straight Length",
+        definition: "Cylindrical shell length between head tangent lines (mm / in).",
+      },
+      {
+        symbol: "h",
+        name: "Liquid Level",
+        definition:
+          "Liquid height from vessel bottom. Horizontal: across diameter. Vertical: through bottom head + shell + top head.",
+      },
+      {
+        symbol: "V_head",
+        name: "One-Head Full Volume",
+        definition:
+          "ASME VIII Div 1 screening volume for one head (flat / 2:1 SE / hemi / F&D).",
+      },
+      {
+        symbol: "V_liq",
+        name: "Partial Liquid Volume",
+        definition: "Screening liquid volume at level h (m³, L, US gal, bbl).",
+      },
+      {
+        symbol: "Fill %",
+        name: "Percent of Total Capacity",
+        definition: "100 · V_liq / V_total with V_total = V_shell + 2·V_head.",
+      },
+    ],
+    standards: [
+      "ASME BPVC Section VIII Division 1 (head geometry / volume screening)",
+      "API 650 (Welded Tanks for Oil Storage — level–capacity practice)",
+      "ISO 7507 (Petroleum and liquid petroleum products — tank calibration)",
+    ],
+    tableCaption:
+      "Tank & vessel volume screening — engine-computed liquid volume and fill %",
+    tableHeaders: [
+      "Orientation",
+      "Heads",
+      "Di",
+      "L",
+      "h",
+      "V_liq",
+      "Fill %",
+      "V_total",
+    ],
+    tableRows: [
+      [
+        "Horizontal",
+        "2:1 SE",
+        "2000 mm",
+        "6000 mm",
+        "1200 mm",
+        "13.12 m³ (3466 gal)",
+        "62.6",
+        "20.94 m³",
+      ],
+      [
+        "Vertical",
+        "Hemi",
+        "3000 mm",
+        "8000 mm",
+        "5000 mm",
+        "38.88 m³ (10270 gal)",
+        "45.8",
+        "84.82 m³",
+      ],
+      [
+        "Horizontal",
+        "Flat",
+        "96 in",
+        "240 in",
+        "48 in",
+        "3760 US gal (14.23 m³)",
+        "50.0",
+        "28.47 m³",
+      ],
+      [
+        "Vertical",
+        "2:1 SE",
+        "120 in",
+        "360 in",
+        "200 in",
+        "9302 US gal (35.21 m³)",
+        "47.5",
+        "74.13 m³",
+      ],
+      [
+        "Horizontal",
+        "Hemi",
+        "1500 mm",
+        "4000 mm",
+        "750 mm",
+        "5.30 m³",
+        "50.0",
+        "10.60 m³",
+      ],
+      [
+        "Vertical",
+        "F&D / Klöpper",
+        "2500 mm",
+        "5000 mm",
+        "3000 mm",
+        "13.98 m³",
+        "51.4",
+        "27.19 m³",
+      ],
+      [
+        "Horizontal",
+        "2:1 SE",
+        "72 in",
+        "180 in",
+        "36 in",
+        "1798 US gal",
+        "50.0",
+        "13.61 m³",
+      ],
+      [
+        "Vertical",
+        "Flat",
+        "96 in",
+        "300 in",
+        "120 in",
+        "3760 US gal",
+        "40.0",
+        "35.58 m³",
+      ],
+    ],
+    tableFootnote:
+      "All rows are engine-computed from the FEK tank-vessel-volume solver (ASME VIII Div 1 head coefficients + circular-segment / vertical-cap screening). Not a certified API 650 / ISO 7507 strapping table — no internals.",
+    allowancesAndTolerances: {
+      title: "Screening Limits & Geometry Notes",
+      summary:
+        "Field screening geometry for level–capacity. Confirm stamped head drawings and certified strapping for design or custody transfer.",
+      items: [
+        {
+          label: "F&D head coefficient",
+          value: "V ≈ 0.084766 · Di³",
+          description:
+            "Common ASME F&D / Klöpper approximation with R=Di and r_knuckle=0.06·Di; head depth ≈ 0.169·Di.",
+        },
+        {
+          label: "Horizontal heads",
+          value: "Area-fraction method",
+          description:
+            "Non-flat head liquid ≈ 2·V_head·f with f = circular segment area / (π r²) at the same liquid height.",
+        },
+        {
+          label: "Volume units",
+          value: "1 m³ = 264.172052 US gal = 6.28981 bbl",
+          description: "Oil barrel based on 42 US gal. Liter = 1000 L/m³.",
+        },
+      ],
+    },
+    materialLimitations: {
+      title: "Fluid Density Presets",
+      summary:
+        "Mass = V_liq · ρ. Presets are screening densities at ambient — override with custom ρ for process fluids.",
+      items: [
+        {
+          label: "Water",
+          value: "998 kg/m³",
+          description: "Default ambient water density for mass screening.",
+        },
+        {
+          label: "Diesel / crude",
+          value: "850 / 870 kg/m³",
+          description: "Typical ambient screening densities — confirm assay.",
+        },
+        {
+          label: "H₂SO₄ (conc.)",
+          value: "1830 kg/m³",
+          description: "Concentrated sulfuric acid screening density.",
+        },
+      ],
+    },
+    workedExample: {
+      title: "Worked Example — Horizontal 2:1 SE · Di 2000 mm · L 6000 mm · h 1200 mm",
+      summary:
+        "Default metric duty: horizontal vessel, 2:1 ellipsoidal heads, water.",
+      steps: [
+        "Compute V_head = π/24·Di³ and V_shell = π r² L → V_total = V_shell + 2 V_head ≈ 20.94 m³.",
+        "Shell liquid from circular segment at h = 1200 mm; heads ≈ 2·V_head·f with f = A_segment/(π r²).",
+        "Result: V_liq ≈ 13.12 m³ (3466 US gal) and fill ≈ 62.6% of total capacity.",
+        "Dipstick table steps 0→Di for field strapping screening — exclude internals.",
+      ],
+    },
+    ...howTo("How to calculate tank & vessel volume", [
+      {
+        name: "1. Choose orientation and head type",
+        text: "Select horizontal or vertical and ASME head style (flat, 2:1 SE, F&D/Klöpper, or hemispherical).",
+      },
+      {
+        name: "2. Enter Di, L, and liquid level h",
+        text: "Inside diameter and shell straight length in mm or inches. Liquid level is measured from the vessel bottom.",
+      },
+      {
+        name: "3. Select fluid density",
+        text: "Use water/diesel/crude/H₂SO₄ presets or enter custom kg/m³ for liquid mass.",
+      },
+      {
+        name: "4. Read partial volume and fill %",
+        text: "Hero shows multi-unit liquid volume (m³ · L · US gal · bbl) and fill percent of total capacity.",
+      },
+      {
+        name: "5. Use the dipstick calibration chart",
+        text: "After-hero table lists screening volumes vs dip. Click a row to set h — not for custody transfer.",
+      },
+    ]),
+    faq: [
+      {
+        question: "Which head volumes does this calculator use?",
+        answer:
+          "ASME **VIII Div 1** screening: **flat = 0**; **2:1 ellipsoidal = π/24·Di³**; **hemispherical = π/6·Di³**; **torispherical Klöpper / ASME F&D ≈ 0.084766·Di³** (R=Di, r_k=0.06·Di). Head depth: 2:1 SE = 0.25·Di; hemi = 0.5·Di; F&D ≈ 0.169·Di.",
+      },
+      {
+        question: "Is the dipstick table suitable for custody transfer?",
+        answer:
+          "**No.** It is a geometric screening chart with **no internals**. Use **API 650 / ISO 7507** certified strapping after fabrication for custody transfer.",
+      },
+      {
+        question: "How is horizontal partial fill computed?",
+        answer:
+          "Shell liquid uses the circular **segment** formula. Non-flat heads use **2·V_head·f** where **f** is the filled-area fraction of the circular cross-section at height h.",
+      },
+      {
+        question: "How is vertical partial fill computed?",
+        answer:
+          "Liquid stacks from the **bottom head** (cap formula) through the **cylindrical shell**, then into the **top head**. Level h is measured from the vessel bottom; max height is **2·headDepth + L**.",
+      },
+      {
+        question: "Does V_total include both heads on a vertical tank?",
+        answer:
+          "**Yes.** **V_total = V_shell + 2·V_head** for both orientations. Fill % is liquid volume divided by that total capacity — so vertical hemi tanks often show lower fill % than shell-only rules of thumb.",
+      },
+      {
+        question: "What volume units are reported?",
+        answer:
+          "Primary display follows metric/imperial preference (**m³** or **US gal**), with liters and oil barrels (**42 US gal**) in badges. Conversion: **1 m³ = 1000 L = 264.172052 US gal = 6.28981 bbl**.",
+      },
+    ],
+  },
+
 };
 
 export function getCalculatorSeo(slug: string): CalculatorSeoEntry | undefined {

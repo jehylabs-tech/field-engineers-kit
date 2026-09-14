@@ -114,6 +114,17 @@ import {
   thermalExpansionDeltaLMm,
 } from "@/lib/calculators/engines/thermal-expansion";
 import {
+  calculateInsulationHeatLoss,
+  computeInsulationHeatLoss,
+  DEFAULT_INSULATION_HEAT_LOSS_INPUTS,
+} from "@/lib/calculators/engines/insulation-heat-loss";
+import {
+  calculateTankVesselVolume,
+  computeTankVesselVolume,
+  DEFAULT_TANK_VESSEL_VOLUME_INPUTS,
+  M3_TO_US_GAL,
+} from "@/lib/calculators/engines/tank-vessel-volume";
+import {
   calculateUnitConverter,
 } from "@/lib/calculators/engines/unit-converter";
 import { gasCvUs, liquidCvUs, calculateValveCv } from "@/lib/calculators/engines/valve-cv";
@@ -2768,5 +2779,197 @@ describe("bolt-wrench-lookup", () => {
     expect(
       listSpecRoutesForSlug("flange-bolt-wrench-size-lookup").length,
     ).toBeGreaterThan(10);
+  });
+});
+
+describe("insulation-heat-loss", () => {
+  it("defaults to finite Ts, Q>0, and personnel Pass", () => {
+    const c = computeInsulationHeatLoss(DEFAULT_INSULATION_HEAT_LOSS_INPUTS);
+    expect(Number.isFinite(c.tsC)).toBe(true);
+    expect(c.tsC).toBeGreaterThan(DEFAULT_INSULATION_HEAT_LOSS_INPUTS.ambientTemp);
+    expect(c.tsC).toBeLessThan(
+      DEFAULT_INSULATION_HEAT_LOSS_INPUTS.operatingTemp,
+    );
+    expect(c.qWm).toBeGreaterThan(0);
+    expect(c.personnelPass).toBe(true);
+    expect(c.tsC).toBeLessThanOrEqual(60);
+    const out = calculateInsulationHeatLoss(DEFAULT_INSULATION_HEAT_LOSS_INPUTS);
+    expect(out.heroLabel).toMatch(/surface temperature/i);
+    expect(out.heroStatusLevel).toBe("pass");
+    expectNoPoison(out);
+  });
+
+  it("raises Ts when thickness decreases and keeps Q_insulated < Q_bare", () => {
+    const base = computeInsulationHeatLoss(DEFAULT_INSULATION_HEAT_LOSS_INPUTS);
+    const thin = computeInsulationHeatLoss({
+      ...DEFAULT_INSULATION_HEAT_LOSS_INPUTS,
+      insulationThickness: 25,
+    });
+    expect(thin.tsC).toBeGreaterThan(base.tsC);
+    expect(base.qWm).toBeLessThan(base.qBareWm);
+    expect(thin.qWm).toBeLessThan(thin.qBareWm);
+    expect(base.savingsPct).toBeGreaterThan(50);
+  });
+
+  it("resolves metric and imperial pSEO paths and findSpecRouteForInputs", () => {
+    expect(
+      resolveSpecRoute("insulation-heat-loss", "4inch-mineral-wool-50mm")
+        ?.query,
+    ).toMatchObject({
+      units: "metric",
+      nps: "4",
+      material: "mineral-wool",
+      insulationThickness: "50",
+    });
+    expect(
+      resolveSpecRoute(
+        "insulation-heat-loss",
+        "6inch-calcium-silicate-75mm",
+      )?.query,
+    ).toMatchObject({
+      units: "metric",
+      nps: "6",
+      material: "calcium-silicate",
+      insulationThickness: "75",
+    });
+    expect(
+      resolveSpecRoute("insulation-heat-loss", "3inch-mineral-wool-2in")
+        ?.query,
+    ).toMatchObject({
+      units: "imperial",
+      nps: "3",
+      material: "mineral-wool",
+      insulationThickness: "2",
+    });
+    expect(
+      resolveSpecRoute("insulation-heat-loss", "8inch-cellular-glass-3in")
+        ?.query,
+    ).toMatchObject({
+      units: "imperial",
+      nps: "8",
+      material: "cellular-glass",
+      insulationThickness: "3",
+    });
+    expect(
+      findSpecRouteForInputs("insulation-heat-loss", {
+        units: "metric",
+        nps: "4",
+        material: "mineral-wool",
+        insulationThickness: "50",
+      })?.spec,
+    ).toBe("4inch-mineral-wool-50mm");
+    expect(
+      findSpecRouteForInputs("insulation-heat-loss", {
+        units: "imperial",
+        nps: "8",
+        material: "cellular-glass",
+        insulationThickness: 3,
+      })?.spec,
+    ).toBe("8inch-cellular-glass-3in");
+  });
+});
+
+describe("tank-vessel-volume", () => {
+  it("defaults to finite liquid volume and fill between 0-100", () => {
+    const c = computeTankVesselVolume(DEFAULT_TANK_VESSEL_VOLUME_INPUTS);
+    expect(Number.isFinite(c.vLiquidM3)).toBe(true);
+    expect(c.vLiquidM3).toBeGreaterThan(0);
+    expect(c.fillPct).toBeGreaterThan(0);
+    expect(c.fillPct).toBeLessThanOrEqual(100);
+    expect(c.vTotalM3).toBeGreaterThan(c.vLiquidM3);
+    const out = calculateTankVesselVolume(DEFAULT_TANK_VESSEL_VOLUME_INPUTS);
+    expect(out.heroLabel).toMatch(/liquid volume/i);
+    expectNoPoison(out);
+  });
+
+  it("horizontal flat half-full is ~50% fill", () => {
+    const c = computeTankVesselVolume({
+      unitSystem: "imperial",
+      orientation: "horizontal",
+      headType: "flat",
+      diameter: 96,
+      length: 240,
+      liquidLevel: 48,
+      fluid: "water",
+      densityKgM3: 998,
+    });
+    expect(c.fillPct).toBeGreaterThan(49);
+    expect(c.fillPct).toBeLessThan(51);
+    expect(c.vLiquidM3 * M3_TO_US_GAL).toBeGreaterThan(3700);
+    expect(c.vLiquidM3 * M3_TO_US_GAL).toBeLessThan(3800);
+  });
+
+  it("resolves the four required pSEO specs", () => {
+    expect(
+      resolveSpecRoute(
+        "tank-vessel-volume",
+        "horizontal-2inch1-ellipsoidal-2000mm-6000mm",
+      )?.query,
+    ).toMatchObject({
+      units: "metric",
+      orientation: "horizontal",
+      headType: "2to1-ellipsoidal",
+      diameter: "2000",
+      length: "6000",
+      liquidLevel: "1200",
+    });
+    expect(
+      resolveSpecRoute(
+        "tank-vessel-volume",
+        "vertical-hemispherical-3000mm-8000mm",
+      )?.query,
+    ).toMatchObject({
+      units: "metric",
+      orientation: "vertical",
+      headType: "hemispherical",
+      diameter: "3000",
+      length: "8000",
+    });
+    expect(
+      resolveSpecRoute("tank-vessel-volume", "horizontal-flat-96in-240in")
+        ?.query,
+    ).toMatchObject({
+      units: "imperial",
+      orientation: "horizontal",
+      headType: "flat",
+      diameter: "96",
+      length: "240",
+    });
+    expect(
+      resolveSpecRoute(
+        "tank-vessel-volume",
+        "vertical-2inch1-ellipsoidal-120in-360in",
+      )?.query,
+    ).toMatchObject({
+      units: "imperial",
+      orientation: "vertical",
+      headType: "2to1-ellipsoidal",
+      diameter: "120",
+      length: "360",
+    });
+    expect(
+      findSpecRouteForInputs("tank-vessel-volume", {
+        units: "metric",
+        orientation: "horizontal",
+        headType: "2to1-ellipsoidal",
+        diameter: "2000",
+        length: "6000",
+      })?.spec,
+    ).toBe("horizontal-2inch1-ellipsoidal-2000mm-6000mm");
+  });
+
+  it("keeps fill% between 0 and 100 for empty and full", () => {
+    const empty = computeTankVesselVolume({
+      ...DEFAULT_TANK_VESSEL_VOLUME_INPUTS,
+      liquidLevel: 0,
+    });
+    const full = computeTankVesselVolume({
+      ...DEFAULT_TANK_VESSEL_VOLUME_INPUTS,
+      liquidLevel: 2000,
+    });
+    expect(empty.fillPct).toBe(0);
+    expect(empty.vLiquidM3).toBe(0);
+    expect(full.fillPct).toBeGreaterThan(99);
+    expect(full.fillPct).toBeLessThanOrEqual(100);
   });
 });

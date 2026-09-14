@@ -748,5 +748,107 @@
     },
     "is_published": true,
     "created_at": "2026-09-14T00:00:00.000Z"
+  },
+  {
+    "id": "local-insulation-heat-loss",
+    "category": "piping",
+    "title": "Piping Insulation Thickness & Heat Loss Calculator",
+    "slug": "insulation-heat-loss",
+    "meta_description": "ASTM C680 / ISO 12241 piping insulation heat loss Q, surface temperature Ts, and ASTM C1055 60 °C personnel protection screening for mineral wool, calcium silicate, and cellular glass.",
+    "formula_json": {
+      "type": "insulation-heat-loss",
+      "standard": "ASTM C680 · ISO 12241 · C1055",
+      "formulaLatex": "Q = (T_h - T_a)/R_{tot},\\quad R_{tot} = \\ln(r_2/r_1)/(2\\pi k) + 1/(2\\pi r_2 h_o)",
+      "formulaBasis": "Steady radial conduction through insulation plus outer surface convection/radiation. Q = (Th − Ta)/Rtot with Rtot = ln(r2/r1)/(2πk) + 1/(2π r2 ho). ho = hc + hr; hc blends natural (1.32((Ts−Ta)/d2)^0.25) and forced wind; hr = ε σ (Ts⁴ − Ta⁴)/(Ts − Ta). k(Tm) from ASTM C533/C547-style polynomials. Personnel Pass when Ts ≤ 60 °C (ASTM C1055). Screening only — confirm jacket emissivity and manufacturer k(T).",
+      "related": [
+        {
+          "slug": "thermal-expansion-loop",
+          "title": "Thermal Expansion & Anchor",
+          "carry": "Same NPS / T"
+        },
+        {
+          "slug": "pipe-schedule-dimension",
+          "title": "Pipe Schedule",
+          "carry": "Same NPS → OD"
+        },
+        {
+          "slug": "metal-weight-cost",
+          "title": "Pipe Metal Weight",
+          "carry": "Same NPS"
+        },
+        {
+          "slug": "hydro-test-pressure",
+          "title": "Hydro Test Pressure",
+          "carry": "Same NPS / T"
+        }
+      ],
+      "faq": [
+        {
+          "q": "What surface temperature limit is used for personnel protection?",
+          "a": "ASTM C1055 screening uses Ts ≤ 60 °C (140 °F) for brief (~5 s) contact. Higher Ts is flagged Fail — increase thickness or add guards."
+        },
+        {
+          "q": "Does this replace a certified ASTM C680 report?",
+          "a": "No. It is a field screening solver with app k(T) polynomials and a Churchill-style natural/forced convection blend. Confirm jacket ε, wind, and manufacturer conductivity curves for contractual work."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-14T12:00:00.000Z"
+  },
+  {
+    "id": "local-tank-vessel-volume",
+    "category": "mechanical",
+    "title": "Tank & Pressure Vessel Volume Calculator",
+    "slug": "tank-vessel-volume",
+    "meta_description": "ASME VIII Div 1 head volumes and API 650 / ISO 7507 tank level–capacity screening for horizontal and vertical vessels — partial liquid volume, fill %, ullage, and dipstick calibration.",
+    "formula_json": {
+      "type": "tank-vessel-volume",
+      "standard": "ASME VIII Div 1 · API 650 · ISO 7507",
+      "formulaLatex": "V_{shell}=\\pi r^2 L,\\quad V_{total}=V_{shell}+2V_{head},\\quad V_{liq}=f(h,Di,L,\\text{heads})",
+      "formulaBasis": "Shell volume π r² L plus two ASME VIII Div 1 heads (flat, 2:1 SE π/24 Di³, hemi π/6 Di³, F&D/Klöpper ≈0.084766 Di³). Horizontal partial fill uses circular segment + head area-fraction strapping. Vertical fill stacks bottom head cap, cylindrical shell, and top head. Screening only — no internals; confirm certified strapping for custody transfer.",
+      "related": [
+        {
+          "slug": "hydro-test-pressure",
+          "title": "Hydro Test Pressure",
+          "carry": "Same duty"
+        },
+        {
+          "slug": "metal-weight-cost",
+          "title": "Pipe Metal Weight",
+          "carry": "Shell MTO"
+        },
+        {
+          "slug": "insulation-heat-loss",
+          "title": "Insulation Heat Loss",
+          "carry": "Vessel OD"
+        },
+        {
+          "slug": "pipe-schedule-dimension",
+          "title": "Pipe Schedule",
+          "carry": "Nozzle NPS"
+        }
+      ],
+      "faq": [
+        {
+          "q": "Which head volumes does this calculator use?",
+          "a": "ASME VIII Div 1 screening: flat = 0; 2:1 ellipsoidal = π/24·Di³; hemispherical = π/6·Di³; torispherical Klöpper / ASME F&D ≈ 0.084766·Di³ (R=Di, r_k=0.06·Di). Head depth: 2:1 SE = 0.25·Di; hemi = 0.5·Di; F&D ≈ 0.169·Di."
+        },
+        {
+          "q": "Is the dipstick table suitable for custody transfer?",
+          "a": "No. It is a geometric screening chart with no internals. Use API 650 / ISO 7507 certified strapping after fabrication for custody transfer."
+        },
+        {
+          "q": "How is vertical partial fill computed?",
+          "a": "Liquid stacks from the bottom head (cap formula) through the cylindrical shell, then into the top head. Level h is from the vessel bottom; max height is 2·headDepth + L."
+        },
+        {
+          "q": "Does V_total include both heads?",
+          "a": "Yes. V_total = V_shell + 2·V_head for both orientations. Fill % = V_liq / V_total — vertical hemi tanks often show lower fill % than shell-only rules of thumb."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-14T12:00:00.000Z"
   }
 ]

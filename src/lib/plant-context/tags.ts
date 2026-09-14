@@ -34,6 +34,8 @@ export const CALCULATOR_TYPE_SLUG: Record<CalculatorType, string> = {
   "pump-mcsf": "pump-mcsf-thermal-protection",
   "multi-pump": "multiple-pump-parallel-series",
   "bolt-wrench-lookup": "flange-bolt-wrench-size-lookup",
+  "insulation-heat-loss": "insulation-heat-loss",
+  "tank-vessel-volume": "tank-vessel-volume",
 };
 
 export const SLUG_TO_CALCULATOR_TYPE: Record<string, CalculatorType> =
@@ -152,6 +154,14 @@ export const CALCULATOR_PLANT_TAGS: Record<CalculatorType, CalculatorPlantTags> 
     "bolt-wrench-lookup": {
       consumes: ["size", "class_rating"],
       produces: ["size", "class_rating"],
+    },
+    "insulation-heat-loss": {
+      consumes: ["size", "temperature"],
+      produces: ["size", "temperature"],
+    },
+    "tank-vessel-volume": {
+      consumes: [],
+      produces: [],
     },
   };
 

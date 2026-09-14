@@ -80,6 +80,14 @@ const CALCULATOR_VIEWS: Record<
     () => import("./calculators/BoltWrenchLookupCalculator"),
     { loading: loadingFallback },
   ),
+  "insulation-heat-loss": dynamic(
+    () => import("./calculators/InsulationHeatLossCalculator"),
+    { loading: loadingFallback },
+  ),
+  "tank-vessel-volume": dynamic(
+    () => import("./calculators/TankVesselVolumeCalculator"),
+    { loading: loadingFallback },
+  ),
   "pipe-schedule": dynamic(() => import("./calculators/PipeScheduleCalculator"), {
     loading: loadingFallback,
   }),
