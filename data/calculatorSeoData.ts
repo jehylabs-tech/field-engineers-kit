@@ -5547,41 +5547,74 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
         "k(Tm) polynomials are screening approximations of published mean curves — not mill certificates.",
       items: [
         {
-          label: "Mineral wool (C547)",
-          value: "Hot service workhorse",
-          description:
+          materialGroup: "Mineral wool (ASTM C547)",
+          temperatureLimit: "Hot process / steam screening",
+          notes:
             "Common for process and steam lines; confirm binder and jacket for elevated Th.",
         },
         {
-          label: "Calcium silicate (C533)",
-          value: "High-temperature blocks",
-          description:
+          materialGroup: "Calcium silicate (ASTM C533)",
+          temperatureLimit: "High-temperature blocks",
+          notes:
             "Higher k than mineral wool; often selected for hotter pipes and fire resistance.",
         },
         {
-          label: "Cellular glass (C552)",
-          value: "Closed-cell / cryogenic & hot",
-          description:
+          materialGroup: "Cellular glass (ASTM C552)",
+          temperatureLimit: "Closed-cell / cryogenic & hot",
+          notes:
             "Moisture impermeable screening option; confirm compressive strength for supports.",
         },
         {
-          label: "Polyurethane (C591)",
-          value: "~120 °C continuous caution",
-          description:
+          materialGroup: "Polyurethane (ASTM C591)",
+          temperatureLimit: "~120 °C continuous caution",
+          notes:
             "App warns above ~120 °C continuous service — confirm manufacturer rating.",
         },
       ],
     },
     workedExample: {
       title: "Worked Example — NPS 4 · 50 mm Mineral Wool · 200 °C",
-      summary:
+      scenario:
         "Default metric duty: NPS 4, 50 mm mineral wool, Th = 200 °C, Ta = 25 °C, wind = 2 m/s, ε = 0.90.",
-      steps: [
-        "Look up B36 OD for NPS 4 (114.3 mm) → r1 = OD/2.",
-        "Set r2 = r1 + 50 mm insulation; evaluate k at Tm = (Th + Ts)/2 with mineral-wool polynomial.",
-        "Iterate Ts until Q = (Th − Ta)/Rtot matches Q = 2π r2 ho (Ts − Ta), with mild Churchill wind blend.",
-        "Result: Ts ≈ 34.5 °C (Pass vs 60 °C) and Q ≈ 78.3 W/m — ~94.5% savings vs bare pipe under the same film model.",
+      designConditions: [
+        { label: "NPS / OD", value: "NPS 4 · B36 OD 114.3 mm" },
+        { label: "Insulation", value: "50 mm mineral wool" },
+        { label: "Th / Ta", value: "200 °C / 25 °C" },
+        { label: "Wind / ε", value: "2 m/s · ε = 0.90" },
       ],
+      steps: [
+        {
+          step: "Step 1",
+          name: "Resolve pipe outer radius",
+          calculation:
+            "Look up B36 OD for NPS 4 (114.3 mm) → r1 = OD/2 = 57.15 mm.",
+          result: "r1 = 57.15 mm",
+        },
+        {
+          step: "Step 2",
+          name: "Set insulation outer radius and k(Tm)",
+          calculation:
+            "r2 = r1 + 50 mm; evaluate mineral-wool k at Tm = (Th + Ts)/2 during iteration.",
+          result: "r2 = 107.15 mm",
+        },
+        {
+          step: "Step 3",
+          name: "Iterate jacket surface temperature Ts",
+          formula: "Q=(T_h-T_a)/R_{tot}=2\\pi r_2 h_o (T_s-T_a)",
+          calculation:
+            "Iterate Ts until conduction and outer film balances match, with mild Churchill natural/forced wind blend.",
+          result: "Ts ≈ 34.5 °C · Q ≈ 78.3 W/m",
+        },
+        {
+          step: "Step 4",
+          name: "Check personnel protection and savings",
+          calculation:
+            "Compare Ts to ASTM C1055 ~60 °C contact limit and compute heat-loss savings vs bare pipe under the same film model.",
+          result: "Pass vs 60 °C · ~94.5% savings vs bare",
+        },
+      ],
+      conclusion:
+        "Screening result: Ts ≈ 34.5 °C (Pass) and Q ≈ 78.3 W/m for the default mineral-wool duty.",
     },
     ...howTo("How to screen piping insulation heat loss", [
       {
@@ -5812,32 +5845,64 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
         "Mass = V_liq · ρ. Presets are screening densities at ambient — override with custom ρ for process fluids.",
       items: [
         {
-          label: "Water",
-          value: "998 kg/m³",
-          description: "Default ambient water density for mass screening.",
+          materialGroup: "Water",
+          stressLimit: "998 kg/m³",
+          notes: "Default ambient water density for mass screening.",
         },
         {
-          label: "Diesel / crude",
-          value: "850 / 870 kg/m³",
-          description: "Typical ambient screening densities — confirm assay.",
+          materialGroup: "Diesel / crude oil",
+          stressLimit: "850 / 870 kg/m³",
+          notes: "Typical ambient screening densities — confirm assay.",
         },
         {
-          label: "H₂SO₄ (conc.)",
-          value: "1830 kg/m³",
-          description: "Concentrated sulfuric acid screening density.",
+          materialGroup: "H₂SO₄ (concentrated)",
+          stressLimit: "1830 kg/m³",
+          notes: "Concentrated sulfuric acid screening density.",
         },
       ],
     },
     workedExample: {
       title: "Worked Example — Horizontal 2:1 SE · Di 2000 mm · L 6000 mm · h 1200 mm",
-      summary:
-        "Default metric duty: horizontal vessel, 2:1 ellipsoidal heads, water.",
-      steps: [
-        "Compute V_head = π/24·Di³ and V_shell = π r² L → V_total = V_shell + 2 V_head ≈ 20.94 m³.",
-        "Shell liquid from circular segment at h = 1200 mm; heads ≈ 2·V_head·f with f = A_segment/(π r²).",
-        "Result: V_liq ≈ 13.12 m³ (3466 US gal) and fill ≈ 62.6% of total capacity.",
-        "Dipstick table steps 0→Di for field strapping screening — exclude internals.",
+      scenario:
+        "Default metric duty: horizontal vessel, 2:1 ellipsoidal heads, water at ambient density.",
+      designConditions: [
+        { label: "Orientation / heads", value: "Horizontal · 2:1 SE" },
+        { label: "Di / L / h", value: "2000 mm / 6000 mm / 1200 mm" },
+        { label: "Fluid", value: "Water · 998 kg/m³" },
       ],
+      steps: [
+        {
+          step: "Step 1",
+          name: "Compute shell and head capacities",
+          formula: "V_{head}=\\pi D_i^3/24,\\quad V_{shell}=\\pi r^2 L",
+          calculation:
+            "V_total = V_shell + 2 V_head ≈ 20.94 m³ for Di = 2000 mm, L = 6000 mm, 2:1 SE heads.",
+          result: "V_total ≈ 20.94 m³",
+        },
+        {
+          step: "Step 2",
+          name: "Partial fill on horizontal shell and heads",
+          calculation:
+            "Shell liquid from circular segment at h = 1200 mm; non-flat heads ≈ 2·V_head·f with f = A_segment/(π r²).",
+          result: "V_liq ≈ 13.12 m³ (3466 US gal)",
+        },
+        {
+          step: "Step 3",
+          name: "Fill percent of total capacity",
+          formula: "Fill\\%=100\\cdot V_{liq}/V_{total}",
+          calculation: "13.12 / 20.94 × 100 ≈ 62.6%.",
+          result: "Fill ≈ 62.6%",
+        },
+        {
+          step: "Step 4",
+          name: "Dipstick screening chart",
+          calculation:
+            "Step liquid level from 0→Di for field strapping screening — exclude internals and use certified charts for custody transfer.",
+          result: "Geometric dipstick table (screening only)",
+        },
+      ],
+      conclusion:
+        "Default horizontal 2:1 SE duty screens at ≈13.12 m³ liquid and ≈62.6% of total capacity.",
     },
     ...howTo("How to calculate tank & vessel volume", [
       {
