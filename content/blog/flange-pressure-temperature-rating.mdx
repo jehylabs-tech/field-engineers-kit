@@ -1,0 +1,162 @@
+---
+title: "ASME B16.5 Flange Pressure-Temperature Rating Guide"
+description: "Master ASME B16.5 flange pressure-temperature ratings. Learn how temperature derating affects MAWP across Class 150 to 2500 for Carbon and Stainless Steel."
+date: "2026-09-16"
+category: "Piping Engineering"
+tags:
+  - ASME B16.5
+  - Flange Rating
+  - Pressure Temperature Rating
+  - P-T Rating
+  - Piping Design
+relatedCalculatorUrl: "/calculator/flange-pressure-temperature-rating"
+relatedCalculatorName: "ASME B16.5 Flange Pressure-Temperature Rating Calculator"
+---
+
+Operating pressure alone is never enough to select a flange. **ASME B16.5 flange pressure-temperature rating** tables set the temperature-adjusted maximum allowable working pressure (MAWP) for NPS ½–24 flanges by material group and class.
+
+## Quick Summary (TL;DR)
+
+- **Takeaway:** Flange MAWP falls as metal temperature rises — Class is a designator, not a fixed psi/bar rating.
+- **Governing relation:** $P = P_1 + \frac{(T - T_1)}{(T_2 - T_1)}(P_2 - P_1)$ between Table 2 nodes; $P_{\mathrm{hydro}} = 1.5 \times P_{\mathrm{ambient}}$.
+- **Code / basis:** ASME B16.5 Table 2 (Groups 1.1–3.19); FEK Phase-1 screening covers Groups **1.1** and **2.2**.
+
+| Item | Field takeaway |
+| :--- | :--- |
+| **Standard** | ASME B16.5 (NPS ½ through NPS 24) — not B16.47 |
+| **Ambient band** | −29 °C to 38 °C (−20 °F to 100 °F) |
+| **Group 1.1 Class 150 ambient** | **19.6 bar** (285 psi customary) |
+| **Group 1.1 Class 150 @ 200 °C** | **14.0 bar** |
+| **Group 1.1 Class 300 ambient** | **51.1 bar** (740 psi customary) |
+| **Group 2.2 Class 150 ambient** | **19.0 bar** (275 psi customary) |
+| **Hydro shell test** | $1.5 \times$ ambient rating (e.g. Class 150 Group 1.1 → **29.4 bar**) |
+| **Screening tool** | [Flange P-T Rating Calculator](/calculator/flange-pressure-temperature-rating/group-1-1-class150-38c) |
+
+---
+
+## Why ASME B16.5 flange pressure-temperature rating matters
+
+A Class 150 mark on the hub does **not** mean “always 285 psi.” At elevated temperature the allowable working pressure from **ASME B16.5 Table 2** drops with material strength. Specifying class from ambient line pressure alone is a common FEED error: the joint may be overstressed (or under-rated) once design metal temperature is applied.
+
+<Callout title="Screening vs. stamped B16.5 edition" variant="info">
+FieldEngineersKit Phase-1 tables (Groups **1.1** and **2.2**) are a field screening extract with linear interpolation. Confirm MAWP against the **project ASME B16.5 edition** before stamping design. Larger flanges (NPS &gt; 24) use **ASME B16.47**, not this table set.
+</Callout>
+
+For geometry, stud count, and mated-pair weight after the rating check, continue with the [Blind Flange Thickness Calculator](/calculator/blind-flange-thickness) or [Pipe Schedule & Dimension Lookup](/calculator/pipe-schedule-dimension).
+
+---
+
+## Core equations and methodology
+
+### Linear interpolation between Table 2 nodes
+
+When design temperature $T$ falls between published temperatures $T_1$ and $T_2$ with ratings $P_1$ and $P_2$:
+
+$$
+P = P_1 + \frac{(T - T_1)}{(T_2 - T_1)} \times (P_2 - P_1)
+$$
+
+FEK evaluates the interpolation in **°C / bar** on the Phase-1 extract, then displays dual units.
+
+### Hydrostatic shell test pressure
+
+Per ASME B16.5 practice for shell hydrostatic test at ambient conditions:
+
+$$
+P_{\mathrm{hydro}} = 1.5 \times P_{\mathrm{ambient}}
+$$
+
+where $P_{\mathrm{ambient}}$ is the Table 2 rating for the −29…38 °C band — **not** $1.5\times$ the derated elevated-temperature MAWP.
+
+### Parameter definitions
+
+| Parameter | Symbol | Metric | Imperial | Boundary / note |
+| :--- | :---: | :---: | :---: | :--- |
+| Working pressure rating | $P$ | bar | psi | Table 2 by group × class × $T$ |
+| Design metal temperature | $T$ | °C | °F | Within published nodes (−29…538 °C typical) |
+| Lower / upper table nodes | $T_1$, $T_2$ | °C | °F | Nearest published temperatures |
+| Ambient rating | $P_{\mathrm{ambient}}$ | bar | psi | −29…38 °C (−20…100 °F) band |
+| Hydro shell test | $P_{\mathrm{hydro}}$ | bar | psi | $1.5 \times P_{\mathrm{ambient}}$ |
+
+---
+
+## Flange rating curve — Group 1.1 carbon steel scan
+
+The **flange rating curve** (P vs $T$) for Group 1.1 (A105 / A106 Gr.B / A350 LF2) shows how **working pressure ASME B16.5** derates with temperature. Values below match the FEK Phase-1 engine (`data/piping/b16_5_pt_ratings.json`).
+
+| Operating temp (°C) | Class 150 (bar) | Class 300 (bar) | Class 600 (bar) |
+| :--- | ---: | ---: | ---: |
+| −29…38 | 19.6 | 51.1 | 102.1 |
+| 100 | 17.7 | 46.4 | 92.8 |
+| 200 | 14.0 | 43.8 | 87.6 |
+| 300 | 10.2 | 39.8 | 79.6 |
+| 400 | 6.5 | 34.7 | 69.4 |
+| 500 | 2.8 | 11.3 | 22.5 |
+| 538 | 1.4 | 5.6 | 11.3 |
+
+Group **2.2** (A182 F316 / F316L) ambient Class 150 is **19.0 bar** — slightly below carbon steel for the same class — and holds more capacity at high temperature than Group 1.1 Class 150 (e.g. **9.8 bar** at 538 °C vs **1.4 bar**).
+
+---
+
+## Worked example: maximum allowable working pressure flange check @ 200 °C
+
+### Field scenario
+
+Refinery hydrotreater feed flange:
+
+| Input | Value |
+| :--- | :--- |
+| Material group | **1.1** (ASTM A105) |
+| Flange class | **150** |
+| Design / operating temperature | **200 °C** |
+| Operating pressure | **12.5 bar** |
+
+Table 2-1.1 (Phase-1): at 200 °C, Class 150 → **$P_2 = 14.0$ bar** (exact node — no interpolation required).
+
+### Step 1 — Read MAWP
+
+$$
+P_{\mathrm{MAWP}} = 14.0\ \mathrm{bar}
+$$
+
+### Step 2 — Compare to operating pressure
+
+- Operating $P = 12.5$ bar ≤ $14.0$ bar → **PASS**
+- Margin $= 14.0 - 12.5 = $ **1.5 bar**
+- Hydro shell test $= 1.5 \times 19.6 = $ **29.4 bar**
+
+<Callout title="Result" variant="tip">
+Class 150 A105 is adequate for **12.5 bar at 200 °C** (MAWP **14.0 bar**, margin **1.5 bar**). Reproduce with the live tool: [Group 1.1 · Class 150 · 38 °C seed](/calculator/flange-pressure-temperature-rating/group-1-1-class150-38c) then set $T = 200$ °C.
+</Callout>
+
+---
+
+## Interactive engineering tool
+
+<Callout title="Open the P-T rating calculator" variant="tip">
+Compute derated **maximum allowable working pressure**, hydrostatic test pressure, and the interactive **flange rating curve** with the [ASME B16.5 Flange Pressure-Temperature Rating Calculator](/calculator/flange-pressure-temperature-rating). After the rating check, size temporary blinds with [Blind Flange Thickness](/calculator/blind-flange-thickness) and confirm pipe ID/wall on [Pipe Schedule & Dimension](/calculator/pipe-schedule-dimension).
+</Callout>
+
+---
+
+## Frequently Asked Questions (FAQ)
+
+### Why does Class 150 flange pressure rating temperature derating look so steep above 200 °C?
+
+Class 150 flanges are geometrically lighter (thinner rings, lower bolt loads). ASME B16.5 therefore applies aggressive Table 2 derating as temperature rises — Group 1.1 Class 150 falls from **19.6 bar** ambient to **14.0 bar** at 200 °C and **1.4 bar** at 538 °C. That is intentional code behavior, not a calculator bug.
+
+### How should dual certified flange rating (316/316L) be handled?
+
+**Dual-certified** 316/316L forgings must follow the **governing** B16.5 material group on the MTR and design basis. FEK Phase-1 Group **2.2** covers typical A182 F316 / F316L screening. If the project assigns a different group (e.g. low-carbon high-temperature notes), use that group’s Table 2 — do not assume ambient Class 150 carbon-steel numbers apply to stainless.
+
+### Is Class the same as maximum allowable working pressure?
+
+**No.** Class is a **dimensionless designator**. **MAWP** comes from **ASME B16.5 Table 2** by material group and temperature. Ambient Group 1.1 Class 150 ≈ **19.6 bar (285 psi customary)**; the same flange at 200 °C is only **14.0 bar**.
+
+### Does this guide cover ASME B16.47 large-diameter flanges?
+
+**No.** ASME B16.5 covers NPS ½–24. Large-diameter steel flanges follow **ASME B16.47** Series A/B with separate P-T tables. Do not extrapolate B16.5 ratings to B16.47 geometries.
+
+### Why might customary psi values differ slightly from bar × 14.5038?
+
+ASME publishes **metric** and **US customary** Table 2 columns. FEK Phase-1 stores the **metric (bar)** extract and converts for display; published customary cells (e.g. **285 / 740 / 275 psi** at ambient for the cases above) can differ by a psi or two from a pure conversion. Stamp design from the unit system required by the project specification.

@@ -62,6 +62,8 @@ export const CATALOG_SEO_BLURBS: Record<string, string> = {
     "ASME B36.10M pipe NPS, schedule, OD, ID, wall thickness, and unit weight lookup.",
   "flange-dimension-weight":
     "ASME B16.5 & B16.47 flange dimensions, rating, and bolt hole data.",
+  "flange-pressure-temperature-rating":
+    "ASME B16.5 Table 2 flange pressure-temperature rating MAWP for Group 1.1 / 2.2 with linear interpolation.",
   "fitting-valve-dimension":
     "ASME B16.10 flanged valve face-to-face (FTF) by NPS and class.",
   "butt-weld-fitting-dimension":
@@ -88,6 +90,8 @@ export const CATALOG_SEO_BLURBS: Record<string, string> = {
     "ASTM C680 / ISO 12241 insulation heat loss Q, surface Ts, and C1055 60 °C personnel protection screening.",
   "tank-vessel-volume":
     "ASME VIII Div 1 head volumes and API 650 / ISO 7507 tank level–capacity screening with dipstick calibration.",
+  "nitrogen-purging-volume":
+    "NFPA 69 nitrogen purging / inerting volume for dilution-sweep and pressure-cycle pipe and vessel duties with cylinder supply screening.",
   "pressure-drop-friction":
     "Darcy–Weisbach / Haaland friction pressure drop for process pipe and fittings.",
   "flow-velocity-erosion":

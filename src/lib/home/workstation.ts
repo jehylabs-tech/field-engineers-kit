@@ -118,6 +118,22 @@ export const WORKSTATION_DOMAINS: WorkstationDomain[] = [
         keywords: ["b16.5", "b16.47", "flange", "pcd", "bolt"],
       },
       {
+        id: "flange-pressure-temperature-rating",
+        title: "Flange P-T Rating",
+        seoLabel:
+          "ASME B16.5 Flange Pressure Temperature Rating MAWP Calculator",
+        standard: "B16.5 Table 2",
+        href: "/calculator/flange-pressure-temperature-rating/group-1-1-class150-38c",
+        keywords: [
+          "b16.5",
+          "flange rating",
+          "pressure temperature",
+          "mawp",
+          "class 150",
+          "a105",
+        ],
+      },
+      {
         id: "thermal-expansion-loop",
         title: "Thermal Expansion & Anchor",
         seoLabel: "ASME B31.3 Piping Thermal Expansion and Anchor Load Calculator",
@@ -138,6 +154,23 @@ export const WORKSTATION_DOMAINS: WorkstationDomain[] = [
           "astm c680",
           "surface temperature",
           "personnel protection",
+        ],
+      },
+      {
+        id: "nitrogen-purging-volume",
+        title: "Nitrogen Purging & Inerting",
+        seoLabel:
+          "NFPA 69 Nitrogen Purging Volume Inerting Dilution and Pressure Cycle Calculator",
+        standard: "NFPA 69 · API 2016",
+        href: "/calculator/nitrogen-purging-volume/piping-dilution-nps12-100m",
+        keywords: [
+          "nitrogen purge",
+          "inerting",
+          "nfpa 69",
+          "oxygen",
+          "dilution sweep",
+          "pressure cycle",
+          "cylinder",
         ],
       },
       {

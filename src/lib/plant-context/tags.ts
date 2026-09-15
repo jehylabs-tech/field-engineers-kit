@@ -36,6 +36,9 @@ export const CALCULATOR_TYPE_SLUG: Record<CalculatorType, string> = {
   "bolt-wrench-lookup": "flange-bolt-wrench-size-lookup",
   "insulation-heat-loss": "insulation-heat-loss",
   "tank-vessel-volume": "tank-vessel-volume",
+  "nitrogen-purging-volume": "nitrogen-purging-volume",
+  "flange-pressure-temperature-rating":
+    "flange-pressure-temperature-rating",
 };
 
 export const SLUG_TO_CALCULATOR_TYPE: Record<string, CalculatorType> =
@@ -162,6 +165,14 @@ export const CALCULATOR_PLANT_TAGS: Record<CalculatorType, CalculatorPlantTags> 
     "tank-vessel-volume": {
       consumes: [],
       produces: [],
+    },
+    "nitrogen-purging-volume": {
+      consumes: ["size"],
+      produces: ["size"],
+    },
+    "flange-pressure-temperature-rating": {
+      consumes: ["class_rating", "temperature", "material"],
+      produces: ["class_rating", "temperature"],
     },
   };
 

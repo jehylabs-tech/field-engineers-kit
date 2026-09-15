@@ -26,7 +26,9 @@ export type CalculatorType =
   | "multi-pump"
   | "bolt-wrench-lookup"
   | "insulation-heat-loss"
-  | "tank-vessel-volume";
+  | "tank-vessel-volume"
+  | "nitrogen-purging-volume"
+  | "flange-pressure-temperature-rating";
 
 export type FaqItem = {
   q: string;

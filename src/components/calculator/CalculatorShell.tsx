@@ -88,6 +88,15 @@ const CALCULATOR_VIEWS: Record<
     () => import("./calculators/TankVesselVolumeCalculator"),
     { loading: loadingFallback },
   ),
+  "nitrogen-purging-volume": dynamic(
+    () => import("./calculators/NitrogenPurgingVolumeCalculator"),
+    { loading: loadingFallback },
+  ),
+  "flange-pressure-temperature-rating": dynamic(
+    () =>
+      import("./calculators/FlangePressureTemperatureRatingCalculator"),
+    { loading: loadingFallback },
+  ),
   "pipe-schedule": dynamic(() => import("./calculators/PipeScheduleCalculator"), {
     loading: loadingFallback,
   }),

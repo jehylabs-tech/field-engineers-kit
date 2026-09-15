@@ -260,6 +260,49 @@ export function applyPlantContext<T extends Record<string, unknown>>(
     }
     case "tank-vessel-volume":
       return inputs;
+    case "nitrogen-purging-volume": {
+      const next = { ...inputs } as T & { pipeNps?: string };
+      const nps = normalizeNps(ctx.size);
+      if (nps) next.pipeNps = nps;
+      return next as T;
+    }
+    case "flange-pressure-temperature-rating": {
+      const next = { ...inputs } as T & {
+        flangeClass?: string;
+        designTemperature?: number;
+        materialGroup?: string;
+        unitSystem?: string;
+      };
+      const cls = normalizeClassRating(ctx.class_rating);
+      if (cls) next.flangeClass = cls;
+      if (ctx.temperature) {
+        next.designTemperature =
+          next.unitSystem === "imperial"
+            ? temperatureToF(ctx.temperature)
+            : temperatureToC(ctx.temperature);
+      }
+      if (ctx.material) {
+        const m = ctx.material.toLowerCase();
+        if (
+          m.includes("316") ||
+          m.includes("304") ||
+          m.includes("stainless") ||
+          /\bss[\s-]?(304|316)\b/.test(m) ||
+          m.startsWith("ss")
+        ) {
+          next.materialGroup = "2.2";
+        } else if (
+          m.includes("a105") ||
+          m.includes("a106") ||
+          m.includes("carbon") ||
+          m.includes("lf2") ||
+          /\bcs\b/.test(m)
+        ) {
+          next.materialGroup = "1.1";
+        }
+      }
+      return next as T;
+    }
     case "pressure-drop":
     case "flow-velocity":
       return applySchedule(applyNps(inputs, ctx), ctx) as T;
@@ -355,6 +398,9 @@ export function extractPlantContext(
   if (typeof inputs.nps === "string") {
     const nps = normalizeNps(inputs.nps);
     if (nps) ctx.size = formatSizeLabel(nps);
+  } else if (typeof inputs.pipeNps === "string") {
+    const nps = normalizeNps(inputs.pipeNps);
+    if (nps) ctx.size = formatSizeLabel(nps);
   } else if (typeof inputs.headerNps === "string") {
     const nps = normalizeNps(inputs.headerNps);
     if (nps) ctx.size = formatSizeLabel(nps);
@@ -436,6 +482,23 @@ export function extractPlantContext(
       unitSystem === "imperial"
         ? { value: Number(inputs.operatingTemp.toFixed(1)), unit: "F" }
         : { value: Number(inputs.operatingTemp.toFixed(1)), unit: "C" };
+  }
+
+  if (
+    type === "flange-pressure-temperature-rating" &&
+    typeof inputs.designTemperature === "number"
+  ) {
+    ctx.temperature =
+      unitSystem === "imperial"
+        ? { value: Number(inputs.designTemperature.toFixed(1)), unit: "F" }
+        : { value: Number(inputs.designTemperature.toFixed(1)), unit: "C" };
+  }
+  if (
+    type === "flange-pressure-temperature-rating" &&
+    typeof inputs.flangeClass === "string" &&
+    inputs.flangeClass
+  ) {
+    ctx.class_rating = String(inputs.flangeClass);
   }
 
   if (type === "pipe-thickness" && typeof inputs.outsideDiameter === "number") {

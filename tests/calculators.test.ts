@@ -125,6 +125,18 @@ import {
   M3_TO_US_GAL,
 } from "@/lib/calculators/engines/tank-vessel-volume";
 import {
+  calculateNitrogenPurgingVolume,
+  computeNitrogenPurgingVolume,
+  DEFAULT_NITROGEN_PURGING_VOLUME_INPUTS,
+} from "@/lib/calculators/engines/nitrogen-purging-volume";
+import {
+  calculateFlangePtRating,
+  computeFlangePtRating,
+  DEFAULT_FLANGE_PT_RATING_INPUTS,
+  interpolatePressureBar,
+  getRatingCurve,
+} from "@/lib/calculators/engines/flange-pressure-temperature-rating";
+import {
   calculateUnitConverter,
 } from "@/lib/calculators/engines/unit-converter";
 import { gasCvUs, liquidCvUs, calculateValveCv } from "@/lib/calculators/engines/valve-cv";
@@ -2971,5 +2983,208 @@ describe("tank-vessel-volume", () => {
     expect(empty.vLiquidM3).toBe(0);
     expect(full.fillPct).toBeGreaterThan(99);
     expect(full.fillPct).toBeLessThanOrEqual(100);
+  });
+});
+
+describe("nitrogen-purging-volume", () => {
+  it("matches default metric dilution pSEO numbers", () => {
+    const c = computeNitrogenPurgingVolume(DEFAULT_NITROGEN_PURGING_VOLUME_INPUTS);
+    expect(c.invalid).toBe(false);
+    expect(c.vSysM3).toBeCloseTo(7.22, 1);
+    expect(c.vN2Nm3).toBeCloseTo(13.81, 1);
+    expect((c.purgeTimeHr ?? 0) * 60).toBeCloseTo(16.6, 0);
+    const out = calculateNitrogenPurgingVolume(
+      DEFAULT_NITROGEN_PURGING_VOLUME_INPUTS,
+    );
+    expect(out.heroLabel).toMatch(/nitrogen/i);
+    expect(out.heroValue).toMatch(/min/i);
+    expectNoPoison(out);
+  });
+
+  it("matches vessel pressure-cycle screening (n=2)", () => {
+    const c = computeNitrogenPurgingVolume({
+      ...DEFAULT_NITROGEN_PURGING_VOLUME_INPUTS,
+      geometryType: "vessel",
+      purgeMethod: "pressure-cycle",
+      vesselDiameter: 2000,
+      vesselLength: 6000,
+      cycleHighPressure: 3,
+    });
+    expect(c.cycles).toBe(2);
+    expect(c.vSysM3).toBeCloseTo(22.0, 0);
+    expect(c.vN2Nm3).toBeCloseTo(132, 0);
+  });
+
+  it("matches imperial custom pressure-cycle SCF", () => {
+    const c = computeNitrogenPurgingVolume({
+      ...DEFAULT_NITROGEN_PURGING_VOLUME_INPUTS,
+      unitSystem: "imperial",
+      geometryType: "custom-volume",
+      customVolume: 1000,
+      purgeMethod: "pressure-cycle",
+      initialO2: 21,
+      targetO2: 2,
+      cycleHighPressure: 45,
+    });
+    expect(c.cycles).toBe(2);
+    expect(c.vSysM3 * 35.3146667).toBeCloseTo(1000, 0);
+    expect(c.vN2Nm3 * 35.3146667).toBeCloseTo(6122.4, 0);
+  });
+
+  it("rejects vacuum floors that look like leftover gauge pressures", () => {
+    const bad = computeNitrogenPurgingVolume({
+      ...DEFAULT_NITROGEN_PURGING_VOLUME_INPUTS,
+      purgeMethod: "vacuum-cycle",
+      cycleHighPressure: 3,
+    });
+    expect(bad.invalid).toBe(true);
+    const ok = computeNitrogenPurgingVolume({
+      ...DEFAULT_NITROGEN_PURGING_VOLUME_INPUTS,
+      purgeMethod: "vacuum-cycle",
+      cycleHighPressure: 0.2,
+    });
+    expect(ok.invalid).toBe(false);
+    expect(ok.cycles).toBe(1);
+  });
+
+  it("resolves the four required pSEO specs", () => {
+    expect(
+      resolveSpecRoute(
+        "nitrogen-purging-volume",
+        "piping-dilution-nps12-100m",
+      )?.query,
+    ).toMatchObject({
+      units: "metric",
+      geometryType: "piping",
+      pipeNps: "12",
+      pipeLength: "100",
+      purgeMethod: "dilution-sweep",
+    });
+    expect(
+      resolveSpecRoute(
+        "nitrogen-purging-volume",
+        "vessel-pressure-cycle-2000mm-6000mm",
+      )?.query,
+    ).toMatchObject({
+      geometryType: "vessel",
+      purgeMethod: "pressure-cycle",
+      vesselDiameter: "2000",
+    });
+    expect(
+      resolveSpecRoute(
+        "nitrogen-purging-volume",
+        "piping-dilution-nps24-500ft",
+      )?.query.units,
+    ).toBe("imperial");
+    expect(
+      resolveSpecRoute(
+        "nitrogen-purging-volume",
+        "custom-pressure-cycle-1000cuft",
+      )?.query.customVolume,
+    ).toBe("1000");
+    expect(
+      findSpecRouteForInputs("nitrogen-purging-volume", {
+        units: "metric",
+        geometryType: "piping",
+        purgeMethod: "dilution-sweep",
+        pipeNps: "12",
+        pipeLength: "100",
+      })?.spec,
+    ).toBe("piping-dilution-nps12-100m");
+  });
+});
+
+describe("flange-pressure-temperature-rating", () => {
+  it("matches Group 1.1 Class 150 ambient and hydrotest", () => {
+    const c = computeFlangePtRating(DEFAULT_FLANGE_PT_RATING_INPUTS);
+    expect(c.invalid).toBe(false);
+    expect(c.pBar).toBeCloseTo(19.6, 5);
+    expect(c.hydroBar).toBeCloseTo(29.4, 5);
+    const out = calculateFlangePtRating(DEFAULT_FLANGE_PT_RATING_INPUTS);
+    expect(out.heroLabel).toMatch(/working pressure/i);
+    expect(out.heroValue).toMatch(/19\.6/);
+  });
+
+  it("linearly interpolates between Table 2 nodes", () => {
+    const curve = getRatingCurve("1.1", "150")!;
+    const mid = interpolatePressureBar(curve, 125);
+    expect(mid.clamped).toBe(false);
+    expect(mid.pBar).toBeCloseTo(16.75, 5);
+    const c = computeFlangePtRating({
+      ...DEFAULT_FLANGE_PT_RATING_INPUTS,
+      designTemperature: 125,
+    });
+    expect(c.pBar).toBeCloseTo(16.75, 5);
+  });
+
+  it("rejects Group 2.2 Class 900 (Phase-1 gap)", () => {
+    const c = computeFlangePtRating({
+      ...DEFAULT_FLANGE_PT_RATING_INPUTS,
+      materialGroup: "2.2",
+      flangeClass: "900",
+      designTemperature: 38,
+    });
+    expect(c.invalid).toBe(true);
+    const out = calculateFlangePtRating({
+      ...DEFAULT_FLANGE_PT_RATING_INPUTS,
+      materialGroup: "2.2",
+      flangeClass: "900",
+      designTemperature: 38,
+    });
+    expect(out.heroStatusLevel).toBe("fail");
+  });
+
+  it("matches Group 2.2 Class 150 at 100 °C", () => {
+    const c = computeFlangePtRating({
+      ...DEFAULT_FLANGE_PT_RATING_INPUTS,
+      materialGroup: "2.2",
+      flangeClass: "150",
+      designTemperature: 100,
+    });
+    expect(c.invalid).toBe(false);
+    expect(c.pBar).toBeCloseTo(16.2, 5);
+    expect(c.hydroBar).toBeCloseTo(28.5, 5);
+  });
+
+  it("warns when temperature is outside published nodes", () => {
+    const c = computeFlangePtRating({
+      ...DEFAULT_FLANGE_PT_RATING_INPUTS,
+      designTemperature: 600,
+    });
+    expect(c.invalid).toBe(false);
+    expect(c.outOfRange).toBe(true);
+    expect(c.pBar).toBeCloseTo(1.4, 5);
+    const out = calculateFlangePtRating({
+      ...DEFAULT_FLANGE_PT_RATING_INPUTS,
+      designTemperature: 600,
+    });
+    expect(out.heroStatusLevel).toBe("warn");
+  });
+
+  it("resolves Pattern B specs", () => {
+    expect(
+      resolveSpecRoute(
+        "flange-pressure-temperature-rating",
+        "group-1-1-class150-38c",
+      )?.query,
+    ).toMatchObject({
+      materialGroup: "1.1",
+      flangeClass: "150",
+      designTemperature: "38",
+    });
+    expect(
+      resolveSpecRoute(
+        "flange-pressure-temperature-rating",
+        "group-2-2-class150-100c",
+      )?.query.materialGroup,
+    ).toBe("2.2");
+    expect(
+      findSpecRouteForInputs("flange-pressure-temperature-rating", {
+        units: "metric",
+        materialGroup: "1.1",
+        flangeClass: "300",
+        designTemperature: "200",
+      })?.spec,
+    ).toBe("group-1-1-class300-200c");
   });
 });

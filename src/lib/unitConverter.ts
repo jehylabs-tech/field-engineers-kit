@@ -579,6 +579,52 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
     );
   }
 
+  // Nitrogen purging companions
+  const isNitrogenPurge =
+    "purgeMethod" in next && "geometryType" in next;
+  if (isNitrogenPurge) {
+    if (
+      typeof next.pipeLength === "number" &&
+      Number.isFinite(next.pipeLength)
+    ) {
+      convertNum("pipeLength", toImperial ? mToFt : ftToM, 3);
+    }
+    for (const key of ["vesselDiameter", "vesselLength"] as const) {
+      if (typeof next[key] === "number" && Number.isFinite(next[key] as number)) {
+        convertNum(key, toImperial ? mmToIn : inToMm, toImperial ? 3 : 0);
+      }
+    }
+    if (
+      typeof next.customVolume === "number" &&
+      Number.isFinite(next.customVolume)
+    ) {
+      convertNum(
+        "customVolume",
+        toImperial ? (v) => v * 35.3146667 : (v) => v / 35.3146667,
+        3,
+      );
+    }
+    if (
+      typeof next.purgeFlowRate === "number" &&
+      Number.isFinite(next.purgeFlowRate)
+    ) {
+      // Nm³/h ↔ SCFM: SCFM = Nm³/h · 35.3147 / 60
+      const nm3hToScfm = (v: number) => (v * 35.3146667) / 60;
+      const scfmToNm3h = (v: number) => (v * 60) / 35.3146667;
+      convertNum("purgeFlowRate", toImperial ? nm3hToScfm : scfmToNm3h, 2);
+    }
+    if (
+      typeof next.cycleHighPressure === "number" &&
+      Number.isFinite(next.cycleHighPressure)
+    ) {
+      convertNum(
+        "cycleHighPressure",
+        toImperial ? barToPsi : psiToBar,
+        2,
+      );
+    }
+  }
+
   return next as T;
 }
 

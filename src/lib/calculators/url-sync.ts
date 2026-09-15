@@ -152,6 +152,21 @@ const PATH_OWNED_PARAMS = new Set([
   "diameter",
   "length",
   "liquidLevel",
+  "geometryType",
+  "purgeMethod",
+  "pipeNps",
+  "pipeLength",
+  "vesselDiameter",
+  "vesselLength",
+  "customVolume",
+  "cycleHighPressure",
+  "mixingEfficiency",
+  "initialO2",
+  "targetO2",
+  "purgeFlowRate",
+  "materialGroup",
+  "flangeClass",
+  "designTemperature",
 ]);
 
 export function useCalculatorUrlSync<T extends Record<string, unknown>>(

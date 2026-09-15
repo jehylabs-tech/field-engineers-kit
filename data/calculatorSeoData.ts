@@ -5960,6 +5960,476 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
     ],
   },
 
+  "nitrogen-purging-volume": {
+    slug: "nitrogen-purging-volume",
+    formulaTitle: "Core Formula & Variable Definitions",
+    formulaHtml:
+      '<p class="eng-eq">Dilution: <i>V</i><sub>N2</sub> = <i>V</i><sub>sys</sub> · ln((<i>C</i><sub>0</sub>−<i>C</i><sub>in</sub>)/(<i>C</i><sub>t</sub>−<i>C</i><sub>in</sub>)) / <i>K</i> &nbsp;·&nbsp; <i>t</i> = <i>V</i><sub>N2</sub> / <i>Q</i></p>' +
+      '<p class="eng-eq">Pressure-cycle: <i>C</i><sub>n</sub> = <i>C</i><sub>0</sub> (<i>P</i><sub>low</sub>/<i>P</i><sub>high</sub>)<sup><i>n</i></sup> &nbsp;·&nbsp; <i>V</i><sub>N2</sub> = <i>n</i> · <i>V</i><sub>sys</sub> · (<i>P</i><sub>high,g</sub>/<i>P</i><sub>std</sub>)</p>' +
+      '<p class="eng-plain">NFPA 69 Chapter 7 · API RP 2016 · CGA G-8.1 screening</p>',
+    formulaLatex:
+      "V_{N2}=V_{sys}\\ln\\frac{C_0-C_{in}}{C_t-C_{in}}/K,\\quad C_n=C_0(P_{low}/P_{high})^n",
+    formulaNotes:
+      "Piping V_sys uses ASME B36 Sch 40 inside diameter. Vessel V_sys = π r² (L + 0.5·Di) for cylinder + 2:1 SE head equivalent. Dilution applies mixing efficiency K. Pressure-cycle n = ceil(ln(Ct/C0)/ln(Plow/Phigh)) with absolute pressures; N₂ inventory uses gauge ΔP to atmosphere over P_std (1.0 bar / 14.7 psi). +20% procurement margin on gas supply rows. Screening only — continuous O₂ monitoring required.",
+    formulaBadges: [
+      { label: "Default K", value: "0.75" },
+      { label: "Target O₂", value: "5%" },
+      { label: "Margin", value: "+20% N₂" },
+      { label: "Cylinder", value: "50 L @ 200 bar ≈ 10 Nm³" },
+    ],
+    variables: [
+      {
+        symbol: "V_sys",
+        name: "System Internal Volume",
+        definition: "Piping, vessel, or custom free volume (m³ / ft³).",
+      },
+      {
+        symbol: "C0 / Ct",
+        name: "Initial / Target O₂",
+        definition: "Starting and maximum residual oxygen concentration (%).",
+      },
+      {
+        symbol: "K",
+        name: "Mixing Efficiency",
+        definition: "Sweep mixing factor 0.25–1.0 (NFPA 69 screening).",
+      },
+      {
+        symbol: "Q",
+        name: "Purge Flow",
+        definition: "Nitrogen flow for dilution timing (Nm³/h / SCFM).",
+      },
+      {
+        symbol: "n",
+        name: "Cycle Count",
+        definition: "Pressure or vacuum cycles to reach Ct from C0.",
+      },
+      {
+        symbol: "V_N2",
+        name: "Required Nitrogen",
+        definition: "Theoretical purge gas inventory (Nm³ / SCF).",
+      },
+    ],
+    standards: [
+      "NFPA 69 — Standard on Explosion Prevention Systems (Purging and Inerting, Chapter 7)",
+      "API Recommended Practice 2016 — Entering and Cleaning Petroleum Storage Tanks",
+      "CGA G-8.1 — Standard for Nitrogen and Inert Gas Purging Procedures",
+      "ASME B36.10/19 — Pipe inside diameter for piping geometry",
+    ],
+    tableCaption:
+      "Nitrogen purging volume screening — engine-computed V_sys, V_N2, time / cycles",
+    tableHeaders: [
+      "Case",
+      "Geometry",
+      "Method",
+      "V_sys",
+      "V_N2",
+      "Time / n",
+    ],
+    tableRows: [
+      [
+        "Default metric",
+        "NPS 12 · 100 m",
+        "Dilution",
+        "7.22 m³",
+        "13.82 Nm³",
+        "16.6 min",
+      ],
+      [
+        "Vessel metric",
+        "Di 2000 · L 6000",
+        "Pressure cycle",
+        "21.99 m³",
+        "131.9 Nm³",
+        "n = 2",
+      ],
+      [
+        "Piping imperial",
+        "NPS 24 · 500 ft",
+        "Dilution",
+        "1396 ft³",
+        "5666 SCF",
+        "56.7 min",
+      ],
+      [
+        "Custom imperial",
+        "1000 ft³",
+        "Pressure cycle",
+        "1000 ft³",
+        "6122 SCF",
+        "n = 2",
+      ],
+      [
+        "NPS 6 · 50 m",
+        "Piping",
+        "Dilution · Ct 8%",
+        "0.93 m³",
+        "1.20 Nm³",
+        "2.9 min",
+      ],
+      [
+        "Custom 50 m³",
+        "Custom",
+        "Dilution · Ct 2%",
+        "50 m³",
+        "147.0 Nm³",
+        "110 min",
+      ],
+    ],
+    tableFootnote:
+      "Rows from the FEK nitrogen-purging-volume solver (B36 Sch 40 ID; vessel L + 0.5·Di). Spec ≈22.1 m³ / 132.6 Nm³ cases round to engine 21.99 m³ / 131.9 Nm³. Not a certified NFPA 69 procedure — confirm O₂ analyzers and MAWP.",
+    allowancesAndTolerances: {
+      title: "Screening Limits & Safety Notes",
+      summary:
+        "Theoretical gas demand only. Continuous O₂ monitoring and MAWP compliance are mandatory field controls.",
+      items: [
+        {
+          label: "Personnel / process safety",
+          value: "O₂ analyzer at vent",
+          description:
+            "Do not introduce hydrocarbons or enter confined spaces until measured O₂ ≤ target (NFPA 69 / API RP 2016).",
+        },
+        {
+          label: "Pressure-cycle MAWP",
+          value: "P_high < MAWP",
+          description:
+            "Never exceed vessel/piping MAWP. Provide relief protection before pressurizing.",
+        },
+        {
+          label: "Procurement margin",
+          value: "+20% N₂",
+          description:
+            "Supply rows apply a 20% contingency on theoretical V_N2 for cylinder / trailer / LN₂ screening.",
+        },
+      ],
+    },
+    materialLimitations: {
+      title: "Gas Supply Screening Equivalents",
+      summary:
+        "Ideal-gas inventory estimates for field logistics — confirm supplier fill pressure and trailer capacity.",
+      items: [
+        {
+          materialGroup: "50 L cylinder @ 200 bar",
+          stressLimit: "≈ 10 Nm³",
+          notes: "Water volume × fill pressure / P_std screening.",
+        },
+        {
+          materialGroup: "Tube trailer",
+          stressLimit: "≈ 2000 Nm³",
+          notes: "Generic high-pressure trailer inventory for equivalent count.",
+        },
+        {
+          materialGroup: "Liquid nitrogen",
+          stressLimit: "≈ 0.682 Nm³ / L LN₂",
+          notes: "Expansion ≈ 682:1 at ambient screening conditions.",
+        },
+      ],
+    },
+    workedExample: {
+      title: "Worked Example — NPS 12 · 100 m Dilution Sweep · 21% → 5% O₂",
+      scenario:
+        "Default metric piping duty: NPS 12 Sch 40, L = 100 m, K = 0.75, Q = 50 Nm³/h.",
+      designConditions: [
+        { label: "Geometry", value: "NPS 12 Sch 40 · L = 100 m" },
+        { label: "O₂", value: "C0 = 21% · Ct = 5% · Cin = 0%" },
+        { label: "K / Q", value: "K = 0.75 · Q = 50 Nm³/h" },
+      ],
+      steps: [
+        {
+          step: "Step 1",
+          name: "Compute system volume",
+          calculation:
+            "B36 Sch 40 ID ≈ 303.23 mm → V_sys = π r² L ≈ 7.22 m³.",
+          result: "V_sys ≈ 7.22 m³",
+        },
+        {
+          step: "Step 2",
+          name: "Dilution nitrogen demand",
+          formula: "V_{N2}=V_{sys}\\ln(C_0/C_t)/K",
+          calculation: "7.22 · ln(21/5) / 0.75 ≈ 13.82 Nm³.",
+          result: "V_N2 ≈ 13.82 Nm³",
+        },
+        {
+          step: "Step 3",
+          name: "Purge duration",
+          formula: "t=V_{N2}/Q",
+          calculation: "13.82 / 50 h ≈ 16.6 min.",
+          result: "t ≈ 16.6 min",
+        },
+        {
+          step: "Step 4",
+          name: "Procurement margin",
+          calculation:
+            "Apply +20% → ≈ 16.6 Nm³ ≈ 2 × 50 L / 200 bar cylinders (screening).",
+          result: "+20% supply ≈ 16.6 Nm³",
+        },
+      ],
+      conclusion:
+        "Default dilution duty screens at ≈13.82 Nm³ N₂ and ≈16.6 min at 50 Nm³/h — verify with continuous O₂ monitoring.",
+    },
+    ...howTo("How to calculate nitrogen purging volume", [
+      {
+        name: "1. Choose geometry",
+        text: "Select piping (NPS × length), vessel (Di × L), or custom free volume.",
+      },
+      {
+        name: "2. Select purge method",
+        text: "Dilution/sweep for continuous flow, or pressure/vacuum cycling for vessels that can be sealed.",
+      },
+      {
+        name: "3. Enter O₂ setpoints and K or P_high",
+        text: "Set initial and target O₂. Dilution needs Q and K; pressure-cycle needs P_high below MAWP.",
+      },
+      {
+        name: "4. Read V_N2, time, and supply rows",
+        text: "Hero shows Nm³/SCF demand; summary lists V_sys, cycles, and +20% margin; rows estimate cylinders / trailer / LN₂.",
+      },
+      {
+        name: "5. Confirm field controls",
+        text: "Install continuous O₂ analyzers at vents and verify MAWP / written procedure before hydrocarbons or entry.",
+      },
+    ]),
+    faq: [
+      {
+        question: "Which standard governs the purge formulas?",
+        answer:
+          "Screening follows **NFPA 69 Chapter 7** purging/inerting methods, with field practice notes from **API RP 2016** and **CGA G-8.1**. It is **not** a certified site procedure.",
+      },
+      {
+        question: "What does mixing efficiency K represent?",
+        answer:
+          "**K (0.25–1.0)** accounts for imperfect sweep mixing. Use **lower K** for dead-legs or poor ventilation; **0.75** is the default field screening value.",
+      },
+      {
+        question: "How is piping volume calculated?",
+        answer:
+          "From **ASME B36 Sch 40** inside diameter and run length: **V = π (ID/2)² L**. Confirm schedule if the line is not Sch 40.",
+      },
+      {
+        question: "Can pressure-cycle purging exceed MAWP?",
+        answer:
+          "**No.** **P_high must remain below equipment MAWP** with relief protection. This calculator does not check MAWP — confirm the written procedure.",
+      },
+      {
+        question: "Is continuous O₂ monitoring required?",
+        answer:
+          "**Yes.** Per **NFPA 69 / API RP 2016**, theoretical volumes are screening only — verify **outfall O₂** before introducing hydrocarbons or confined-space entry.",
+      },
+    ],
+  },
+
+  "flange-pressure-temperature-rating": {
+    slug: "flange-pressure-temperature-rating",
+    formulaTitle: "Core Formula & Variable Definitions",
+    formulaHtml:
+      '<p class="eng-eq"><i>P</i> = <i>P</i><sub>1</sub> + ((<i>T</i> − <i>T</i><sub>1</sub>)/(<i>T</i><sub>2</sub> − <i>T</i><sub>1</sub>)) · (<i>P</i><sub>2</sub> − <i>P</i><sub>1</sub>)</p>' +
+      '<p class="eng-eq"><i>P</i><sub>hydro</sub> = 1.5 · <i>P</i><sub>ambient</sub> (−29…38 °C)</p>' +
+      '<p class="eng-plain">ASME B16.5 Table 2 Pressure-Temperature Ratings · Phase-1 Groups 1.1 &amp; 2.2</p>',
+    formulaLatex:
+      "P=P_1+\\frac{(T-T_1)}{(T_2-T_1)}(P_2-P_1),\\quad P_{\\mathrm{hydro}}=1.5\\,P_{\\mathrm{ambient}}",
+    formulaNotes:
+      "Working pressure is taken from ASME B16.5 Table 2 for the selected material group and flange class. Intermediate temperatures use linear interpolation between published nodes. Hydrostatic shell test pressure is 1.5 × the ambient (−29…38 °C) rating. Phase-1 data: Group 1.1 Classes 150–2500 and Group 2.2 Classes 150/300/600. Scope is NPS ½–24 (B16.5); B16.47 large-diameter flanges are excluded.",
+    formulaBadges: [
+      { label: "Groups", value: "1.1 · 2.2" },
+      { label: "Classes", value: "150–2500 (Phase-1)" },
+      { label: "Hydro", value: "1.5 × ambient" },
+      { label: "Scope", value: "B16.5 NPS ≤ 24" },
+    ],
+    variables: [
+      {
+        symbol: "T",
+        name: "Design Temperature",
+        definition: "Metal temperature used to enter Table 2 (°C / °F).",
+      },
+      {
+        symbol: "P",
+        name: "Working Pressure Rating",
+        definition: "Maximum allowable working pressure from Table 2 (bar / psi / MPa).",
+      },
+      {
+        symbol: "P_ambient",
+        name: "Ambient Rating",
+        definition: "Table 2 rating for the −29…38 °C band.",
+      },
+      {
+        symbol: "P_hydro",
+        name: "Hydrostatic Shell Test",
+        definition: "1.5 × ambient rating (screening).",
+      },
+      {
+        symbol: "Group",
+        name: "Material Group",
+        definition: "B16.5 material group (Phase-1: 1.1 carbon steel, 2.2 316/316L).",
+      },
+      {
+        symbol: "Class",
+        name: "Flange Class",
+        definition: "Pressure class designator 150 / 300 / 600 / 900 / 1500 / 2500.",
+      },
+    ],
+    standards: [
+      "ASME B16.5 — Pipe Flanges and Flanged Fittings (NPS ½–24)",
+      "ASME B16.5 Table 2 — Pressure-Temperature Ratings (Groups 1.1 & 2.2 Phase-1 extract)",
+      "ASME B31.3 — Process Piping (related wall-thickness screening)",
+    ],
+    tableCaption:
+      "ASME B16.5 Group 1.1 carbon steel MAWP (bar) — Class 150 / 300 / 600 scan chart",
+    tableHeaders: ["T (°C)", "Class 150", "Class 300", "Class 600"],
+    tableRows: [
+      ["−29…38", "19.6", "51.1", "102.1"],
+      ["50", "19.2", "50.1", "—"],
+      ["100", "17.7", "46.4", "92.8"],
+      ["150", "15.8", "45.2", "—"],
+      ["200", "14.0", "43.8", "87.6"],
+      ["250", "12.1", "41.9", "—"],
+      ["300", "10.2", "39.8", "79.6"],
+      ["350", "8.4", "37.6", "—"],
+      ["400", "6.5", "34.7", "69.4"],
+      ["450", "4.7", "23.0", "46.0"],
+      ["500", "2.8", "11.3", "22.5"],
+      ["538", "1.4", "5.6", "11.3"],
+    ],
+    tableFootnote:
+      "Values from the Phase-1 FEK extract of ASME B16.5 Table 2-1.1. Class 600 rows marked — use nearest published nodes with linear interpolation in the live calculator. Group 2.2 and Classes 900–2500 are available in the interactive tool.",
+    allowancesAndTolerances: {
+      title: "Interpolation, Hydrotest & Scope Limits",
+      summary:
+        "Use official ASME B16.5 tables for stamped design. This tool is a Phase-1 screening extract with linear interpolation.",
+      items: [
+        {
+          label: "Linear interpolation",
+          value: "P between T₁ and T₂",
+          description:
+            "When design temperature falls between published nodes, MAWP is linearly interpolated in °C / bar space.",
+        },
+        {
+          label: "Hydrostatic shell test",
+          value: "1.5 × P_ambient",
+          description:
+            "Screening hydrotest pressure uses the ambient (−29…38 °C) rating, not the derated elevated-temperature rating.",
+        },
+        {
+          label: "B16.5 size limit",
+          value: "NPS ≤ 24",
+          description:
+            "Larger flanges follow ASME B16.47 and are outside this calculator.",
+        },
+        {
+          label: "Class 150 high temperature",
+          value: "> 538 °C / 1000 °F",
+          description:
+            "Class 150 service above 538 °C requires confirmation against B16.5 notes and owner specification.",
+        },
+      ],
+    },
+    materialLimitations: {
+      title: "Phase-1 Material Groups",
+      summary:
+        "Only Groups 1.1 and 2.2 are loaded. Additional Table 2 groups require a later data release.",
+      items: [
+        {
+          materialGroup: "Group 1.1 — Carbon Steel",
+          temperatureLimit: "−29…538 °C",
+          stressLimit: "Classes 150–2500",
+          notes: "Typical specs: ASTM A105, A106 Gr.B, A350 LF2.",
+        },
+        {
+          materialGroup: "Group 2.2 — Stainless 316/316L",
+          temperatureLimit: "−29…538 °C",
+          stressLimit: "Classes 150 / 300 / 600",
+          notes: "Typical specs: ASTM A182 F316 / F316L. Classes 900–2500 not in Phase-1.",
+        },
+      ],
+      codeRestrictions: [
+        "Do not apply these ratings to ASME B16.47 Series A/B flanges.",
+        "Confirm edition year of the project B16.5 table before stamping MAWP.",
+      ],
+    },
+    workedExample: {
+      title: "Worked Example — Group 1.1 Class 150 @ 125 °C",
+      scenario:
+        "Carbon steel Class 150 flange at 125 °C (between 100 °C = 17.7 bar and 150 °C = 15.8 bar).",
+      designConditions: [
+        { label: "Material group", value: "1.1 (A105)" },
+        { label: "Flange class", value: "150" },
+        { label: "Design temperature", value: "125 °C" },
+      ],
+      steps: [
+        {
+          step: "Step 1",
+          name: "Locate bounding nodes",
+          calculation: "T₁ = 100 °C, P₁ = 17.7 bar; T₂ = 150 °C, P₂ = 15.8 bar.",
+          result: "Bracket identified",
+        },
+        {
+          step: "Step 2",
+          name: "Linear interpolation",
+          formula: "P=P_1+\\frac{(T-T_1)}{(T_2-T_1)}(P_2-P_1)",
+          calculation:
+            "P = 17.7 + (125−100)/(150−100)×(15.8−17.7) = 17.7 − 0.95 = 16.75 bar.",
+          result: "MAWP ≈ 16.8 bar",
+        },
+        {
+          step: "Step 3",
+          name: "Hydrotest pressure",
+          formula: "P_{hydro}=1.5 P_{ambient}",
+          calculation: "P_ambient = 19.6 bar → P_hydro = 29.4 bar.",
+          result: "P_hydro = 29.4 bar",
+        },
+      ],
+      conclusion:
+        "Report MAWP ≈ 16.8 bar at 125 °C and hydrotest 29.4 bar. Confirm against the project ASME B16.5 edition before design acceptance.",
+    },
+    ...howTo("How to look up ASME B16.5 flange P-T rating", [
+      {
+        name: "1. Select material group",
+        text: "Choose Group 1.1 (carbon steel) or Group 2.2 (316/316L) matching the flange forging / plate material.",
+      },
+      {
+        name: "2. Select flange class",
+        text: "Pick Class 150–2500 (Group 2.2 Phase-1 offers 150/300/600 only).",
+      },
+      {
+        name: "3. Enter design temperature",
+        text: "Enter metal temperature in °C (or °F in imperial). The solver interpolates between Table 2 nodes.",
+      },
+      {
+        name: "4. Read MAWP and hydrotest",
+        text: "Hero shows MAWP; hydrotest is 1.5 × ambient rating. Review warnings if temperature is outside the table or Class 150 is above 538 °C.",
+      },
+      {
+        name: "5. Cross-check related tools",
+        text: "Use Flange Dimension & Weight for geometry and Pipe Wall Thickness (B31.3) for matching pipe design pressure.",
+      },
+    ]),
+    faq: [
+      {
+        question: "Is Class a constant psi / bar rating?",
+        answer:
+          "**No.** Class is a **dimensionless designator**. **MAWP depends on material group and temperature** per **ASME B16.5 Table 2** (e.g. Group 1.1 Class 150 ≈ **19.6 bar at 38 °C**, much lower at elevated temperature).",
+      },
+      {
+        question: "How are temperatures between table rows handled?",
+        answer:
+          "The calculator applies **linear interpolation** between the nearest published temperature nodes in °C / bar.",
+      },
+      {
+        question: "What is hydrostatic shell test pressure here?",
+        answer:
+          "**P_hydro = 1.5 × ambient rating** (−29…38 °C band), not 1.5 × the derated elevated-temperature MAWP.",
+      },
+      {
+        question: "Does this cover ASME B16.47 large flanges?",
+        answer:
+          "**No.** Scope is **ASME B16.5 NPS ½–24**. Large-diameter flanges use **B16.47** (not in Phase-1).",
+      },
+      {
+        question: "Which material groups are included in Phase-1?",
+        answer:
+          "**Group 1.1** (A105 / A106-B / A350 LF2) and **Group 2.2** (A182 F316 / F316L). Other Table 2 groups require a later data release.",
+      },
+    ],
+  },
+
 };
 
 export function getCalculatorSeo(slug: string): CalculatorSeoEntry | undefined {

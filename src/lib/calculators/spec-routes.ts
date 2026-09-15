@@ -19,6 +19,8 @@ import { listMultiPumpPseoRoutes } from "@/lib/calculators/pseo/multi-pump-route
 import { listBoltWrenchLookupPseoRoutes } from "@/lib/calculators/pseo/bolt-wrench-lookup-routes";
 import { listInsulationHeatLossPseoRoutes } from "@/lib/calculators/pseo/insulation-heat-loss-routes";
 import { listTankVesselVolumePseoRoutes } from "@/lib/calculators/pseo/tank-vessel-volume-routes";
+import { listNitrogenPurgingVolumePseoRoutes } from "@/lib/calculators/pseo/nitrogen-purging-volume-routes";
+import { listFlangePtRatingPseoRoutes } from "@/lib/calculators/pseo/flange-pressure-temperature-rating-routes";
 import {
   listAvailableNps,
   listFlangeClassesForNps,
@@ -417,6 +419,20 @@ export function parseSpecToQuery(spec: string): Record<string, string> | null {
     };
   }
 
+  // Flange P-T: `group-{1-1|2-2}-class{N}-{T}{c|f}`
+  const flangePt = value.match(
+    /^group-(1-1|2-2)-class(150|300|600|900|1500|2500)-(\d+(?:p\d+)?)(c|f)$/i,
+  );
+  if (flangePt) {
+    const unitTok = flangePt[4].toLowerCase();
+    return {
+      units: unitTok === "f" ? "imperial" : "metric",
+      materialGroup: flangePt[1].replace("-", "."),
+      flangeClass: flangePt[2],
+      designTemperature: flangePt[3].replace("p", "."),
+    };
+  }
+
   if (value === "liquid" || value === "gas") {
     return { fluid: value };
   }
@@ -661,6 +677,10 @@ export function listSpecRoutesForSlug(slug: string): SpecRoute[] {
       return listInsulationHeatLossPseoRoutes(slug);
     case "tank-vessel-volume":
       return listTankVesselVolumePseoRoutes(slug);
+    case "nitrogen-purging-volume":
+      return listNitrogenPurgingVolumePseoRoutes(slug);
+    case "flange-pressure-temperature-rating":
+      return listFlangePtRatingPseoRoutes(slug);
     case "unit-converter":
       return [
         {
@@ -954,6 +974,46 @@ export function findSpecRouteForInputs(
   const length =
     partial.length != null && partial.length !== ""
       ? String(partial.length)
+      : "";
+  const geometryType =
+    partial.geometryType != null && partial.geometryType !== ""
+      ? String(partial.geometryType)
+      : "";
+  const purgeMethod =
+    partial.purgeMethod != null && partial.purgeMethod !== ""
+      ? String(partial.purgeMethod)
+      : "";
+  const pipeNps =
+    partial.pipeNps != null && partial.pipeNps !== ""
+      ? String(partial.pipeNps).replace(/^NPS\s*/i, "").replace(/"/g, "")
+      : "";
+  const pipeLength =
+    partial.pipeLength != null && partial.pipeLength !== ""
+      ? String(partial.pipeLength)
+      : "";
+  const vesselDiameter =
+    partial.vesselDiameter != null && partial.vesselDiameter !== ""
+      ? String(partial.vesselDiameter)
+      : "";
+  const vesselLength =
+    partial.vesselLength != null && partial.vesselLength !== ""
+      ? String(partial.vesselLength)
+      : "";
+  const customVolume =
+    partial.customVolume != null && partial.customVolume !== ""
+      ? String(partial.customVolume)
+      : "";
+  const materialGroup =
+    partial.materialGroup != null && partial.materialGroup !== ""
+      ? String(partial.materialGroup)
+      : "";
+  const flangeClass =
+    partial.flangeClass != null && partial.flangeClass !== ""
+      ? String(partial.flangeClass)
+      : "";
+  const designTemperature =
+    partial.designTemperature != null && partial.designTemperature !== ""
+      ? String(partial.designTemperature)
       : "";
 
   if (bolts && pattern) {
@@ -1260,6 +1320,71 @@ export function findSpecRouteForInputs(
         numEq(route.query.diameter ?? "", diameter) &&
         numEq(route.query.length ?? "", length)
       );
+    });
+    if (hit) return hit;
+  }
+
+  // Nitrogen purging — geometry + method + key size/volume
+  if (geometryType && purgeMethod) {
+    const numEq = (a: string, b: string) => {
+      const na = Number(a);
+      const nb = Number(b);
+      return Number.isFinite(na) && Number.isFinite(nb)
+        ? Math.abs(na - nb) < 1e-9
+        : a === b;
+    };
+    const hit = routes.find((route) => {
+      if (route.query.geometryType !== geometryType) return false;
+      if (route.query.purgeMethod !== purgeMethod) return false;
+      if (units && route.query.units && route.query.units !== units) {
+        return false;
+      }
+      if (geometryType === "piping") {
+        const routeNps = (route.query.pipeNps ?? "").replace(/^NPS\s*/i, "");
+        return (
+          routeNps === pipeNps &&
+          numEq(route.query.pipeLength ?? "", pipeLength)
+        );
+      }
+      if (geometryType === "vessel") {
+        return (
+          numEq(route.query.vesselDiameter ?? "", vesselDiameter) &&
+          numEq(route.query.vesselLength ?? "", vesselLength)
+        );
+      }
+      return numEq(route.query.customVolume ?? "", customVolume);
+    });
+    if (hit) return hit;
+  }
+
+  // Flange P-T rating — material group + class (+ temp when present)
+  if (materialGroup && flangeClass) {
+    const numEq = (a: string, b: string) => {
+      const na = Number(a);
+      const nb = Number(b);
+      return Number.isFinite(na) && Number.isFinite(nb)
+        ? Math.abs(na - nb) < 1e-6
+        : a === b;
+    };
+    const withTemp =
+      designTemperature !== ""
+        ? routes.find((route) => {
+            if (route.query.materialGroup !== materialGroup) return false;
+            if (route.query.flangeClass !== flangeClass) return false;
+            if (units && route.query.units && route.query.units !== units) {
+              return false;
+            }
+            return numEq(route.query.designTemperature ?? "", designTemperature);
+          })
+        : undefined;
+    if (withTemp) return withTemp;
+    const hit = routes.find((route) => {
+      if (route.query.materialGroup !== materialGroup) return false;
+      if (route.query.flangeClass !== flangeClass) return false;
+      if (units && route.query.units && route.query.units !== units) {
+        return false;
+      }
+      return true;
     });
     if (hit) return hit;
   }
@@ -1639,6 +1764,44 @@ export function buildSpecSeoCopy(
         `${shortTitle} for ${focus} stock with density-based mass and cost screening.`,
       h1: `${shortTitle} — ${focus}`,
       h2: `${focus} material summary`,
+    };
+  }
+
+  if (q.geometryType && q.purgeMethod) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus} | ${brand}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `NFPA 69 nitrogen purging / inerting volume for ${focus.toLowerCase()} with dilution or pressure-cycle screening.`;
+    const clipped =
+      description.length > 160
+        ? `${description.slice(0, 157).trimEnd()}…`
+        : description;
+    return {
+      title,
+      description: clipped,
+      h1: `${shortTitle} — ${focus}`,
+      h2: `${focus} purge duty summary`,
+    };
+  }
+
+  if (q.materialGroup && q.flangeClass) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus} | ${brand}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `ASME B16.5 flange pressure-temperature rating MAWP for ${focus} with linear interpolation between table nodes.`;
+    const clipped =
+      description.length > 160
+        ? `${description.slice(0, 157).trimEnd()}…`
+        : description;
+    return {
+      title,
+      description: clipped,
+      h1: `${shortTitle} — ${focus}`,
+      h2: `${focus} P-T rating summary`,
     };
   }
 
