@@ -39,6 +39,8 @@ export const CALCULATOR_TYPE_SLUG: Record<CalculatorType, string> = {
   "nitrogen-purging-volume": "nitrogen-purging-volume",
   "flange-pressure-temperature-rating":
     "flange-pressure-temperature-rating",
+  "flange-gasket-stress": "flange-gasket-stress",
+  "pipe-branch-reinforcement": "pipe-branch-reinforcement",
 };
 
 export const SLUG_TO_CALCULATOR_TYPE: Record<string, CalculatorType> =
@@ -84,6 +86,10 @@ export const CALCULATOR_PLANT_TAGS: Record<CalculatorType, CalculatorPlantTags> 
     "gasket-dimension": {
       consumes: ["size", "class_rating"],
       produces: ["size", "class_rating"],
+    },
+    "flange-gasket-stress": {
+      consumes: ["size", "class_rating", "pressure"],
+      produces: ["size", "class_rating", "pressure"],
     },
     "hydro-test": {
       consumes: ["size", "pressure"],
@@ -174,6 +180,10 @@ export const CALCULATOR_PLANT_TAGS: Record<CalculatorType, CalculatorPlantTags> 
       consumes: ["class_rating", "temperature", "material"],
       produces: ["class_rating", "temperature"],
     },
+    "pipe-branch-reinforcement": {
+      consumes: ["size", "schedule", "pressure"],
+      produces: ["size", "schedule", "pressure"],
+    },
   };
 
 export type NextAction = {
@@ -205,6 +215,7 @@ export function getNextActions(
       const type = SLUG_TO_CALCULATOR_TYPE[calculator.slug];
       if (!type || calculator.slug === currentSlug) return null;
       const tags = CALCULATOR_PLANT_TAGS[type];
+      if (!tags?.consumes?.length) return null;
       const overlap = tags.consumes.filter((key) => available.includes(key));
       if (overlap.length === 0) return null;
       return {

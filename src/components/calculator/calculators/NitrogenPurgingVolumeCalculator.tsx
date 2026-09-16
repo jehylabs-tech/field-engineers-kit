@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import CalculatorBaseLayout from "@/components/calculator/CalculatorBaseLayout";
 import FieldGroup, { FieldSelect } from "@/components/calculator/FieldGroup";
 import NitrogenPurgeSchematic from "@/components/calculator/schematics/NitrogenPurgeSchematic";
@@ -168,6 +168,7 @@ export default function NitrogenPurgingVolumeCalculator({
       NITROGEN_PURGING_VOLUME_URL_CONFIG,
       { type: "nitrogen-purging-volume" },
     );
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   const output = useMemo(
     () => calculateNitrogenPurgingVolume(inputs),
@@ -204,6 +205,7 @@ export default function NitrogenPurgingVolumeCalculator({
     NITROGEN_PURGE_METHOD_OPTIONS[0];
 
   const presets = isImperial ? IMPERIAL_PRESETS : METRIC_PRESETS;
+  const isDilution = inputs.purgeMethod === "dilution-sweep";
 
   function applyPreset(preset: Preset) {
     setInputs((current) => ({ ...current, ...preset.patch }));
@@ -223,6 +225,8 @@ export default function NitrogenPurgingVolumeCalculator({
 
   const oxygenFraction = Math.min(1, Math.max(0, inputs.targetO2 / 21));
 
+  const advancedSummary = `C_in=${inputs.supplyO2Impurity}%`;
+
   const inputRows = [
     {
       label: "Geometry",
@@ -235,7 +239,7 @@ export default function NitrogenPurgingVolumeCalculator({
     },
     { label: "Method", value: methodMeta.shortLabel },
     { label: "O₂", value: o2Label },
-    ...(inputs.purgeMethod === "dilution-sweep"
+    ...(isDilution
       ? [{ label: "K", value: inputs.mixingEfficiency.toFixed(2) }]
       : [
           {
@@ -248,7 +252,6 @@ export default function NitrogenPurgingVolumeCalculator({
   function onPurgeMethodChange(value: NitrogenPurgeMethod) {
     setInputs((current) => {
       const nextPressure = defaultCyclePressure(value, current.unitSystem);
-      // Always reset when switching pressure ↔ vacuum (absolute vs gauge).
       const crossingAbsGauge =
         (current.purgeMethod === "pressure-cycle" &&
           value === "vacuum-cycle") ||
@@ -271,6 +274,7 @@ export default function NitrogenPurgingVolumeCalculator({
   return (
     <CalculatorBaseLayout
       layout="formula"
+      inputNaturalHeight
       output={output}
       exportTitle={title}
       standard={standard}
@@ -287,9 +291,6 @@ export default function NitrogenPurgingVolumeCalculator({
       }
       inputPanel={
         <div className="flex w-full min-w-0 flex-col gap-2.5 [&_.calc-field]:mb-0 [&_.calc-field]:max-w-none">
-          <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-            System geometry &amp; purge duty
-          </h3>
           <div className="flex flex-wrap gap-1.5">
             {presets.map((preset) => {
               const active =
@@ -321,32 +322,47 @@ export default function NitrogenPurgingVolumeCalculator({
             })}
           </div>
 
-          <FieldSelect
-            label="System geometry"
-            value={inputs.geometryType}
-            options={NITROGEN_GEOMETRY_OPTIONS}
-            onChange={(value) =>
-              setField("geometryType", value as NitrogenGeometryType)
-            }
-          />
+          <div className="grid grid-cols-2 gap-2">
+            <FieldSelect
+              label="System geometry"
+              value={inputs.geometryType}
+              options={NITROGEN_GEOMETRY_OPTIONS}
+              onChange={(value) =>
+                setField("geometryType", value as NitrogenGeometryType)
+              }
+            />
+            <FieldSelect
+              label="Purging method"
+              value={inputs.purgeMethod}
+              options={NITROGEN_PURGE_METHOD_OPTIONS.map((m) => ({
+                value: m.value,
+                label: m.label,
+              }))}
+              onChange={(value) =>
+                onPurgeMethodChange(value as NitrogenPurgeMethod)
+              }
+            />
+          </div>
 
           {inputs.geometryType === "piping" ? (
             <>
-              <FieldSelect
-                label="Nominal pipe size"
-                value={inputs.pipeNps}
-                options={NITROGEN_NPS_OPTIONS}
-                onChange={(value) => setField("pipeNps", value)}
-              />
-              <FieldGroup
-                label="Pipe length L"
-                unit={lengthUnit}
-                hint="Straight-run equivalent. Dead-legs may need lower K."
-                value={inputs.pipeLength}
-                onChange={(value) =>
-                  setField("pipeLength", toNumber(value, inputs.pipeLength))
-                }
-              />
+              <div className="grid grid-cols-2 gap-2">
+                <FieldSelect
+                  label="Nominal pipe size"
+                  value={inputs.pipeNps}
+                  options={NITROGEN_NPS_OPTIONS}
+                  onChange={(value) => setField("pipeNps", value)}
+                />
+                <FieldGroup
+                  label="Pipe length L"
+                  unit={lengthUnit}
+                  hint="Straight-run equivalent. Dead-legs may need lower K."
+                  value={inputs.pipeLength}
+                  onChange={(value) =>
+                    setField("pipeLength", toNumber(value, inputs.pipeLength))
+                  }
+                />
+              </div>
               {computed.idMm != null ? (
                 <p className="m-0 -mt-1 text-xs text-slate-500 dark:text-slate-400">
                   B36 Sch {inputs.pipeSchedule || "40"} ID ={" "}
@@ -358,9 +374,9 @@ export default function NitrogenPurgingVolumeCalculator({
           ) : null}
 
           {inputs.geometryType === "vessel" ? (
-            <>
+            <div className="grid grid-cols-2 gap-2">
               <FieldGroup
-                label="Vessel inside diameter Di"
+                label="Vessel ID Di"
                 unit={isImperial ? "in" : "mm"}
                 value={inputs.vesselDiameter}
                 onChange={(value) =>
@@ -371,7 +387,7 @@ export default function NitrogenPurgingVolumeCalculator({
                 }
               />
               <FieldGroup
-                label="Vessel length / height L"
+                label="Vessel length L"
                 unit={isImperial ? "in" : "mm"}
                 hint="Shell T/T length. Volume includes 2:1 SE head equivalent (L + 0.5·Di)."
                 value={inputs.vesselLength}
@@ -382,7 +398,7 @@ export default function NitrogenPurgingVolumeCalculator({
                   )
                 }
               />
-            </>
+            </div>
           ) : null}
 
           {inputs.geometryType === "custom-volume" ? (
@@ -396,40 +412,30 @@ export default function NitrogenPurgingVolumeCalculator({
             />
           ) : null}
 
-          <FieldSelect
-            label="Purging method"
-            value={inputs.purgeMethod}
-            options={NITROGEN_PURGE_METHOD_OPTIONS.map((m) => ({
-              value: m.value,
-              label: m.label,
-            }))}
-            onChange={(value) =>
-              onPurgeMethodChange(value as NitrogenPurgeMethod)
-            }
-          />
+          <div className="grid grid-cols-2 gap-2">
+            <FieldGroup
+              label="Initial O₂"
+              unit="%"
+              value={inputs.initialO2}
+              onChange={(value) =>
+                setField("initialO2", toNumber(value, inputs.initialO2))
+              }
+            />
+            <FieldGroup
+              label="Target max O₂"
+              unit="%"
+              hint="NFPA 69 / site LEL policy — often ≤5% O₂ before hydrocarbons; confirm AHJ."
+              value={inputs.targetO2}
+              onChange={(value) =>
+                setField("targetO2", toNumber(value, inputs.targetO2))
+              }
+            />
+          </div>
 
-          <FieldGroup
-            label="Initial O₂ concentration"
-            unit="%"
-            value={inputs.initialO2}
-            onChange={(value) =>
-              setField("initialO2", toNumber(value, inputs.initialO2))
-            }
-          />
-          <FieldGroup
-            label="Target maximum O₂"
-            unit="%"
-            hint="NFPA 69 / site LEL policy — often ≤5% O₂ before hydrocarbons; confirm AHJ."
-            value={inputs.targetO2}
-            onChange={(value) =>
-              setField("targetO2", toNumber(value, inputs.targetO2))
-            }
-          />
-
-          {inputs.purgeMethod === "dilution-sweep" ? (
-            <>
+          {isDilution ? (
+            <div className="grid grid-cols-2 gap-2">
               <FieldGroup
-                label="Purge N₂ flow rate Q"
+                label="Purge N₂ flow Q"
                 unit={flowUnit}
                 value={inputs.purgeFlowRate}
                 onChange={(value) =>
@@ -442,7 +448,7 @@ export default function NitrogenPurgingVolumeCalculator({
               <FieldGroup
                 label="Mixing efficiency K"
                 unit="—"
-                hint="0.25 poor mixing / dead-legs · 0.75 typical · 1.0 ideal plug flow."
+                hint="0.25 poor / dead-legs · 0.75 typical · 1.0 ideal plug flow."
                 chips={MIXING_K_CHIPS}
                 value={inputs.mixingEfficiency}
                 onChange={(value) =>
@@ -452,19 +458,7 @@ export default function NitrogenPurgingVolumeCalculator({
                   )
                 }
               />
-              <FieldGroup
-                label="Supply N₂ O₂ impurity"
-                unit="%"
-                hint="Usually ≈0 for industrial N₂. Must stay below target O₂ or dilution cannot converge."
-                value={inputs.supplyO2Impurity}
-                onChange={(value) =>
-                  setField(
-                    "supplyO2Impurity",
-                    toNumber(value, inputs.supplyO2Impurity),
-                  )
-                }
-              />
-            </>
+            </div>
           ) : (
             <FieldGroup
               label={
@@ -475,7 +469,7 @@ export default function NitrogenPurgingVolumeCalculator({
               unit={pressureUnit}
               hint={
                 inputs.purgeMethod === "vacuum-cycle"
-                  ? "Absolute pressure at vacuum hold before N₂ break to atmosphere (typical 0.1–0.5 bar(a) / 1.5–7 psia)."
+                  ? "Absolute pressure at vacuum hold before N₂ break (typical 0.1–0.5 bar(a) / 1.5–7 psia)."
                   : "Must remain below equipment MAWP. Vent returns to atmosphere each cycle."
               }
               value={inputs.cycleHighPressure}
@@ -487,6 +481,47 @@ export default function NitrogenPurgingVolumeCalculator({
               }
             />
           )}
+
+          <div className="rounded-xl border border-slate-200/90 bg-slate-50/50 dark:border-slate-800/90 dark:bg-slate-900/30">
+            <button
+              type="button"
+              onClick={() => setShowAdvanced((open) => !open)}
+              className="flex w-full items-center justify-between px-3.5 py-2.5 text-left transition-colors hover:bg-slate-100/60 dark:hover:bg-slate-800/40"
+            >
+              <div className="flex min-w-0 items-center gap-2">
+                <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-slate-200/80 px-1 text-[10px] font-bold text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                  1.2
+                </span>
+                <span className="text-xs font-semibold text-slate-700 dark:text-slate-200">
+                  Advanced (supply O₂ impurity)
+                </span>
+                {!showAdvanced ? (
+                  <span className="truncate font-mono text-[11px] text-slate-500 dark:text-slate-400">
+                    {advancedSummary}
+                  </span>
+                ) : null}
+              </div>
+              <span className="shrink-0 text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                {showAdvanced ? "▲ Hide" : "▼ Edit"}
+              </span>
+            </button>
+            {showAdvanced ? (
+              <div className="space-y-2.5 border-t border-slate-200/80 p-3.5 dark:border-slate-800">
+                <FieldGroup
+                  label="Supply N₂ O₂ impurity"
+                  unit="%"
+                  hint="Usually ≈0 for industrial N₂. Must stay below target O₂ or dilution cannot converge."
+                  value={inputs.supplyO2Impurity}
+                  onChange={(value) =>
+                    setField(
+                      "supplyO2Impurity",
+                      toNumber(value, inputs.supplyO2Impurity),
+                    )
+                  }
+                />
+              </div>
+            ) : null}
+          </div>
         </div>
       }
     />

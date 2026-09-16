@@ -88,6 +88,43 @@
     "created_at": "2026-08-12T00:00:04.000Z"
   },
   {
+    "id": "local-flange-gasket-stress",
+    "category": "piping",
+    "title": "Flange Gasket Stress & Sealing",
+    "slug": "flange-gasket-stress",
+    "meta_description": "ASME PCC-1 App. O / VIII-1 App. 2 flange gasket stress screening: σ_g,op, m·y seating checks, preload F_b, and crush/leakage status by NPS and class.",
+    "formula_json": {
+      "type": "flange-gasket-stress",
+      "standard": "ASME PCC-1 App. O / VIII-1 App. 2",
+      "formulaLatex": "\\sigma_{g,op}=(F_b-H)/A_g",
+      "formulaBasis": "A_g=π/4(OD_g²−ID_g²); F_b=N_b·S_bolt·A_b (nominal shank); H=π/4·G²·P with G=OD_g; seating floor = max(y, σ_g,min_seal); check σ_g,inst ≥ seating floor and σ_g,op ≥ m·P; PCC-1 max crush band.",
+      "related": [
+        {
+          "slug": "gasket-dimension-selection",
+          "title": "Gasket Dimensions",
+          "carry": "Same NPS / class"
+        },
+        {
+          "slug": "bolt-torque-tensioning",
+          "title": "Bolt Torque & Tensioning",
+          "carry": "Same NPS / class / bolt stress basis"
+        },
+        {
+          "slug": "flange-bolt-tightening-sequence",
+          "title": "Bolt Tightening Sequence",
+          "carry": "Same bolt count / class"
+        },
+        {
+          "slug": "flange-dimension-weight",
+          "title": "Flange Dimensions",
+          "carry": "Same NPS / class"
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-16T00:00:00.000Z"
+  },
+  {
     "id": "local-valve-cv-sizing",
     "category": "mechanical",
     "title": "Valve Cv Sizing Calculator",
@@ -422,6 +459,48 @@
     },
     "is_published": true,
     "created_at": "2026-09-11T00:00:00.000Z"
+  },
+  {
+    "id": "local-pipe-branch-reinforcement",
+    "category": "piping",
+    "title": "Pipe Branch Reinforcement Calculator",
+    "slug": "pipe-branch-reinforcement",
+    "meta_description": "ASME B31.3 Para. 304.3 pipe branch reinforcement calculation: area replacement A₁–A₄, pad required screening, and recommended repad thickness by header/branch NPS, schedule, and design pressure.",
+    "formula_json": {
+      "type": "pipe-branch-reinforcement",
+      "standard": "ASME B31.3 Para. 304.3.3",
+      "formulaLatex": "A_1=d_1 t_h(2-\\sin\\beta);\\quad A_{req}=\\max(0,A_1-(A_2+A_3+A_4))",
+      "formulaBasis": "Required area A₁ = d₁·t_h·(2−sin β) with t = PD/(2(SEW+PY)). Available A₂/A₃ from mill-adjusted excess wall; A₄ ≈ leg_h²+leg_b². Pad when A₁ > A₂+A₃+A₄; T_pad = A_req_metal/(2 W_pad). Design temperature is for record — enter S at temperature separately.",
+      "related": [
+        {
+          "slug": "pipe-wall-thickness",
+          "title": "Pipe Wall Thickness",
+          "carry": "Same NPS / pressure / S basis"
+        },
+        {
+          "slug": "pipe-schedule-dimension",
+          "title": "Pipe Schedule & Dimensions",
+          "carry": "Same NPS / schedule OD-wall"
+        },
+        {
+          "slug": "pipe-coping-branch-cut-layout",
+          "title": "Pipe Coping & Branch Cut",
+          "carry": "Same header / branch NPS"
+        }
+      ],
+      "faq": [
+        {
+          "q": "When is a reinforcement pad required?",
+          "a": "When the required area A₁ exceeds the sum of available areas A₂ + A₃ + A₄ from excess header/branch wall and fillet welds. This tool flags Pad Required when A_req > 0."
+        },
+        {
+          "q": "Does this include the weld strength reduction factor W?",
+          "a": "Yes. Required thickness t = P·D / (2(S·E·W + P·Y)) uses W per ASME B31.3 branch reinforcement screening."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-16T00:00:01.000Z"
   },
   {
     "id": "local-pneumatic-test-safety-distance",

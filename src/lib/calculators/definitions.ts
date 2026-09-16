@@ -28,7 +28,9 @@ export type CalculatorType =
   | "insulation-heat-loss"
   | "tank-vessel-volume"
   | "nitrogen-purging-volume"
-  | "flange-pressure-temperature-rating";
+  | "flange-pressure-temperature-rating"
+  | "flange-gasket-stress"
+  | "pipe-branch-reinforcement";
 
 export type FaqItem = {
   q: string;

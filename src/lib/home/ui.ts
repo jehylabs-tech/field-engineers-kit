@@ -70,6 +70,8 @@ export const CATALOG_SEO_BLURBS: Record<string, string> = {
     "ASME B16.9 BW fittings: LR/SR elbow, tee, reducer, and cap center-to-end with schedule OD/ID/wall.",
   "gasket-dimension-selection":
     "ASME B16.20 spiral-wound and RTJ ring gasket dimensions by NPS and class.",
+  "flange-gasket-stress":
+    "ASME PCC-1 App. O gasket stress σ_g,op with VIII-1 m·y sealing checks and crush/leakage status.",
   "valve-cv-sizing":
     "ISA / IEC 60534 control-valve Cv sizing for liquid and gas service.",
   "bolt-torque-tensioning":
@@ -110,6 +112,8 @@ export const CATALOG_SEO_BLURBS: Record<string, string> = {
     "ASME B16.5 / B18.2.2 heavy-hex wrench AF, stud diameter, bolt count, and stud length quick lookup.",
   "pipe-coping-branch-cut-layout":
     "Pipe coping / branch cut flat-pattern layout with 16–32 ordinate marks for set-on, set-in, and miter joints.",
+  "pipe-branch-reinforcement":
+    "ASME B31.3 Para. 304.3 branch reinforcement area method: A₁–A₄, pad required status, and recommended repad OD/ID/thickness.",
   "pneumatic-test-safety-distance":
     "ASME PCC-2 Article 501 pneumatic test stored energy and personnel exclusion distance screening.",
   "unit-converter":

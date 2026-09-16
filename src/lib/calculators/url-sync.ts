@@ -18,6 +18,10 @@ import {
 } from "@/lib/calculators/spec-routes";
 import { syncCompanionUnits } from "@/lib/unitConverter";
 import { readPreferredUnitSystem } from "@/lib/units/preferred-system";
+import {
+  omitPathOwnedSearchParams,
+  searchParamsHavePathOwnedKeys,
+} from "@/lib/calculators/url-sync-path-owned";
 
 type ParamConfig<T> = {
   [K in keyof T]: {
@@ -84,90 +88,6 @@ function partialQueryFromInputs<T extends Record<string, unknown>>(
   }
   return partial;
 }
-
-/** Query keys that belong on the path (not carried as ?state when path syncing). */
-const PATH_OWNED_PARAMS = new Set([
-  "nps",
-  "sch",
-  "schedule",
-  "class",
-  "class_rating",
-  "fluid",
-  "material",
-  "cat",
-  "category",
-  "size",
-  "bolts",
-  "pattern",
-  "hnps",
-  "bnps",
-  "hsch",
-  "bsch",
-  "theta",
-  "pt",
-  "vol",
-  "mode",
-  "gas",
-  "temp",
-  "arr",
-  "hs",
-  "hf",
-  "npshr",
-  "ps",
-  "q",
-  "qunit",
-  "dens",
-  "etap",
-  "etam",
-  "hp",
-  "visc",
-  "sf",
-  "mode",
-  "n1",
-  "n2",
-  "d1",
-  "d2",
-  "head",
-  "pwr",
-  "hso",
-  "dtmax",
-  "mcsf",
-  "sor",
-  "etamin",
-  "dp",
-  "vmax",
-  "cp",
-  "sg",
-  "qop",
-  "hr",
-  "n",
-  "facing",
-  "insulationThickness",
-  "operatingTemp",
-  "ambientTemp",
-  "windSpeed",
-  "emissivity",
-  "orientation",
-  "headType",
-  "diameter",
-  "length",
-  "liquidLevel",
-  "geometryType",
-  "purgeMethod",
-  "pipeNps",
-  "pipeLength",
-  "vesselDiameter",
-  "vesselLength",
-  "customVolume",
-  "cycleHighPressure",
-  "mixingEfficiency",
-  "initialO2",
-  "targetO2",
-  "purgeFlowRate",
-  "materialGroup",
-  "flangeClass",
-  "designTemperature",
-]);
 
 export function useCalculatorUrlSync<T extends Record<string, unknown>>(
   defaults: T,
@@ -244,7 +164,7 @@ export function useCalculatorUrlSync<T extends Record<string, unknown>>(
     const plant = parsePlantContextFromSearchParams(source);
     const applied = applyPlantContext(options.type, next, plant);
     // SpecRoute / explicit query keys win over soft plant-context carry-over
-    // (e.g. ?size=12in must not overwrite hnps=4 from /4-on-6-??path seed).
+    // (e.g. ?size=12in must not overwrite hnps=4 from /4-on-6-… path seed).
     for (const key of Array.from(explicitParams)) {
       (applied as Record<string, unknown>)[key] = (
         beforePlant as Record<string, unknown>
@@ -319,31 +239,32 @@ export function useCalculatorUrlSync<T extends Record<string, unknown>>(
         ? findSpecRouteForInputs(pathInfo.slug, partial)
         : undefined;
 
-    // Prefer clean programmatic path when a SpecRoute matches (including
-    // first navigation from /calculator/:slug with no [spec] segment).
-    if (
-      pathInfo.base === "calculator" &&
-      pathInfo.slug &&
-      matched &&
-      matched.spec !== (pathInfo.spec ?? "")
-    ) {
+    // Matched SpecRoute → always prefer clean path; never re-emit path-owned
+    // keys (nps/class/size/gasketType/…) into ?query. Aux state (units,
+    // pressure, targetBoltStress, …) stays in the query string.
+    if (pathInfo.base === "calculator" && pathInfo.slug && matched) {
       const nextPath = buildSpecPath(pathInfo.slug, matched.spec);
-      const keep = new URLSearchParams();
-      params.forEach((value, key) => {
-        if (!PATH_OWNED_PARAMS.has(key)) {
-          keep.set(key, value);
-        }
-      });
-      // Drop SEO keys already encoded in the path; keep units / plant extras.
-      for (const key of Array.from(PATH_OWNED_PARAMS)) {
-        keep.delete(key);
-      }
+      const keep = omitPathOwnedSearchParams(params);
+      keep.delete("carried");
       const qs = keep.toString();
-      router.replace(qs ? `${nextPath}?${qs}` : nextPath, { scroll: false });
+      const nextUrl = qs ? `${nextPath}?${qs}` : nextPath;
+
+      const currentAux = omitPathOwnedSearchParams(
+        new URLSearchParams(searchParams.toString()),
+      );
+      currentAux.delete("carried");
+      const pathChanged = pathname !== nextPath;
+      const dirtyPathOwned = searchParamsHavePathOwnedKeys(searchParams);
+      const auxChanged = currentAux.toString() !== keep.toString();
+
+      if (pathChanged || dirtyPathOwned || auxChanged) {
+        router.replace(nextUrl, { scroll: false });
+      }
       return;
     }
 
-    // Stale SpecRoute path (inputs no longer match any listed combo) ??    // drop to the calculator root and keep state in the query string so the
+    // Stale SpecRoute path (inputs no longer match any listed combo) —
+    // drop to the calculator root and keep state in the query string so the
     // URL never advertises a different joint than the live inputs.
     if (
       pathInfo.base === "calculator" &&

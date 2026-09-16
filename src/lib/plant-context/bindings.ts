@@ -130,6 +130,22 @@ export function applyPlantContext<T extends Record<string, unknown>>(
     case "bolt-wrench-lookup":
     case "gasket-dimension":
       return applyClass(applyNps(inputs, ctx), ctx) as T;
+    case "flange-gasket-stress": {
+      const next = applyNps(inputs, ctx) as T & {
+        flangeClass?: string;
+        pressure?: number;
+        unitSystem?: string;
+      };
+      const cls = normalizeClassRating(ctx.class_rating);
+      if (cls) next.flangeClass = cls;
+      if (ctx.pressure) {
+        next.pressure =
+          next.unitSystem === "imperial"
+            ? pressureToPsi(ctx.pressure)
+            : pressureToBar(ctx.pressure);
+      }
+      return next as T;
+    }
     case "bolt-sequence": {
       const next = applyClass(applyNps(inputs, ctx), ctx) as T & {
         nps?: string;
@@ -327,12 +343,15 @@ export function applyPlantContext<T extends Record<string, unknown>>(
       }
       return next as T;
     }
-    case "pipe-coping": {
+    case "pipe-coping":
+    case "pipe-branch-reinforcement": {
       const next = { ...inputs } as T & {
         headerNps?: string;
         branchNps?: string;
         headerSchedule?: string;
         branchSchedule?: string;
+        designPressure?: number;
+        unitSystem?: string;
       };
       const nps = normalizeNps(ctx.size);
       if (nps) {
@@ -350,6 +369,12 @@ export function applyPlantContext<T extends Record<string, unknown>>(
           next.headerSchedule = sch;
           next.branchSchedule = sch;
         }
+      }
+      if (type === "pipe-branch-reinforcement" && ctx.pressure) {
+        next.designPressure =
+          next.unitSystem === "imperial"
+            ? pressureToPsi(ctx.pressure)
+            : pressureToBar(ctx.pressure);
       }
       return next as T;
     }
@@ -436,7 +461,9 @@ export function extractPlantContext(
     ctx.pressure =
       unitSystem === "imperial"
         ? { value: Number(inputs.designPressure.toFixed(1)), unit: "psi" }
-        : { value: Number(inputs.designPressure.toFixed(3)), unit: "MPa" };
+        : type === "pipe-branch-reinforcement" || type === "pneumatic-safety"
+          ? { value: Number(inputs.designPressure.toFixed(3)), unit: "bar" }
+          : { value: Number(inputs.designPressure.toFixed(3)), unit: "MPa" };
   }
 
   if (type === "valve-cv" && typeof inputs.inletPressure === "number") {
@@ -494,11 +521,21 @@ export function extractPlantContext(
         : { value: Number(inputs.designTemperature.toFixed(1)), unit: "C" };
   }
   if (
-    type === "flange-pressure-temperature-rating" &&
+    (type === "flange-pressure-temperature-rating" ||
+      type === "flange-gasket-stress") &&
     typeof inputs.flangeClass === "string" &&
     inputs.flangeClass
   ) {
-    ctx.class_rating = String(inputs.flangeClass);
+    ctx.class_rating = String(inputs.flangeClass).startsWith("Class")
+      ? String(inputs.flangeClass)
+      : `Class ${inputs.flangeClass}`;
+  }
+
+  if (type === "flange-gasket-stress" && typeof inputs.pressure === "number") {
+    ctx.pressure =
+      unitSystem === "imperial"
+        ? { value: Number(inputs.pressure.toFixed(1)), unit: "psi" }
+        : { value: Number(inputs.pressure.toFixed(3)), unit: "bar" };
   }
 
   if (type === "pipe-thickness" && typeof inputs.outsideDiameter === "number") {

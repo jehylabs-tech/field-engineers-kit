@@ -267,26 +267,10 @@ export function calculateFlangePtRating(
     heroStatus = `MAWP at ${fmtTemp(c.tC, inputs.unitSystem)}`;
   }
 
-  const callouts: ResultCallout[] = [
-    {
-      tone: "warn",
-      title: "Screening Extract — Confirm Official B16.5 Edition",
-      body: "Phase-1 FEK table extract for field screening only. Stamp MAWP from the project ASME B16.5 edition before design acceptance.",
-    },
-    {
-      tone: "info",
-      title: "ASME B16.5 NPS ≤ 24 Scope",
-      body: "Ratings apply to ASME B16.5 flanges NPS ½ through NPS 24. Larger diameters use ASME B16.47 (not in this Phase-1 tool).",
-    },
-    {
-      tone: "info",
-      title: "Phase-1 Material Coverage",
-      body: "Tables included: Group 1.1 (carbon steel) Classes 150–2500 and Group 2.2 (316/316L) Classes 150/300/600. Other material groups and Class 400 require a later data release.",
-    },
-  ];
+  const callouts: ResultCallout[] = [];
 
   if (!c.invalid && c.outOfRange) {
-    callouts.unshift({
+    callouts.push({
       tone: "warn",
       title: "Temperature Outside Published Nodes",
       body: `Design temperature is outside ${c.tMin}…${c.tMax} °C for this group/class. The value shown is the nearest table endpoint only — it is not a rated MAWP at the entered temperature.`,
@@ -294,7 +278,7 @@ export function calculateFlangePtRating(
   }
 
   if (!c.invalid && c.class150HighTempWarn) {
-    callouts.unshift({
+    callouts.push({
       tone: "warn",
       title: "Class 150 High-Temperature Restriction",
       body: `Class 150 flanges above ${CLASS_150_HIGH_TEMP_C} °C (${CLASS_150_HIGH_TEMP_F} °F) have special B16.5 limitations. Confirm material notes and owner specification before use.`,
@@ -325,24 +309,9 @@ export function calculateFlangePtRating(
       value: c.invalid ? "—" : fmtPressure(c.ambientBar, inputs.unitSystem),
     },
     {
-      section: "Selection",
-      label: "Material group",
-      value: meta?.label ?? inputs.materialGroup,
-    },
-    {
-      section: "Selection",
-      label: "Typical specs",
+      section: "Rating",
+      label: "Typical material specs",
       value: meta?.examples?.join(", ") ?? "—",
-    },
-    {
-      section: "Selection",
-      label: "Flange class",
-      value: `Class ${inputs.flangeClass}`,
-    },
-    {
-      section: "Selection",
-      label: "Design temperature",
-      value: fmtTemp(c.tC, inputs.unitSystem),
     },
   ];
 

@@ -22,6 +22,14 @@ import { listTankVesselVolumePseoRoutes } from "@/lib/calculators/pseo/tank-vess
 import { listNitrogenPurgingVolumePseoRoutes } from "@/lib/calculators/pseo/nitrogen-purging-volume-routes";
 import { listFlangePtRatingPseoRoutes } from "@/lib/calculators/pseo/flange-pressure-temperature-rating-routes";
 import {
+  listFlangeGasketStressPseoRoutes,
+  parseFlangeGasketStressSpec,
+} from "@/lib/calculators/pseo/flange-gasket-stress-routes";
+import {
+  listPipeBranchReinforcementPseoRoutesFull,
+  parsePipeBranchReinforcementSpec,
+} from "@/lib/calculators/pseo/pipe-branch-reinforcement-routes";
+import {
   listAvailableNps,
   listFlangeClassesForNps,
   listFlangeNps,
@@ -142,6 +150,12 @@ function npsClassRoutes(
 
 export function parseSpecToQuery(spec: string): Record<string, string> | null {
   const value = spec.trim().toLowerCase();
+
+  const gasketStress = parseFlangeGasketStressSpec(value);
+  if (gasketStress) return gasketStress;
+
+  const branchReinforcement = parsePipeBranchReinforcementSpec(value);
+  if (branchReinforcement) return branchReinforcement;
 
   const inchClassBlind = value.match(
     /^(\d+(?:\.\d+)?)-inch-class-(\d+)(?:-blind)?$/,
@@ -472,7 +486,8 @@ export function specLabelFromQuery(
   }
   if (query.bnps && query.hnps) {
     const sch = query.hsch || query.bsch || "";
-    const ang = query.theta ? `${query.theta}°` : "";
+    const angRaw = query.theta || query.angle;
+    const ang = angRaw ? `${angRaw}°` : "";
     return `${query.bnps}" on ${query.hnps}"${sch ? ` Sch ${sch}` : ""}${ang ? ` · ${ang}` : ""}`;
   }
   if (query.insulationThickness && query.nps && query.material) {
@@ -622,6 +637,8 @@ export function listSpecRoutesForSlug(slug: string): SpecRoute[] {
         (nps) => listGasketClassesForNps("spiral_wound", nps),
         listFlangeNps(),
       );
+    case "flange-gasket-stress":
+      return listFlangeGasketStressPseoRoutes(slug);
     case "blind-flange":
       return npsClassRoutes(slug, listFlangeClassesForNps, listFlangeNps());
     case "valve-cv":
@@ -659,6 +676,8 @@ export function listSpecRoutesForSlug(slug: string): SpecRoute[] {
       }));
     case "pipe-coping":
       return listPipeCopingPseoRoutes(slug);
+    case "pipe-branch-reinforcement":
+      return listPipeBranchReinforcementPseoRoutesFull(slug);
     case "pneumatic-safety":
       return listPneumaticSafetyPseoRoutes(slug);
     case "pump-npsh":
@@ -840,7 +859,9 @@ export function findSpecRouteForInputs(
   const theta =
     partial.theta != null && partial.theta !== ""
       ? String(Math.round(Number(partial.theta)) || partial.theta)
-      : "";
+      : partial.angle != null && partial.angle !== ""
+        ? String(Math.round(Number(partial.angle)) || partial.angle)
+        : "";
   const pt =
     partial.pt != null && partial.pt !== ""
       ? String(partial.pt)
@@ -1032,13 +1053,15 @@ export function findSpecRouteForInputs(
     if (hit) return hit;
   }
 
+  const routeAngle = (route: SpecRoute) => route.query.theta || route.query.angle;
+
   if (hnps && bnps && hsch && theta) {
     const hit = routes.find(
       (route) =>
         route.query.hnps === hnps &&
         route.query.bnps === bnps &&
         route.query.hsch === hsch &&
-        route.query.theta === theta,
+        routeAngle(route) === theta,
     );
     if (hit) return hit;
   }
@@ -1047,7 +1070,7 @@ export function findSpecRouteForInputs(
       (route) =>
         route.query.hnps === hnps &&
         route.query.bnps === bnps &&
-        route.query.theta === theta,
+        routeAngle(route) === theta,
     );
     if (hit) return hit;
   }
@@ -1413,6 +1436,22 @@ export function findSpecRouteForInputs(
     if (hit) return hit;
   }
   if (nps && pressureClass) {
+    const gasketType =
+      partial.gasketType != null && partial.gasketType !== ""
+        ? String(partial.gasketType)
+        : "";
+    if (gasketType) {
+      const withGasket = routes.find(
+        (route) =>
+          route.query.nps === nps &&
+          route.query.class === pressureClass &&
+          route.query.gasketType === gasketType,
+      );
+      if (withGasket) return withGasket;
+      if (routes.some((route) => Boolean(route.query.gasketType))) {
+        return undefined;
+      }
+    }
     if (facing) {
       const withFacing = routes.find(
         (route) =>
@@ -1522,16 +1561,25 @@ export function buildSpecSeoCopy(
   if (q.bnps && q.hnps) {
     const focus = route.label;
     const title = `${shortTitle} — ${focus} | ${brand}`;
+    const isReinforcement =
+      calculatorType === "pipe-branch-reinforcement" ||
+      route.spec.includes("psi") ||
+      route.spec.includes("bar") ||
+      route.slug === "pipe-branch-reinforcement";
     const description =
       metaDescription != null && metaDescription.length > 0
         ? `${focus}: ${metaDescription}`
-        : `Pipe coping / branch cut layout template for ${focus} with unwrapped ordinate marking table (ASME B31.3 fabrication screening).`;
+        : isReinforcement
+          ? `ASME B31.3 Para. 304.3 branch reinforcement area screening for ${focus} — pad required / adequate status and recommended repad dimensions.`
+          : `Pipe coping / branch cut layout template for ${focus} with unwrapped ordinate marking table (ASME B31.3 fabrication screening).`;
     return {
       title,
       description,
       // Page H1 stays the clean tool name; focus lives in <title> + Spec panel.
       h1: shortTitle,
-      h2: "Branch Cut Layout Summary",
+      h2: isReinforcement
+        ? "Branch Reinforcement Summary"
+        : "Branch Cut Layout Summary",
     };
   }
 
@@ -1713,6 +1761,24 @@ export function buildSpecSeoCopy(
       description,
       h1: shortTitle,
       h2: "Bolt & Wrench Size Summary",
+    };
+  }
+
+  if (q.nps && q.class && q.gasketType) {
+    const size = humanNps(q.nps);
+    const cls = humanClass(q.class);
+    const gasket = String(q.gasketType).replace(/_/g, " ");
+    const focus = `${size} ${cls} ${gasket}`;
+    const title = `Flange Gasket Stress — ${focus} | ${brand}`;
+    const description = `ASME PCC-1 App. O / VIII-1 App. 2 gasket stress screening for ${focus}: σ_g,op, m·y factors, and preload margin.`.slice(
+      0,
+      160,
+    );
+    return {
+      title,
+      description,
+      h1: `Flange Gasket Stress — ${focus}`,
+      h2: `${focus} stress summary`,
     };
   }
 

@@ -206,6 +206,21 @@ export const WORKSTATION_DOMAINS: WorkstationDomain[] = [
         ],
       },
       {
+        id: "pipe-branch-reinforcement",
+        title: "Pipe Branch Reinforcement",
+        seoLabel:
+          "ASME B31.3 Pipe Branch Reinforcement & Pad Thickness Calculator",
+        standard: "B31.3 §304.3",
+        href: "/calculator/pipe-branch-reinforcement/10inch-std-6inch-std-500psi",
+        keywords: [
+          "branch reinforcement",
+          "repad",
+          "pad thickness",
+          "ASME B31.3 304.3",
+          "area replacement",
+        ],
+      },
+      {
         id: "pneumatic-test-safety-distance",
         title: "Pneumatic Test Safety Distance",
         seoLabel:
@@ -406,6 +421,34 @@ export const WORKSTATION_DOMAINS: WorkstationDomain[] = [
           class_rating: DEMO.class_rating,
         }),
         keywords: ["b16.20", "gasket", "spiral", "rtj", "ring"],
+      },
+      {
+        id: "flange-gasket-stress",
+        title: "Flange Gasket Stress & Sealing",
+        seoLabel:
+          "ASME PCC-1 Appendix O Flange Gasket Stress & Sealing Calculator",
+        standard: "PCC-1 / VIII-1",
+        href: buildCalculatorHref(
+          "flange-gasket-stress",
+          {
+            size: "2in",
+            class_rating: "Class 300",
+            pressure: { value: 740, unit: "psi" as const },
+          },
+          {
+            gasketType: "spiral_wound_filled",
+            targetBoltStress: "45000",
+          },
+        ),
+        keywords: [
+          "gasket stress",
+          "pcc-1",
+          "m factor",
+          "y factor",
+          "sealing",
+          "spiral wound",
+          "appendix o",
+        ],
       },
       {
         id: "link-seal-penetration-sleeve",

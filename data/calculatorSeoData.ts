@@ -1539,6 +1539,232 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
     ],
   },
 
+  "flange-gasket-stress": {
+    slug: "flange-gasket-stress",
+    formulaTitle: "Core Formula & Variable Definitions",
+    formulaHtml:
+      '<p class="eng-eq"><i>A</i><sub>g</sub> = (π/4)·(<i>OD</i><sub>g</sub>² − <i>ID</i><sub>g</sub>²)</p>' +
+      '<p class="eng-eq"><i>F</i><sub>b</sub> = <i>N</i><sub>b</sub>·<i>S</i><sub>bolt</sub>·<i>A</i><sub>b</sub> &nbsp;·&nbsp; <i>H</i> = (π/4)·<i>G</i>²·<i>P</i> &nbsp;(<i>G</i> = <i>OD</i><sub>g</sub>)</p>' +
+      '<p class="eng-eq"><i>σ</i><sub>g,inst</sub> = <i>F</i><sub>b</sub>/<i>A</i><sub>g</sub> &nbsp;·&nbsp; <i>σ</i><sub>g,op</sub> = (<i>F</i><sub>b</sub> − <i>H</i>)/<i>A</i><sub>g</sub></p>' +
+      '<p class="eng-plain">Required: <i>σ</i><sub>g,inst</sub> ≥ max(<i>y</i>, <i>σ</i><sub>g,min_seal</sub>) and <i>σ</i><sub>g,op</sub> ≥ <i>m</i>·<i>P</i> · PCC-1 App. O max crush band</p>',
+    formulaLatex:
+      "\\sigma_{g,op}=\\frac{F_b-H}{A_g},\\quad A_g=\\frac{\\pi}{4}(OD_g^2-ID_g^2),\\quad H=\\frac{\\pi}{4}G^2 P",
+    formulaNotes:
+      "Screening calculator for average gasket stress using ASME B16.20 / B16.5 geometry, ASME VIII-1 Appendix 2 m and y factors, and ASME PCC-1 Appendix O stress-band status. Assembly seating floor is max(y, σ_g,min_seal). Bolt preload uses nominal shank area A_b = π/4·d_b² (not tensile stress area). Hydrostatic diameter G is taken at OD_g for field screening. Creep, flange rotation, and thermal transients require FEA / detailed joint analysis.",
+    formulaBadges: [
+      { label: "Hero", value: "σ_g,op" },
+      { label: "Code", value: "PCC-1 App. O" },
+      { label: "Factors", value: "m · y (App. 2)" },
+      { label: "Scope", value: "Screening only" },
+    ],
+    variables: [
+      {
+        symbol: "A_g",
+        name: "Gasket contact area",
+        definition: "π/4 · (OD_g² − ID_g²) of the sealing contact annulus.",
+      },
+      {
+        symbol: "F_b",
+        name: "Total bolt preload",
+        definition: "N_b · S_bolt · A_b using nominal shank area.",
+      },
+      {
+        symbol: "H",
+        name: "Hydrostatic end force",
+        definition: "π/4 · G² · P with G = OD_g for this screening tool.",
+      },
+      {
+        symbol: "σ_g,op",
+        name: "Operating gasket stress",
+        definition: "(F_b − H) / A_g — primary hero value.",
+      },
+      {
+        symbol: "σ_g,inst",
+        name: "Installation gasket stress",
+        definition: "F_b / A_g at assembly (before pressure end force).",
+      },
+      {
+        symbol: "m, y",
+        name: "App. 2 gasket factors",
+        definition: "Maintenance factor m and seating stress y from VIII-1 Table 2-5.1 style values by gasket type.",
+      },
+    ],
+    standards: [
+      "ASME PCC-1 Appendix O (target torque & gasket stress limits)",
+      "ASME BPVC VIII-1 Appendix 2 (bolted flange connections — m, y)",
+      "ASME B16.20 / B16.21 (gasket contact geometry)",
+      "ASME B16.5 (flange bolting & raised-face OD)",
+    ],
+    allowancesAndTolerances: {
+      title: "Screening Assumptions",
+      summary:
+        "Average gasket stress screening with uniform bolt load. Not a substitute for Appendix 2 flange design or FEA.",
+      items: [
+        {
+          label: "Bolt area A_b",
+          value: "π/4 · d_b² (nominal shank)",
+          description:
+            "Field preload screening uses shank area so results align with PCC-1 style examples. Tensile stress area is more conservative for stud capacity.",
+        },
+        {
+          label: "Hydrostatic G",
+          value: "G = OD_g",
+          description:
+            "End force H uses gasket OD for screening. Formal App. 2 may use G = OD − 2b.",
+        },
+        {
+          label: "Spiral geometry",
+          value: "SE_OD × IR_OD",
+          description:
+            "Contact annulus from B16.20 sealing-element OD and inner-ring OD in gasketDimension.json.",
+        },
+        {
+          label: "Sheet gasket geometry",
+          value: "RF OD × pipe OD",
+          description:
+            "Compressed fiber / PTFE / soft rubber use B16.5 raised-face OD and B36 pipe OD as a seating proxy.",
+        },
+      ],
+    },
+    tableCaption:
+      "Representative gasket-stress screening chart (NPS × Class × gasket type) — FEK table geometry",
+    tableHeaders: [
+      "Duty",
+      "Gasket",
+      "P",
+      "S_bolt",
+      "σ_g,op",
+      "Status",
+    ],
+    tableRows: [
+      ["2\" Cl.300", "Spiral wound filled", "740 psi", "45 ksi", "18.4 ksi", "OPTIMAL"],
+      ["DN50 Cl.300", "Spiral wound filled", "51 bar", "310 MPa", "126.6 MPa", "OPTIMAL"],
+      ["3\" Cl.150", "Compressed fiber", "285 psi", "30 ksi", "3.1 ksi", "UNDER_STRESSED*"],
+      ["DN80 Cl.150", "Compressed fiber", "19.6 bar", "207 MPa", "21.5 MPa", "UNDER_STRESSED*"],
+      ["4\" Cl.150", "Spiral wound filled", "285 psi", "30 ksi", "—", "Lookup"],
+      ["6\" Cl.300", "PTFE sheet", "740 psi", "40 ksi", "—", "Lookup"],
+      ["8\" Cl.150", "Compressed fiber", "285 psi", "30 ksi", "—", "Lookup"],
+      ["12\" Cl.300", "Spiral wound filled", "740 psi", "45 ksi", "—", "Lookup"],
+    ],
+    tableFootnote:
+      "*Compressed-fiber Class 150 uses 4 bolts × RF/pipe annulus — operating stress is typically below m·P at moderate bolt stress; raise S_bolt or change construction. Spiral-wound 2\" Class 300 default matches 18.4 ksi σ_g,op.",
+    materialLimitations: {
+      title: "Gasket Construction Limits",
+      summary:
+        "m·y factors and PCC-1 min/max bands are type-based screening values. Confirm OEM datasheets before assembly.",
+      items: [
+        {
+          materialGroup: "Soft rubber / elastomer",
+          stressLimit: "Low crush limit (~800 psi max band)",
+          notes: "OVER_CRUSH_RISK triggers quickly if bolt stress is aggressive.",
+        },
+        {
+          materialGroup: "Spiral wound filled (SS / graphite)",
+          stressLimit: "m ≈ 3.0, y ≈ 10 ksi; PCC-1 band ~5–25 ksi",
+          notes: "Default construction for the 2\" Class 300 worked example.",
+        },
+        {
+          materialGroup: "Compressed fiber / PTFE sheet",
+          stressLimit: "m ≈ 2.0, y ≈ 1.6 ksi",
+          notes: "RF/pipe annulus proxy; often under-stressed on small Class 150 joints.",
+        },
+        {
+          materialGroup: "RTJ soft iron",
+          stressLimit: "m ≈ 5.5, y ≈ 18 ksi",
+          notes: "Uses pitch±width annular proxy when RTJ rows exist.",
+        },
+      ],
+    },
+    workedExample: {
+      title: "Worked example — 2\" Class 300 spiral-wound (imperial)",
+      scenario:
+        "Screen operating gasket stress for NPS 2 Class 300 spiral-wound filled at 740 psi with 45 ksi target bolt stress.",
+      designConditions: [
+        { label: "NPS / Class", value: '2" · Class 300' },
+        { label: "Gasket", value: "Spiral wound filled (SS / graphite)" },
+        { label: "P", value: "740 psi" },
+        { label: "S_bolt", value: "45,000 psi" },
+        { label: "Bolting", value: "8 × 5/8 studs (B16.5)" },
+        { label: "Geometry", value: "OD_g 91.9 mm · ID_g 62 mm (B16.20)" },
+      ],
+      steps: [
+        {
+          step: "Step 1",
+          name: "Contact area",
+          calculation:
+            "A_g = π/4 · (3.618² − 2.441²) = 5.602 in²",
+          result: "A_g = 5.602 in²",
+          note: "Sealing-element OD × inner-ring OD.",
+        },
+        {
+          step: "Step 2",
+          name: "Bolt preload",
+          calculation:
+            "A_b = π/4 · (5/8)² = 0.307 in²; F_b = 8 · 45000 · 0.307 = 110,447 lbf",
+          result: "F_b ≈ 110.4 kip",
+          note: "Nominal shank area screening.",
+        },
+        {
+          step: "Step 3",
+          name: "Hydrostatic end force",
+          calculation: "H = π/4 · 3.618² · 740 = 7,608 lbf",
+          result: "H ≈ 7.6 kip",
+          note: "G = OD_g for this tool.",
+        },
+        {
+          step: "Step 4",
+          name: "Operating stress",
+          calculation:
+            "σ_g,op = (110447 − 7608) / 5.602 = 18,360 psi = 18.4 ksi",
+          result: "σ_g,op = 18.4 ksi",
+          note: "Status OPTIMAL vs m·P and PCC-1 band.",
+        },
+      ],
+      conclusion:
+        "Default imperial duty returns 18.4 ksi operating gasket stress with OPTIMAL PCC-1 status. Metric twin (51 bar / 310 MPa) returns 126.6 MPa.",
+    },
+    ...howTo("How to check flange gasket stress", [
+      {
+        name: "1. Select NPS, class, and gasket type",
+        text: "Match the flange class and gasket construction (spiral-wound, fiber, PTFE, RTJ).",
+      },
+      {
+        name: "2. Enter operating pressure and target bolt stress",
+        text: "Use project design pressure and PCC-1 target stud stress (psi or MPa).",
+      },
+      {
+        name: "3. Read σ_g,op hero and status badges",
+        text: "OPTIMAL / UNDER_STRESSED / OVER_CRUSH_RISK plus sealing margin σ_g,op/(m·P).",
+      },
+      {
+        name: "4. Review callouts and carry to related tools",
+        text: "Confirm torque sequence and flange dimensions; treat results as screening only.",
+      },
+    ]),
+    faq: [
+      {
+        question: "What does OPTIMAL mean in this calculator?",
+        answer:
+          "**OPTIMAL** means installation stress is at or below the PCC-1 style **σ_g,max_allow**, assembly stress meets the seating floor **max(y, σ_g,min_seal)**, and **σ_g,op ≥ m·P**. Results are average-stress screening — not Appendix 2 flange design.",
+      },
+      {
+        question: "Why is bolt area based on shank diameter?",
+        answer:
+          "This screening tool uses **nominal shank area A_b = π/4·d²** so preload maps consistently to published PCC-1 field examples. Tensile stress area is more conservative for **stud capacity** checks — use project bolting procedures for final torque.",
+      },
+      {
+        question: "Can this replace ASME VIII-1 Appendix 2 flange design?",
+        answer:
+          "**No.** It screens **average gasket stress** and App. 2 **m·y** sealing checks. Flange moments, hub stress, and rotation require formal Appendix 2 / FEA.",
+      },
+      {
+        question: "Which related calculators should I open next?",
+        answer:
+          "Use **flange-dimension-weight**, **bolt-torque-tensioning**, **flange-bolt-tightening-sequence**, and **flange-bolt-wrench-size-lookup** to confirm geometry, torque, sequence, and wrench AF.",
+      },
+    ],
+  },
+
   "valve-cv-sizing": {
     slug: "valve-cv-sizing",
     formulaTitle: "Core Formula & Variable Definitions",
@@ -3891,6 +4117,131 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
         question: "Does this calculate reinforcement pad size?",
         answer:
           "**No.** Use ASME B31.3 Paragraph **304.3** (or your project calc) for reinforcement. This tool only produces the cut layout template.",
+      },
+    ],
+  },
+
+  "pipe-branch-reinforcement": {
+    slug: "pipe-branch-reinforcement",
+    formulaTitle: "ASME B31.3 Branch Reinforcement Area Method",
+    formulaHtml:
+      '<p class="eng-eq"><i>t</i> = <i>P</i><i>D</i> / (2(<i>S</i><i>E</i><i>W</i> + <i>P</i><i>Y</i>))</p>' +
+      '<p class="eng-eq"><i>A</i><sub>1</sub> = <i>d</i><sub>1</sub> <i>t</i><sub>h</sub> (2 − sin β)</p>' +
+      '<p class="eng-eq"><i>A</i><sub>req</sub> = max(0, <i>A</i><sub>1</sub> − (<i>A</i><sub>2</sub> + <i>A</i><sub>3</sub> + <i>A</i><sub>4</sub>))</p>' +
+      '<p class="eng-plain">ASME B31.3 Para. 304.3.3 area replacement · mill tolerance on nominal wall</p>',
+    formulaLatex:
+      "A_1=d_1 t_h(2-\\sin\\beta),\\quad A_{req}=\\max(0,A_1-(A_2+A_3+A_4))",
+    formulaNotes:
+      "Screening calculator for welded branch reinforcement per ASME B31.3 Paragraph 304.3.3. Computes required area A₁ vs available excess wall A₂/A₃ and fillet-weld A₄ (leg²+leg²), then recommends pad OD/ID/thickness when A_req > 0. Nominal schedule walls are reduced by mill under-tolerance. Design temperature is recorded only — allowable stresses S_h/S_b/S_r are user inputs at temperature. No schematic: geometry limits d₂/L₄ and pad sizes appear in result tables.",
+    formulaHighlight: true,
+    formulaBadges: [
+      { label: "Hero", value: "Pad status + A_req" },
+      { label: "Code", value: "B31.3 §304.3" },
+      { label: "Areas", value: "A₁–A₄" },
+      { label: "Scope", value: "Screening" },
+    ],
+    variables: [
+      {
+        symbol: "A₁",
+        name: "Required reinforcement area",
+        definition: "d₁ · t_h · (2 − sin β) — area to be replaced at the branch opening.",
+      },
+      {
+        symbol: "A₂",
+        name: "Header excess area",
+        definition: "(2d₂ − d₁) · (T_H − t_h − c) when positive.",
+      },
+      {
+        symbol: "A₃",
+        name: "Branch excess area",
+        definition: "2 L₄ (T_B − t_b − c) / sin β when positive.",
+      },
+      {
+        symbol: "A₄",
+        name: "Fillet weld area",
+        definition: "Approximation leg_h² + leg_b² for both fillet legs.",
+      },
+      {
+        symbol: "d₂",
+        name: "Reinforcement zone limit",
+        definition: "min(D_h, max(d₁, (T_B−c)+(T_H−c)+d₁/2)).",
+      },
+      {
+        symbol: "L₄",
+        name: "Effective branch length",
+        definition: "min(2.5(T_H−c), 2.5(T_B−c)) for initial pad screening.",
+      },
+    ],
+    standards: [
+      "ASME B31.3 Process Piping — Paragraph 304.3.3 (branch reinforcement)",
+      "ASME B36.10M / B36.19M (NPS × schedule OD and wall thickness)",
+    ],
+    allowancesAndTolerances: {
+      title: "Screening assumptions",
+      summary:
+        "Mill tolerance reduces nominal wall before area checks. Pad thickness uses simplified W_pad and uniform pad annulus.",
+      items: [
+        {
+          label: "Mill tolerance",
+          value: "T_bar = T_nom × (1 − mill/100)",
+          description: "Default 12.5% under-tolerance on ordered pipe wall.",
+        },
+        {
+          label: "Weld factor W",
+          value: "In t = PD/(2(SEW+PY))",
+          description: "Branch and header required thickness include weld strength reduction W.",
+        },
+        {
+          label: "Pad metal area",
+          value: "A_req_metal = A_req / (S_r/S_h) when S_r < S_h",
+          description: "Lower pad material allowable stress increases required pad metal area.",
+        },
+      ],
+    },
+    tableCaption:
+      "Featured branch reinforcement screening duties (illustrative)",
+    tableHeaders: ["Header / branch", "Pressure", "Expected status"],
+    tableAllNumeric: false,
+    tableRows: [
+      ['10" STD / 6" STD', "500 psi", "Adequate without pad"],
+      ['16" STD / 10" STD', "800 psi", "Pad required"],
+      ["DN250 / DN150 STD", "35 bar", "Adequate without pad"],
+      ["DN400 / DN250 STD", "55 bar", "Repad required"],
+      ['8" STD / 4" STD', "600 psi @ 90°", "Screen A₁ vs A₂–A₄"],
+    ],
+    ...howTo("How to check branch reinforcement", [
+      {
+        name: "1. Select header and branch NPS × schedule",
+        text: "Branch NPS must be ≤ header NPS. STD maps to Sch 40 in the lookup tables.",
+      },
+      {
+        name: "2. Enter design pressure and allowable stresses",
+        text: "Use project design P and temperature-adjusted S values for header, branch, and pad material.",
+      },
+      {
+        name: "3. Review A₁ vs available area",
+        text: "Compare required A₁ against A₂ + A₃ + A₄. Positive A_req triggers pad sizing.",
+      },
+      {
+        name: "4. Confirm pad dimensions",
+        text: "Use recommended pad OD, ID (= branch OD), and T_pad as a screening start — verify with detailed calc.",
+      },
+    ]),
+    faq: [
+      {
+        question: "What is pipe branch reinforcement calculation ASME B31.3?",
+        answer:
+          "ASME B31.3 Para. 304.3 requires enough reinforcement area at branch connections. This tool applies the **area replacement method**: required area **A₁** from the branch opening vs excess wall and weld areas **A₂–A₄**.",
+      },
+      {
+        question: "How is branch pad thickness calculated?",
+        answer:
+          "When **A_req > 0**, pad metal area is **A_req_metal** (stress-adjusted if S_r < S_h). Thickness **T_pad ≈ A_req_metal / (2 W_pad)** with **W_pad = max(d₂ − D_b/2, 0.5 in)** screening minimum.",
+      },
+      {
+        question: "Does this include the weld strength reduction W?",
+        answer:
+          "Yes. Required thickness uses **t = PD / (2(SEW + PY))** including **W** on both header and branch.",
       },
     ],
   },

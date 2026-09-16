@@ -1,0 +1,201 @@
+---
+title: "ASME B16.20 Spiral Wound & RTJ Gasket Dimensions and Sealing Stress Guide"
+description: "Look up ASME B16.20 spiral-wound and RTJ gasket dimensions (ID, SE_OD, OR_OD), ring numbers, and PCC-1 / VIII-1 m·y sealing stress for B16.5 flanges."
+date: "2026-09-17"
+category: "ASME Standards"
+tags:
+  - ASME B16.20
+  - Spiral Wound Gasket
+  - Ring Type Joint
+  - Gasket Sealing Stress
+  - Flange Sealing
+  - ASME PCC-1
+relatedCalculatorUrl: "/calculator/gasket-dimension-selection"
+relatedCalculatorName: "Gasket Dimension & Selection"
+---
+
+Wrong gasket OD on an RF flange, a missing inner ring on a spiral-wound (SWG) order, or an RTJ ring number that does not match the groove class turns a “standard” B16.5 joint into a hydrotest leak or a crushed sealing element. **ASME B16.20 gasket dimensions** fix the geometry; **ASME PCC-1** / **VIII-1 Appendix 2** $m$ and $y$ factors bound how hard you must seat that geometry.
+
+## Quick Summary (TL;DR)
+
+- **Takeaway:** Size SWG / RTJ from **ASME B16.20** (NPS × class), then check seating with **$y$** and operating stress with **$m\cdot P$** before locking bolt load.
+- **Governing relation:** Contact area $A_g = \pi/4\,(OD_g^2 - ID_g^2)$; seating floor $\ge \max(y,\sigma_{g,\min})$.
+- **Code / basis:** ASME B16.20 · ASME B16.5 facing · ASME PCC-1 App. O screening · ASME VIII-1 App. 2 $m$, $y$.
+
+| Item | Field takeaway |
+| :--- | :--- |
+| **SWG envelope** | FEK reports **ID × SE_OD × OR_OD** (+ **IR_OD**) from B16.20 screening tables |
+| **Inner ring** | Order **inner + outer** rings when the datasheet / class requires crush control and bore protection |
+| **RTJ identity** | Ring **number + pitch $P$ + $w\times h$** must match the flange groove class |
+| **Class trap** | NPS 4 **Class 300 → R-37**; **Class 600 → R-38**; **Class 900 → R-39** (FEK catalog) |
+| **SWG $m$, $y$** | Flexible-graphite filled SWG screening: **$m = 3.0$**, **$y = 10{,}000$ psi** |
+| **Stress band** | Seating floor $\max(y,\sigma_{g,\min})$; FEK PCC-1-style **$\sigma_{g,\max}$ ≈ 25 ksi** for filled SWG |
+| **Tooling** | Dimensions → [Gasket Dimension & Selection](/calculator/gasket-dimension-selection); stress → [Flange Gasket Stress](/calculator/flange-gasket-stress) |
+
+---
+
+## ASME B16.20 gasket dimensions in the field
+
+Piping purchase specs often say “B16.20 spiral wound, graphite fill, 304 SS windings, inner and outer rings” without listing the four diameters the warehouse needs. Fitters then guess from the raised-face OD or reuse a Class 150 outer ring on a Class 300 joint. Outer-ring OD (**OR_OD**) tracks the **raised-face / centering** envelope for that **NPS × class**; sealing-element OD (**SE_OD**) and gasket ID set the **contact band**.
+
+Look up the FEK screening row for any listed NPS / class in the [Gasket Dimension & Selection](/calculator/gasket-dimension-selection) calculator (public slug `gasket-dimension-selection`). Pair geometry with bolt preload using [Flange Gasket Stress & Sealing](/calculator/flange-gasket-stress) and [Bolt Torque & Tensioning](/calculator/bolt-torque-tensioning).
+
+<Callout title="Engineering guidance & screening note" variant="info">
+Gasket selection and dimensional verification follow **ASME B16.20** and **ASME B16.5** facing practice. Minimum seating stresses ($y$) and maintenance target bands used in FEK follow **ASME PCC-1** Appendix O–style screening and **ASME VIII-1 Appendix 2** $m$, $y$ tables. For critical service, lethal fluids, or severe thermal transients, consult manufacturer seating limits and perform site-specific joint integrity analysis. FEK tables are **screening catalogs** — confirm the OEM datasheet before PO.
+</Callout>
+
+---
+
+## Core formulas & parameter definitions
+
+### Spiral-wound contact geometry
+
+For an annular sealing element (and for average gasket-stress screening when $OD_g$ / $ID_g$ are the contact diameters):
+
+$$
+A_g = \frac{\pi}{4}\left(OD_g^{2} - ID_g^{2}\right)
+$$
+
+FEK spiral-wound lookup reports four B16.20 screening diameters:
+
+| FEK label | Symbol (article) | Meaning |
+| :--- | :---: | :--- |
+| **ID** | $d_{\mathrm{ID}}$ | Gasket / sealing-element **inside** diameter |
+| **IR_OD** | $d_{\mathrm{IR}}$ | **Inner ring outside** diameter |
+| **SE_OD** | $d_{\mathrm{SE}}$ | **Sealing element outside** diameter |
+| **OR_OD** | $d_{\mathrm{OR}}$ | **Outer ring outside** diameter (centering ring) |
+
+Hero string format matches the calculator: **ID × SE_OD × OR_OD**.
+
+### RTJ pitch and section
+
+Ring-type joints are identified by **ring number**, **pitch diameter $P$**, and section **width × height** ($w \times h$). Octagonal rings are the FEK default style for standard R-number grooves; oval rings use the same pitch family but a different section profile — always match **ring style to the groove** stamped on the flange.
+
+### Seating and operating stress (VIII-1 App. 2 / PCC-1 screen)
+
+Appendix 2 gasket factors for a flexible-graphite-filled spiral wound (FEK `spiral_wound_filled`):
+
+$$
+m = 3.0,\qquad y = 10{,}000\ \mathrm{psi}\ (69\ \mathrm{MPa})
+$$
+
+Operating maintenance check (simplified):
+
+$$
+\sigma_{g,\mathrm{op}} \ge m\cdot P
+$$
+
+Installation / seating floor used in FEK gasket-stress screening:
+
+$$
+\sigma_{\mathrm{seat}} = \max\!\left(y,\ \sigma_{g,\min}\right)
+$$
+
+For filled SWG, FEK uses $\sigma_{g,\min} = 5{,}000$ psi and a PCC-1-style **crush ceiling** $\sigma_{g,\max} \approx 25{,}000$ psi. Target assembly gasket stress is therefore planned **above $y$** and **below $\sigma_{g,\max}$**, not at an arbitrary “internet” 30 ksi ceiling.
+
+### Parameter definitions
+
+| Parameter | Symbol | Unit | Description |
+| :--- | :---: | :---: | :--- |
+| Gasket contact area | $A_g$ | in², mm² | Annular area between $OD_g$ and $ID_g$ |
+| Gasket factor | $m$ | — | VIII-1 App. 2 maintenance factor |
+| Seating stress | $y$ | psi, MPa | Minimum design seating stress (App. 2) |
+| Design / operating pressure | $P$ | psi, bar | Joint pressure used in $m\cdot P$ |
+| RTJ pitch diameter | $P$ | in, mm | Ring pitch (do not confuse with pressure $P$) |
+| Ring width / height | $w$, $h$ | in, mm | RTJ section dimensions |
+
+---
+
+## Worked example: NPS 6 Class 300 spiral-wound gasket dimensions
+
+**Scenario:** ASME B16.5 **NPS 6″ Class 300** RF flange pair with an **ASME B16.20 spiral-wound** gasket (flexible graphite filler; stainless inner / outer rings as specified on the PO).
+
+### Inputs
+
+| Input | Value |
+| :--- | :--- |
+| NPS | **6** |
+| Pressure class | **300** |
+| Gasket type (FEK) | **Spiral Wound Gasket** (`spiral_wound`) |
+| Unit system | Imperial or metric (same catalog row) |
+
+### Step 1 — Read the B16.20 screening row (FEK catalog)
+
+From `gasketDimension.json` / [Gasket Dimension & Selection](/calculator/gasket-dimension-selection) for **NPS 6 · Class 300**:
+
+| Dimension | Metric (FEK) | Imperial (÷ 25.4) |
+| :--- | :---: | :---: |
+| **ID** ($d_{\mathrm{ID}}$) | **98.4 mm** | **3.874 in** |
+| **IR_OD** ($d_{\mathrm{IR}}$) | **111.1 mm** | **4.374 in** |
+| **SE_OD** ($d_{\mathrm{SE}}$) | **149.4 mm** | **5.882 in** |
+| **OR_OD** ($d_{\mathrm{OR}}$) | **266.7 mm** | **10.500 in** |
+
+Calculator hero (metric): **ID × SE_OD × OR_OD ≈ 98.400 × 149.400 × 266.700 mm**.
+
+### Step 2 — Map seating stress to bolt target
+
+Using FEK [Flange Gasket Stress](/calculator/flange-gasket-stress) factors for filled SWG:
+
+| Factor | FEK screening value |
+| :--- | :--- |
+| $m$ | **3.00** |
+| $y$ | **10,000 psi** (69 MPa) |
+| $\sigma_{g,\min}$ | **5,000 psi** |
+| Seating floor $\max(y,\sigma_{g,\min})$ | **10,000 psi** |
+| $\sigma_{g,\max}$ (crush band) | **25,000 psi** |
+
+Plan assembly so average gasket stress sits **≥ 10 ksi** and **≪ 25 ksi**, then convert that stress into stud preload / torque with [Bolt Torque & Tensioning](/calculator/bolt-torque-tensioning) and a [star-pattern sequence](/calculator/flange-bolt-tightening-sequence).
+
+<Callout title="Field callout — inner ring" variant="tip">
+**Spiral wound gasket inner ring requirement (ASME B16.20 practice):** When the purchase order calls for an inner ring, verify **IR_OD** and **ID** on the packing list against the FEK / OEM row — not against pipe ID alone. Missing inner rings on high-class or vacuum-prone joints are a common warehouse substitution error.
+</Callout>
+
+---
+
+## RTJ gasket dimensions: Octagonal rings by class (NPS 4)
+
+Long-tail trap: crews reuse **R-37** on every NPS 4 RTJ flange. In the FEK B16.20 screening table, **ring number changes with class**:
+
+| NPS 4 class | Ring No. | Pitch $P$ | Width $w$ | Height $h$ | Style |
+| :---: | :---: | :---: | :---: | :---: | :---: |
+| **300** | **R-37** | **123.8 mm** (4.874 in) | **11.1 mm** | **17.5 mm** | Octagonal |
+| **600** | **R-38** | **136.5 mm** (5.374 in) | **11.1 mm** | **17.5 mm** | Octagonal |
+| **900** | **R-39** | **149.2 mm** (5.874 in) | **14.3 mm** | **22.2 mm** | Octagonal |
+
+So **RTJ gasket dimensions — Octagonal vs Oval** is first a **groove / ring-number** match, then a **section style** match. Oval rings are not interchangeable with octagonal grooves of the same nominal size.
+
+Reproduce Class 300 in the calculator: NPS **4**, class **300**, type **RTJ** → hero **Ring No. R-37** with pitch **123.800 mm**.
+
+---
+
+## Interactive tool CTA
+
+<Callout title="Open the FEK gasket tools" variant="tip">
+1. Dimensions: [Gasket Dimension & Selection](/calculator/gasket-dimension-selection) — set **Spiral Wound** or **RTJ**, NPS, and class (example: NPS **6** / Class **300** / SWG).  
+2. Sealing stress: [Flange Gasket Stress & Sealing](/calculator/flange-gasket-stress) — same NPS / class with **spiral-wound filled** for $m$, $y$, and $\sigma_g$ screening.  
+3. Makeup: [Bolt Torque & Tensioning](/calculator/bolt-torque-tensioning) and [ASME B16.5 Flange Dimensions & Weight](/calculator/flange-dimension-weight) for stud count, length, and wrench envelope.
+</Callout>
+
+---
+
+## Frequently Asked Questions (FAQ)
+
+### Q1. When is a spiral wound gasket inner ring required under ASME B16.20 practice?
+
+B16.20 / project PMS language typically requires an **inner ring** when crush control, vacuum, or high-class service needs a solid bore stop. FieldEngineersKit always exposes **IR_OD** and **ID** on spiral-wound rows so you can verify the ring is present on the ticket. If the PO says “inner + outer” and the box shows only a centering ring, **stop** — do not assemble.
+
+### Q2. How do minimum gasket seating stress and target bolt load relate under ASME PCC-1?
+
+**Minimum seating stress** starts at Appendix 2 **$y$** (10 ksi for FEK filled SWG). PCC-1-style assembly targets raise average gasket stress above $y$ while staying under the material **crush band** (FEK **$\sigma_{g,\max}$ ≈ 25 ksi** for filled SWG). Convert the chosen $\sigma_g$ into stud stress / torque with the bolt-torque tool; do not treat “25–30 ksi on every SWG” as a universal code number — FEK’s filled-SWG ceiling is **25 ksi**.
+
+### Q3. Why do RTJ gasket dimensions differ for Octagonal vs Oval ring joints?
+
+**Pitch diameter** can share a family, but **section geometry** and **groove machining** differ. FEK lists **Octagonal** (and RX where tabulated) with explicit $w\times h$. An oval ring in an octagonal groove (or the reverse) will not seat correctly even if the ring number “sounds right.”
+
+### Q4. Why don’t some internet ASME B16.20 SWG seating stress / $Y$ factor charts match FEK?
+
+Many blogs mix **VIII-1 App. 2 $y$**, OEM preferred assembly stress, and PCC-1 Appendix O bands into one column labeled “Y factor.” FieldEngineersKit keeps them separate: **$y = 10$ ksi**, **$\sigma_{g,\min} = 5$ ksi**, seating floor **$\max(y,\sigma_{g,\min}) = 10$ ksi**, crush **$\sigma_{g,\max} = 25$ ksi** for filled SWG. Always reconcile the **OEM sheet** for exotic fillers or PTFE-faced windings.
+
+### Q5. Why does NPS 4 Class 600 use R-38 instead of R-37?
+
+Because **ASME B16.20 / B16.5 groove class** — not NPS alone — sets the ring number. In the FEK catalog, NPS 4 **Class 300 = R-37**, **Class 600 = R-38**, **Class 900 = R-39**. Confirm with [Gasket Dimension & Selection](/calculator/gasket-dimension-selection) before issuing the RTJ purchase order.

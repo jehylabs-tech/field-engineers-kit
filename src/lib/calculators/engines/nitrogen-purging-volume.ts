@@ -483,39 +483,25 @@ export function calculateNitrogenPurgingVolume(
     : c.vN2WithMarginNm3 / TUBE_TRAILER_NM3;
   const ln2L = c.invalid ? 0 : c.vN2WithMarginNm3 / LN2_NM3_PER_L;
 
-  const callouts: ResultCallout[] = [
-    {
-      tone: "warn",
-      title: "NFPA 69 Inerting Safety Warning",
-      body: "This calculation provides theoretical volumetric gas requirements. Continuous oxygen analyzer monitoring at outfall vents is mandatory before introducing hydrocarbons or entering confined spaces (NFPA 69 / API RP 2016).",
-    },
-  ];
+  const callouts: ResultCallout[] = [];
   if (inputs.purgeMethod === "pressure-cycle") {
     callouts.push({
       tone: "warn",
-      title: "Pressure Vessel Cycle Limit Notice",
-      body: "Pressure-cycle inerting must never exceed the Maximum Allowable Working Pressure (MAWP) of the vessel or piping system. Confirm relief protection and written procedure before pressurizing.",
+      title: "Do not exceed MAWP",
+      body: "Pressure-cycle inerting must never exceed vessel/piping MAWP. Confirm relief protection and written procedure before pressurizing.",
     });
   }
-  if (inputs.purgeMethod === "dilution-sweep") {
+  if (c.invalid && c.invalidReason) {
     callouts.push({
-      tone: "info",
-      title: "Mixing Efficiency K",
-      body: "K accounts for imperfect sweep mixing (NFPA 69 screening). Use K ≈ 0.25–0.5 for dead-legs / poor mixing; K ≈ 0.75–1.0 for well-ventilated runs. Confirm with O₂ readings.",
-      items: [`Current K = ${inputs.mixingEfficiency.toFixed(2)}`],
-    });
-  }
-  if (inputs.purgeMethod === "vacuum-cycle") {
-    callouts.push({
-      tone: "info",
-      title: "Vacuum Floor Is Absolute Pressure",
-      body: "P_vac is absolute (bar(a) / psia), not gauge vacuum. Typical screening hold is ~0.1–0.5 bar(a) (≈1.5–7 psia). Do not reuse pressure-cycle gauge values.",
+      tone: "warn",
+      title: "Check purge inputs",
+      body: c.invalidReason,
     });
   }
 
   const rows: ResultRow[] = [
     {
-      section: "Geometry",
+      section: "Calculation basis",
       label: "Net system volume V_sys",
       value: fmtSysVol(c.vSysM3, inputs.unitSystem),
       emphasis: true,
@@ -524,60 +510,37 @@ export function calculateNitrogenPurgingVolume(
 
   if (inputs.geometryType === "piping" && c.idMm != null) {
     rows.push({
-      section: "Geometry",
+      section: "Calculation basis",
       label: `NPS ${normalizeNps(inputs.pipeNps)} Sch ${inputs.pipeSchedule || "40"} ID`,
       value: `${c.idMm.toFixed(2)} mm · ${(c.idMm / 25.4).toFixed(3)} in`,
     });
   }
 
+  if (c.cycles != null) {
+    rows.push({
+      section: "Calculation basis",
+      label: "Predicted residual O₂ after n cycles",
+      value: c.finalO2Pct != null ? `${c.finalO2Pct.toFixed(2)} % O₂` : "—",
+    });
+  }
+
   rows.push(
     {
-      section: "Gas supply procurement (+20% margin)",
-      label: "Standard 50 L · 200 bar cylinders",
+      section: "Calculation basis",
+      label: "50 L · 200 bar cylinders (+20%)",
       value: c.invalid
         ? "—"
         : `${cylinders} cylinder${cylinders === 1 ? "" : "s"}`,
       emphasis: true,
     },
     {
-      section: "Gas supply procurement (+20% margin)",
-      label: "Tube trailer equivalents (~2000 Nm³)",
-      value: c.invalid ? "—" : `${trailers.toFixed(2)} trailer-eq`,
-    },
-    {
-      section: "Gas supply procurement (+20% margin)",
-      label: "Liquid N₂ (screening)",
+      section: "Calculation basis",
+      label: "Tube trailer-eq / LN₂ (+20%)",
       value: c.invalid
         ? "—"
-        : `${ln2L.toFixed(0)} L LN₂ · ${(ln2L / 1000).toFixed(2)} m³ LN₂`,
-    },
-    {
-      section: "Duty",
-      label: "Purge method",
-      value: methodMeta.label,
-    },
-    {
-      section: "Duty",
-      label: "Initial → target O₂",
-      value: `${inputs.initialO2.toFixed(1)}% → ${inputs.targetO2.toFixed(2)}%`,
+        : `${trailers.toFixed(2)} trailer · ${ln2L.toFixed(0)} L LN₂`,
     },
   );
-
-  if (inputs.purgeMethod === "dilution-sweep") {
-    rows.push({
-      section: "Duty",
-      label: "Mixing efficiency K",
-      value: inputs.mixingEfficiency.toFixed(2),
-    });
-  }
-
-  if (c.cycles != null) {
-    rows.push({
-      section: "Duty",
-      label: "Predicted residual O₂ after n cycles",
-      value: c.finalO2Pct != null ? `${c.finalO2Pct.toFixed(2)} % O₂` : "—",
-    });
-  }
 
   const heroPrimary = c.invalid ? "—" : fmtVolGas(c.vN2Nm3, inputs.unitSystem);
   const heroWithTime =
@@ -607,6 +570,8 @@ export function calculateNitrogenPurgingVolume(
     { label: "LN2 liters", value: c.invalid ? "—" : ln2L.toFixed(1) },
   ];
 
+  const isDilution = inputs.purgeMethod === "dilution-sweep";
+
   return {
     heroLabel: "Required nitrogen volume",
     heroValue: heroWithTime,
@@ -635,22 +600,28 @@ export function calculateNitrogenPurgingVolume(
         ],
     summary: [
       {
-        label: "Net system volume V_sys",
+        label: "System volume V_sys",
         value: fmtSysVol(c.vSysM3, inputs.unitSystem),
       },
       {
-        label: "Pressure / vacuum cycles n",
-        value: c.cycles != null ? String(c.cycles) : "— (dilution)",
+        label: isDilution ? "Purge duration" : "Cycles n",
+        value: isDilution
+          ? fmtTime(c.purgeTimeHr)
+          : c.cycles != null
+            ? String(c.cycles)
+            : "—",
       },
       {
-        label: "N₂ with +20% safety margin",
+        label: "N₂ with +20% margin",
         value: c.invalid
           ? "—"
           : fmtVolGas(c.vN2WithMarginNm3, inputs.unitSystem),
       },
       {
-        label: "Purge duration",
-        value: fmtTime(c.purgeTimeHr),
+        label: "50 L cylinders (+20%)",
+        value: c.invalid
+          ? "—"
+          : `${cylinders} cylinder${cylinders === 1 ? "" : "s"}`,
       },
     ],
     summaryStatus: {

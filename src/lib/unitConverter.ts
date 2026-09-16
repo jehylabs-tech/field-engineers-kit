@@ -410,10 +410,25 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
     "testPressure",
     "surfacePressureAbs",
     "bypassDp",
+    "pressure",
   ]) {
     if (typeof next[key] === "number" && Number.isFinite(next[key] as number)) {
       convertNum(key, toImperial ? barToPsi : psiToBar, 3);
     }
+  }
+
+  // Bolt / gasket target stress: MPa ↔ psi
+  if (
+    typeof next.targetBoltStress === "number" &&
+    Number.isFinite(next.targetBoltStress)
+  ) {
+    const mpaToPsi = (mpa: number) => mpa * UNIT_FACTORS.BAR_TO_PSI * 10;
+    const psiToMpa = (psi: number) => psi / (UNIT_FACTORS.BAR_TO_PSI * 10);
+    convertNum(
+      "targetBoltStress",
+      toImperial ? mpaToPsi : psiToMpa,
+      toImperial ? 0 : 1,
+    );
   }
 
   // Pump NPSH / TDH / affinity head terms: m ↔ ft

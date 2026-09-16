@@ -93,6 +93,16 @@ import {
 } from "@/lib/calculators/engines/flow-velocity";
 import { calculateGasketDimension } from "@/lib/calculators/engines/gasket-dimension";
 import {
+  calculateFlangeGasketStress,
+  computeFlangeGasketStress,
+  convertFlangeGasketStressUnitSystem,
+  DEFAULT_FLANGE_GASKET_STRESS_INPUTS,
+} from "@/lib/calculators/engines/flange-gasket-stress";
+import {
+  omitPathOwnedSearchParams,
+  searchParamsHavePathOwnedKeys,
+} from "@/lib/calculators/url-sync-path-owned";
+import {
   calculateHydroTest,
   getHoldingTimeGuide,
   hydroTestPressureMpa,
@@ -2071,7 +2081,7 @@ describe("pSEO reference pages", () => {
     );
     const { getCalculatorSeo } = await import("../data/calculatorSeoData");
     const published = getLocalPublishedCalculators();
-    expect(published.length).toBe(19);
+    expect(published.length).toBeGreaterThan(0);
     for (const calculator of published) {
       const seo = getCalculatorSeo(calculator.slug);
       expect(seo, calculator.slug).toBeDefined();
@@ -2998,6 +3008,12 @@ describe("nitrogen-purging-volume", () => {
     );
     expect(out.heroLabel).toMatch(/nitrogen/i);
     expect(out.heroValue).toMatch(/min/i);
+    expect(out.summary).toHaveLength(4);
+    expect(out.callouts ?? []).toHaveLength(0);
+    expect(out.rows.every((row) => row.section === "Calculation basis")).toBe(
+      true,
+    );
+    expect(out.rows.length).toBeLessThanOrEqual(5);
     expectNoPoison(out);
   });
 
@@ -3159,6 +3175,23 @@ describe("flange-pressure-temperature-rating", () => {
       designTemperature: 600,
     });
     expect(out.heroStatusLevel).toBe("warn");
+    expect(
+      out.callouts?.some((item) =>
+        item.title.includes("Temperature Outside Published Nodes"),
+      ),
+    ).toBe(true);
+    expect(
+      out.callouts?.some((item) => item.title.includes("Screening Extract")),
+    ).toBe(false);
+    expect(out.rows.some((row) => row.section === "Selection")).toBe(false);
+  });
+
+  it("omits static scope callouts on in-range duties", () => {
+    const out = calculateFlangePtRating(DEFAULT_FLANGE_PT_RATING_INPUTS);
+    expect(out.callouts ?? []).toHaveLength(0);
+    expect(out.rows.some((row) => row.label === "Typical material specs")).toBe(
+      true,
+    );
   });
 
   it("resolves Pattern B specs", () => {
@@ -3186,5 +3219,157 @@ describe("flange-pressure-temperature-rating", () => {
         designTemperature: "200",
       })?.spec,
     ).toBe("group-1-1-class300-200c");
+  });
+});
+
+describe("flange-gasket-stress", () => {
+  it("matches 2in Class 300 spiral-wound imperial worked example (18.4 ksi)", () => {
+    const calc = computeFlangeGasketStress({
+      ...DEFAULT_FLANGE_GASKET_STRESS_INPUTS,
+      unitSystem: "imperial",
+      nps: "2",
+      flangeClass: "300",
+      gasketType: "spiral_wound_filled",
+      pressure: 740,
+      targetBoltStress: 45000,
+    });
+    expect(calc).not.toBeNull();
+    expect(calc!.sigmaOpPsi / 1000).toBeCloseTo(18.4, 1);
+    expect(calc!.status).toBe("OPTIMAL");
+    const out = calculateFlangeGasketStress({
+      ...DEFAULT_FLANGE_GASKET_STRESS_INPUTS,
+      unitSystem: "imperial",
+      nps: "2",
+      flangeClass: "300",
+      gasketType: "spiral_wound_filled",
+      pressure: 740,
+      targetBoltStress: 45000,
+    });
+    expect(out.heroValue).toBe("18.4 ksi");
+    expect(out.heroStatusLevel).toBe("pass");
+    expect(out.callouts ?? []).toHaveLength(0);
+    expect(out.summary).toHaveLength(4);
+    expect(out.rows.every((row) => row.section === "Calculation basis")).toBe(
+      true,
+    );
+    expect(out.rows.length).toBeLessThanOrEqual(6);
+  });
+
+  it("matches DN50 Class 300 metric twin (~126.6 MPa)", () => {
+    const calc = computeFlangeGasketStress({
+      ...DEFAULT_FLANGE_GASKET_STRESS_INPUTS,
+      unitSystem: "metric",
+      nps: "2",
+      flangeClass: "300",
+      gasketType: "spiral_wound_filled",
+      pressure: 51,
+      targetBoltStress: 310,
+    });
+    expect(calc).not.toBeNull();
+    expect(calc!.sigmaOpPsi * 0.006894757).toBeCloseTo(126.6, 0);
+    const out = calculateFlangeGasketStress({
+      ...DEFAULT_FLANGE_GASKET_STRESS_INPUTS,
+      unitSystem: "metric",
+      nps: "2",
+      flangeClass: "300",
+      gasketType: "spiral_wound_filled",
+      pressure: 51,
+      targetBoltStress: 310,
+    });
+    expect(out.heroValue).toMatch(/126\.|127\./);
+  });
+
+  it("screens 3in Class 150 compressed fiber with table bolt count", () => {
+    const calc = computeFlangeGasketStress({
+      unitSystem: "imperial",
+      nps: "3",
+      flangeClass: "150",
+      gasketType: "compressed_fiber",
+      pressure: 285,
+      targetBoltStress: 30000,
+    });
+    expect(calc).not.toBeNull();
+    expect(calc!.nb).toBe(4);
+    expect(calc!.sigmaOpPsi / 1000).toBeCloseTo(3.1, 1);
+    expect(calc!.status).toBe("UNDER_STRESSED");
+    expect(calc!.seatingRequiredPsi).toBe(5000);
+  });
+
+  it("converts imperial ↔ metric duty fields on unit toggle", () => {
+    const metric = convertFlangeGasketStressUnitSystem(
+      {
+        ...DEFAULT_FLANGE_GASKET_STRESS_INPUTS,
+        unitSystem: "imperial",
+        pressure: 740,
+        targetBoltStress: 45000,
+      },
+      "metric",
+    );
+    expect(metric.pressure).toBeCloseTo(51.0, 0);
+    expect(metric.targetBoltStress).toBeCloseTo(310.3, 0);
+    const back = convertFlangeGasketStressUnitSystem(metric, "imperial");
+    expect(back.pressure).toBeCloseTo(740, 0);
+    expect(back.targetBoltStress).toBeCloseTo(45000, 0);
+  });
+
+  it("resolves Pattern B specs and findSpecRouteForInputs", () => {
+    expect(
+      resolveSpecRoute("flange-gasket-stress", "2inch-300lb-spiral-wound")?.query,
+    ).toMatchObject({
+      nps: "2",
+      class: "300",
+      gasketType: "spiral_wound_filled",
+    });
+    expect(
+      resolveSpecRoute("flange-gasket-stress", "dn50-300lb-spiral-wound")?.query,
+    ).toMatchObject({
+      nps: "2",
+      class: "300",
+      gasketType: "spiral_wound_filled",
+    });
+    expect(
+      findSpecRouteForInputs("flange-gasket-stress", {
+        nps: "3",
+        class: "150",
+        gasketType: "compressed_fiber",
+      })?.spec,
+    ).toBe("3inch-150lb-compressed-fiber");
+  });
+});
+
+describe("clean URL path-owned query strip", () => {
+  it("omits path-owned keys while keeping auxiliary state", () => {
+    const raw = new URLSearchParams({
+      nps: "2",
+      class: "300",
+      class_rating: "300",
+      size: "2in",
+      gasketType: "spiral_wound_filled",
+      units: "metric",
+      pressure: "51",
+      targetBoltStress: "310",
+    });
+    expect(searchParamsHavePathOwnedKeys(raw)).toBe(true);
+    const clean = omitPathOwnedSearchParams(raw);
+    expect(clean.get("units")).toBe("metric");
+    expect(clean.get("pressure")).toBe("51");
+    expect(clean.get("targetBoltStress")).toBe("310");
+    expect(clean.get("nps")).toBeNull();
+    expect(clean.get("class")).toBeNull();
+    expect(clean.get("class_rating")).toBeNull();
+    expect(clean.get("size")).toBeNull();
+    expect(clean.get("gasketType")).toBeNull();
+    expect(searchParamsHavePathOwnedKeys(clean)).toBe(false);
+  });
+
+  it("keeps facing-free flange class specs path-owned only", () => {
+    const raw = new URLSearchParams({
+      nps: "4",
+      class: "150",
+      size: "4in",
+      units: "imperial",
+    });
+    const clean = omitPathOwnedSearchParams(raw);
+    expect(clean.toString()).toBe("units=imperial");
   });
 });

@@ -16,6 +16,7 @@ import {
   WORKSTATION_DOMAINS,
   WORKSTATION_SHORTCUTS,
   type WorkstationDomain,
+  type WorkstationTool,
 } from "@/lib/home/workstation";
 import type { UnitSystem } from "@/lib/calculators/definitions";
 import {
@@ -115,11 +116,20 @@ function SearchIcon({ className }: { className?: string }) {
   );
 }
 
-function WorkstationSearch() {
+const ALL_PREVIEW_COUNT = 4;
+const CATEGORY_TOOL_GRID_CLASS =
+  "grid gap-4 [grid-template-columns:repeat(auto-fill,minmax(280px,1fr))]";
+
+function WorkstationSearch({
+  query,
+  onQueryChange,
+}: {
+  query: string;
+  onQueryChange: (query: string) => void;
+}) {
   const router = useRouter();
   const units = usePreferredUnits();
   const listId = useId();
-  const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -145,10 +155,10 @@ function WorkstationSearch() {
   const go = useCallback(
     (href: string) => {
       setOpen(false);
-      setQuery("");
+      onQueryChange("");
       navigateToHref(router, withPreferredUnits(href, units));
     },
-    [router, units],
+    [onQueryChange, router, units],
   );
 
   const requestCalculator = useCallback(() => {
@@ -167,7 +177,7 @@ function WorkstationSearch() {
         id="workstation-search"
         value={query}
         onChange={(event) => {
-          setQuery(event.target.value);
+          onQueryChange(event.target.value);
           setOpen(true);
         }}
         onFocus={() => setOpen(true)}
@@ -269,8 +279,51 @@ function WorkstationSearch() {
   );
 }
 
-function DomainColumn({ domain }: { domain: WorkstationDomain }) {
+function ToolRow({
+  tool,
+  className,
+}: {
+  tool: WorkstationTool;
+  className?: string;
+}) {
+  return (
+    <ToolLink
+      href={tool.href}
+      label={tool.seoLabel}
+      className={
+        className ??
+        "group flex items-center gap-2 rounded-lg px-0.5 py-1.5 transition-colors hover:bg-slate-50 dark:hover:bg-spec-panel"
+      }
+    >
+      <span className="min-w-0 flex-1 text-[14px] font-semibold leading-snug text-slate-800 transition-colors group-hover:text-blue-600 dark:text-slate-100 dark:group-hover:text-blue-400 md:text-[15px]">
+        {tool.title}
+      </span>
+      <span className="shrink-0 rounded bg-slate-100 px-1.5 py-0.5 text-right font-mono text-[11px] font-medium text-slate-500 dark:bg-spec-panel dark:text-slate-400">
+        {tool.standard}
+      </span>
+      <span
+        aria-hidden="true"
+        className="inline-block w-3 shrink-0 text-sm font-medium text-blue-600 opacity-0 transition-opacity duration-150 group-hover:opacity-100 dark:text-blue-400"
+      >
+        →
+      </span>
+    </ToolLink>
+  );
+}
+
+function DomainColumn({
+  domain,
+  tools,
+  showMore,
+  onMore,
+}: {
+  domain: WorkstationDomain;
+  tools: WorkstationTool[];
+  showMore?: boolean;
+  onMore?: () => void;
+}) {
   const Icon = DOMAIN_ICONS[domain.id] ?? GitCommit;
+  const totalCount = domain.tools.length;
 
   return (
     <section
@@ -291,26 +344,54 @@ function DomainColumn({ domain }: { domain: WorkstationDomain }) {
       </h2>
       <nav aria-label={`${domain.label} calculators`} className="flex-1">
         <ul>
-          {domain.tools.map((tool) => (
+          {tools.map((tool) => (
             <li key={tool.id}>
-              <ToolLink
-                href={tool.href}
-                label={tool.seoLabel}
-                className="group flex items-center gap-2 rounded-lg px-0.5 py-1.5 transition-colors hover:bg-slate-50 dark:hover:bg-spec-panel"
-              >
-                <span className="min-w-0 flex-1 text-[14px] font-semibold leading-snug text-slate-800 transition-colors group-hover:text-blue-600 dark:text-slate-100 dark:group-hover:text-blue-400 md:text-[15px]">
-                  {tool.title}
-                </span>
-                <span className="shrink-0 rounded bg-slate-100 px-1.5 py-0.5 text-right font-mono text-[11px] font-medium text-slate-500 dark:bg-spec-panel dark:text-slate-400">
-                  {tool.standard}
-                </span>
-                <span
-                  aria-hidden="true"
-                  className="inline-block w-3 shrink-0 text-sm font-medium text-blue-600 opacity-0 transition-opacity duration-150 group-hover:opacity-100 dark:text-blue-400"
-                >
-                  →
-                </span>
-              </ToolLink>
+              <ToolRow tool={tool} />
+            </li>
+          ))}
+        </ul>
+      </nav>
+      {showMore && onMore ? (
+        <button
+          type="button"
+          onClick={onMore}
+          className="mt-3 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-left text-sm font-semibold text-blue-600 transition-colors hover:border-blue-300 hover:bg-blue-50 dark:border-spec-border dark:bg-spec-panel dark:text-blue-400 dark:hover:border-blue-400 dark:hover:bg-blue-950/40"
+        >
+          + More {domain.label} ({totalCount})
+        </button>
+      ) : null}
+    </section>
+  );
+}
+
+function CategoryToolGrid({ domain }: { domain: WorkstationDomain }) {
+  const Icon = DOMAIN_ICONS[domain.id] ?? GitCommit;
+
+  return (
+    <section
+      id={`domain-${domain.id}`}
+      aria-labelledby={`domain-heading-${domain.id}`}
+      className="scroll-mt-28"
+    >
+      <h2
+        id={`domain-heading-${domain.id}`}
+        className="mb-4 flex items-center gap-2 text-lg font-bold text-slate-900 dark:text-slate-50"
+      >
+        <Icon
+          aria-hidden="true"
+          className="h-5 w-5 shrink-0 text-blue-600 dark:text-blue-400"
+          strokeWidth={2.25}
+        />
+        {domain.label}
+      </h2>
+      <nav aria-label={`${domain.label} calculators`}>
+        <ul className={CATEGORY_TOOL_GRID_CLASS}>
+          {domain.tools.map((tool) => (
+            <li key={tool.id} className="min-w-0">
+              <ToolRow
+                tool={tool}
+                className="group flex h-full items-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2.5 shadow-sm transition-colors hover:border-blue-300 hover:bg-slate-50 dark:border-spec-border dark:bg-spec-bg dark:hover:border-blue-400 dark:hover:bg-spec-panel"
+              />
             </li>
           ))}
         </ul>
@@ -561,11 +642,37 @@ function StandardsSeoSection() {
 export default function WorkstationHome() {
   usePrefetchCalculators();
   const [filter, setFilter] = useState<string>("all");
+  const [filterBeforeSearch, setFilterBeforeSearch] = useState<string>("all");
+  const [catalogQuery, setCatalogQuery] = useState("");
   const catalogRef = useRef<HTMLElement>(null);
+
+  const trimmedCatalogQuery = catalogQuery.trim();
+  const isSearching = trimmedCatalogQuery.length > 0;
+  const activeFilter = isSearching ? "all" : filter;
+
+  const handleCatalogQueryChange = useCallback(
+    (nextQuery: string) => {
+      const nextTrimmed = nextQuery.trim();
+      const wasSearching = catalogQuery.trim().length > 0;
+      const willSearch = nextTrimmed.length > 0;
+
+      if (!wasSearching && willSearch) {
+        setFilterBeforeSearch(filter);
+        setFilter("all");
+      } else if (wasSearching && !willSearch) {
+        setFilter(filterBeforeSearch);
+      }
+
+      setCatalogQuery(nextQuery);
+    },
+    [catalogQuery, filter, filterBeforeSearch],
+  );
 
   const focusDomain = useCallback((domainId: string) => {
     if (!WORKSTATION_DOMAINS.some((domain) => domain.id === domainId)) return;
+    setCatalogQuery("");
     setFilter(domainId);
+    setFilterBeforeSearch(domainId);
     requestAnimationFrame(() => {
       const el = document.getElementById(`domain-${domainId}`);
       el?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -594,13 +701,34 @@ export default function WorkstationHome() {
     };
   }, [focusDomain]);
 
-  const domains =
-    filter === "all"
-      ? orderedWorkstationDomains()
-      : orderedWorkstationDomains().filter((domain) => domain.id === filter);
+  const searchHits = useMemo(
+    () => (isSearching ? searchWorkstationTools(trimmedCatalogQuery, 100) : []),
+    [isSearching, trimmedCatalogQuery],
+  );
+
+  const searchTools = useMemo(() => {
+    if (!isSearching) return [];
+    const byId = new Map<string, WorkstationTool>();
+    for (const domain of WORKSTATION_DOMAINS) {
+      for (const tool of domain.tools) byId.set(tool.id, tool);
+    }
+    return searchHits
+      .map((hit) => byId.get(hit.id))
+      .filter((tool): tool is WorkstationTool => Boolean(tool));
+  }, [isSearching, searchHits]);
+
+  const domains = useMemo(() => {
+    if (isSearching) return [];
+    if (activeFilter === "all") return orderedWorkstationDomains();
+    return orderedWorkstationDomains().filter(
+      (domain) => domain.id === activeFilter,
+    );
+  }, [activeFilter, isSearching]);
 
   function selectDomainTab(tabId: string) {
+    setCatalogQuery("");
     setFilter(tabId);
+    setFilterBeforeSearch(tabId);
     if (tabId !== "all") {
       window.history.replaceState(null, "", `#domain-${tabId}`);
       requestAnimationFrame(() => {
@@ -637,7 +765,10 @@ export default function WorkstationHome() {
                 Live ASME / API calculators for piping, flanges, valves, gaskets,
                 torque, and plant procurement — searchable by code and NPS.
               </p>
-              <WorkstationSearch />
+              <WorkstationSearch
+                query={catalogQuery}
+                onQueryChange={handleCatalogQueryChange}
+              />
               <nav
                 aria-label="Frequently used calculators"
                 className="mt-4 flex flex-wrap gap-2"
@@ -677,7 +808,7 @@ export default function WorkstationHome() {
         </div>
       </section>
 
-      {/* 2. Standalone category filter + high-density card grid */}
+      {/* 2. Standalone category filter + domain card columns */}
       <section
         ref={catalogRef}
         aria-labelledby="catalog-heading"
@@ -687,16 +818,14 @@ export default function WorkstationHome() {
           <h2 id="catalog-heading" className="sr-only">
             Live engineering calculator catalog
           </h2>
-          <div
-            className="mb-5 flex flex-wrap items-center justify-between gap-2"
-          >
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-2">
             <div
               role="tablist"
               aria-label="Filter by engineering domain"
               className="flex flex-wrap gap-2 overflow-x-auto pb-1"
             >
               {WORKSTATION_DOMAIN_TABS.map((tab) => {
-                const selected = filter === tab.id;
+                const selected = activeFilter === tab.id;
                 return (
                   <button
                     key={tab.id}
@@ -722,11 +851,43 @@ export default function WorkstationHome() {
               {DOCS_HOME_FILTER_LABEL} 📖
             </Link>
           </div>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5 lg:grid-cols-4">
-            {domains.map((domain) => (
-              <DomainColumn key={domain.id} domain={domain} />
-            ))}
-          </div>
+
+          {isSearching ? (
+            <div className="space-y-3">
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                {searchTools.length > 0
+                  ? `${searchTools.length} result${searchTools.length === 1 ? "" : "s"} across all categories`
+                  : `No calculators match “${trimmedCatalogQuery}”`}
+              </p>
+              {searchTools.length > 0 ? (
+                <ul className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm dark:border-spec-border dark:bg-spec-bg">
+                  {searchTools.map((tool) => (
+                    <li key={tool.id}>
+                      <ToolRow tool={tool} />
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </div>
+          ) : activeFilter === "all" ? (
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-5 lg:grid-cols-4">
+              {domains.map((domain) => (
+                <DomainColumn
+                  key={domain.id}
+                  domain={domain}
+                  tools={domain.tools.slice(0, ALL_PREVIEW_COUNT)}
+                  showMore={domain.tools.length > ALL_PREVIEW_COUNT}
+                  onMore={() => selectDomainTab(domain.id)}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {domains.map((domain) => (
+                <CategoryToolGrid key={domain.id} domain={domain} />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

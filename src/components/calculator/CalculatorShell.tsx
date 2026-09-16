@@ -122,6 +122,14 @@ const CALCULATOR_VIEWS: Record<
     () => import("./calculators/GasketDimensionCalculator"),
     { loading: loadingFallback },
   ),
+  "flange-gasket-stress": dynamic(
+    () => import("./calculators/FlangeGasketStressCalculator"),
+    { loading: loadingFallback },
+  ),
+  "pipe-branch-reinforcement": dynamic(
+    () => import("./calculators/PipeBranchReinforcementCalculator"),
+    { loading: loadingFallback },
+  ),
   "hydro-test": dynamic(() => import("./calculators/HydroTestCalculator"), {
     loading: loadingFallback,
   }),
