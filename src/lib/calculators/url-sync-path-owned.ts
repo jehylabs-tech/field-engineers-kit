@@ -106,8 +106,9 @@ export function omitPathOwnedSearchParams(
 export function searchParamsHavePathOwnedKeys(
   params: URLSearchParams,
 ): boolean {
-  for (const key of params.keys()) {
-    if (PATH_OWNED_PARAMS.has(key)) return true;
-  }
-  return false;
+  let found = false;
+  params.forEach((_value, key) => {
+    if (PATH_OWNED_PARAMS.has(key)) found = true;
+  });
+  return found;
 }
