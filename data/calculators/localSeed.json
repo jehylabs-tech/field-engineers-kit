@@ -312,8 +312,16 @@
         }
       ],
       "related": [
-        { "slug": "pipe-wall-thickness", "title": "Pipe Thickness", "carry": "Same NPS / T" },
-        { "slug": "pipe-schedule-dimension", "title": "Pipe Schedule", "carry": "Same NPS" }
+        {
+          "slug": "pipe-wall-thickness",
+          "title": "Pipe Thickness",
+          "carry": "Same NPS / T"
+        },
+        {
+          "slug": "pipe-schedule-dimension",
+          "title": "Pipe Schedule",
+          "carry": "Same NPS"
+        }
       ]
     },
     "is_published": true,
@@ -337,9 +345,21 @@
         }
       ],
       "related": [
-        { "slug": "flow-velocity-erosion", "title": "Flow Velocity", "carry": "Same Q / NPS" },
-        { "slug": "pump-tdh-power", "title": "TDH & Pump Power", "carry": "Convert ΔP → Hf" },
-        { "slug": "pipe-schedule-dimension", "title": "Pipe Schedule", "carry": "Same NPS / Sch" }
+        {
+          "slug": "flow-velocity-erosion",
+          "title": "Flow Velocity",
+          "carry": "Same Q / NPS"
+        },
+        {
+          "slug": "pump-tdh-power",
+          "title": "TDH & Pump Power",
+          "carry": "Convert ΔP → Hf"
+        },
+        {
+          "slug": "pipe-schedule-dimension",
+          "title": "Pipe Schedule",
+          "carry": "Same NPS / Sch"
+        }
       ]
     },
     "is_published": true,
@@ -363,10 +383,26 @@
         }
       ],
       "related": [
-        { "slug": "pressure-drop-friction", "title": "Pressure Drop", "carry": "Same NPS / flow" },
-        { "slug": "pump-tdh-power", "title": "TDH & Pump Power", "carry": "Same Q" },
-        { "slug": "pump-npsh-cavitation", "title": "Pump NPSH", "carry": "Suction check" },
-        { "slug": "pipe-schedule-dimension", "title": "Pipe Schedule", "carry": "Same NPS / Sch" }
+        {
+          "slug": "pressure-drop-friction",
+          "title": "Pressure Drop",
+          "carry": "Same NPS / flow"
+        },
+        {
+          "slug": "pump-tdh-power",
+          "title": "TDH & Pump Power",
+          "carry": "Same Q"
+        },
+        {
+          "slug": "pump-npsh-cavitation",
+          "title": "Pump NPSH",
+          "carry": "Suction check"
+        },
+        {
+          "slug": "pipe-schedule-dimension",
+          "title": "Pipe Schedule",
+          "carry": "Same NPS / Sch"
+        }
       ]
     },
     "is_published": true,
@@ -411,8 +447,16 @@
         }
       ],
       "related": [
-        { "slug": "pipe-schedule-dimension", "title": "Pipe Schedule", "carry": "Same NPS / OD" },
-        { "slug": "pipe-wall-thickness", "title": "Pipe Thickness", "carry": "Same NPS" }
+        {
+          "slug": "pipe-schedule-dimension",
+          "title": "Pipe Schedule",
+          "carry": "Same NPS / OD"
+        },
+        {
+          "slug": "pipe-wall-thickness",
+          "title": "Pipe Thickness",
+          "carry": "Same NPS"
+        }
       ]
     },
     "is_published": true,
@@ -1031,5 +1075,153 @@
     },
     "is_published": true,
     "created_at": "2026-09-15T16:00:00.000Z"
+  },
+  {
+    "id": "local-water-thermodynamic-properties",
+    "category": "piping",
+    "title": "Water Density & Thermodynamic Properties Calculator",
+    "slug": "water-thermodynamic-properties",
+    "meta_description": "IAPWS-IF97 / ASME steam-table water density, specific heat, viscosity, and thermal conductivity at temperature and pressure for process piping screening.",
+    "formula_json": {
+      "type": "water-thermodynamic-properties",
+      "standard": "IAPWS-IF97 / ASME Steam Tables",
+      "formulaLatex": "\\rho=1/v(T,P),\\quad C_p=(\\partial h/\\partial T)_P,\\quad \\nu=\\mu/\\rho",
+      "formulaBasis": "IAPWS-IF97 Region 1 subcooled liquid screening with Region 4 saturation for boiling point / phase. Viscosity and thermal conductivity use IAPWS industrial liquid-band correlations.",
+      "related": [
+        {
+          "slug": "pipe-wall-thickness",
+          "title": "Pipe Wall Thickness",
+          "carry": "Same design T / P basis"
+        },
+        {
+          "slug": "flange-dimension-weight",
+          "title": "Flange Dimensions",
+          "carry": "Same piping duty"
+        },
+        {
+          "slug": "pressure-drop-friction",
+          "title": "Pressure Drop",
+          "carry": "Same fluid T for density/viscosity"
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-17T00:00:00.000Z"
+  },
+  {
+    "id": "local-noise-criterion",
+    "category": "inspection",
+    "title": "Noise Criterion Rating Calculator",
+    "slug": "noise-criterion",
+    "meta_description": "ANSI/ASA S12.2 Noise Criterion (NC) tangent rating from octave-band SPL with ASHRAE HVAC space screening (NC-15 to NC-65).",
+    "formula_json": {
+      "type": "noise-criterion",
+      "standard": "ANSI/ASA S12.2 / ASHRAE HVAC Applications",
+      "formulaLatex": "\\mathrm{NC}=\\max_i\\{\\text{lowest NC curve with }L_p(f_i)\\le L_{\\mathrm{NC}}(f_i)\\}",
+      "formulaBasis": "Octave-band tangent method per ANSI/ASA S12.2. Rated NC is the lowest published NC curve (15–65) that is nowhere exceeded by measured L_p at 63–8000 Hz. ASHRAE HVAC Applications space limits drive Pass/Fail. Estimated dBA ≈ NC + 5…8 dB. Screening only — use RC/NCB for rumble or tonal isolation.",
+      "related": [
+        {
+          "slug": "link-seal-penetration-sleeve",
+          "title": "Link-Seal & Penetration Sleeve",
+          "carry": "Related plant sealing / enclosure work"
+        },
+        {
+          "slug": "hydro-test-pressure",
+          "title": "Hydro / Pneumatic Test Pressure",
+          "carry": "Same inspection / QA toolkit"
+        }
+      ],
+      "faq": [
+        {
+          "q": "What is the NC tangent method?",
+          "a": "Plot octave-band SPL against standard NC curves. The NC rating is the lowest curve that is nowhere exceeded — the band that touches (or comes closest) is the tangent band."
+        },
+        {
+          "q": "When should I use RC or NCB instead?",
+          "a": "Use Room Criterion (RC) or Balanced Noise Criterion (NCB) when low-frequency rumble or tonal noise dominates — NC alone can miss those complaints."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-17T12:00:00.000Z"
+  },
+  {
+    "id": "local-pipe-slope-calculator",
+    "category": "piping",
+    "title": "Pipe Slope & Drainage Ratio Calculator",
+    "slug": "pipe-slope-calculator",
+    "meta_description": "Pipe slope %, drainage ratio, and IPC minimum slope check from rise, run, and NPS (ASME B31.3 / IPC gravity-drain screening).",
+    "formula_json": {
+      "type": "pipe-slope-calculator",
+      "standard": "IPC / ASME B31.3 (gravity drain screening)",
+      "formulaLatex": "S=\\Delta H/L,\\quad \\theta=\\arctan(S),\\quad \\text{Pass if } S \\ge S_{IPC}(NPS)",
+      "formulaBasis": "Geometric slope S = rise/run with percent, in/ft or mm/m, and 1:N ratio. IPC Table 704.1–style minimum slopes by NPS. Screening only — not for pressurized or two-phase lines.",
+      "related": [
+        {
+          "slug": "pipe-wall-thickness",
+          "title": "Pipe Wall Thickness",
+          "carry": "Same NPS"
+        },
+        {
+          "slug": "flange-dimension-weight",
+          "title": "Flange Dimensions",
+          "carry": "Same NPS"
+        }
+      ],
+      "faq": [
+        {
+          "q": "What is 1/4 in/ft slope as a percent?",
+          "a": "1/4 in of fall per foot of run is 2.5/120 ≈ 2.08% (ratio about 1:48)."
+        },
+        {
+          "q": "Does IPC require 1/4 in/ft on 4 inch drains?",
+          "a": "IPC Table 704.1 typically allows 1/8 in/ft for 4–6 in building drains. 1/4 in/ft still complies and is a common plant drainage preference."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-17T14:00:00.000Z"
+  },
+  {
+    "id": "local-piping-equivalent-length",
+    "category": "piping",
+    "title": "Piping Equivalent Length Calculator (Fittings & Valves)",
+    "slug": "piping-equivalent-length",
+    "meta_description": "Crane TP-410 piping equivalent length L_eq and K-factor for elbows, tees, and valves from L/D and ASME B36 pipe ID.",
+    "formula_json": {
+      "type": "piping-equivalent-length",
+      "standard": "Crane TP-410 / ASME B36.10M",
+      "formulaLatex": "L_{eq}=(L/D)\\cdot D_i,\\quad K=f_T\\cdot(L/D)",
+      "formulaBasis": "Equivalent length L_eq = (L/D)×Di with Crane TP-410 L/D ratios and fully turbulent f_T. K = f_T×(L/D). Inside diameter from ASME B36.10M/B36.19M. Turbulent screening only — use 2-K/3-K for laminar or high-viscosity fluids.",
+      "related": [
+        {
+          "slug": "pressure-drop-friction",
+          "title": "Pressure Drop / Friction Loss",
+          "carry": "Same NPS / schedule"
+        },
+        {
+          "slug": "pipe-wall-thickness",
+          "title": "Pipe Wall Thickness",
+          "carry": "Same NPS"
+        },
+        {
+          "slug": "flange-pressure-temperature-rating",
+          "title": "Flange P-T Rating",
+          "carry": "Same NPS"
+        }
+      ],
+      "faq": [
+        {
+          "q": "What is L/D in Crane TP-410?",
+          "a": "L/D is the equivalent length of straight pipe expressed as a multiple of inside diameter for a fitting or valve under fully turbulent flow."
+        },
+        {
+          "q": "How is K related to L/D?",
+          "a": "K = f_T × (L/D), where f_T is Crane’s fully turbulent friction factor for the pipe size."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-17T16:00:00.000Z"
   }
 ]

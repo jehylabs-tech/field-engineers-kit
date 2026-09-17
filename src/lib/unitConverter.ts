@@ -640,6 +640,14 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
     }
   }
 
+  // Pipe slope: rise in ↔ mm, run ft ↔ m
+  if (typeof next.rise === "number" && Number.isFinite(next.rise)) {
+    convertNum("rise", toImperial ? mmToIn : inToMm, toImperial ? 2 : 0);
+  }
+  if (typeof next.run === "number" && Number.isFinite(next.run)) {
+    convertNum("run", toImperial ? mToFt : ftToM, toImperial ? 2 : 3);
+  }
+
   return next as T;
 }
 

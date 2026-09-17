@@ -72,6 +72,14 @@ export const CATALOG_SEO_BLURBS: Record<string, string> = {
     "ASME B16.20 spiral-wound and RTJ ring gasket dimensions by NPS and class.",
   "flange-gasket-stress":
     "ASME PCC-1 App. O gasket stress σ_g,op with VIII-1 m·y sealing checks and crush/leakage status.",
+  "water-thermodynamic-properties":
+    "IAPWS-IF97 water density, specific heat, viscosity, and thermal conductivity at T and P for piping screening.",
+  "noise-criterion":
+    "ANSI/ASA S12.2 Noise Criterion (NC) tangent rating from octave-band SPL with ASHRAE HVAC space screening.",
+  "pipe-slope-calculator":
+    "Pipe slope %, drainage ratio, and IPC minimum slope check from rise, run, and NPS.",
+  "piping-equivalent-length":
+    "Crane TP-410 fitting and valve equivalent length L_eq from L/D, pipe ID, and quantity.",
   "valve-cv-sizing":
     "ISA / IEC 60534 control-valve Cv sizing for liquid and gas service.",
   "bolt-torque-tensioning":

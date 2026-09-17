@@ -13,6 +13,8 @@ export const PATH_OWNED_PARAMS = new Set([
   "cat",
   "category",
   "size",
+  "fittingType",
+  "qty",
   "bolts",
   "pattern",
   "hnps",
@@ -85,6 +87,18 @@ export const PATH_OWNED_PARAMS = new Set([
   "materialGroup",
   "flangeClass",
   "designTemperature",
+  "space",
+  "s63",
+  "s125",
+  "s250",
+  "s500",
+  "s1k",
+  "s2k",
+  "s4k",
+  "s8k",
+  "rise",
+  "run",
+  "mat",
 ]);
 
 /**

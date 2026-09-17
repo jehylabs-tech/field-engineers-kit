@@ -41,6 +41,10 @@ export const CALCULATOR_TYPE_SLUG: Record<CalculatorType, string> = {
     "flange-pressure-temperature-rating",
   "flange-gasket-stress": "flange-gasket-stress",
   "pipe-branch-reinforcement": "pipe-branch-reinforcement",
+  "water-thermodynamic-properties": "water-thermodynamic-properties",
+  "noise-criterion": "noise-criterion",
+  "pipe-slope-calculator": "pipe-slope-calculator",
+  "piping-equivalent-length": "piping-equivalent-length",
 };
 
 export const SLUG_TO_CALCULATOR_TYPE: Record<string, CalculatorType> =
@@ -183,6 +187,22 @@ export const CALCULATOR_PLANT_TAGS: Record<CalculatorType, CalculatorPlantTags> 
     "pipe-branch-reinforcement": {
       consumes: ["size", "schedule", "pressure"],
       produces: ["size", "schedule", "pressure"],
+    },
+    "water-thermodynamic-properties": {
+      consumes: ["temperature", "pressure"],
+      produces: ["temperature", "pressure"],
+    },
+    "noise-criterion": {
+      consumes: [],
+      produces: [],
+    },
+    "pipe-slope-calculator": {
+      consumes: ["size"],
+      produces: ["size"],
+    },
+    "piping-equivalent-length": {
+      consumes: ["size", "schedule"],
+      produces: ["size", "schedule"],
     },
   };
 

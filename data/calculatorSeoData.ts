@@ -1765,6 +1765,565 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
     ],
   },
 
+  "water-thermodynamic-properties": {
+    slug: "water-thermodynamic-properties",
+    formulaTitle: "Core Formula & Variable Definitions",
+    formulaHtml:
+      '<p class="eng-eq"><i>ρ</i> = 1 / <i>v</i>(<i>T</i>, <i>P</i>) &nbsp;[kg/m³ or lb/ft³]</p>' +
+      '<p class="eng-eq"><i>C</i><sub>p</sub> = (∂<i>h</i>/∂<i>T</i>)<sub>P</sub> &nbsp;[kJ/(kg·K) or Btu/(lb·°F)]</p>' +
+      '<p class="eng-eq"><i>ν</i> = <i>μ</i> / <i>ρ</i> &nbsp;·&nbsp; <i>μ</i> from IAPWS viscosity formulation</p>' +
+      '<p class="eng-plain">IAPWS-IF97 Region 1 liquid screening · Region 4 saturation for boiling point / phase</p>',
+    formulaLatex:
+      "\\rho=1/v(T,P),\\quad C_p=(\\partial h/\\partial T)_P,\\quad \\nu=\\mu/\\rho",
+    formulaNotes:
+      "Field screening for compressed / subcooled liquid water using IAPWS-IF97 Region 1–aligned property bands and Region 4 saturation pressure. Viscosity and thermal conductivity use IAPWS industrial liquid correlations. Do not use for steam, two-phase, or supercritical states without a full steam-table verification.",
+    formulaBadges: [
+      { label: "Hero", value: "ρ · C_p" },
+      { label: "Code", value: "IAPWS-IF97" },
+      { label: "Scope", value: "Region 1 liquid" },
+      { label: "Phase", value: "R4 boiling point" },
+    ],
+    variables: [
+      {
+        symbol: "ρ",
+        name: "Density",
+        definition: "1 / v(T, P) — primary hero value with C_p.",
+      },
+      {
+        symbol: "C_p",
+        name: "Specific heat capacity",
+        definition: "Isobaric heat capacity of liquid water.",
+      },
+      {
+        symbol: "μ",
+        name: "Dynamic viscosity",
+        definition: "IAPWS industrial liquid viscosity (Pa·s / cP).",
+      },
+      {
+        symbol: "ν",
+        name: "Kinematic viscosity",
+        definition: "μ / ρ (m²/s or cSt).",
+      },
+      {
+        symbol: "T, P",
+        name: "Temperature & pressure",
+        definition: "°C/°F and bar/psi state point for Region 1 liquid.",
+      },
+    ],
+    standards: [
+      "IAPWS-IF97 Industrial Formulation for the Thermodynamic Properties of Water and Steam",
+      "ASME Steam Tables (IAPWS-IF97 basis)",
+      "IAPWS Release on the Viscosity of Ordinary Water Substance (2008)",
+    ],
+    tableCaption:
+      "IAPWS-IF97 liquid water density & C_p screening chart (compressed / near-sat liquid)",
+    tableHeaders: ["T", "P", "ρ", "C_p", "μ", "Phase note"],
+    tableRows: [
+      ["20 °C", "1.013 bar", "998.2 kg/m³", "4.182 kJ/kg·K", "1.00 cP", "Subcooled"],
+      ["20 °C", "1 bar", "998.2 kg/m³", "4.182 kJ/kg·K", "1.00 cP", "Subcooled"],
+      ["40 °C", "1 bar", "992.2 kg/m³", "4.179 kJ/kg·K", "0.65 cP", "Subcooled"],
+      ["60 °C", "1 bar", "983.2 kg/m³", "4.185 kJ/kg·K", "0.47 cP", "Subcooled"],
+      ["80 °C", "1 bar", "971.8 kg/m³", "4.196 kJ/kg·K", "0.35 cP", "Subcooled"],
+      ["100 °C", "1 bar", "958.4 kg/m³", "4.216 kJ/kg·K", "0.28 cP", "Near sat."],
+      ["100 °C", "1.013 bar", "958.4 kg/m³", "4.216 kJ/kg·K", "0.28 cP", "Sat. liquid"],
+      ["150 °C", "5 bar", "917.0 kg/m³", "4.316 kJ/kg·K", "0.18 cP", "Compressed"],
+      ["200 °C", "20 bar", "864.7 kg/m³", "4.505 kJ/kg·K", "0.13 cP", "Compressed"],
+      ["68 °F", "14.7 psi", "62.3 lb/ft³", "1.000 Btu/lb·°F", "1.00 cP", "Subcooled"],
+      ["212 °F", "14.7 psi", "59.8 lb/ft³", "1.007 Btu/lb·°F", "0.28 cP", "Near sat."],
+      ["300 °F", "100 psi", "57.3 lb/ft³", "1.03 Btu/lb·°F", "0.20 cP", "Compressed"],
+    ],
+    tableFootnote:
+      "Screening values from IAPWS-IF97 Region 1–aligned liquid polynomials. Near-saturation duties (100 °C · 1 bar) evaluate as liquid for field use — verify phase with a full steam table when P < Psat(T).",
+    workedExample: {
+      title: "Worked example — 20 °C · 1.013 bar",
+      scenario:
+        "Look up liquid water density and specific heat at ambient process conditions for Darcy friction / heat-balance screening.",
+      designConditions: [
+        { label: "Temperature", value: "20 °C" },
+        { label: "Pressure", value: "1.01325 bar (atm)" },
+        { label: "Basis", value: "IAPWS-IF97 Region 1 liquid" },
+      ],
+      steps: [
+        {
+          step: "Step 1",
+          name: "Confirm liquid state",
+          calculation: "Tsat(1.013 bar) ≈ 100 °C > 20 °C → subcooled liquid",
+          result: "Phase = Subcooled Water",
+        },
+        {
+          step: "Step 2",
+          name: "Density & C_p",
+          calculation: "ρ ≈ 998.2 kg/m³ · C_p ≈ 4.182 kJ/kg·K",
+          result: "Hero: 998.2 kg/m³ · 4.182 kJ/kg·K",
+        },
+        {
+          step: "Step 3",
+          name: "Transport properties",
+          calculation: "μ ≈ 1.00 cP · ν = μ/ρ · k ≈ 0.598 W/m·K",
+          result: "Summary viscosities + conductivity",
+        },
+      ],
+      conclusion:
+        "Default metric duty returns ≈998.2 kg/m³ and 4.182 kJ/kg·K. Imperial twin (68 °F · 14.7 psi) returns ≈62.3 lb/ft³ and 1.00 Btu/lb·°F.",
+    },
+    ...howTo("How to look up water thermodynamic properties", [
+      {
+        name: "1. Select unit system",
+        text: "Use the navbar UnitSwitcher for metric (°C, bar) or imperial (°F, psi).",
+      },
+      {
+        name: "2. Enter temperature and pressure",
+        text: "Stay within 0–350 °C and 0.1–200 bar (or °F / psi equivalents) for Region 1 liquid screening.",
+      },
+      {
+        name: "3. Read ρ · C_p hero and viscosity summary",
+        text: "Hero shows density and specific heat; summary lists μ, ν, v, and k.",
+      },
+      {
+        name: "4. Check phase / boiling point rows",
+        text: "Confirm Subcooled / Compressed Liquid status. If vapor is possible, open a steam table.",
+      },
+    ]),
+    faq: [
+      {
+        question: "What does density of water at 20 °C equal in this tool?",
+        answer:
+          "At **20 °C · 1.013 bar**, hero density is about **998.2 kg/m³** with **C_p ≈ 4.182 kJ/kg·K** — the common IAPWS / ASME steam-table ambient liquid values.",
+      },
+      {
+        question: "Can I use this for steam or supercritical water?",
+        answer:
+          "**No for final design.** This calculator is **IAPWS-IF97 Region 1 liquid screening**. Steam / two-phase / supercritical states need a full steam-table evaluation.",
+      },
+      {
+        question: "How is kinematic viscosity calculated?",
+        answer:
+          "**ν = μ / ρ**. Dynamic viscosity μ uses an IAPWS industrial liquid correlation; density comes from the Region 1–aligned liquid model at your T and P.",
+      },
+      {
+        question: "Which related calculators should I open next?",
+        answer:
+          "Carry temperature/pressure into **pipe-wall-thickness**, **flange-dimension-weight**, or **pressure-drop-friction** for piping design and Darcy friction screening.",
+      },
+    ],
+  },
+
+  "noise-criterion": {
+    slug: "noise-criterion",
+    formulaTitle: "Core Formula & Variable Definitions",
+    formulaHtml:
+      '<p class="eng-eq"><i>L</i><sub>p</sub>(<i>f</i><sub>i</sub>) ≤ <i>L</i><sub>NC</sub>(<i>f</i><sub>i</sub>) → NC</p>' +
+      '<p class="eng-eq">dBA ≈ NC + 5…8</p>' +
+      '<p class="eng-plain">Octave bands <i>f</i><sub>i</sub> ∈ {63, 125, 250, 500, 1000, 2000, 4000, 8000} Hz · NC = lowest clear NC-15…65 curve (ANSI/ASA S12.2 tangent) · ASHRAE space Pass/Fail</p>',
+    formulaLatex:
+      "\\mathrm{NC}=\\max_i\\{\\text{lowest NC curve with }L_p(f_i)\\le L_{\\mathrm{NC}}(f_i)\\}",
+    formulaNotes:
+      "Field screening using the ANSI/ASA S12.2 octave-band tangent method. Rated NC is the lowest standard curve (NC-15 to NC-65) that is nowhere exceeded by measured L_p. Pass/Fail uses ASHRAE HVAC Applications recommended maxima by space type. Estimated A-weighted level is a coarse NC+5…8 rule — not a substitute for calibrated dBA measurement. For rumble or tonal complaints, use RC or NCB analysis.",
+    formulaBadges: [
+      { label: "Hero", value: "NC · Pass/Fail" },
+      { label: "Code", value: "ANSI S12.2" },
+      { label: "Scope", value: "NC-15…65" },
+      { label: "Space", value: "ASHRAE HVAC" },
+    ],
+    variables: [
+      {
+        symbol: "L_p(f_i)",
+        name: "Octave-band SPL",
+        definition: "Sound pressure level in each standard octave band (dB).",
+      },
+      {
+        symbol: "L_NC(f_i)",
+        name: "NC curve limit",
+        definition: "Published NC-15…65 octave-band limit at frequency f_i.",
+      },
+      {
+        symbol: "NC",
+        name: "Noise Criterion rating",
+        definition:
+          "Lowest NC curve that clears every band (tangent method).",
+      },
+      {
+        symbol: "dBA est.",
+        name: "A-weighted estimate",
+        definition: "Screening: dBA ≈ NC + 5 to 8 dB.",
+      },
+    ],
+    standards: [
+      "ANSI/ASA S12.2 Criteria for Evaluating Room Noise (Noise Criterion curves)",
+      "ASHRAE Handbook — HVAC Applications (recommended NC by space type)",
+    ],
+    tableCaption:
+      "ANSI/ASA S12.2 NC curve octave-band limits (dB) — tangent screening table",
+    tableHeaders: [
+      "NC",
+      "63 Hz",
+      "125 Hz",
+      "250 Hz",
+      "500 Hz",
+      "1 kHz",
+      "2 kHz",
+      "4 kHz",
+      "8 kHz",
+    ],
+    tableRows: [
+      ["NC-15", "47", "36", "29", "22", "17", "14", "12", "11"],
+      ["NC-20", "51", "40", "33", "26", "22", "19", "17", "16"],
+      ["NC-25", "54", "44", "37", "31", "27", "24", "22", "20"],
+      ["NC-30", "57", "48", "41", "35", "31", "29", "28", "27"],
+      ["NC-35", "60", "52", "45", "40", "36", "34", "33", "32"],
+      ["NC-40", "64", "56", "50", "45", "41", "39", "38", "37"],
+      ["NC-45", "67", "60", "54", "49", "46", "44", "43", "42"],
+      ["NC-50", "71", "64", "58", "54", "51", "49", "48", "47"],
+      ["NC-55", "74", "67", "62", "58", "56", "54", "53", "52"],
+      ["NC-60", "77", "71", "67", "63", "61", "59", "58", "57"],
+      ["NC-65", "80", "75", "71", "68", "66", "64", "63", "62"],
+    ],
+    tableFootnote:
+      "Values from the ANSI/ASA S12.2 NC curve family used for FEK tangent screening. Verify against the current published standard for final HVAC design.",
+    workedExample: {
+      title: "Worked example — Control Room NC-35 duty",
+      scenario:
+        "Rate a control-room octave-band spectrum that sits on the NC-35 tangent profile and check ASHRAE Pass/Fail.",
+      designConditions: [
+        { label: "Space", value: "Control Room (max NC-35)" },
+        { label: "Method", value: "ANSI/ASA S12.2 tangent" },
+        {
+          label: "Spectrum (dB)",
+          value: "55 / 48 / 41 / 36 / 31 / 27 / 24 / 22",
+        },
+      ],
+      steps: [
+        {
+          step: "Step 1",
+          name: "Compare each band to NC curves",
+          calculation:
+            "Spectrum clears NC-30 at most bands but exceeds NC-30 at 500 Hz (36 > 35)",
+          result: "NC-30 not clear",
+        },
+        {
+          step: "Step 2",
+          name: "Find lowest clear curve",
+          calculation: "All bands ≤ NC-35 limits → lowest clear = NC-35",
+          result: "NC Rating = NC-35",
+        },
+        {
+          step: "Step 3",
+          name: "Space compliance",
+          calculation: "NC-35 ≤ Control Room max NC-35",
+          result: "Pass · est. dBA 40–43",
+        },
+      ],
+      conclusion:
+        "Default Control Room duty returns NC-35 Pass. Exact NC-curve spectra on pSEO paths (office-nc30, equipment-room-nc50, workshop-nc55) rate exactly to those NC levels.",
+    },
+    ...howTo("How to calculate Noise Criterion (NC) rating", [
+      {
+        name: "1. Select space type",
+        text: "Choose Control Room, Executive Office, Equipment Room, or Workshop to set the ASHRAE max NC for Pass/Fail.",
+      },
+      {
+        name: "2. Enter octave-band SPL",
+        text: "Input L_p (dB) for 63 Hz through 8000 Hz from a sound-level meter or HVAC report.",
+      },
+      {
+        name: "3. Read NC hero and compliance",
+        text: "Hero shows NC-XX and Pass/Fail versus the selected space limit.",
+      },
+      {
+        name: "4. Review tangent band and chart",
+        text: "Use the spectrum vs NC curve chart and octave-band rows to see which band governs the rating.",
+      },
+    ]),
+    faq: [
+      {
+        question: "What is a Noise Criterion (NC) rating?",
+        answer:
+          "An **NC rating** is the lowest standard NC curve (NC-15 to NC-65) that is **nowhere exceeded** by measured octave-band sound pressure levels, per **ANSI/ASA S12.2** tangent method.",
+      },
+      {
+        question: "How does this calculator decide Pass or Fail?",
+        answer:
+          "Pass/Fail compares the rated NC to an **ASHRAE HVAC Applications** screening maximum for the selected space (e.g. Control Room NC-35, Office NC-30, Equipment Room NC-50, Workshop NC-55).",
+      },
+      {
+        question: "Is estimated dBA exact?",
+        answer:
+          "**No.** The tool reports a screening estimate **dBA ≈ NC + 5…8 dB**. Use a calibrated A-weighted measurement for compliance documentation.",
+      },
+      {
+        question: "When should I use RC or NCB instead of NC?",
+        answer:
+          "For **low-frequency rumble** or **tonal** noise isolation, perform **RC (Room Criterion)** or **NCB (Balanced Noise Criterion)** analysis — NC alone can miss those complaint modes.",
+      },
+    ],
+  },
+
+  "pipe-slope-calculator": {
+    slug: "pipe-slope-calculator",
+    formulaTitle: "Core Formula & Variable Definitions",
+    formulaHtml:
+      '<p class="eng-eq"><i>S</i> = Δ<i>H</i> / <i>L</i> &nbsp;·&nbsp; <i>θ</i> = arctan(<i>S</i>)</p>' +
+      '<p class="eng-eq">Ratio = 1 : (1/<i>S</i>) &nbsp;·&nbsp; Pass if <i>S</i> ≥ IPC min(NPS)</p>' +
+      '<p class="eng-plain">IPC Table 704.1–style bands by NPS · ASME B31.3 gravity-drain screening context</p>',
+    formulaLatex:
+      "S=\\Delta H/L,\\quad \\theta=\\arctan(S),\\quad \\text{Pass if } S \\ge S_{\\mathrm{IPC}}(\\mathrm{NPS})",
+    formulaNotes:
+      "Geometric slope from rise (drop) over run length, reported as percent, in/ft or mm/m, and 1:N ratio. IPC Table 704.1–style minima: ≤3 in → 1/4 in/ft; 4–6 in → 1/8 in/ft; ≥8 in → 1/16 in/ft. Screening only — not for pressurized or two-phase lines. Full-pipe Manning velocity is out of scope here.",
+    formulaBadges: [
+      { label: "Hero", value: "% · Ratio" },
+      { label: "Code", value: "IPC / B31.3" },
+      { label: "Check", value: "IPC min slope" },
+      { label: "Input", value: "NPS · Rise · Run" },
+    ],
+    variables: [
+      {
+        symbol: "ΔH",
+        name: "Rise / drop",
+        definition: "Vertical fall over the run (in or mm).",
+      },
+      {
+        symbol: "L",
+        name: "Run",
+        definition: "Horizontal (or along-pipe) length (ft or m).",
+      },
+      {
+        symbol: "S",
+        name: "Slope",
+        definition: "ΔH/L — also shown as % , in/ft, mm/m, and 1:N.",
+      },
+      {
+        symbol: "NPS",
+        name: "Nominal pipe size",
+        definition: "Selects the IPC Table 704.1–style minimum slope band.",
+      },
+    ],
+    standards: [
+      "International Plumbing Code (IPC) Table 704.1 — horizontal drain slopes (screening)",
+      "ASME B31.3 Process Piping — gravity drain context (screening)",
+    ],
+    tableCaption: "IPC Table 704.1–style minimum gravity drain slopes (screening)",
+    tableHeaders: ["NPS band", "Min slope", "As %", "As mm/m"],
+    tableRows: [
+      ["≤ 3 in", "1/4 in/ft", "2.08%", "20.8"],
+      ["4–6 in", "1/8 in/ft", "1.04%", "10.4"],
+      ["≥ 8 in", "1/16 in/ft", "0.52%", "5.2"],
+    ],
+    tableFootnote:
+      "Building-drain screening minima. Plant process gravity lines may require steeper slopes — confirm project specs. Example duties (4\"·2.5 in/10 ft, 100A·60 mm/3 m) are on the pSEO paths, not code minima.",
+    workedExample: {
+      title: "Worked example — 4 in · 10 ft · 2.5 in rise",
+      scenario:
+        "Check a 4 inch gravity drain for IPC Table 704.1–style slope compliance from rise and run.",
+      designConditions: [
+        { label: "NPS", value: '4"' },
+        { label: "Run", value: "10 ft" },
+        { label: "Rise", value: "2.5 in" },
+      ],
+      steps: [
+        {
+          step: "Step 1",
+          name: "Slope",
+          calculation: "S = 2.5 in / 10 ft = 0.25 in/ft = 2.08%",
+          result: "1/4 in/ft · 1:48",
+        },
+        {
+          step: "Step 2",
+          name: "IPC check",
+          calculation: "4 in drain min = 1/8 in/ft; 0.25 ≥ 0.125",
+          result: "Pass",
+        },
+        {
+          step: "Step 3",
+          name: "Drop scale",
+          calculation: "Same S → drop on 20 ft run = 5.0 in",
+          result: "Field layout check",
+        },
+      ],
+      conclusion:
+        "Default imperial duty returns ≈2.08% (1/4 in/ft) Pass. Metric 100A · 60 mm / 3 m returns 2.00% (20 mm/m, 1:50). Metric 150A · 1% (10 mm/m) is slightly below the 4–6 in IPC 1/8 in/ft band and screens as Fail.",
+    },
+    ...howTo("How to calculate pipe drainage slope", [
+      {
+        name: "1. Select NPS",
+        text: "NPS sets the IPC Table 704.1–style minimum slope band for Pass/Fail.",
+      },
+      {
+        name: "2. Enter rise and run",
+        text: "Rise is vertical drop (in or mm). Run is length (ft or m). Toggle metric/imperial in the navbar.",
+      },
+      {
+        name: "3. Read slope % and ratio",
+        text: "Hero shows percent slope with in/ft or mm/m and 1:N ratio, plus IPC Pass/Fail.",
+      },
+      {
+        name: "4. Use drop rows",
+        text: "Result rows scale the same slope to other run lengths for layout checks.",
+      },
+    ]),
+    faq: [
+      {
+        question: "What slope is 1/4 inch per foot as a percent?",
+        answer:
+          "**About 2.08%.** 0.25 in of fall per foot of run is 2.5 ÷ 120 ≈ **0.0208**, or roughly a **1:48** ratio.",
+      },
+      {
+        question: "What is the IPC minimum slope for a 4 inch drain?",
+        answer:
+          "IPC Table 704.1 typically allows **1/8 in/ft** for 4–6 in drains. Steeper slopes such as **1/4 in/ft** still comply.",
+      },
+      {
+        question: "Does this calculator include Manning velocity?",
+        answer:
+          "**No — by design.** This tool focuses on geometric slope and IPC minimum-slope screening. Full-pipe Manning velocity needs diameter and roughness assumptions that overstate precision for most plant drain checks.",
+      },
+      {
+        question: "Which related calculators should I open next?",
+        answer:
+          "Carry NPS into **pipe-wall-thickness** or **flange-dimension-weight** for the same line size.",
+      },
+    ],
+  },
+
+  "piping-equivalent-length": {
+    slug: "piping-equivalent-length",
+    formulaTitle: "Core Formula & Variable Definitions",
+    formulaHtml:
+      '<p class="eng-eq"><i>L</i><sub>eq</sub> = (<i>L</i>/<i>D</i>) · <i>D</i><sub>i</sub></p>' +
+      '<p class="eng-eq"><i>K</i> = <i>f</i><sub>T</sub> · (<i>L</i>/<i>D</i>) &nbsp;·&nbsp; <i>L</i><sub>eq</sub> = <i>K</i> · <i>D</i><sub>i</sub> / <i>f</i><sub>T</sub></p>' +
+      '<p class="eng-plain">Crane TP-410 L/D · fully turbulent <i>f</i><sub>T</sub> · ASME B36.10M/B36.19M inside diameter</p>',
+    formulaLatex:
+      "L_{eq}=(L/D)D_i,\\quad K=f_T(L/D),\\quad L_{eq}=K D_i/f_T",
+    formulaNotes:
+      "Equivalent length converts fittings and valves into an equal length of straight pipe for Darcy–Weisbach pressure-drop screening. L/D and f_T follow Crane TP-410 fully turbulent steel-pipe practice. Di is the ASME B36 schedule inside diameter. Not for laminar / high-viscosity regimes — use 2-K or Darby 3-K methods there.",
+    formulaBadges: [
+      { label: "Hero", value: "L_eq (unit-aware)" },
+      { label: "Source", value: "Crane TP-410" },
+      { label: "K", value: "f_T × L/D" },
+      { label: "ID", value: "B36 schedule" },
+    ],
+    variables: [
+      {
+        symbol: "L_eq",
+        name: "Equivalent length",
+        definition: "Straight-pipe length with the same frictional loss as the fitting (m or ft).",
+      },
+      {
+        symbol: "L/D",
+        name: "Length-to-diameter ratio",
+        definition: "Crane TP-410 published ratio for the fitting or valve (dimensionless).",
+      },
+      {
+        symbol: "D_i",
+        name: "Inside diameter",
+        definition: "Pipe ID from ASME B36.10M / B36.19M for the selected NPS × schedule.",
+      },
+      {
+        symbol: "f_T",
+        name: "Fully turbulent friction factor",
+        definition: "Crane chart f_T for commercial steel pipe at the NPS band.",
+      },
+      {
+        symbol: "K",
+        name: "Resistance coefficient",
+        definition: "K = f_T × (L/D); total K scales with quantity.",
+      },
+    ],
+    standards: [
+      "Crane Technical Paper No. 410 — Flow of Fluids Through Valves, Fittings, and Pipe (Ch. 2 & Appendix A)",
+      "ASME B36.10M / B36.19M — Welded and Seamless Wrought Steel Pipe",
+      "ASME B16.9 / B16.10 — Fitting and valve dimensional context (geometry reference)",
+    ],
+    tableCaption: "Crane TP-410 screening L/D ratios (selected fittings & valves)",
+    tableHeaders: ["Fitting / valve", "L/D", "Group", "Notes"],
+    tableRows: [
+      ["90° elbow, standard (r/D ≈ 1)", "30", "Elbow", "Most common process elbow"],
+      ["90° elbow, long radius (r/D ≈ 1.5)", "16", "Elbow", "Lower loss than std"],
+      ["45° elbow, standard", "16", "Elbow", "—"],
+      ["Tee — flow through run", "20", "Tee", "Straight-run path"],
+      ["Tee — branch flow", "60", "Tee", "Into/out of branch"],
+      ["Gate valve, full open", "8", "Valve", "Low loss"],
+      ["Globe valve, standard", "340", "Valve", "High loss"],
+      ["Swing check valve", "100", "Valve", "—"],
+      ["Ball valve, full bore open", "3", "Valve", "Nearly full bore"],
+      ["Butterfly valve, full open", "45", "Valve", "—"],
+    ],
+    tableFootnote:
+      "L/D values are Crane TP-410 turbulent screening defaults used in this calculator. Manufacturer Cv/K data overrides Crane when available for purchase sizing.",
+    workedExample: {
+      title: "Worked example — NPS 2 Sch 40 · 90° standard elbow",
+      scenario:
+        "Convert one NPS 2 Schedule 40 standard 90° elbow to equivalent pipe length using Crane TP-410 L/D and f_T.",
+      designConditions: [
+        { label: "NPS × Sch", value: '2" × 40' },
+        { label: "Fitting", value: "90° std elbow (L/D = 30)" },
+        { label: "D_i", value: "52.51 mm" },
+        { label: "f_T", value: "0.019" },
+      ],
+      steps: [
+        {
+          step: "Step 1",
+          name: "Look up L/D and f_T",
+          calculation: "L/D = 30 · f_T (NPS 2) = 0.019",
+          result: "K = 0.019 × 30 = 0.57",
+        },
+        {
+          step: "Step 2",
+          name: "Equivalent length",
+          calculation: "L_eq = 30 × 52.51 mm = 1575.3 mm",
+          result: "1.58 m · 5.17 ft",
+        },
+        {
+          step: "Step 3",
+          name: "Scale quantity",
+          calculation: "For N elbows, L_eq,total = N × 1.58 m",
+          result: "Qty = 1 → 1.58 m",
+        },
+      ],
+      conclusion:
+        "Default metric duty returns ≈1.58 m (5.17 ft) with K ≈ 0.57. Gate valves are much shorter (NPS 4 Sch 40 ≈ 0.82 m); globe valves are much longer (NPS 6 Sch 40 ≈ 52.4 m).",
+    },
+    ...howTo("How to calculate piping equivalent length", [
+      {
+        name: "1. Select NPS and schedule",
+        text: "NPS sets Crane f_T; schedule sets ASME B36 inside diameter D_i.",
+      },
+      {
+        name: "2. Choose fitting or valve",
+        text: "Pick the Crane TP-410 component — L/D is shown on each option.",
+      },
+      {
+        name: "3. Enter quantity",
+        text: "Total L_eq and K scale linearly with the number of identical fittings.",
+      },
+      {
+        name: "4. Read L_eq and K",
+        text: "Hero shows total L_eq with the active unit first; badges list D_i, L/D, K, and f_T.",
+      },
+    ]),
+    faq: [
+      {
+        question: "What is L/D in a piping equivalent length calculator?",
+        answer:
+          "**L/D** is Crane TP-410’s ratio of equivalent straight-pipe length to inside diameter for a fitting or valve under **fully turbulent** flow. **L_eq = (L/D) × D_i**.",
+      },
+      {
+        question: "How do I get K from L/D?",
+        answer:
+          "**K = f_T × (L/D)**. FEK stores Crane-style **f_T** by NPS band (e.g. NPS 2 → **0.019**). Total K multiplies by quantity.",
+      },
+      {
+        question: "Why not use this for viscous / laminar flow?",
+        answer:
+          "Crane L/D and f_T assume **turbulent** commercial-steel pipe. For **Re < ~2000** or high viscosity, use **2-K or Darby 3-K** methods — this tool is screening only.",
+      },
+      {
+        question: "Which calculator should I open next?",
+        answer:
+          "Carry NPS/schedule into **pressure-drop-friction** for line ΔP, or **pipe-wall-thickness** for B31.3 wall checks.",
+      },
+    ],
+  },
+
   "valve-cv-sizing": {
     slug: "valve-cv-sizing",
     formulaTitle: "Core Formula & Variable Definitions",

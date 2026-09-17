@@ -1,0 +1,195 @@
+---
+title: "ASME B31.3 & UG-34 Blind Flange & Spectacle Blind Thickness Calculation Guide"
+description: "Calculate ASME B31.3 / UG-34 blind flange and spectacle blind thickness with C = 0.30, corrosion allowance, and a worked NPS 10 Class 300 example aligned to FEK."
+date: "2026-09-17"
+category: "Piping Engineering"
+tags:
+  - ASME B31.3
+  - ASME UG-34
+  - Blind Flange
+  - Spectacle Blind
+  - Line Blinding
+  - Pressure Vessel
+relatedCalculatorUrl: "/calculator/blind-flange-thickness"
+relatedCalculatorName: "Blind Flange Thickness"
+---
+
+Wrong plate thickness on a **line blind**, **spectacle blind**, or temporary **hydrotest blank** is a classic turnaround failure mode: too thin and the cover yields at the gasket reaction circle; too thick and you fight weight, gasket seating, and schedule. This guide walks through a field-ready **blind flange thickness calculation** using the same ASME B31.3 / Section VIII Div. 1 UG-34 attachment model implemented in FieldEngineersKit.
+
+Open the live [Blind Flange Thickness](/calculator/blind-flange-thickness) calculator to size permanent blinds and hydrotest blanks with ASME B16.5 raised-face diameter auto-fill.
+
+## Quick Summary (TL;DR)
+
+- **Takeaway:** Required blind thickness is $t_m = d\sqrt{C P / (S E)} + c$ with bolted-cover factor **$C = 0.30$** (not the simply-supported $3/16$).
+- **Governing relation:** $t_m = d \cdot \sqrt{\dfrac{0.30\,P}{S\,E}} + c$ (permanent); hydrotest blanks often use $c = 0$ and $P_t$ at ambient $S$.
+- **Code / basis:** ASME B31.3 Para. **304.4.1** (closure plates) + ASME VIII-1 **UG-34**; FEK RF $d$ from ASME B16.5.
+
+| Item | Field takeaway |
+| :--- | :--- |
+| **What $d$ is** | Gasket reaction / **B16.5 raised-face diameter**, not pipe ID |
+| **Permanent blind** | Design $P$ + temperature-derated $S$ + **$c$ (typically 3.0 mm)** |
+| **Hydrotest blank** | Test $P_t$, ambient $S$, usually **$c = 0$** |
+| **$C = 0.30$** | Bolted edge restraint / prying — thicker than ideal plate theory |
+| **FEK NPS 10 Cl 300 RF $d$** | **323.8 mm** (B16.5 catalog in FEK) |
+| **Worked $t_m$ (below)** | **≈ 36.8 mm** → next stock **38 mm** plate |
+| **Limits** | Screening only — confirm piping class / MTO / isolation standard |
+
+---
+
+## Blind flange thickness calculation in the field
+
+Process plants isolate lines with **spectacle blinds**, **spades/spacers**, forged **blind flanges**, and temporary **test blanks**. Pressure design of the flat circular cover is governed by the same family of relations used for unstayed flat heads: diameter at the gasket reaction circle, design (or test) pressure, plate allowable stress, joint efficiency, and corrosion allowance.
+
+Use the interactive [Blind Flange Thickness](/calculator/blind-flange-thickness) tool for mode switching (permanent vs hydrotest), B16.5 NPS × class RF diameter, and commercial plate recommendation. Pair pressure class checks with the [Flange Pressure-Temperature Rating](/calculator/flange-pressure-temperature-rating) calculator, and pipe wall selection with [ASME B31.3 Pipe Thickness](/calculator/pipe-wall-thickness).
+
+<Callout title="Screening Note" variant="info">
+This calculation provides **screening** minimum required thickness per **ASME B31.3 Para. 304.4.1** and **ASME Section VIII Div. 1 UG-34**. Final fabrication drawings for critical high-pressure line blinds must be verified against piping class specifications (MTO) and plant isolation standards. FEK is not a substitute for stamped design packages.
+</Callout>
+
+---
+
+## Core formulas & parameter definitions
+
+### Permanent operating blind / spectacle plate
+
+FEK implements the bolted flat-cover form used in UG-34 / B31.3 closure-plate screening:
+
+$$
+t_m = d \cdot \sqrt{\frac{C \cdot P}{S \cdot E}} + c,\qquad C = 0.30
+$$
+
+Equivalently:
+
+$$
+t_m = d \cdot \sqrt{\frac{0.30\,P}{S\,E}} + c
+$$
+
+$P$ and $S$ must share stress units (MPa with MPa, or psi with psi). $d$, $t_m$, and $c$ share length units.
+
+### Temporary hydrotest blank
+
+For short-duration, non-corrosive hydro/pneumatic tests (B31.3 Chapter VI practice in FEK):
+
+$$
+t_m = d \cdot \sqrt{\frac{0.30\,P_t}{S_{\mathrm{amb}}\,E}}
+$$
+
+with **$c = 0$** and ambient allowable stress $S_{\mathrm{amb}}$.
+
+### Why not $t = d\sqrt{3P/(16SE)}$?
+
+The factor **$3/16 = 0.1875$** is the classical **simply-supported** circular plate coefficient under uniform load. Bolted pipe flanges introduce **edge clamping and prying**. ASME UG-34 / FEK therefore use **$C = 0.30$**, which increases thickness by roughly **$\sqrt{0.30/0.1875} \approx 1.26$** (about **+26%**) versus the $3/16$ internet form. Using $3/16$ under-sizes FEK/code screening blinds.
+
+### Parameter definitions
+
+| Symbol | Parameter | Typical units | Description |
+| :---: | :--- | :---: | :--- |
+| **$t_m$** | Required minimum thickness | mm (in) | Structural cover thickness including corrosion term for permanent blinds |
+| **$d$** | Gasket reaction / RF diameter | mm (in) | FEK uses ASME B16.5 **raised-face diameter** for RF joints |
+| **$P$ / $P_t$** | Design / test pressure | MPa (psi) | Permanent: design $P$; hydro blank: test $P_t$ |
+| **$S$ / $S_{\mathrm{amb}}$** | Allowable stress | MPa (psi) | Design-temperature $S$ or ambient $S_{\mathrm{amb}}$ |
+| **$E$** | Joint efficiency | — | Usually **1.00** for solid plate / forged stock |
+| **$C$** | Attachment factor | — | **0.30** bolted flat cover (UG-34 / FEK) |
+| **$c$** | Corrosion allowance | mm (in) | Typically **3.0 mm** permanent; **0** hydrotest blank |
+
+### FEK material screening presets (engine)
+
+| Preset | Ambient $S$ | Design $S$ (elevated screening) | Typical use |
+| :--- | ---: | ---: | :--- |
+| A516 Gr. 70 | 138 MPa / 20 ksi | 125 MPa / 18.1 ksi | Permanent PV plate / blinds |
+| A36 / SS400 | 115 MPa / 16.6 ksi | 100 MPa / 14.5 ksi | Temporary hydro blanks |
+| SS304 / SS316 | 138 MPa / 20 ksi | 138 MPa / 20 ksi | Corrosion-resistant blinds |
+
+---
+
+## How to calculate spectacle blind thickness per ASME B31.3 (worked example)
+
+### Scenario
+
+**NPS 10″ Class 300** line isolation blank for screening (ASTM A105 / CS plate allowable taken as **$S = 137.9\text{ MPa}$ / 20,000 psi**, design pressure **50 bar = 5.0 MPa** near Class 300 ambient rating, **$c = 3.0\text{ mm}$**, **$E = 1.0$**).
+
+| Input | Value | Source |
+| :--- | :--- | :--- |
+| NPS × class | 10″ Class 300 RF | Duty |
+| $d$ (RF) | **323.8 mm** | FEK ASME B16.5 `flangeDimension.json` |
+| $P$ | **5.0 MPa** (50 bar) | Design |
+| $S$ | **137.9 MPa** | Screening allowable |
+| $E$ | **1.00** | Solid plate |
+| $c$ | **3.0 mm** | Piping CA |
+| $C$ | **0.30** | FEK / UG-34 |
+
+<Callout title="Diameter note" variant="warning">
+Some hand calculations use a smaller mean gasket diameter (e.g. ~286 mm). **FEK auto-fill uses the B16.5 raised-face diameter $d = 323.8\text{ mm}$ for NPS 10 RF.** Always state which $d$ you used — understating $d$ understates $t_m$.
+</Callout>
+
+### Step 1 — Confirm gasket reaction diameter $d$
+
+From FEK B16.5 geometry for **NPS 10 Class 300**:
+
+$$
+d = 323.8\ \text{mm (RF)}
+$$
+
+### Step 2 — Pressure (uncorroded) term
+
+$$
+t = d \cdot \sqrt{\frac{0.30 \cdot P}{S \cdot E}}
+= 323.8 \cdot \sqrt{\frac{0.30 \times 5.0}{137.9 \times 1.0}}
+= 323.8 \cdot \sqrt{0.010877}
+= 323.8 \times 0.10429
+= 33.77\ \text{mm}
+$$
+
+### Step 3 — Add corrosion allowance
+
+$$
+t_m = t + c = 33.77\ \text{mm} + 3.0\ \text{mm} = 36.77\ \text{mm} \approx \mathbf{36.8\ mm}
+$$
+
+### Step 4 — Commercial plate & catalog check
+
+| Check | Value | Result |
+| :--- | :--- | :--- |
+| FEK next commercial plate ≥ $t_m$ | **38 mm (38T)** | Select ≥ 38 mm stock |
+| FEK B16.5 Class 300 NPS 10 blind face $T$ | **46.1 mm** | Forged blind flange hub/face catalog $T$ ≥ $t_m$ |
+| Class 300 ambient limit (FEK) | **51.1 bar** | Duty 50 bar is within ambient class screen |
+
+**Conclusion:** Required screening thickness is **$t_m \approx 36.8\text{ mm}$**. Procure at least **38 mm** plate (or a forged blind whose pressure design meets the same $t_m$). Confirm **ASME B16.48** spectacle-blind paddle thickness on the current edition chart for the exact ring/spacer geometry — FEK does not embed a full B16.48 paddle table.
+
+<Callout title="Try this duty in FEK" variant="tip">
+Open [Blind Flange Thickness](/calculator/blind-flange-thickness): set **permanent** mode, **NPS 10**, **Class 300**, $P = 5.0\text{ MPa}$, $S \approx 138\text{ MPa}$, $c = 3.0\text{ mm}$, $E = 1$. RF $d$ should populate near **323.8 mm**; hero $t_m$ should match this worked example within rounding.
+</Callout>
+
+---
+
+## Interactive tool CTA
+
+<Callout title="Run the live blind thickness screen" variant="tip">
+Use the [Blind Flange Thickness Calculator](/calculator/blind-flange-thickness) for permanent vs hydrotest modes, B16.5 RF diameter fill, and commercial plate recommendation. Check whether Class ambient / hydro limits cover your $P$ with [Flange Pressure-Temperature Rating](/calculator/flange-pressure-temperature-rating), then confirm connected pipe wall on [ASME B31.3 Pipe Thickness](/calculator/pipe-wall-thickness).
+</Callout>
+
+Public reference matrices (ambient class rating and hydrotest plate capability) are also published on the calculator page for field lookup and image reference.
+
+---
+
+## Frequently Asked Questions (FAQ)
+
+### Q1. How to calculate spectacle blind thickness per ASME B31.3 Para. 304.5.3?
+
+FEK screens flat blinds with **Para. 304.4.1 / UG-34** using **$t_m = d\sqrt{0.30 P/(S E)} + c$**. Spec writers sometimes cite neighboring paragraphs for specialty closures; always match the **attachment detail** and **$C$ factor** to the actual blind (bolted RF cover vs other geometries). For spectacle assemblies, size the **pressure-retaining paddle** with this flat-cover screen, then confirm **B16.48** paddle/spacer dimensions and ring drilling against the purchase standard—not against pipe ID alone.
+
+### Q2. What is the difference between ASME UG-34 unstayed flat heads and ASME B31.3 blanks?
+
+**UG-34** is the Section VIII Div. 1 flat-head / cover thickness framework (including attachment factor $C$). **B31.3** process piping adopts the same bolted-cover logic for **closure plates / blinds** in the Para. 304.4 family and treats **temporary test blanks** under Chapter VI testing practice. FEK uses one engineering model ($C = 0.30$) with mode switches for corrosion and ambient vs design stress—so a hydrotest blank is usually thinner than a permanent blind at the same diameter and pressure class.
+
+### Q3. How do ASME B16.5 flange pressure-temperature ratings relate to custom blind thickness?
+
+**B16.5 P–T ratings** limit the **flanged joint’s allowable working pressure** by material group and temperature. **Blind thickness $t_m$** answers a different question: can the **flat cover plate** carry that pressure at diameter $d$? You need both: verify class rating (e.g. Class 300 ambient ≈ 51.1 bar in FEK) **and** compute $t_m$. A forged B16.5 blind flange brings a catalog face thickness; a **fabricated plate blind / spectacle paddle** must still meet $t_m$ even if the mating flanges are correctly rated.
+
+### Q4. Why does my spreadsheet give ~26 mm for NPS 10 / 5 MPa when FEK gives ~37 mm?
+
+Two common causes: (1) using **$C = 3/16 = 0.1875$** instead of **$C = 0.30$**, and/or (2) using a **smaller $d$** than the B16.5 RF diameter (**323.8 mm** in FEK for NPS 10). FEK follows the bolted-cover factor and RF $d$ auto-fill—treat thinner $3/16$ results as **non-conservative** relative to this screening basis.
+
+### Q5. Can I use ASTM A36 plate for hydrotest blanks?
+
+**Yes, for temporary blanks**, with a lower ambient allowable (FEK A36 preset **$S_{\mathrm{amb}} = 115\text{ MPa}$**), which increases $t_m$ versus A516-70. Stamp, tag, and register temporary blanks for **mandatory removal** before commissioning.

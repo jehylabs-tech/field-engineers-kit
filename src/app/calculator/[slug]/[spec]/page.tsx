@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import CalculatorSeoContent from "@/components/calculator/CalculatorSeoContent";
 import CalculatorShell from "@/components/calculator/CalculatorShell";
 import SpecProgrammaticPanel from "@/components/calculator/SpecProgrammaticPanel";
+import BoltSequenceSeoFigure from "@/components/calculator/BoltSequenceSeoFigure";
 import { getLocalPublishedCalculators } from "@/lib/calculators/local-seed";
 import {
   getPublishedCalculatorBySlug,
@@ -14,6 +15,15 @@ import {
   listAllSpecRoutes,
   resolveSpecRoute,
 } from "@/lib/calculators/spec-routes";
+import {
+  BOLT_SEQUENCE_SEO_SLUG,
+  getBoltSequenceSeoChartSpec,
+  parseBoltSequenceSpecSegment,
+} from "@/lib/calculators/bolt-sequence-seo-chart";
+import {
+  BLIND_FLANGE_SEO_SLUG,
+  defaultBlindFlangeSeoChart,
+} from "@/lib/calculators/blind-flange-seo-chart";
 import { SLUG_TO_CALCULATOR_TYPE } from "@/lib/plant-context/tags";
 import { canonicalUrl } from "@/lib/site";
 
@@ -61,6 +71,40 @@ export async function generateMetadata({
     `/calculator/${calculator.slug}/${specRoute.spec}`,
   );
 
+  const boltChart =
+    calculator.slug === BOLT_SEQUENCE_SEO_SLUG
+      ? (() => {
+          const parsed = parseBoltSequenceSpecSegment(specRoute.spec);
+          return parsed
+            ? getBoltSequenceSeoChartSpec(parsed.boltCount, parsed.pattern)
+            : null;
+        })()
+      : null;
+  const blindChart =
+    calculator.slug === BLIND_FLANGE_SEO_SLUG
+      ? defaultBlindFlangeSeoChart()
+      : null;
+  const ogImage = boltChart
+    ? {
+        url: boltChart.src,
+        width: 1200,
+        height: 1400,
+        alt: boltChart.alt,
+      }
+    : blindChart
+      ? {
+          url: blindChart.src,
+          width: 1400,
+          height: 900,
+          alt: blindChart.alt,
+        }
+      : {
+          url: "/opengraph-image",
+          width: 1200,
+          height: 630,
+          alt: copy.title,
+        };
+
   return {
     title: copy.title,
     description: copy.description,
@@ -76,20 +120,13 @@ export async function generateMetadata({
       url: canonical,
       type: "website",
       siteName: "FieldEngineersKit",
-      images: [
-        {
-          url: "/opengraph-image",
-          width: 1200,
-          height: 630,
-          alt: copy.title,
-        },
-      ],
+      images: [ogImage],
     },
     twitter: {
       card: "summary_large_image",
       title: copy.title,
       description: copy.description,
-      images: ["/opengraph-image"],
+      images: [ogImage.url],
     },
   };
 }
@@ -135,6 +172,9 @@ export default async function CalculatorSpecPage({ params }: SpecPageProps) {
         ) : null}
       </p>
       <SpecProgrammaticPanel h2={copy.h2} route={specRoute} />
+      {calculator.slug === BOLT_SEQUENCE_SEO_SLUG ? (
+        <BoltSequenceSeoFigure spec={specRoute.spec} />
+      ) : null}
       <CalculatorSeoContent
         slug={calculator.slug}
         title={copy.h1}

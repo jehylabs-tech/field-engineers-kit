@@ -96,6 +96,56 @@ export const WORKSTATION_DOMAINS: WorkstationDomain[] = [
         keywords: ["b31.3", "wall", "thickness", "tmin", "pipe"],
       },
       {
+        id: "water-thermodynamic-properties",
+        title: "Water Density & Thermo Props",
+        seoLabel:
+          "IAPWS-IF97 Water Density Specific Heat Viscosity Calculator",
+        standard: "IAPWS-IF97",
+        href: "/calculator/water-thermodynamic-properties/20c-1bar",
+        keywords: [
+          "water density",
+          "specific heat",
+          "IAPWS",
+          "viscosity",
+          "thermodynamic",
+          "steam tables",
+        ],
+      },
+      {
+        id: "pipe-slope-calculator",
+        title: "Pipe Slope & Drainage",
+        seoLabel:
+          "Pipe Slope Drainage Ratio Rise Run IPC Minimum Slope Calculator",
+        standard: "IPC / B31.3",
+        href: "/calculator/pipe-slope-calculator",
+        keywords: [
+          "pipe slope",
+          "drainage slope",
+          "rise run",
+          "manning",
+          "gravity flow",
+          "ipc",
+          "fall",
+        ],
+      },
+      {
+        id: "piping-equivalent-length",
+        title: "Piping Equivalent Length",
+        seoLabel:
+          "Piping Equivalent Length Fitting Valve L/D Crane TP-410 Calculator",
+        standard: "Crane TP-410",
+        href: "/calculator/piping-equivalent-length/2inch-sch40-90-elbow-std",
+        keywords: [
+          "equivalent length",
+          "L/D",
+          "crane",
+          "fitting",
+          "valve",
+          "K factor",
+          "friction loss",
+        ],
+      },
+      {
         id: "pipe-schedule-dimension",
         title: "Pipe Schedule & Dimension",
         seoLabel: "ASME B36.10M Pipe Schedule OD ID Wall Thickness Lookup",
@@ -575,6 +625,23 @@ export const WORKSTATION_DOMAINS: WorkstationDomain[] = [
     icon: "◇",
     filterIds: ["inspection"],
     tools: [
+      {
+        id: "noise-criterion",
+        title: "Noise Criterion Rating",
+        seoLabel:
+          "ANSI/ASA S12.2 Noise Criterion NC Rating Octave Band Calculator",
+        standard: "ANSI S12.2 / ASHRAE",
+        href: "/calculator/noise-criterion",
+        keywords: [
+          "noise criterion",
+          "nc rating",
+          "octave band",
+          "ashrae",
+          "ansi s12.2",
+          "hvac noise",
+          "nc-35",
+        ],
+      },
       {
         id: "hydro-test-pressure",
         title: "Hydro / Pneumatic Test Pressure",

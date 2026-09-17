@@ -1,5 +1,7 @@
 "use client";
 
+import { layoutBoltCircle } from "@/lib/calculators/bolt-circle-layout";
+
 type BoltCircleDiagramProps = {
   boltCount: number;
   /** Bolt number (1…N) currently highlighted; null = none. */
@@ -10,32 +12,7 @@ type BoltCircleDiagramProps = {
   title?: string;
 };
 
-/** Layout math so discs never overlap on the bolt circle (viewBox 0–100). */
-export function layoutBoltCircle(n: number): {
-  boltR: number;
-  fontSize: number;
-  ringR: number;
-  guideR: number;
-  strokeW: number;
-} {
-  const pad = 1.25;
-  // Initial guess from N; shrink further if chord spacing is too tight.
-  let boltR = Math.max(2.1, Math.min(9, 180 / n));
-  let ringR = 50 - boltR - pad;
-  const minGap = 1.08; // require slight clearance between discs
-  const chord = 2 * ringR * Math.sin(Math.PI / n);
-  if (chord < 2 * boltR * minGap) {
-    boltR = Math.max(2.0, (ringR * Math.sin(Math.PI / n)) / minGap);
-    ringR = 50 - boltR - pad;
-  }
-  const fontSize = Math.max(
-    3.0,
-    Math.min(boltR * 1.15, Math.min(9, 150 / n)),
-  );
-  const strokeW = n >= 32 ? 0.75 : n >= 20 ? 1.05 : 1.35;
-  const guideR = Math.min(ringR * 0.92, ringR + boltR * 0.2);
-  return { boltR, fontSize, ringR, guideR, strokeW };
-}
+export { layoutBoltCircle } from "@/lib/calculators/bolt-circle-layout";
 
 /** Build the same bolt-numbering SVG used on-page (neutral, no active highlight). */
 export function buildBoltNumberingSvgMarkup(boltCount: number): string | null {

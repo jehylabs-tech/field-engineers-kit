@@ -298,9 +298,6 @@ function ToolRow({
       <span className="min-w-0 flex-1 text-[14px] font-semibold leading-snug text-slate-800 transition-colors group-hover:text-blue-600 dark:text-slate-100 dark:group-hover:text-blue-400 md:text-[15px]">
         {tool.title}
       </span>
-      <span className="shrink-0 rounded bg-slate-100 px-1.5 py-0.5 text-right font-mono text-[11px] font-medium text-slate-500 dark:bg-spec-panel dark:text-slate-400">
-        {tool.standard}
-      </span>
       <span
         aria-hidden="true"
         className="inline-block w-3 shrink-0 text-sm font-medium text-blue-600 opacity-0 transition-opacity duration-150 group-hover:opacity-100 dark:text-blue-400"

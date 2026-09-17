@@ -130,6 +130,22 @@ const CALCULATOR_VIEWS: Record<
     () => import("./calculators/PipeBranchReinforcementCalculator"),
     { loading: loadingFallback },
   ),
+  "water-thermodynamic-properties": dynamic(
+    () => import("./calculators/WaterThermodynamicPropertiesCalculator"),
+    { loading: loadingFallback },
+  ),
+  "noise-criterion": dynamic(
+    () => import("./calculators/NoiseCriterionCalculator"),
+    { loading: loadingFallback },
+  ),
+  "pipe-slope-calculator": dynamic(
+    () => import("./calculators/PipeSlopeCalculator"),
+    { loading: loadingFallback },
+  ),
+  "piping-equivalent-length": dynamic(
+    () => import("./calculators/PipingEquivalentLengthCalculator"),
+    { loading: loadingFallback },
+  ),
   "hydro-test": dynamic(() => import("./calculators/HydroTestCalculator"), {
     loading: loadingFallback,
   }),

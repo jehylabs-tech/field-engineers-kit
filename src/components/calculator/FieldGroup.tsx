@@ -53,6 +53,8 @@ type FieldGroupProps = {
   value: string | number;
   onChange: (value: string) => void;
   unit?: string;
+  /** Narrow unit gutter (e.g. "dB") so the value column keeps readable width. */
+  compactUnit?: boolean;
   error?: string;
   highlight?: string;
   hint?: string;
@@ -61,6 +63,7 @@ type FieldGroupProps = {
   allowNegative?: boolean;
   allowZero?: boolean;
   disabled?: boolean;
+  onBlur?: () => void;
 };
 
 export default function FieldGroup({
@@ -68,6 +71,7 @@ export default function FieldGroup({
   value,
   onChange,
   unit,
+  compactUnit,
   error,
   highlight,
   hint,
@@ -76,6 +80,7 @@ export default function FieldGroup({
   allowNegative,
   allowZero,
   disabled,
+  onBlur,
 }: FieldGroupProps) {
   const carryOver = useCarryOver();
   const schematic = useSchematicHighlight();
@@ -145,7 +150,13 @@ export default function FieldGroup({
           ariaLabel={`${label} presets`}
         />
       ) : null}
-      <div className="grid w-full min-w-0 grid-cols-[minmax(0,1fr)_72px] gap-1.5">
+      <div
+        className={`grid w-full min-w-0 gap-1.5 ${
+          compactUnit
+            ? "grid-cols-[minmax(0,1fr)_2.5rem]"
+            : "grid-cols-[minmax(0,1fr)_72px]"
+        }`}
+      >
         <input
           type="text"
           inputMode="decimal"
@@ -159,6 +170,7 @@ export default function FieldGroup({
             if (highlight) schematic?.setActive(highlight);
           }}
           onBlur={() => {
+            onBlur?.();
             if (highlight) schematic?.setActive(null);
           }}
           className={`box-border flex h-10 min-h-10 w-full min-w-0 items-center rounded-lg border border-slate-300 bg-white px-2.5 font-mono text-sm text-slate-900 outline-none focus:border-spec-accent focus:ring-2 focus:ring-spec-accent dark:border-slate-600 dark:bg-spec-bg dark:text-spec-text ${
@@ -170,7 +182,7 @@ export default function FieldGroup({
         <select
           disabled
           tabIndex={-1}
-          className={UNIT_GUTTER_CLASS}
+          className={`${UNIT_GUTTER_CLASS}${compactUnit ? " px-1 text-xs" : ""}`}
           aria-label={`${label} unit`}
         >
           <option>{unitLabel}</option>

@@ -14,6 +14,7 @@ import { PRODUCTION_SITE_URL, getSiteUrl } from "@/lib/site";
 export default function robots(): MetadataRoute.Robots {
   const siteUrl = getSiteUrl();
   const sitemapUrl = `${PRODUCTION_SITE_URL}/sitemap.xml`;
+  const imageSitemapUrl = `${PRODUCTION_SITE_URL}/sitemap-images.xml`;
 
   return {
     rules: [
@@ -46,7 +47,7 @@ export default function robots(): MetadataRoute.Robots {
         allow: "/",
       },
     ],
-    sitemap: sitemapUrl,
+    sitemap: [sitemapUrl, imageSitemapUrl],
     host: siteUrl.includes("localhost") ? PRODUCTION_SITE_URL : siteUrl,
   };
 }

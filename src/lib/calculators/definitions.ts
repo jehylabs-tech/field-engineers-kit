@@ -30,7 +30,11 @@ export type CalculatorType =
   | "nitrogen-purging-volume"
   | "flange-pressure-temperature-rating"
   | "flange-gasket-stress"
-  | "pipe-branch-reinforcement";
+  | "pipe-branch-reinforcement"
+  | "water-thermodynamic-properties"
+  | "noise-criterion"
+  | "pipe-slope-calculator"
+  | "piping-equivalent-length";
 
 export type FaqItem = {
   q: string;

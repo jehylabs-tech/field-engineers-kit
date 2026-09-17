@@ -3,11 +3,21 @@ import { notFound } from "next/navigation";
 import CalculatorSeoContent from "@/components/calculator/CalculatorSeoContent";
 import CalculatorShell from "@/components/calculator/CalculatorShell";
 import SpecRouteLinkGrid from "@/components/calculator/SpecRouteLinkGrid";
+import BoltSequenceSeoFigure from "@/components/calculator/BoltSequenceSeoFigure";
+import BlindFlangeSeoFigures from "@/components/calculator/BlindFlangeSeoFigures";
 import { getLocalPublishedCalculators } from "@/lib/calculators/local-seed";
 import {
   getPublishedCalculatorBySlug,
   getPublishedCalculators,
 } from "@/lib/calculators/queries";
+import {
+  BOLT_SEQUENCE_SEO_SLUG,
+  getBoltSequenceSeoChartSpec,
+} from "@/lib/calculators/bolt-sequence-seo-chart";
+import {
+  BLIND_FLANGE_SEO_SLUG,
+  defaultBlindFlangeSeoChart,
+} from "@/lib/calculators/blind-flange-seo-chart";
 import { canonicalUrl } from "@/lib/site";
 
 type CalculatorPageProps = {
@@ -57,6 +67,35 @@ export async function generateMetadata({
     "Engineering Calculator",
   ];
 
+  const boltChart =
+    calculator.slug === BOLT_SEQUENCE_SEO_SLUG
+      ? getBoltSequenceSeoChartSpec(8, "star")
+      : null;
+  const blindChart =
+    calculator.slug === BLIND_FLANGE_SEO_SLUG
+      ? defaultBlindFlangeSeoChart()
+      : null;
+  const ogImage = boltChart
+    ? {
+        url: boltChart.src,
+        width: 1200,
+        height: 1400,
+        alt: boltChart.alt,
+      }
+    : blindChart
+      ? {
+          url: blindChart.src,
+          width: 1400,
+          height: 900,
+          alt: blindChart.alt,
+        }
+      : {
+          url: "/opengraph-image",
+          width: 1200,
+          height: 630,
+          alt: `${title} - FieldEngineersKit`,
+        };
+
   return {
     title,
     description,
@@ -76,20 +115,13 @@ export async function generateMetadata({
       type: "website",
       siteName: "FieldEngineersKit",
       locale: "en_US",
-      images: [
-        {
-          url: "/opengraph-image",
-          width: 1200,
-          height: 630,
-          alt: `${title} - FieldEngineersKit`,
-        },
-      ],
+      images: [ogImage],
     },
     twitter: {
       card: "summary_large_image",
       title: `${title} | FieldEngineersKit`,
       description,
-      images: ["/opengraph-image"],
+      images: [ogImage.url],
     },
   };
 }
@@ -110,6 +142,12 @@ export default async function CalculatorPage({ params }: CalculatorPageProps) {
         allCalculators={allCalculators}
       >
         <SpecRouteLinkGrid slug={calculator.slug} />
+        {calculator.slug === BOLT_SEQUENCE_SEO_SLUG ? (
+          <BoltSequenceSeoFigure boltCount={8} pattern="star" />
+        ) : null}
+        {calculator.slug === BLIND_FLANGE_SEO_SLUG ? (
+          <BlindFlangeSeoFigures showAll />
+        ) : null}
         <CalculatorSeoContent
           slug={calculator.slug}
           title={calculator.title}

@@ -319,6 +319,33 @@ export function applyPlantContext<T extends Record<string, unknown>>(
       }
       return next as T;
     }
+    case "water-thermodynamic-properties": {
+      const next = { ...inputs } as T & {
+        temperature?: number;
+        pressure?: number;
+        unitSystem?: string;
+      };
+      if (ctx.temperature) {
+        next.temperature =
+          next.unitSystem === "imperial"
+            ? temperatureToF(ctx.temperature)
+            : temperatureToC(ctx.temperature);
+      }
+      if (ctx.pressure) {
+        next.pressure =
+          next.unitSystem === "imperial"
+            ? pressureToPsi(ctx.pressure)
+            : pressureToBar(ctx.pressure);
+      }
+      return next as T;
+    }
+    case "pipe-slope-calculator": {
+      const next = { ...inputs } as T & { pipeNps?: string };
+      const nps = normalizeNps(ctx.size);
+      if (nps) next.pipeNps = nps;
+      return next as T;
+    }
+    case "piping-equivalent-length":
     case "pressure-drop":
     case "flow-velocity":
       return applySchedule(applyNps(inputs, ctx), ctx) as T;
@@ -536,6 +563,25 @@ export function extractPlantContext(
       unitSystem === "imperial"
         ? { value: Number(inputs.pressure.toFixed(1)), unit: "psi" }
         : { value: Number(inputs.pressure.toFixed(3)), unit: "bar" };
+  }
+
+  if (
+    type === "water-thermodynamic-properties" &&
+    typeof inputs.temperature === "number"
+  ) {
+    ctx.temperature =
+      unitSystem === "imperial"
+        ? { value: Number(inputs.temperature.toFixed(1)), unit: "F" }
+        : { value: Number(inputs.temperature.toFixed(1)), unit: "C" };
+  }
+  if (
+    type === "water-thermodynamic-properties" &&
+    typeof inputs.pressure === "number"
+  ) {
+    ctx.pressure =
+      unitSystem === "imperial"
+        ? { value: Number(inputs.pressure.toFixed(1)), unit: "psi" }
+        : { value: Number(inputs.pressure.toFixed(4)), unit: "bar" };
   }
 
   if (type === "pipe-thickness" && typeof inputs.outsideDiameter === "number") {

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="764" viewBox="0 0 1400 764" role="img" aria-label="Blind flange thickness chart by NPS and ASME B16.5 pressure class ambient rating (metric units) — FieldEngineersKit">
+  <rect width="1400" height="764" fill="#FFFFFF"/>
+  <rect x="24" y="24" width="1352" height="716" rx="20" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="2"/>
+  <text x="56" y="72" font-size="32" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">Blind Flange Thickness Chart</text>
+  <text x="56" y="108" font-size="18" font-weight="500" fill="#64748B" font-family="system-ui,Segoe UI,sans-serif">ASME B16.5 ambient class rating · plate mm · c = 3.0 mm · screening</text>
+  <rect x="40" y="150" width="1320" height="56" fill="#F1F5F9"/>
+  <text x="85" y="186" text-anchor="middle" font-size="14" font-weight="800" fill="#334155" font-family="system-ui,Segoe UI,sans-serif">NPS</text>
+  <text x="185" y="178" text-anchor="middle" font-size="13" font-weight="800" fill="#334155" font-family="system-ui,Segoe UI,sans-serif">RF (d)</text>
+  <text x="185" y="196" text-anchor="middle" font-size="11" fill="#64748B" font-family="system-ui,Segoe UI,sans-serif">mm</text>
+  
+      <text x="333.3333333333333" y="178" text-anchor="middle" font-size="18" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">#150</text>
+      <text x="333.3333333333333" y="198" text-anchor="middle" font-size="13" fill="#64748B" font-family="system-ui,Segoe UI,sans-serif">1.96 MPa</text>
+      <text x="520" y="178" text-anchor="middle" font-size="18" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">#300</text>
+      <text x="520" y="198" text-anchor="middle" font-size="13" fill="#64748B" font-family="system-ui,Segoe UI,sans-serif">5.11 MPa</text>
+      <text x="706.6666666666666" y="178" text-anchor="middle" font-size="18" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">#600</text>
+      <text x="706.6666666666666" y="198" text-anchor="middle" font-size="13" fill="#64748B" font-family="system-ui,Segoe UI,sans-serif">10.21 MPa</text>
+      <text x="893.3333333333334" y="178" text-anchor="middle" font-size="18" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">#900</text>
+      <text x="893.3333333333334" y="198" text-anchor="middle" font-size="13" fill="#64748B" font-family="system-ui,Segoe UI,sans-serif">15.32 MPa</text>
+      <text x="1080" y="178" text-anchor="middle" font-size="18" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">#1500</text>
+      <text x="1080" y="198" text-anchor="middle" font-size="13" fill="#64748B" font-family="system-ui,Segoe UI,sans-serif">25.53 MPa</text>
+      <text x="1266.6666666666665" y="178" text-anchor="middle" font-size="18" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">#2500</text>
+      <text x="1266.6666666666665" y="198" text-anchor="middle" font-size="13" fill="#64748B" font-family="system-ui,Segoe UI,sans-serif">42.55 MPa</text>
+  <rect x="40" y="206" width="1320" height="52" fill="#F8FAFC"/>
+      <text x="85" y="238" text-anchor="middle" font-size="16" font-weight="700" fill="#1E293B" font-family="system-ui,Segoe UI,sans-serif">2"</text>
+      <text x="185" y="238" text-anchor="middle" font-size="13" fill="#475569" font-family="ui-monospace,Consolas,monospace">91.9</text>
+      
+        <text x="333.3333333333333" y="228" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">10 mm</text>
+        <text x="333.3333333333333" y="246" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(9.3 mm)</text>
+        <text x="520" y="228" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">14 mm</text>
+        <text x="520" y="246" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(13.2 mm)</text>
+        <text x="706.6666666666666" y="228" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">18 mm</text>
+        <text x="706.6666666666666" y="246" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(17.4 mm)</text>
+        <text x="893.3333333333334" y="228" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">22 mm</text>
+        <text x="893.3333333333334" y="246" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(20.6 mm)</text>
+        <text x="1080" y="228" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">28 mm</text>
+        <text x="1080" y="246" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(25.7 mm)</text>
+        <text x="1266.6666666666665" y="228" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">35 mm</text>
+        <text x="1266.6666666666665" y="246" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(32.4 mm)</text>
+      <text x="85" y="290" text-anchor="middle" font-size="16" font-weight="700" fill="#1E293B" font-family="system-ui,Segoe UI,sans-serif">3"</text>
+      <text x="185" y="290" text-anchor="middle" font-size="13" fill="#475569" font-family="ui-monospace,Consolas,monospace">127.0</text>
+      
+        <text x="333.3333333333333" y="280" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">12 mm</text>
+        <text x="333.3333333333333" y="298" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(11.7 mm)</text>
+        <text x="520" y="280" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">18 mm</text>
+        <text x="520" y="298" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(17.1 mm)</text>
+        <text x="706.6666666666666" y="280" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">25 mm</text>
+        <text x="706.6666666666666" y="298" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(22.9 mm)</text>
+        <text x="893.3333333333334" y="280" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">28 mm</text>
+        <text x="893.3333333333334" y="298" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(27.4 mm)</text>
+        <text x="1080" y="280" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">35 mm</text>
+        <text x="1080" y="298" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(34.4 mm)</text>
+        <text x="1266.6666666666665" y="280" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">45 mm</text>
+        <text x="1266.6666666666665" y="298" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(43.6 mm)</text><rect x="40" y="310" width="1320" height="52" fill="#F8FAFC"/>
+      <text x="85" y="342" text-anchor="middle" font-size="16" font-weight="700" fill="#1E293B" font-family="system-ui,Segoe UI,sans-serif">4"</text>
+      <text x="185" y="342" text-anchor="middle" font-size="13" fill="#475569" font-family="ui-monospace,Consolas,monospace">157.2</text>
+      
+        <text x="333.3333333333333" y="332" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">14 mm</text>
+        <text x="333.3333333333333" y="350" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(13.8 mm)</text>
+        <text x="520" y="332" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">22 mm</text>
+        <text x="520" y="350" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(20.4 mm)</text>
+        <text x="706.6666666666666" y="332" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">28 mm</text>
+        <text x="706.6666666666666" y="350" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(27.6 mm)</text>
+        <text x="893.3333333333334" y="332" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">35 mm</text>
+        <text x="893.3333333333334" y="350" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(33.1 mm)</text>
+        <text x="1080" y="332" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">45 mm</text>
+        <text x="1080" y="350" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(41.9 mm)</text>
+        <text x="1266.6666666666665" y="332" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">55 mm</text>
+        <text x="1266.6666666666665" y="350" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(53.2 mm)</text>
+      <text x="85" y="394" text-anchor="middle" font-size="16" font-weight="700" fill="#1E293B" font-family="system-ui,Segoe UI,sans-serif">6"</text>
+      <text x="185" y="394" text-anchor="middle" font-size="13" fill="#475569" font-family="ui-monospace,Consolas,monospace">215.9</text>
+      
+        <text x="333.3333333333333" y="384" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">18 mm</text>
+        <text x="333.3333333333333" y="402" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(17.8 mm)</text>
+        <text x="520" y="384" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">28 mm</text>
+        <text x="520" y="402" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(26.9 mm)</text>
+        <text x="706.6666666666666" y="384" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">38 mm</text>
+        <text x="706.6666666666666" y="402" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(36.8 mm)</text>
+        <text x="893.3333333333334" y="384" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">45 mm</text>
+        <text x="893.3333333333334" y="402" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(44.4 mm)</text>
+        <text x="1080" y="384" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">60 mm</text>
+        <text x="1080" y="402" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(56.4 mm)</text>
+        <text x="1266.6666666666665" y="384" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">75 mm</text>
+        <text x="1266.6666666666665" y="402" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(72.0 mm)</text><rect x="40" y="414" width="1320" height="52" fill="#F8FAFC"/>
+      <text x="85" y="446" text-anchor="middle" font-size="16" font-weight="700" fill="#1E293B" font-family="system-ui,Segoe UI,sans-serif">8"</text>
+      <text x="185" y="446" text-anchor="middle" font-size="13" fill="#475569" font-family="ui-monospace,Consolas,monospace">269.9</text>
+      
+        <text x="333.3333333333333" y="436" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">22 mm</text>
+        <text x="333.3333333333333" y="454" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(21.5 mm)</text>
+        <text x="520" y="436" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">35 mm</text>
+        <text x="520" y="454" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(32.9 mm)</text>
+        <text x="706.6666666666666" y="436" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">50 mm</text>
+        <text x="706.6666666666666" y="454" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(45.2 mm)</text>
+        <text x="893.3333333333334" y="436" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">55 mm</text>
+        <text x="893.3333333333334" y="454" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(54.8 mm)</text>
+        <text x="1080" y="436" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">70 mm</text>
+        <text x="1080" y="454" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(69.8 mm)</text>
+        <text x="1266.6666666666665" y="436" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">90 mm</text>
+        <text x="1266.6666666666665" y="454" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(89.2 mm)</text>
+      <text x="85" y="498" text-anchor="middle" font-size="16" font-weight="700" fill="#1E293B" font-family="system-ui,Segoe UI,sans-serif">10"</text>
+      <text x="185" y="498" text-anchor="middle" font-size="13" fill="#475569" font-family="ui-monospace,Consolas,monospace">323.8</text>
+      
+        <text x="333.3333333333333" y="488" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">28 mm</text>
+        <text x="333.3333333333333" y="506" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(25.2 mm)</text>
+        <text x="520" y="488" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">40 mm</text>
+        <text x="520" y="506" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(38.9 mm)</text>
+        <text x="706.6666666666666" y="488" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">55 mm</text>
+        <text x="706.6666666666666" y="506" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(53.7 mm)</text>
+        <text x="893.3333333333334" y="488" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">70 mm</text>
+        <text x="893.3333333333334" y="506" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(65.1 mm)</text>
+        <text x="1080" y="488" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">90 mm</text>
+        <text x="1080" y="506" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(83.2 mm)</text>
+        <text x="1266.6666666666665" y="488" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">110 mm</text>
+        <text x="1266.6666666666665" y="506" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(106.5 mm)</text><rect x="40" y="518" width="1320" height="52" fill="#F8FAFC"/>
+      <text x="85" y="550" text-anchor="middle" font-size="16" font-weight="700" fill="#1E293B" font-family="system-ui,Segoe UI,sans-serif">12"</text>
+      <text x="185" y="550" text-anchor="middle" font-size="13" fill="#475569" font-family="ui-monospace,Consolas,monospace">381.0</text>
+      
+        <text x="333.3333333333333" y="540" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">30 mm</text>
+        <text x="333.3333333333333" y="558" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(29.1 mm)</text>
+        <text x="520" y="540" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">50 mm</text>
+        <text x="520" y="558" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(45.2 mm)</text>
+        <text x="706.6666666666666" y="540" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">65 mm</text>
+        <text x="706.6666666666666" y="558" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(62.6 mm)</text>
+        <text x="893.3333333333334" y="540" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">80 mm</text>
+        <text x="893.3333333333334" y="558" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(76.1 mm)</text>
+        <text x="1080" y="540" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">100 mm</text>
+        <text x="1080" y="558" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(97.3 mm)</text>
+        <text x="1266.6666666666665" y="540" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">125 mm</text>
+        <text x="1266.6666666666665" y="558" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(124.8 mm)</text>
+      <text x="85" y="602" text-anchor="middle" font-size="16" font-weight="700" fill="#1E293B" font-family="system-ui,Segoe UI,sans-serif">14"</text>
+      <text x="185" y="602" text-anchor="middle" font-size="13" fill="#475569" font-family="ui-monospace,Consolas,monospace">412.8</text>
+      
+        <text x="333.3333333333333" y="592" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">32 mm</text>
+        <text x="333.3333333333333" y="610" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(31.3 mm)</text>
+        <text x="520" y="592" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">50 mm</text>
+        <text x="520" y="610" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(48.7 mm)</text>
+        <text x="706.6666666666666" y="592" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">70 mm</text>
+        <text x="706.6666666666666" y="610" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(67.6 mm)</text>
+        <text x="893.3333333333334" y="592" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">90 mm</text>
+        <text x="893.3333333333334" y="610" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(82.2 mm)</text>
+        <text x="1080" y="592" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">110 mm</text>
+        <text x="1080" y="610" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(105.2 mm)</text>
+        <text x="1266.6666666666665" y="592" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">135 mm</text>
+        <text x="1266.6666666666665" y="610" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(134.9 mm)</text><rect x="40" y="622" width="1320" height="52" fill="#F8FAFC"/>
+      <text x="85" y="654" text-anchor="middle" font-size="16" font-weight="700" fill="#1E293B" font-family="system-ui,Segoe UI,sans-serif">16"</text>
+      <text x="185" y="654" text-anchor="middle" font-size="13" fill="#475569" font-family="ui-monospace,Consolas,monospace">469.9</text>
+      
+        <text x="333.3333333333333" y="644" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">38 mm</text>
+        <text x="333.3333333333333" y="662" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(35.2 mm)</text>
+        <text x="520" y="644" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">60 mm</text>
+        <text x="520" y="662" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(55.0 mm)</text>
+        <text x="706.6666666666666" y="644" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">80 mm</text>
+        <text x="706.6666666666666" y="662" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(76.6 mm)</text>
+        <text x="893.3333333333334" y="644" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">100 mm</text>
+        <text x="893.3333333333334" y="662" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(93.1 mm)</text>
+        <text x="1080" y="644" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">120 mm</text>
+        <text x="1080" y="662" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(119.3 mm)</text>
+        <text x="1266.6666666666665" y="644" text-anchor="middle" font-size="16" font-weight="800" fill="#0F172A" font-family="system-ui,Segoe UI,sans-serif">154 mm</text>
+        <text x="1266.6666666666665" y="662" text-anchor="middle" font-size="11" fill="#64748B" font-family="ui-monospace,Consolas,monospace">(153.2 mm)</text>
+  <line x1="40" y1="206" x2="1360" y2="206" stroke="#CBD5E1" stroke-width="1"/>
+  <text x="1344" y="724" text-anchor="end" font-size="16" font-weight="600" fill="#94A3B8" font-family="system-ui,Segoe UI,sans-serif">fieldengineerskit.com</text>
+</svg>

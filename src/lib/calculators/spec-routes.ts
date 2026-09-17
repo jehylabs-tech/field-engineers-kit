@@ -30,6 +30,22 @@ import {
   parsePipeBranchReinforcementSpec,
 } from "@/lib/calculators/pseo/pipe-branch-reinforcement-routes";
 import {
+  listWaterThermoPseoRoutes,
+  parseWaterThermoSpec,
+} from "@/lib/calculators/pseo/water-thermodynamic-properties-routes";
+import {
+  listNoiseCriterionPseoRoutes,
+  parseNoiseCriterionSpec,
+} from "@/lib/calculators/pseo/noise-criterion-routes";
+import {
+  listPipeSlopePseoRoutes,
+  parsePipeSlopeSpec,
+} from "@/lib/calculators/pseo/pipe-slope-calculator-routes";
+import {
+  listPipingEquivalentLengthPseoRoutes,
+  parsePipingEquivalentLengthSpec,
+} from "@/lib/calculators/pseo/piping-equivalent-length-routes";
+import {
   listAvailableNps,
   listFlangeClassesForNps,
   listFlangeNps,
@@ -156,6 +172,18 @@ export function parseSpecToQuery(spec: string): Record<string, string> | null {
 
   const branchReinforcement = parsePipeBranchReinforcementSpec(value);
   if (branchReinforcement) return branchReinforcement;
+
+  const waterThermo = parseWaterThermoSpec(value);
+  if (waterThermo) return waterThermo;
+
+  const noiseCriterion = parseNoiseCriterionSpec(value);
+  if (noiseCriterion) return noiseCriterion;
+
+  const pipeSlope = parsePipeSlopeSpec(value);
+  if (pipeSlope) return pipeSlope;
+
+  const pipingEqLen = parsePipingEquivalentLengthSpec(value);
+  if (pipingEqLen) return pipingEqLen;
 
   const inchClassBlind = value.match(
     /^(\d+(?:\.\d+)?)-inch-class-(\d+)(?:-blind)?$/,
@@ -678,6 +706,14 @@ export function listSpecRoutesForSlug(slug: string): SpecRoute[] {
       return listPipeCopingPseoRoutes(slug);
     case "pipe-branch-reinforcement":
       return listPipeBranchReinforcementPseoRoutesFull(slug);
+    case "water-thermodynamic-properties":
+      return listWaterThermoPseoRoutes(slug);
+    case "noise-criterion":
+      return listNoiseCriterionPseoRoutes(slug);
+    case "pipe-slope-calculator":
+      return listPipeSlopePseoRoutes(slug);
+    case "piping-equivalent-length":
+      return listPipingEquivalentLengthPseoRoutes(slug);
     case "pneumatic-safety":
       return listPneumaticSafetyPseoRoutes(slug);
     case "pump-npsh":
@@ -1035,6 +1071,10 @@ export function findSpecRouteForInputs(
   const designTemperature =
     partial.designTemperature != null && partial.designTemperature !== ""
       ? String(partial.designTemperature)
+      : "";
+  const pressure =
+    partial.pressure != null && partial.pressure !== ""
+      ? String(partial.pressure)
       : "";
 
   if (bolts && pattern) {
@@ -1408,6 +1448,114 @@ export function findSpecRouteForInputs(
         return false;
       }
       return true;
+    });
+    if (hit) return hit;
+  }
+
+  // Water thermodynamic properties: temp + pressure (+ units).
+  if (temp && pressure) {
+    const numEq = (a: string, b: string) => {
+      const na = Number(a);
+      const nb = Number(b);
+      return Number.isFinite(na) && Number.isFinite(nb)
+        ? Math.abs(na - nb) < 1e-6
+        : a === b;
+    };
+    const hit = routes.find((route) => {
+      if (!route.query.temp || !route.query.pressure) return false;
+      if (units && route.query.units && route.query.units !== units) {
+        return false;
+      }
+      return (
+        numEq(route.query.temp, temp) && numEq(route.query.pressure, pressure)
+      );
+    });
+    if (hit) return hit;
+  }
+
+  // Noise Criterion: space type + octave-band spectrum keys.
+  const space =
+    partial.space != null && partial.space !== ""
+      ? String(partial.space)
+      : partial.spaceType != null && partial.spaceType !== ""
+        ? String(partial.spaceType)
+        : "";
+  if (space) {
+    const bandKeys = [
+      "s63",
+      "s125",
+      "s250",
+      "s500",
+      "s1k",
+      "s2k",
+      "s4k",
+      "s8k",
+    ] as const;
+    const numEq = (a: string, b: string) => {
+      const na = Number(a);
+      const nb = Number(b);
+      return Number.isFinite(na) && Number.isFinite(nb)
+        ? Math.abs(na - nb) < 1e-6
+        : a === b;
+    };
+    const hit = routes.find((route) => {
+      if (route.query.space !== space) return false;
+      for (const key of bandKeys) {
+        const want =
+          partial[key] != null && partial[key] !== ""
+            ? String(partial[key])
+            : "";
+        if (!want || !route.query[key]) continue;
+        if (!numEq(route.query[key], want)) return false;
+      }
+      return Boolean(route.query.space);
+    });
+    if (hit) return hit;
+  }
+
+  // Pipe slope: nps + rise + run (+ units).
+  const rise =
+    partial.rise != null && partial.rise !== "" ? String(partial.rise) : "";
+  const runLen =
+    partial.run != null && partial.run !== "" ? String(partial.run) : "";
+  if (nps && rise && runLen) {
+    const numEq = (a: string, b: string) => {
+      const na = Number(a);
+      const nb = Number(b);
+      return Number.isFinite(na) && Number.isFinite(nb)
+        ? Math.abs(na - nb) < 1e-6
+        : a === b;
+    };
+    const hit = routes.find((route) => {
+      if (!route.query.rise || !route.query.run) return false;
+      if (route.query.nps !== nps) return false;
+      if (units && route.query.units && route.query.units !== units) {
+        return false;
+      }
+      return (
+        numEq(route.query.rise, rise) && numEq(route.query.run, runLen)
+      );
+    });
+    if (hit) return hit;
+  }
+
+  // Piping equivalent length: nps + schedule + fittingType.
+  const fittingType =
+    partial.fittingType != null && partial.fittingType !== ""
+      ? String(partial.fittingType)
+      : "";
+  const scheduleKey =
+    sch ||
+    (partial.schedule != null && partial.schedule !== ""
+      ? String(partial.schedule)
+      : "");
+  if (nps && scheduleKey && fittingType) {
+    const hit = routes.find((route) => {
+      if (!route.query.fittingType) return false;
+      if (route.query.nps !== nps) return false;
+      if (route.query.fittingType !== fittingType) return false;
+      const routeSch = route.query.schedule || route.query.sch || "";
+      return routeSch === scheduleKey;
     });
     if (hit) return hit;
   }
@@ -1868,6 +2016,99 @@ export function buildSpecSeoCopy(
       description: clipped,
       h1: `${shortTitle} — ${focus}`,
       h2: `${focus} P-T rating summary`,
+    };
+  }
+
+  if (
+    q.temp &&
+    q.pressure &&
+    (calculatorType === "water-thermodynamic-properties" ||
+      route.slug === "water-thermodynamic-properties")
+  ) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus} | ${brand}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `IAPWS-IF97 water density, specific heat, viscosity, and thermal conductivity at ${focus} for process piping screening.`;
+    const clipped =
+      description.length > 160
+        ? `${description.slice(0, 157).trimEnd()}…`
+        : description;
+    return {
+      title,
+      description: clipped,
+      h1: `${shortTitle} — ${focus}`,
+      h2: `${focus} water properties summary`,
+    };
+  }
+
+  if (
+    q.space &&
+    (calculatorType === "noise-criterion" || route.slug === "noise-criterion")
+  ) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus} | ${brand}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `ANSI/ASA S12.2 Noise Criterion (NC) tangent rating for ${focus} with ASHRAE space screening.`;
+    const clipped =
+      description.length > 160
+        ? `${description.slice(0, 157).trimEnd()}…`
+        : description;
+    return {
+      title,
+      description: clipped,
+      h1: `${shortTitle} — ${focus}`,
+      h2: `${focus} NC rating summary`,
+    };
+  }
+
+  if (
+    q.rise &&
+    q.run &&
+    (calculatorType === "pipe-slope-calculator" ||
+      route.slug === "pipe-slope-calculator")
+  ) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus} | ${brand}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `Pipe slope, drainage ratio, and IPC minimum slope check for ${focus} (ASME B31.3 screening).`;
+    const clipped =
+      description.length > 160
+        ? `${description.slice(0, 157).trimEnd()}…`
+        : description;
+    return {
+      title,
+      description: clipped,
+      h1: `${shortTitle} — ${focus}`,
+      h2: `${focus} slope & drainage summary`,
+    };
+  }
+
+  if (
+    q.fittingType &&
+    (calculatorType === "piping-equivalent-length" ||
+      route.slug === "piping-equivalent-length")
+  ) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus} | ${brand}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `Crane TP-410 piping equivalent length L_eq and K-factor for ${focus} (turbulent screening).`;
+    const clipped =
+      description.length > 160
+        ? `${description.slice(0, 157).trimEnd()}…`
+        : description;
+    return {
+      title,
+      description: clipped,
+      h1: `${shortTitle} — ${focus}`,
+      h2: `${focus} equivalent length summary`,
     };
   }
 
