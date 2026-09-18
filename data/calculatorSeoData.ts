@@ -2324,6 +2324,573 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
     ],
   },
 
+  "control-valve-noise": {
+    slug: "control-valve-noise",
+    formulaTitle: "Core Formula & Variable Definitions",
+    formulaHtml:
+      '<p class="eng-eq"><i>L</i><sub>p,1m</sub> ≈ <i>L</i><sub>wA</sub> − Δ<i>L</i><sub>TL</sub> − RAD</p>' +
+      '<p class="eng-eq"><i>W</i><sub>a</sub> = η<sub>a</sub> · <i>W</i><sub>m</sub> &nbsp;·&nbsp; <i>W</i><sub>m</sub> = ½ · ṁ · <i>U</i><sub>v</sub>²</p>' +
+      '<p class="eng-eq">Δ<i>L</i><sub>TL</sub> = 17 log<sub>10</sub>(<i>t</i><sub>w</sub>/<i>D</i><sub>i</sub>) + 36</p>' +
+      '<p class="eng-plain">IEC 60534-8-3 aerodynamic · IEC 60534-8-4 hydrodynamic · ISA-75.01.01 process context</p>',
+    formulaLatex:
+      "L_{p,1m}\\approx L_{wA}-\\Delta L_{TL}-\\mathrm{RAD},\\quad W_a=\\eta_a W_m,\\quad W_m=\\tfrac12\\dot m U_v^2",
+    formulaNotes:
+      "Screening prediction of A-weighted sound pressure at 1 m from the downstream pipe for standard single-stage globe/butterfly trims. Acoustic power comes from jet mechanical power with regime-based acoustic efficiency; pipe-wall transmission loss uses t_w/D_i. Multi-stage low-noise trims need OEM attenuation tables.",
+    formulaBadges: [
+      { label: "Hero", value: "L_p,1m dBA" },
+      { label: "Gas", value: "IEC 60534-8-3" },
+      { label: "Liquid", value: "IEC 60534-8-4" },
+      { label: "Wall", value: "ΔL_TL" },
+    ],
+    variables: [
+      {
+        symbol: "L_p,1m",
+        name: "External sound pressure level",
+        definition:
+          "Predicted A-weighted level at 1 m from the downstream pipe wall (dBA).",
+      },
+      {
+        symbol: "W_a",
+        name: "Acoustic power",
+        definition: "Sound power radiated by the valve trim (W).",
+      },
+      {
+        symbol: "W_m",
+        name: "Mechanical jet power",
+        definition: "½ · ṁ · U_v² stream power at the vena contracta (W).",
+      },
+      {
+        symbol: "U_v",
+        name: "Vena contracta velocity",
+        definition: "Jet velocity from isentropic expansion (gas) or Bernoulli (liquid).",
+      },
+      {
+        symbol: "ΔL_TL",
+        name: "Pipe transmission loss",
+        definition: "17 log10(t_w/D_i) + 36 from downstream wall and ID.",
+      },
+      {
+        symbol: "η_a",
+        name: "Acoustic efficiency",
+        definition: "W_a / W_m — regime-dependent screening factor.",
+      },
+    ],
+    standards: [
+      "ANSI/ISA-75.01.01-2012 (IEC 60534-2-1 Mod) — Flow capacity equations",
+      "IEC 60534-8-3 — Aerodynamic noise prediction method",
+      "IEC 60534-8-4 — Hydrodynamic noise prediction method",
+      "ASME B36.10M / B36.19M — Downstream pipe ID and wall",
+    ],
+    tableCaption: "Default screening duty (NPS 4 Sch 40 · gas · Cv 120)",
+    tableHeaders: ["Quantity", "Value", "Unit", "Notes"],
+    tableRows: [
+      ["P1 / P2", "10 / 2", "bar g", "Gauge upstream / downstream"],
+      ["Mass flow", "15 000", "kg/h", "Air / N₂-like gas"],
+      ["D_i / t_w", "102.26 / 6.02", "mm", "B36 Sch 40"],
+      ["L_p,1m", "≈ 84.6", "dBA", "Safe band (< 85 dBA)"],
+    ],
+    tableFootnote:
+      "Values are FEK IEC-style single-stage screening results. Manufacturer multi-stage or silencer packages override these levels.",
+    workedExample: {
+      title: "Worked example — NPS 4 Sch 40 · gas · Cv 120",
+      scenario:
+        "Predict external valve noise for a gas letdown from 10 bar g to 2 bar g on NPS 4 Sch 40 carbon steel with Cv = 120 and ṁ = 15 000 kg/h.",
+      designConditions: [
+        { label: "NPS × Sch", value: '4" × 40' },
+        { label: "Fluid", value: "Gas (air / N₂)" },
+        { label: "P1 / P2", value: "10 / 2 bar g" },
+        { label: "ṁ", value: "15 000 kg/h" },
+      ],
+      steps: [
+        {
+          step: "Step 1",
+          name: "Regime & jet velocity",
+          calculation: "P2/P1 below critical → choked jet; U_v from isentropic expansion",
+          result: "Sonic choked flow",
+        },
+        {
+          step: "Step 2",
+          name: "Acoustic power",
+          calculation: "W_m = ½ ṁ U_v² · W_a = η_a W_m · L_wA = 10 log10(W_a/10⁻¹²)",
+          result: "L_wA from jet power",
+        },
+        {
+          step: "Step 3",
+          name: "External level",
+          calculation: "ΔL_TL = 17 log10(t_w/D_i)+36 · L_p,1m = L_wA − ΔL_TL − RAD + corrections",
+          result: "≈ 84.6 dBA (safe < 85)",
+        },
+      ],
+      conclusion:
+        "Default metric duty returns ≈84.6 dBA. Higher ΔP gas letdowns (e.g. NPS 6 · 25→3 bar) climb above 95 dBA; cavitating liquids need IEC 60534-8-4 awareness.",
+    },
+    ...howTo("How to predict control valve noise", [
+      {
+        name: "1. Select downstream NPS and schedule",
+        text: "Wall thickness and ID set pipe transmission loss ΔL_TL.",
+      },
+      {
+        name: "2. Choose gas or liquid",
+        text: "Gas uses IEC 60534-8-3 aerodynamic path; liquid uses 8-4 hydrodynamic cavitation screening.",
+      },
+      {
+        name: "3. Enter Cv, P1/P2, temperature, and mass flow",
+        text: "Process conditions drive jet velocity, mechanical power, and acoustic efficiency.",
+      },
+      {
+        name: "4. Read L_p,1m and severity",
+        text: "Hero shows dBA with Safe / Caution / High badges; rows list W_a, ΔL_TL, U_v, Mach, and exposure time.",
+      },
+    ]),
+    faq: [
+      {
+        question: "What is ISA 75.01 control valve noise prediction?",
+        answer:
+          "A screening estimate of **external A-weighted sound pressure** near the downstream pipe using **ISA-75.01** process context and **IEC 60534-8-3 / 8-4** acoustic methods for standard single-stage trims.",
+      },
+      {
+        question: "How is L_p,1m calculated?",
+        answer:
+          "**L_p,1m ≈ L_wA − ΔL_TL − RAD** with corrections for upstream pressure and pipe diameter. **W_a = η_a · ½ ṁ U_v²** and **ΔL_TL = 17 log10(t_w/D_i) + 36**.",
+      },
+      {
+        question: "Gas vs liquid — which IEC part applies?",
+        answer:
+          "**Gas** → aerodynamic **IEC 60534-8-3**. **Liquid** → hydrodynamic **IEC 60534-8-4** (cavitation / flashing proxies from ΔP/P1).",
+      },
+      {
+        question: "When is OEM data required?",
+        answer:
+          "Multi-stage low-noise trims, quiet plates, and diffuser silencers are **outside** this single-stage screening — use manufacturer attenuation tables.",
+      },
+    ],
+  },
+
+  "orifice-plate-flow-meter": {
+    slug: "orifice-plate-flow-meter",
+    formulaTitle: "Core Formula & Variable Definitions",
+    formulaHtml:
+      '<p class="eng-eq"><i>q</i><sub>m</sub> = <span class="eng-frac"><span class="eng-num"><i>C</i></span><span class="eng-den">√(1 − β⁴)</span></span> · ε · (π/4) <i>d</i>² · √(2 ρ₁ Δ<i>p</i>)</p>' +
+      '<p class="eng-eq">β = <i>d</i> / <i>D</i><sub>i</sub> &nbsp;·&nbsp; Δϖ ≈ Δ<i>p</i> · (1 − β<sup>1.9</sup>)</p>' +
+      '<p class="eng-plain">ISO 5167-2 Reader-Harris/Gallagher <i>C</i> · flange / corner / D–D/2 taps · liquid ε = 1</p>',
+    formulaLatex:
+      "q_m=\\frac{C}{\\sqrt{1-\\beta^4}}\\varepsilon\\frac{\\pi}{4}d^2\\sqrt{2\\rho_1\\Delta p},\\quad \\beta=d/D_i,\\quad \\Delta\\varpi\\approx\\Delta p(1-\\beta^{1.9})",
+    formulaNotes:
+      "Mass flow from ISO 5167-2 with iterative Reader-Harris/Gallagher discharge coefficient. Pipe ID from ASME B36 schedule. Permanent loss uses the β^1.9 screening form. Gas expansibility is held at ε = 1 for liquid/incompressible screening. Require Re_D ≥ 5000 and 0.1 ≤ β ≤ 0.75 with adequate straight lengths per §6.2.",
+    formulaBadges: [
+      { label: "Hero", value: "Q m³/h · GPM" },
+      { label: "C", value: "RG / ISO 5167-2" },
+      { label: "β", value: "d / D_i" },
+      { label: "Loss", value: "Δϖ ≈ Δp(1−β^1.9)" },
+    ],
+    variables: [
+      {
+        symbol: "q_m",
+        name: "Mass flow rate",
+        definition: "Mass flow through the orifice (kg/s).",
+      },
+      {
+        symbol: "C",
+        name: "Discharge coefficient",
+        definition:
+          "Reader-Harris/Gallagher coefficient (typically ≈ 0.60 for common β).",
+      },
+      {
+        symbol: "β",
+        name: "Diameter ratio",
+        definition: "Orifice bore d divided by pipe inside diameter D_i.",
+      },
+      {
+        symbol: "Δp",
+        name: "Differential pressure",
+        definition: "Pressure drop between upstream and downstream taps.",
+      },
+      {
+        symbol: "Δϖ",
+        name: "Permanent pressure loss",
+        definition: "Non-recoverable loss ≈ Δp·(1−β^1.9).",
+      },
+      {
+        symbol: "ε",
+        name: "Expansibility factor",
+        definition: "1.0 for incompressible liquid screening in this tool.",
+      },
+    ],
+    standards: [
+      "ISO 5167-2:2003 — Orifice plates",
+      "ASME MFC-3M — Measurement of fluid flow using orifice, nozzle, and Venturi",
+      "ASME B36.10M / B36.19M — Pipe inside diameter",
+    ],
+    tableCaption: "Default screening duty (NPS 4 Sch 40 · d 50 mm · Δp 25 kPa · water)",
+    tableHeaders: ["Quantity", "Value", "Unit", "Notes"],
+    tableRows: [
+      ["D_i", "102.26", "mm", "B36 Sch 40"],
+      ["β", "0.489", "—", "d / D_i"],
+      ["C (RG)", "≈ 0.606", "—", "Flange taps"],
+      ["Q", "≈ 31.2", "m³/h", "ISO 5167-2 liquid"],
+      ["Δϖ", "≈ 18.6", "kPa", "1 − β^1.9"],
+    ],
+    tableFootnote:
+      "Hero flow follows ISO 5167-2 physics (not marketing round-ups). Confirm tap type and straight-run lengths before purchase metering.",
+    workedExample: {
+      title: "Worked example — NPS 4 Sch 40 · d 50 mm · 25 kPa",
+      scenario:
+        "Water orifice on NPS 4 Sch 40 with 50 mm bore and 25 kPa flange-tap differential.",
+      designConditions: [
+        { label: "NPS × Sch", value: '4" × 40' },
+        { label: "d / D_i", value: "50 / 102.26 mm" },
+        { label: "Δp", value: "25 kPa" },
+        { label: "ρ", value: "998.2 kg/m³" },
+      ],
+      steps: [
+        {
+          step: "Step 1",
+          name: "Beta ratio",
+          calculation: "β = 50 / 102.26",
+          result: "β = 0.489 (within 0.10–0.75)",
+        },
+        {
+          step: "Step 2",
+          name: "Iterate C and q_m",
+          calculation: "RG C from Re_D · q_m = C/√(1−β⁴)·(π/4)d²√(2ρΔp)",
+          result: "C ≈ 0.606 · Q ≈ 31.2 m³/h",
+        },
+        {
+          step: "Step 3",
+          name: "Permanent loss",
+          calculation: "Δϖ ≈ 25 · (1 − 0.489^1.9)",
+          result: "≈ 18.6 kPa",
+        },
+      ],
+      conclusion:
+        "Default metric duty returns ≈31.2 m³/h (137 GPM) with β = 0.489 and permanent loss ≈ 18.6 kPa.",
+    },
+    ...howTo("How to calculate orifice plate flow", [
+      {
+        name: "1. Select NPS and schedule",
+        text: "Fixes ASME B36 inside diameter D_i used in β = d/D_i.",
+      },
+      {
+        name: "2. Enter orifice bore and Δp",
+        text: "Bore sets beta ratio; differential pressure drives mass flow.",
+      },
+      {
+        name: "3. Set density and viscosity",
+        text: "Water defaults are 998.2 kg/m³ and 1 cP; viscosity updates Re_D and C.",
+      },
+      {
+        name: "4. Read Q, C, and permanent loss",
+        text: "Hero shows volumetric flow; badges list β, C, Δϖ, and orifice velocity.",
+      },
+    ]),
+    faq: [
+      {
+        question: "What is an orifice plate flow calculator?",
+        answer:
+          "A tool that estimates **mass/volumetric flow** and **permanent pressure loss** from orifice bore, pipe ID, and tap differential pressure using **ISO 5167-2**.",
+      },
+      {
+        question: "How is discharge coefficient C calculated?",
+        answer:
+          "FEK uses the **Reader-Harris/Gallagher** equation with flange, corner, or D–D/2 tap geometry, iterated with pipe Reynolds number.",
+      },
+      {
+        question: "What beta ratio is valid?",
+        answer:
+          "ISO 5167-2 screening here targets **0.10 ≤ β ≤ 0.75** with **Re_D ≥ 5000** and adequate straight lengths per §6.2.",
+      },
+      {
+        question: "What is permanent pressure loss Δϖ?",
+        answer:
+          "The non-recoverable drop across the orifice run, screened as **Δp·(1−β^1.9)**.",
+      },
+    ],
+  },
+
+  "darby-3k-fitting-loss": {
+    slug: "darby-3k-fitting-loss",
+    formulaTitle: "Core Formula & Variable Definitions",
+    formulaHtml:
+      '<p class="eng-eq"><i>K</i> = <span class="eng-frac"><span class="eng-num"><i>K</i><sub>1</sub></span><span class="eng-den"><i>Re</i></span></span> + <i>K</i><sub><i>i</i></sub> · (1 + <span class="eng-frac"><span class="eng-num"><i>K</i><sub><i>d</i></sub></span><span class="eng-den"><i>D</i><sub>in</sub><sup>0.3</sup></span></span>)</p>' +
+      '<p class="eng-eq"><i>L</i><sub>eq</sub> = <span class="eng-frac"><span class="eng-num"><i>K</i> · <i>D</i><sub><i>i</i></sub></span><span class="eng-den"><i>f</i><sub><i>T</i></sub></span></span></p>' +
+      '<p class="eng-plain">Darby 3-K · Crane TP-410 f_T for L_eq · ASME B36 D_i</p>',
+    formulaLatex:
+      "K=\\frac{K_1}{Re}+K_i\\left(1+\\frac{K_d}{D_{in}^{0.3}}\\right),\\quad L_{eq}=\\frac{K\\cdot D_i}{f_T}",
+    formulaNotes:
+      "Resistance coefficient from Darby 3-K constants (K₁, Kᵢ, K_d) with pipe Reynolds number and internal diameter in inches. Equivalent length uses Crane fully turbulent f_T so L_eq compares with TP-410 L/D screening. Prefer Darby 3-K when Re < 2000 (laminar / high viscosity).",
+    formulaBadges: [
+      { label: "Hero", value: "K · L_eq" },
+      { label: "K₁/Re", value: "Laminar term" },
+      { label: "Kᵢ", value: "Turbulent asymptote" },
+      { label: "L_eq", value: "K·D_i/f_T" },
+    ],
+    variables: [
+      {
+        symbol: "K",
+        name: "Resistance coefficient",
+        definition:
+          "Darby 3-K loss coefficient for the fitting (total = per-fitting × quantity).",
+      },
+      {
+        symbol: "K₁",
+        name: "Laminar constant",
+        definition: "Low-Reynolds fitting constant in the K₁/Re term.",
+      },
+      {
+        symbol: "Kᵢ",
+        name: "Turbulent constant",
+        definition: "High-Reynolds asymptotic constant (K_∞).",
+      },
+      {
+        symbol: "K_d",
+        name: "Diameter scale factor",
+        definition: "Pipe-size scale constant in the (1 + K_d/D_in^0.3) term.",
+      },
+      {
+        symbol: "Re",
+        name: "Reynolds number",
+        definition: "Pipe Reynolds number Re = ρ v D_i / μ.",
+      },
+      {
+        symbol: "L_eq",
+        name: "Equivalent length",
+        definition: "Straight-pipe length with the same loss at Crane f_T: L_eq = K·D_i/f_T.",
+      },
+    ],
+    standards: [
+      "Ron Darby — Chemical Engineering Fluid Mechanics (3-K method)",
+      "Crane Technical Paper No. 410 — Flow of Fluids Through Valves, Fittings, and Pipe",
+      "ASME B36.10M / B36.19M — Pipe inside diameter",
+    ],
+    tableCaption:
+      "Default screening duty (NPS 2 Sch 40 · 90° std elbow · Re 50,000)",
+    tableHeaders: ["Quantity", "Value", "Unit", "Notes"],
+    tableRows: [
+      ["D_i", "52.51", "mm", "B36 Sch 40"],
+      ["K₁ · Kᵢ · K_d", "800 · 0.09 · 4.0", "—", "Darby 3-K"],
+      ["K", "≈ 0.396", "—", "Re = 50,000"],
+      ["L_eq", "≈ 1.09", "m", "via Crane f_T"],
+      ["Regime", "Turbulent", "—", "Re > 4000"],
+    ],
+    tableFootnote:
+      "Hero K follows Darby 3-K physics. L_eq uses Crane f_T so lengths compare with TP-410 L/D tables.",
+    workedExample: {
+      title: "Worked example — NPS 2 Sch 40 · 90° elbow · Re 50k",
+      scenario:
+        "Standard 90° elbow on NPS 2 Sch 40 water line at Re = 50,000 (turbulent).",
+      designConditions: [
+        { label: "NPS × Sch", value: '2" × 40' },
+        { label: "D_i", value: "52.51 mm (2.067 in)" },
+        { label: "Fitting", value: "90° standard elbow" },
+        { label: "Re", value: "50,000" },
+      ],
+      steps: [
+        {
+          step: "Step 1",
+          name: "Turbulent component",
+          calculation: "Kᵢ(1 + K_d/D_in^0.3) = 0.09(1 + 4/2.067^0.3)",
+          result: "≈ 0.380",
+        },
+        {
+          step: "Step 2",
+          name: "Add laminar term",
+          calculation: "K = K₁/Re + turb = 800/50000 + 0.380",
+          result: "K ≈ 0.396",
+        },
+        {
+          step: "Step 3",
+          name: "Equivalent length",
+          calculation: "L_eq = K·D_i/f_T with f_T(NPS 2) = 0.019",
+          result: "≈ 1.09 m",
+        },
+      ],
+      conclusion:
+        "Default metric duty returns K ≈ 0.396 and L_eq ≈ 1.09 m for one 90° standard elbow.",
+    },
+    ...howTo("How to calculate Darby 3-K fitting loss", [
+      {
+        name: "1. Select NPS and schedule",
+        text: "Fixes ASME B36 inside diameter D_i and Crane f_T for L_eq.",
+      },
+      {
+        name: "2. Choose fitting type",
+        text: "Loads Darby constants K₁, Kᵢ, and K_d for the fitting or valve.",
+      },
+      {
+        name: "3. Enter Reynolds number and quantity",
+        text: "Re sets laminar vs turbulent weighting; quantity scales total K and L_eq.",
+      },
+      {
+        name: "4. Read K, L_eq, and Crane comparison",
+        text: "Hero shows K and L_eq; rows split laminar/turbulent parts and Crane K = f_T·(L/D).",
+      },
+    ]),
+    faq: [
+      {
+        question: "What is a Darby 3-K fitting loss calculator?",
+        answer:
+          "A tool that estimates fitting **resistance coefficient K** and **equivalent length L_eq** using Darby’s **3-K** constants across laminar, transition, and turbulent Reynolds numbers.",
+      },
+      {
+        question: "When is Darby 3-K better than Crane L/D?",
+        answer:
+          "When **Re < 2000** (laminar / viscous fluids) or when you need size-dependent turbulent K. Crane TP-410 L/D is a turbulent-flow screening shortcut.",
+      },
+      {
+        question: "How is L_eq related to K?",
+        answer:
+          "FEK converts with **L_eq = K·D_i/f_T** using Crane’s fully turbulent friction factor so lengths compare with TP-410 tables.",
+      },
+      {
+        question: "What do K₁, Kᵢ, and K_d mean?",
+        answer:
+          "**K₁** scales the laminar term K₁/Re; **Kᵢ** is the turbulent asymptote; **K_d** scales the diameter correction (1 + K_d/D_in^0.3).",
+      },
+    ],
+  },
+
+  "steam-properties-iapws": {
+    slug: "steam-properties-iapws",
+    formulaTitle: "Core Formula & Variable Definitions",
+    formulaHtml:
+      '<p class="eng-eq"><i>h</i> = <i>R</i> · <i>T</i> · τ · (γ<sub>τ</sub><sup>0</sup> + γ<sub>τ</sub><sup>r</sup>) &nbsp;[kJ/kg]</p>' +
+      '<p class="eng-eq"><i>s</i> = <i>R</i> · [τ · (γ<sub>τ</sub><sup>0</sup> + γ<sub>τ</sub><sup>r</sup>) − (γ<sup>0</sup> + γ<sup>r</sup>)] &nbsp;[kJ/(kg·K)]</p>' +
+      '<p class="eng-eq"><i>v</i> = <i>R</i> · <i>T</i> · π · (γ<sub>π</sub><sup>0</sup> + γ<sub>π</sub><sup>r</sup>) / <i>p</i> &nbsp;[m³/kg] · ρ = 1/<i>v</i></p>' +
+      '<p class="eng-plain">IAPWS-IF97 Region 2 superheated · Region 4 saturation (Tsat, wet steam with quality <i>x</i>)</p>',
+    formulaLatex:
+      "h=RT\\tau(\\gamma_\\tau^0+\\gamma_\\tau^r),\\quad s=R[\\tau(\\gamma_\\tau^0+\\gamma_\\tau^r)-(\\gamma^0+\\gamma^r)],\\quad v=RT\\pi(\\gamma_\\pi^0+\\gamma_\\pi^r)/p",
+    formulaNotes:
+      "Steam thermodynamic properties from the IAPWS-IF97 industrial formulation. Saturation mode uses Region 4 Tsat(P) with quality x between liquid (Region 1) and vapor (Region 2). Superheated mode evaluates Region 2 Gibbs free energy at T and P (T ≥ Tsat). Scope ends at Pc = 22.064 MPa.",
+    formulaBadges: [
+      { label: "Hero", value: "h · Tsat / ρ" },
+      { label: "Region 4", value: "Saturation" },
+      { label: "Region 2", value: "Superheated" },
+      { label: "Pc", value: "22.064 MPa" },
+    ],
+    variables: [
+      {
+        symbol: "h",
+        name: "Specific enthalpy",
+        definition: "Steam enthalpy from Gibbs free energy (kJ/kg or Btu/lb).",
+      },
+      {
+        symbol: "s",
+        name: "Specific entropy",
+        definition: "Steam entropy (kJ/(kg·K) or Btu/(lb·°F)).",
+      },
+      {
+        symbol: "v / ρ",
+        name: "Specific volume / density",
+        definition: "v from π·γ_π; ρ = 1/v.",
+      },
+      {
+        symbol: "Tsat",
+        name: "Saturation temperature",
+        definition: "Region 4 backward Tsat(P) on the saturation line.",
+      },
+      {
+        symbol: "x",
+        name: "Steam quality",
+        definition: "Dryness fraction 0 (sat. liquid) to 1 (sat. vapor).",
+      },
+      {
+        symbol: "hfg",
+        name: "Latent heat",
+        definition: "hg − hf at the saturation pressure.",
+      },
+    ],
+    standards: [
+      "IAPWS-IF97 Industrial Formulation for the Thermodynamic Properties of Water and Steam",
+      "ASME Steam Tables (IAPWS-IF97 basis)",
+      "ISO 80000-5 (Thermodynamics Quantities)",
+    ],
+    tableCaption:
+      "IAPWS-IF97 steam property screening chart (saturation & superheated)",
+    tableHeaders: ["Duty", "P", "State", "h", "Tsat / ρ", "v"],
+    tableRows: [
+      ["Default", "10 bar", "Sat. vapor x=1", "2777.1 kJ/kg", "179.88 °C", "0.1944 m³/kg"],
+      ["pSEO", "20 bar · 300 °C", "Superheated R2", "3024 kJ/kg", "7.97 kg/m³", "0.1255 m³/kg"],
+      ["pSEO", "3 bar", "Sat. vapor x=1", "2724.9 kJ/kg", "133.52 °C", "0.6058 m³/kg"],
+      ["pSEO", "15 bar · 250 °C", "Superheated R2", "2924 kJ/kg", "6.58 kg/m³", "0.1520 m³/kg"],
+      ["Imperial", "145 psi", "Sat. vapor", "~1194 Btu/lb", "~356 °F", "—"],
+      ["Imperial", "290 psi · 572 °F", "Superheated", "~1300 Btu/lb", "~7.97 kg/m³", "—"],
+    ],
+    tableFootnote:
+      "Values from IAPWS-IF97 Region 2 / 4 evaluation in this app. Spec sheet density at 20 bar · 300 °C uses IF97 ρ ≈ 7.97 kg/m³ (not ideal-gas estimates).",
+    workedExample: {
+      title: "Worked example — 10 bar saturated dry steam",
+      scenario:
+        "Look up saturated steam enthalpy and density at 10 bar abs for heat-balance / line sizing screening.",
+      designConditions: [
+        { label: "Pressure", value: "10 bar abs (1.0 MPa)" },
+        { label: "Mode", value: "Saturation · x = 1.0" },
+        { label: "Basis", value: "IAPWS-IF97 Region 4 / Region 2 at Tsat" },
+      ],
+      steps: [
+        {
+          step: "Step 1",
+          name: "Find Tsat",
+          calculation: "Region 4 backward Tsat(1.0 MPa) ≈ 179.88 °C",
+          result: "Tsat = 179.88 °C",
+        },
+        {
+          step: "Step 2",
+          name: "Evaluate dry vapor",
+          calculation: "Region 2 at (Tsat, P) → h, v, s",
+          result: "h ≈ 2777.1 kJ/kg · v ≈ 0.1944 m³/kg",
+        },
+        {
+          step: "Step 3",
+          name: "Read hero",
+          calculation: "Hero shows h with Tsat for saturation duties",
+          result: "2777.1 kJ/kg · Tsat = 179.9 °C",
+        },
+      ],
+      conclusion:
+        "Default metric duty returns ≈2777.1 kJ/kg at Tsat ≈ 179.88 °C with density ≈ 5.15 kg/m³.",
+    },
+    ...howTo("How to look up IAPWS-IF97 steam properties", [
+      {
+        name: "1. Select unit system",
+        text: "Use the navbar UnitSwitcher for metric (bar, °C) or imperial (psi, °F).",
+      },
+      {
+        name: "2. Enter absolute pressure",
+        text: "Stay within 0.01–100 bar abs (below critical 22.064 MPa).",
+      },
+      {
+        name: "3. Choose saturation or superheated",
+        text: "Saturation: set dryness x. Superheated: set T ≥ Tsat.",
+      },
+      {
+        name: "4. Read h hero and property rows",
+        text: "Hero shows enthalpy with Tsat (sat.) or density (superheat). Rows list hfg, s, μ, and k.",
+      },
+    ]),
+    faq: [
+      {
+        question: "What is an IAPWS-IF97 steam properties calculator?",
+        answer:
+          "A tool that evaluates **steam enthalpy, entropy, density, Tsat, and latent heat** from the **IAPWS-IF97** industrial formulation used by ASME steam tables.",
+      },
+      {
+        question: "When do I use saturation vs superheated mode?",
+        answer:
+          "Use **saturation** on the two-phase line with quality **x**. Use **superheated** when steam temperature is above **Tsat** at the given absolute pressure (Region 2).",
+      },
+      {
+        question: "Does this cover supercritical steam?",
+        answer:
+          "**No.** Pressures at or above **22.064 MPa** are outside Region 2/4 scope — verify with a full ASME steam table.",
+      },
+      {
+        question: "How is wet steam enthalpy calculated?",
+        answer:
+          "At Tsat(P): **h = hf + x·(hg − hf)** (same mixing for s and v).",
+      },
+    ],
+  },
+
   "valve-cv-sizing": {
     slug: "valve-cv-sizing",
     formulaTitle: "Core Formula & Variable Definitions",

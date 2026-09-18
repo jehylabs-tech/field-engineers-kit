@@ -146,6 +146,22 @@ const CALCULATOR_VIEWS: Record<
     () => import("./calculators/PipingEquivalentLengthCalculator"),
     { loading: loadingFallback },
   ),
+  "control-valve-noise": dynamic(
+    () => import("./calculators/ControlValveNoiseCalculator"),
+    { loading: loadingFallback },
+  ),
+  "orifice-plate-flow-meter": dynamic(
+    () => import("./calculators/OrificePlateFlowMeterCalculator"),
+    { loading: loadingFallback },
+  ),
+  "darby-3k-fitting-loss": dynamic(
+    () => import("./calculators/Darby3kFittingLossCalculator"),
+    { loading: loadingFallback },
+  ),
+  "steam-properties-iapws": dynamic(
+    () => import("./calculators/SteamPropertiesIapwsCalculator"),
+    { loading: loadingFallback },
+  ),
   "hydro-test": dynamic(() => import("./calculators/HydroTestCalculator"), {
     loading: loadingFallback,
   }),

@@ -315,6 +315,7 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
     "ambientTemp",
     "designTemperature",
     "fluidTemp",
+    "temp",
   ]) {
     if (typeof next[key] === "number" && Number.isFinite(next[key] as number)) {
       convertNum(key, toImperial ? cToF : fToC, 0);
@@ -411,10 +412,22 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
     "surfacePressureAbs",
     "bypassDp",
     "pressure",
+    "p1",
+    "p2",
   ]) {
     if (typeof next[key] === "number" && Number.isFinite(next[key] as number)) {
       convertNum(key, toImperial ? barToPsi : psiToBar, 3);
     }
+  }
+
+  // Mass flow: kg/h ↔ lb/h (control valve noise)
+  if (typeof next.massFlow === "number" && Number.isFinite(next.massFlow)) {
+    const KG_TO_LB = 2.2046226218;
+    convertNum(
+      "massFlow",
+      toImperial ? (n) => n * KG_TO_LB : (n) => n / KG_TO_LB,
+      1,
+    );
   }
 
   // Bolt / gasket target stress: MPa ↔ psi
@@ -526,10 +539,26 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
     "diameter1",
     "diameter2",
     "liquidLevel",
+    "orificeDiameter",
   ]) {
     if (typeof next[key] === "number" && Number.isFinite(next[key] as number)) {
       convertNum(key, toImperial ? mmToIn : inToMm, 4);
     }
+  }
+
+  // Orifice Δp: kPa ↔ psi (not bar)
+  if (typeof next.deltaP === "number" && Number.isFinite(next.deltaP)) {
+    const kPaToPsi = (kPa: number) => kPa / 6.894757293;
+    const psiToKpa = (psi: number) => psi * 6.894757293;
+    convertNum("deltaP", toImperial ? kPaToPsi : psiToKpa, 3);
+  }
+
+  // Orifice / process density field named fluidDensity
+  if (
+    typeof next.fluidDensity === "number" &&
+    Number.isFinite(next.fluidDensity)
+  ) {
+    convertNum("fluidDensity", toImperial ? kgM3ToLbFt3 : lbFt3ToKgM3, 3);
   }
 
   // Corrosion allowance: 3 dp in / 1 dp mm; snap common screening values

@@ -1223,5 +1223,189 @@
     },
     "is_published": true,
     "created_at": "2026-09-17T16:00:00.000Z"
+  },
+  {
+    "id": "local-control-valve-noise",
+    "category": "piping",
+    "title": "ISA 75.01 Control Valve Noise Prediction Calculator",
+    "slug": "control-valve-noise",
+    "meta_description": "ISA/IEC control valve noise prediction: L_p,1m (dBA) from Cv, P1/P2, mass flow, and downstream pipe wall using IEC 60534-8-3 / 8-4 screening.",
+    "formula_json": {
+      "type": "control-valve-noise",
+      "standard": "ISA-75.01.01 / IEC 60534-8-3 / IEC 60534-8-4",
+      "formulaLatex": "L_{p,1m}=L_{wA}-\\Delta L_{TL}-\\mathrm{RAD},\\quad W_a=\\eta_a W_m,\\quad W_m=\\tfrac12\\dot m U_v^2",
+      "formulaBasis": "IEC 60534-8-3 aerodynamic and 60534-8-4 hydrodynamic screening for single-stage globe/butterfly trims. Acoustic power from jet mechanical power; pipe-wall transmission loss ΔL_TL = 17 log10(t_w/D_i)+36. External L_p,1m includes calibrated radiation and diameter corrections. Multi-stage low-noise trims require OEM attenuation tables.",
+      "related": [
+        {
+          "slug": "valve-cv-sizing",
+          "title": "Valve Cv Sizing",
+          "carry": "Same P1/P2 and Cv"
+        },
+        {
+          "slug": "noise-criterion",
+          "title": "Noise Criterion (NC) Rating",
+          "carry": "Compare plant NC target"
+        },
+        {
+          "slug": "pressure-drop-friction",
+          "title": "Pressure Drop / Friction Loss",
+          "carry": "Same NPS / schedule"
+        }
+      ],
+      "faq": [
+        {
+          "q": "What standards does this calculator follow?",
+          "a": "ANSI/ISA-75.01.01 flow-capacity context with IEC 60534-8-3 (gas aerodynamic) and IEC 60534-8-4 (liquid hydrodynamic) noise screening for standard single-stage trims."
+        },
+        {
+          "q": "What does L_p,1m mean?",
+          "a": "Predicted A-weighted sound pressure level at 1 m from the downstream pipe wall after applying acoustic power, pipe transmission loss, and radiation corrections."
+        },
+        {
+          "q": "When should I use OEM noise tables instead?",
+          "a": "For multi-stage low-noise trims, quiet plates, diffuser silencers, or special cage designs — FEK screening assumes standard single-stage globe/butterfly geometry."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-18T12:00:00.000Z"
+  },
+  {
+    "id": "local-orifice-plate-flow-meter",
+    "category": "piping",
+    "title": "ISO 5167 Orifice Plate Flow & Pressure Drop Calculator",
+    "slug": "orifice-plate-flow-meter",
+    "meta_description": "ISO 5167-2 orifice plate mass/volumetric flow and permanent pressure loss from beta ratio, Δp, and Reader-Harris/Gallagher discharge coefficient C.",
+    "formula_json": {
+      "type": "orifice-plate-flow-meter",
+      "standard": "ISO 5167-2 / ASME MFC-3M",
+      "formulaLatex": "q_m=\\frac{C}{\\sqrt{1-\\beta^4}}\\varepsilon\\frac{\\pi}{4}d^2\\sqrt{2\\rho_1\\Delta p},\\quad \\beta=d/D_i",
+      "formulaBasis": "ISO 5167-2 Reader-Harris/Gallagher discharge coefficient with flange/corner/D-D2 taps. Liquid screening uses ε = 1. Permanent loss ≈ Δp(1−β^1.9). Valid for 0.1 ≤ β ≤ 0.75 and Re_D ≥ 5000 with adequate straight lengths per §6.2.",
+      "related": [
+        {
+          "slug": "pressure-drop-friction",
+          "title": "Pressure Drop / Friction Loss",
+          "carry": "Same NPS / schedule"
+        },
+        {
+          "slug": "flow-velocity-erosion",
+          "title": "Flow Velocity & Erosion",
+          "carry": "Same NPS / Q"
+        },
+        {
+          "slug": "valve-cv-sizing",
+          "title": "Valve Cv Sizing",
+          "carry": "Same ΔP / flow"
+        }
+      ],
+      "faq": [
+        {
+          "q": "What is the beta ratio β?",
+          "a": "β = d/D_i, the orifice bore divided by the pipe inside diameter. ISO 5167-2 screening is valid for roughly 0.10 ≤ β ≤ 0.75."
+        },
+        {
+          "q": "What is permanent pressure loss Δϖ?",
+          "a": "The non-recoverable head loss across the orifice run, approximated as Δp·(1−β^1.9) for screening."
+        },
+        {
+          "q": "Which tap type should I select?",
+          "a": "Flange taps are the common process default. Corner and D–D/2 taps change L1/L2' in the Reader-Harris/Gallagher C equation."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-18T14:00:00.000Z"
+  },
+  {
+    "id": "local-darby-3k-fitting-loss",
+    "category": "piping",
+    "title": "Darby 3-K Fitting Loss Calculator (Laminar & Turbulent K-Factor)",
+    "slug": "darby-3k-fitting-loss",
+    "meta_description": "Darby 3-K fitting resistance coefficient K and equivalent length L_eq from K1, Ki, Kd across laminar to turbulent Reynolds numbers, with Crane TP-410 comparison.",
+    "formula_json": {
+      "type": "darby-3k-fitting-loss",
+      "standard": "Darby 3-K / Crane TP-410",
+      "formulaLatex": "K=K_1/Re+K_i(1+K_d/D_{in}^{0.3}),\\quad L_{eq}=K\\cdot D_i/f_T",
+      "formulaBasis": "Darby 3-K resistance coefficient with laminar K1/Re and size-scaled turbulent Ki term. Equivalent length uses Crane fully turbulent f_T so L_eq compares with TP-410 L/D screening. Pipe ID from ASME B36.10M/B36.19M.",
+      "related": [
+        {
+          "slug": "piping-equivalent-length",
+          "title": "Piping Equivalent Length",
+          "carry": "Same NPS / schedule"
+        },
+        {
+          "slug": "pressure-drop-friction",
+          "title": "Pressure Drop / Friction Loss",
+          "carry": "Same NPS / schedule"
+        },
+        {
+          "slug": "flow-velocity-erosion",
+          "title": "Flow Velocity & Erosion",
+          "carry": "Same NPS"
+        }
+      ],
+      "faq": [
+        {
+          "q": "What is the Darby 3-K method?",
+          "a": "A Reynolds-number-aware fitting loss model: K = K1/Re + Ki·(1 + Kd/Din^0.3). It covers laminar through fully turbulent flow better than constant Crane L/D factors."
+        },
+        {
+          "q": "When should I prefer Darby 3-K over Crane TP-410?",
+          "a": "Use Darby 3-K for laminar or transitional Re (especially Re < 2000) and when pipe size scale effects matter. Crane L/D is a turbulent-flow screening shortcut."
+        },
+        {
+          "q": "How is L_eq calculated from K?",
+          "a": "L_eq = K·Di/f_T using Crane’s fully turbulent friction factor for the NPS, so lengths compare with TP-410 equivalent-length tables."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-18T15:00:00.000Z"
+  },
+  {
+    "id": "local-steam-properties-iapws",
+    "category": "piping",
+    "title": "IAPWS-IF97 Steam Thermodynamic Properties Calculator",
+    "slug": "steam-properties-iapws",
+    "meta_description": "IAPWS-IF97 steam enthalpy, entropy, density, and saturation temperature for saturated and superheated steam screening (Region 2 / Region 4).",
+    "formula_json": {
+      "type": "steam-properties-iapws",
+      "standard": "IAPWS-IF97 / ASME Steam Tables",
+      "formulaLatex": "h=RT\\tau(\\gamma_\\tau^0+\\gamma_\\tau^r),\\quad s=R[\\tau(\\gamma_\\tau^0+\\gamma_\\tau^r)-(\\gamma^0+\\gamma^r)],\\quad v=\\pi(\\gamma_\\pi^0+\\gamma_\\pi^r)RT/p",
+      "formulaBasis": "IAPWS-IF97 industrial formulation for Region 2 superheated steam and Region 4 saturation (wet/dry quality x). Viscosity and thermal conductivity use IAPWS industrial transport correlations. Critical / Region 3 states are out of scope.",
+      "related": [
+        {
+          "slug": "water-thermodynamic-properties",
+          "title": "Water Density & Thermo Props",
+          "carry": "Same T / P basis (liquid Region 1)"
+        },
+        {
+          "slug": "insulation-heat-loss",
+          "title": "Insulation Heat Loss",
+          "carry": "Same steam temperature"
+        },
+        {
+          "slug": "thermal-expansion-loop",
+          "title": "Thermal Expansion Loop",
+          "carry": "Same design temperature"
+        }
+      ],
+      "faq": [
+        {
+          "q": "What steam states does this calculator cover?",
+          "a": "Region 4 saturation (quality x from 0 to 1) and Region 2 superheated steam up to the critical pressure Pc = 22.064 MPa. Supercritical and Region 3 states need a full ASME steam table."
+        },
+        {
+          "q": "What is steam quality x?",
+          "a": "Dryness fraction: x = 0 is saturated liquid, x = 1 is dry saturated vapor. Wet steam properties are linear mixtures of hf/hg, sf/sg, and vf/vg."
+        },
+        {
+          "q": "How is enthalpy calculated?",
+          "a": "From the IAPWS-IF97 dimensionless Gibbs free energy: h = R·T·τ·(γ_τ⁰ + γ_τʳ) in Region 2, with saturated states evaluated on the Region 4 line."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-19T00:00:00.000Z"
   }
 ]

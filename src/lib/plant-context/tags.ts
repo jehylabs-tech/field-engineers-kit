@@ -45,6 +45,10 @@ export const CALCULATOR_TYPE_SLUG: Record<CalculatorType, string> = {
   "noise-criterion": "noise-criterion",
   "pipe-slope-calculator": "pipe-slope-calculator",
   "piping-equivalent-length": "piping-equivalent-length",
+  "control-valve-noise": "control-valve-noise",
+  "orifice-plate-flow-meter": "orifice-plate-flow-meter",
+  "darby-3k-fitting-loss": "darby-3k-fitting-loss",
+  "steam-properties-iapws": "steam-properties-iapws",
 };
 
 export const SLUG_TO_CALCULATOR_TYPE: Record<string, CalculatorType> =
@@ -203,6 +207,22 @@ export const CALCULATOR_PLANT_TAGS: Record<CalculatorType, CalculatorPlantTags> 
     "piping-equivalent-length": {
       consumes: ["size", "schedule"],
       produces: ["size", "schedule"],
+    },
+    "control-valve-noise": {
+      consumes: ["size", "schedule", "pressure", "temperature"],
+      produces: ["size", "schedule", "pressure", "temperature"],
+    },
+    "orifice-plate-flow-meter": {
+      consumes: ["size", "schedule"],
+      produces: ["size", "schedule"],
+    },
+    "darby-3k-fitting-loss": {
+      consumes: ["size", "schedule"],
+      produces: ["size", "schedule"],
+    },
+    "steam-properties-iapws": {
+      consumes: ["temperature", "pressure"],
+      produces: ["temperature", "pressure"],
     },
   };
 

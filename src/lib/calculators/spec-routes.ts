@@ -46,6 +46,22 @@ import {
   parsePipingEquivalentLengthSpec,
 } from "@/lib/calculators/pseo/piping-equivalent-length-routes";
 import {
+  listControlValveNoisePseoRoutes,
+  parseControlValveNoiseSpec,
+} from "@/lib/calculators/pseo/control-valve-noise-routes";
+import {
+  listOrificePlateFlowPseoRoutes,
+  parseOrificePlateFlowSpec,
+} from "@/lib/calculators/pseo/orifice-plate-flow-meter-routes";
+import {
+  listDarby3kFittingLossPseoRoutes,
+  parseDarby3kFittingLossSpec,
+} from "@/lib/calculators/pseo/darby-3k-fitting-loss-routes";
+import {
+  listSteamPropertiesIapwsPseoRoutes,
+  parseSteamPropertiesIapwsSpec,
+} from "@/lib/calculators/pseo/steam-properties-iapws-routes";
+import {
   listAvailableNps,
   listFlangeClassesForNps,
   listFlangeNps,
@@ -184,6 +200,18 @@ export function parseSpecToQuery(spec: string): Record<string, string> | null {
 
   const pipingEqLen = parsePipingEquivalentLengthSpec(value);
   if (pipingEqLen) return pipingEqLen;
+
+  const controlValveNoise = parseControlValveNoiseSpec(value);
+  if (controlValveNoise) return controlValveNoise;
+
+  const orificePlate = parseOrificePlateFlowSpec(value);
+  if (orificePlate) return orificePlate;
+
+  const darby3k = parseDarby3kFittingLossSpec(value);
+  if (darby3k) return darby3k;
+
+  const steamIapws = parseSteamPropertiesIapwsSpec(value);
+  if (steamIapws) return steamIapws;
 
   const inchClassBlind = value.match(
     /^(\d+(?:\.\d+)?)-inch-class-(\d+)(?:-blind)?$/,
@@ -714,6 +742,14 @@ export function listSpecRoutesForSlug(slug: string): SpecRoute[] {
       return listPipeSlopePseoRoutes(slug);
     case "piping-equivalent-length":
       return listPipingEquivalentLengthPseoRoutes(slug);
+    case "control-valve-noise":
+      return listControlValveNoisePseoRoutes(slug);
+    case "orifice-plate-flow-meter":
+      return listOrificePlateFlowPseoRoutes(slug);
+    case "darby-3k-fitting-loss":
+      return listDarby3kFittingLossPseoRoutes(slug);
+    case "steam-properties-iapws":
+      return listSteamPropertiesIapwsPseoRoutes(slug);
     case "pneumatic-safety":
       return listPneumaticSafetyPseoRoutes(slug);
     case "pump-npsh":
@@ -834,6 +870,50 @@ export function resolveSpecRoute(
 
 export function buildSpecPath(slug: string, spec: string): string {
   return `/calculator/${slug}/${spec}`;
+}
+
+function matchSteamPropertiesIapwsSpecRoute(
+  routes: SpecRoute[],
+  partial: Record<string, string | number | undefined | null>,
+  units: string,
+): SpecRoute | undefined {
+  const mode =
+    partial.inputMode != null && partial.inputMode !== ""
+      ? String(partial.inputMode)
+      : "";
+  const pAbs =
+    partial.pressure != null && partial.pressure !== ""
+      ? String(partial.pressure)
+      : "";
+  if (!mode || !pAbs) return undefined;
+
+  const numEq = (a: string, b: string) => {
+    const na = Number(a);
+    const nb = Number(b);
+    return Number.isFinite(na) && Number.isFinite(nb)
+      ? Math.abs(na - nb) < 1e-6
+      : a === b;
+  };
+
+  return routes.find((route) => {
+    if (!route.query.inputMode || route.query.pressure == null) return false;
+    if (route.query.inputMode !== mode) return false;
+    if (units && route.query.units && route.query.units !== units) return false;
+    if (!numEq(route.query.pressure, pAbs)) return false;
+    if (mode === "superheated") {
+      const t =
+        partial.temp != null && partial.temp !== ""
+          ? String(partial.temp)
+          : "";
+      if (!t || route.query.temp == null) return false;
+      return numEq(route.query.temp, t);
+    }
+    const x =
+      partial.steamQuality != null && partial.steamQuality !== ""
+        ? String(partial.steamQuality)
+        : "1";
+    return numEq(route.query.steamQuality ?? "1", x);
+  });
 }
 
 /**
@@ -1539,7 +1619,12 @@ export function findSpecRouteForInputs(
     if (hit) return hit;
   }
 
-  // Piping equivalent length: nps + schedule + fittingType.
+  {
+    const steamHit = matchSteamPropertiesIapwsSpecRoute(routes, partial, units);
+    if (steamHit) return steamHit;
+  }
+
+  // Piping equivalent length / Darby 3-K: nps + schedule + fittingType (+ re).
   const fittingType =
     partial.fittingType != null && partial.fittingType !== ""
       ? String(partial.fittingType)
@@ -1549,9 +1634,39 @@ export function findSpecRouteForInputs(
     (partial.schedule != null && partial.schedule !== ""
       ? String(partial.schedule)
       : "");
+  const reKey =
+    partial.re != null && partial.re !== ""
+      ? String(partial.re)
+      : partial.reynoldsNumber != null && partial.reynoldsNumber !== ""
+        ? String(partial.reynoldsNumber)
+        : "";
   if (nps && scheduleKey && fittingType) {
+    const numEq = (a: string, b: string) => {
+      const na = Number(a);
+      const nb = Number(b);
+      return Number.isFinite(na) && Number.isFinite(nb)
+        ? Math.abs(na - nb) < 1e-6
+        : a === b;
+    };
+    if (reKey) {
+      const darbyHit = routes.find((route) => {
+        if (!route.query.fittingType || route.query.re == null) return false;
+        if (route.query.nps !== nps) return false;
+        if (route.query.fittingType !== fittingType) return false;
+        if (units && route.query.units && route.query.units !== units) {
+          return false;
+        }
+        const routeSch = route.query.schedule || route.query.sch || "";
+        if (routeSch !== scheduleKey) return false;
+        return numEq(route.query.re, reKey);
+      });
+      if (darbyHit) return darbyHit;
+      if (routes.some((route) => Boolean(route.query.re && route.query.fittingType))) {
+        return undefined;
+      }
+    }
     const hit = routes.find((route) => {
-      if (!route.query.fittingType) return false;
+      if (!route.query.fittingType || route.query.re) return false;
       if (route.query.nps !== nps) return false;
       if (route.query.fittingType !== fittingType) return false;
       const routeSch = route.query.schedule || route.query.sch || "";
@@ -1567,7 +1682,8 @@ export function findSpecRouteForInputs(
             (route) =>
               route.query.nps === nps &&
               route.query.sch === sch &&
-              route.query.material === material,
+              route.query.material === material &&
+              !route.query.orificeDiameter,
           )
         : undefined;
     if (withMat) return withMat;
@@ -1575,11 +1691,17 @@ export function findSpecRouteForInputs(
       (route) =>
         route.query.nps === nps &&
         route.query.sch === sch &&
-        !route.query.material,
+        !route.query.material &&
+        !route.query.orificeDiameter &&
+        !route.query.re,
     );
     if (plain) return plain;
     const hit = routes.find(
-      (route) => route.query.nps === nps && route.query.sch === sch,
+      (route) =>
+        route.query.nps === nps &&
+        route.query.sch === sch &&
+        !route.query.orificeDiameter &&
+        !route.query.re,
     );
     if (hit) return hit;
   }
@@ -1644,10 +1766,57 @@ export function findSpecRouteForInputs(
     );
     if (hit) return hit;
   }
+
+  // Orifice plate flow: nps + schedule + bore + Δp (+ units). Do not fall through
+  // to the loose nps-only matcher — those routes omit `sch` and would rematch the
+  // first NPS duty, re-seeding metric numbers under an imperial `units` query.
+  const orificeDiameter =
+    partial.orificeDiameter != null && partial.orificeDiameter !== ""
+      ? String(partial.orificeDiameter)
+      : "";
+  const orificeDeltaP =
+    partial.deltaP != null && partial.deltaP !== ""
+      ? String(partial.deltaP)
+      : "";
+  if (nps && orificeDiameter && orificeDeltaP) {
+    const numEq = (a: string, b: string) => {
+      const na = Number(a);
+      const nb = Number(b);
+      return Number.isFinite(na) && Number.isFinite(nb)
+        ? Math.abs(na - nb) < 1e-3
+        : a === b;
+    };
+    const routeSch = (route: SpecRoute) =>
+      route.query.sch || route.query.schedule || "";
+    const hit = routes.find((route) => {
+      if (!route.query.orificeDiameter || !route.query.deltaP) return false;
+      if (route.query.nps !== nps) return false;
+      if (sch && routeSch(route) && routeSch(route) !== sch) return false;
+      // Spec duty units are authoritative — imperial UI must not stick on a
+      // metric-only path (and vice versa), or seed rehydrate fights the toggle.
+      if (units && route.query.units && route.query.units !== units) {
+        return false;
+      }
+      return (
+        numEq(route.query.orificeDiameter, orificeDiameter) &&
+        numEq(route.query.deltaP, orificeDeltaP)
+      );
+    });
+    if (hit) return hit;
+    // Explicit orifice inputs that do not match a listed duty — stay on query URL.
+    if (routes.some((route) => route.query.orificeDiameter)) {
+      return undefined;
+    }
+  }
+
   if (nps) {
     const hit = routes.find(
       (route) =>
-        route.query.nps === nps && !route.query.sch && !route.query.class,
+        route.query.nps === nps &&
+        !route.query.sch &&
+        !route.query.schedule &&
+        !route.query.class &&
+        !route.query.orificeDiameter,
     );
     if (hit) return hit;
     // Default to Sch 40 only when the UI did not supply a schedule (tools
@@ -1656,7 +1825,10 @@ export function findSpecRouteForInputs(
     // drops the stale /…/4-inch-sch-40 path instead of advertising Sch 40.
     if (!sch) {
       const sch40 = routes.find(
-        (route) => route.query.nps === nps && route.query.sch === "40",
+        (route) =>
+          route.query.nps === nps &&
+          route.query.sch === "40" &&
+          !route.query.orificeDiameter,
       );
       if (sch40) return sch40;
     }
@@ -2109,6 +2281,100 @@ export function buildSpecSeoCopy(
       description: clipped,
       h1: `${shortTitle} — ${focus}`,
       h2: `${focus} equivalent length summary`,
+    };
+  }
+
+  if (
+    q.fittingType &&
+    q.re &&
+    (calculatorType === "darby-3k-fitting-loss" ||
+      route.slug === "darby-3k-fitting-loss")
+  ) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus} | ${brand}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `Darby 3-K fitting loss coefficient K and equivalent length L_eq for ${focus} (laminar to turbulent).`;
+    const clipped =
+      description.length > 160
+        ? `${description.slice(0, 157).trimEnd()}…`
+        : description;
+    return {
+      title,
+      description: clipped,
+      h1: `${shortTitle} — ${focus}`,
+      h2: `${focus} Darby 3-K summary`,
+    };
+  }
+
+  if (
+    q.inputMode &&
+    q.pressure &&
+    (calculatorType === "steam-properties-iapws" ||
+      route.slug === "steam-properties-iapws")
+  ) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus} | ${brand}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `IAPWS-IF97 steam enthalpy, entropy, density, and saturation properties for ${focus}.`;
+    const clipped =
+      description.length > 160
+        ? `${description.slice(0, 157).trimEnd()}…`
+        : description;
+    return {
+      title,
+      description: clipped,
+      h1: `${shortTitle} — ${focus}`,
+      h2: `${focus} steam properties summary`,
+    };
+  }
+
+  if (
+    q.fluidType &&
+    (calculatorType === "control-valve-noise" ||
+      route.slug === "control-valve-noise")
+  ) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus} | ${brand}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `ISA/IEC control valve noise prediction L_p,1m for ${focus} (IEC 60534-8-3 / 8-4 screening).`;
+    const clipped =
+      description.length > 160
+        ? `${description.slice(0, 157).trimEnd()}…`
+        : description;
+    return {
+      title,
+      description: clipped,
+      h1: `${shortTitle} — ${focus}`,
+      h2: `${focus} valve noise summary`,
+    };
+  }
+
+  if (
+    q.orificeDiameter &&
+    (calculatorType === "orifice-plate-flow-meter" ||
+      route.slug === "orifice-plate-flow-meter")
+  ) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus} | ${brand}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `ISO 5167-2 orifice plate flow and permanent pressure loss for ${focus}.`;
+    const clipped =
+      description.length > 160
+        ? `${description.slice(0, 157).trimEnd()}…`
+        : description;
+    return {
+      title,
+      description: clipped,
+      h1: `${shortTitle} — ${focus}`,
+      h2: `${focus} orifice flow summary`,
     };
   }
 

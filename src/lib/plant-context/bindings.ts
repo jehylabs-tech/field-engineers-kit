@@ -185,6 +185,34 @@ export function applyPlantContext<T extends Record<string, unknown>>(
       }
       return next;
     }
+    case "control-valve-noise": {
+      const unitSystem =
+        inputs.unitSystem === "imperial" ? "imperial" : "metric";
+      let next = applySchedule(applyNps(inputs, ctx), ctx) as T & {
+        p1?: number;
+        temp?: number;
+        unitSystem?: string;
+      };
+      if (ctx.pressure) {
+        next = {
+          ...next,
+          p1:
+            unitSystem === "imperial"
+              ? pressureToPsi(ctx.pressure)
+              : pressureToBar(ctx.pressure),
+        };
+      }
+      if (ctx.temperature) {
+        next = {
+          ...next,
+          temp:
+            unitSystem === "imperial"
+              ? temperatureToF(ctx.temperature)
+              : temperatureToC(ctx.temperature),
+        };
+      }
+      return next as T;
+    }
     case "metal-weight": {
       const next = { ...inputs } as T & {
         material: string;
@@ -319,7 +347,8 @@ export function applyPlantContext<T extends Record<string, unknown>>(
       }
       return next as T;
     }
-    case "water-thermodynamic-properties": {
+    case "water-thermodynamic-properties":
+    case "steam-properties-iapws": {
       const next = { ...inputs } as T & {
         temperature?: number;
         pressure?: number;
@@ -346,6 +375,8 @@ export function applyPlantContext<T extends Record<string, unknown>>(
       return next as T;
     }
     case "piping-equivalent-length":
+    case "orifice-plate-flow-meter":
+    case "darby-3k-fitting-loss":
     case "pressure-drop":
     case "flow-velocity":
       return applySchedule(applyNps(inputs, ctx), ctx) as T;
@@ -566,7 +597,8 @@ export function extractPlantContext(
   }
 
   if (
-    type === "water-thermodynamic-properties" &&
+    (type === "water-thermodynamic-properties" ||
+      type === "steam-properties-iapws") &&
     typeof inputs.temperature === "number"
   ) {
     ctx.temperature =
@@ -575,7 +607,8 @@ export function extractPlantContext(
         : { value: Number(inputs.temperature.toFixed(1)), unit: "C" };
   }
   if (
-    type === "water-thermodynamic-properties" &&
+    (type === "water-thermodynamic-properties" ||
+      type === "steam-properties-iapws") &&
     typeof inputs.pressure === "number"
   ) {
     ctx.pressure =

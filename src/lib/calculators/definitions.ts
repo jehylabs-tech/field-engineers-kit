@@ -34,7 +34,11 @@ export type CalculatorType =
   | "water-thermodynamic-properties"
   | "noise-criterion"
   | "pipe-slope-calculator"
-  | "piping-equivalent-length";
+  | "piping-equivalent-length"
+  | "control-valve-noise"
+  | "orifice-plate-flow-meter"
+  | "darby-3k-fitting-loss"
+  | "steam-properties-iapws";
 
 export type FaqItem = {
   q: string;

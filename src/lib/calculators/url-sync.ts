@@ -156,6 +156,54 @@ export function useCalculatorUrlSync<T extends Record<string, unknown>>(
       } else if (preferred) {
         (next as unknown as { unitSystem: UnitSystem }).unitSystem = preferred;
       }
+
+      // Spec-path seeds carry numbers in seed.units. If the live unit system
+      // differs (e.g. ?units=imperial on a metric duty path), convert those
+      // seeded numeric companions so we never treat mm/kPa as in/psi.
+      const seedUnits = specSeed?.units;
+      const liveUnits = (next as { unitSystem?: UnitSystem }).unitSystem;
+      if (
+        specSeed &&
+        (seedUnits === "metric" || seedUnits === "imperial") &&
+        (liveUnits === "metric" || liveUnits === "imperial") &&
+        seedUnits !== liveUnits
+      ) {
+        const companionKeys = [
+          "orificeDiameter",
+          "deltaP",
+          "fluidDensity",
+          "dynamicViscosity",
+          "density",
+          "length",
+          "flow",
+          "flowRate",
+          "massFlow",
+          "temperature",
+          "pressure",
+          "designPressure",
+          "operatingPressure",
+        ] as const;
+        const bridge: Record<string, unknown> = {
+          ...(next as Record<string, unknown>),
+          unitSystem: seedUnits,
+        };
+        for (const key of companionKeys) {
+          const raw = specSeed[key];
+          if (raw == null || raw === "") continue;
+          if (/[a-z]/i.test(raw)) continue;
+          const asNum = Number(raw);
+          if (Number.isFinite(asNum)) bridge[key] = asNum;
+        }
+        const convertedSeed = syncCompanionUnits(
+          bridge,
+          liveUnits,
+        ) as Record<string, unknown>;
+        for (const key of companionKeys) {
+          if (key in convertedSeed && specSeed[key] != null) {
+            (next as Record<string, unknown>)[key] = convertedSeed[key];
+          }
+        }
+      }
     }
 
     if (!options?.type) return next;
@@ -171,7 +219,7 @@ export function useCalculatorUrlSync<T extends Record<string, unknown>>(
       )[key];
     }
     return applied;
-  }, [config, mergedSearch, options?.type]);
+  }, [config, mergedSearch, options?.type, specSeed]);
 
   useEffect(() => {
     if (hasHydratedFromUrl.current) return;

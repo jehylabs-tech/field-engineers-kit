@@ -112,6 +112,23 @@ export const WORKSTATION_DOMAINS: WorkstationDomain[] = [
         ],
       },
       {
+        id: "steam-properties-iapws",
+        title: "Steam Properties (IAPWS-IF97)",
+        seoLabel:
+          "IAPWS-IF97 Steam Enthalpy Entropy Density Saturation Calculator",
+        standard: "IAPWS-IF97",
+        href: "/calculator/steam-properties-iapws/10bar-saturated-steam",
+        keywords: [
+          "steam properties",
+          "IAPWS-IF97",
+          "enthalpy",
+          "entropy",
+          "superheated steam",
+          "saturated steam",
+          "steam tables",
+        ],
+      },
+      {
         id: "pipe-slope-calculator",
         title: "Pipe Slope & Drainage",
         seoLabel:
@@ -143,6 +160,57 @@ export const WORKSTATION_DOMAINS: WorkstationDomain[] = [
           "valve",
           "K factor",
           "friction loss",
+        ],
+      },
+      {
+        id: "darby-3k-fitting-loss",
+        title: "Darby 3-K Fitting Loss",
+        seoLabel:
+          "Darby 3K Fitting Loss Calculator Laminar Turbulent K-Factor",
+        standard: "Darby 3-K / Crane TP-410",
+        href: "/calculator/darby-3k-fitting-loss/2inch-sch40-elbow-90-std-re50000",
+        keywords: [
+          "darby 3k",
+          "3K method",
+          "resistance coefficient",
+          "K factor",
+          "laminar fitting loss",
+          "K1 Ki Kd",
+          "equivalent length",
+        ],
+      },
+      {
+        id: "control-valve-noise",
+        title: "Control Valve Noise",
+        seoLabel:
+          "ISA 75.01 Control Valve Noise Prediction Calculator IEC 60534-8-3",
+        standard: "ISA 75.01 / IEC 60534-8",
+        href: "/calculator/control-valve-noise/4inch-sch40-gas-cv120",
+        keywords: [
+          "control valve noise",
+          "ISA 75.01",
+          "IEC 60534-8-3",
+          "aerodynamic noise",
+          "hydrodynamic noise",
+          "dBA",
+          "valve sound pressure",
+        ],
+      },
+      {
+        id: "orifice-plate-flow-meter",
+        title: "Orifice Plate Flow",
+        seoLabel:
+          "ISO 5167 Orifice Plate Flow Pressure Drop Beta Ratio Calculator",
+        standard: "ISO 5167-2",
+        href: "/calculator/orifice-plate-flow-meter/4inch-sch40-d50mm-dp25kpa",
+        keywords: [
+          "orifice plate",
+          "ISO 5167",
+          "differential pressure",
+          "beta ratio",
+          "discharge coefficient",
+          "flow meter",
+          "permanent pressure loss",
         ],
       },
       {

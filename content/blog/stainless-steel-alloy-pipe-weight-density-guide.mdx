@@ -1,0 +1,199 @@
+---
+title: "Stainless Steel & Special Alloy Density & Weight Calculation Guide"
+description: "Calculate stainless steel pipe weight per meter for SS316L, Duplex, and Inconel using ASME B36.19M geometry and catalog densities for accurate MTO screening."
+date: "2026-09-19"
+category: "Piping Engineering"
+tags:
+  - Pipe Weight
+  - Stainless Steel Density
+  - Material Take Off
+  - ASME B36.19M
+  - Special Alloy
+  - MTO Weight
+relatedCalculatorUrl: "/calculator/stainless-alloy-weight-density"
+relatedCalculatorName: "Stainless Steel & Special Alloy Weight & Density"
+---
+
+Underestimated spool mass shows up as crane capacity shortfalls, wrong truck loading, and MTO bid gaps. Overestimated mass locks capital in freight and support steel that the line never needed. Accurate **stainless steel pipe weight calculation** starts from B36 OD / wall geometry and the right alloy density—not a carbon-steel rule of thumb with a vague “add 2%.”
+
+Run the same geometry and density catalog in the interactive [Stainless Steel & Special Alloy Weight & Density](/calculator/stainless-alloy-weight-density) calculator (pipe / plate / bar screening).
+
+<Callout title="Screening Note" variant="info">
+Calculated weights are **nominal estimation values** based on ASME B36.10M / B36.19M geometric dimensions and standard material densities. Actual delivered MTO shipment weights may vary by about **±10%** due to mill manufacturing wall thickness tolerances (ASTM A53 / A312) and weld seam reinforcement. Use mill certificates for contractual mass.
+</Callout>
+
+## Quick Summary (TL;DR)
+
+- **Takeaway:** Pipe mass = metal cross-section × density × length; stainless and nickel alloys are denser than carbon steel, so the same NPS/Sch spool is heavier.
+- **Governing relation:** $A = \frac{\pi}{4}(OD^2 - ID^2),\quad w_m = A\cdot\rho,\quad W = w_m\cdot L$
+- **Code / basis:** ASME B36.19M (S-schedules) for stainless OD/wall; catalog densities as in the FEK alloy calculator (SS316L $8.00\text{ g/cm}^3$).
+
+| Item | Field takeaway |
+| :--- | :--- |
+| **Metal area** | $A = \frac{\pi}{4}(OD^2 - ID^2)$ with $ID = OD - 2t$ |
+| **Linear weight** | $w_m = A \cdot \rho$ ($\text{kg/m}$ or $\text{lb/ft}$) |
+| **Spool total** | $W = w_m \cdot L \cdot N_{\text{pieces}}$ |
+| **CS density** | $\rho \approx 7.85\text{ g/cm}^3$ ($7{,}850\text{ kg/m}^3$) |
+| **SS 304 / 316L** | $7.93$ / $8.00\text{ g/cm}^3$ (FEK catalog) |
+| **Duplex 2205** | $7.80\text{ g/cm}^3$ |
+| **Inconel 625** | $8.44\text{ g/cm}^3$ |
+| **Limit** | Nominal B36 wall — not mill under-tolerance mass |
+
+---
+
+## Why stainless steel pipe weight calculation matters for MTO
+
+Carbon-steel rack and freight estimates often reuse the B36.10M plain-end weight formula with $\rho = 7{,}850\text{ kg/m}^3$. Austenitic stainless (304/316), duplex, and nickel alloys change $\rho$ by several percent—and Inconel 625 by nearly **8%** versus CS for the same OD and wall. On a long alloy header, that error is measurable money and crane tonnage.
+
+FieldEngineersKit screens pipe, plate, and bar mass from catalog densities in [Stainless Steel & Special Alloy Weight & Density](/calculator/stainless-alloy-weight-density). Pair OD / wall lookup with [Pipe Schedule & Dimensions](/calculator/pipe-schedule-dimension) when you need B36.10M / B36.19M tables instead of typed OD.
+
+---
+
+## Core formulas & parameter definitions
+
+### Metal cross-section and linear weight
+
+For plain-end round pipe or tube:
+
+$$
+ID = OD - 2t
+$$
+
+$$
+A = \frac{\pi}{4}\left(OD^2 - ID^2\right)
+$$
+
+$$
+w_m = A \cdot \rho
+$$
+
+$$
+W_{\text{total}} = w_m \cdot L \cdot N
+$$
+
+When $OD$ and $t$ are in millimetres, convert $A$ to $\text{m}^2$ before multiplying by $\rho$ in $\text{kg/m}^3$ (or keep consistent mm–g–cm units). The FEK alloy tool evaluates volume as $\frac{\pi}{4}(OD^2 - ID^2)\cdot L$ in SI, then $m = \rho V$.
+
+An equivalent expanded form (same physics) used in many CS handbooks is:
+
+$$
+w_m = 0.0246615 \cdot t \cdot (OD - t)
+\quad\text{(kg/m at }\rho = 7{,}850\text{ kg/m}^3\text{)}
+$$
+
+That constant is **carbon-steel specific**. For stainless / nickel alloys, scale by $\rho / 7{,}850$ or compute $A\cdot\rho$ directly—do not paste the CS formula unchanged onto 316L.
+
+### Parameter definitions
+
+| Parameter | Symbol | Unit | Description |
+| :--- | :---: | :---: | :--- |
+| Outside diameter | $OD$ | mm (in) | ASME B36.10M / B36.19M governing OD |
+| Wall thickness | $t$ | mm (in) | Nominal schedule wall |
+| Inside diameter | $ID$ | mm (in) | $OD - 2t$ |
+| Metal area | $A$ | m² (mm²) | Annular steel area |
+| Density | $\rho$ | kg/m³ (g/cm³) | Catalog / screening density |
+| Linear weight | $w_m$ | kg/m (lb/ft) | Mass per unit length |
+| Length / qty | $L$, $N$ | m, ea | Spool length and piece count |
+
+### FEK catalog densities (screening)
+
+| Material | $\rho$ (kg/m³) | $\rho$ (g/cm³) |
+| :--- | ---: | ---: |
+| Carbon steel | 7,850 | 7.85 |
+| SS304 / 304L | 7,930 | 7.93 |
+| SS316 / 316L | 8,000 | 8.00 |
+| Duplex 2205 | 7,800 | 7.80 |
+| Inconel 625 | 8,440 | 8.44 |
+
+Values match the FEK `alloy-weight` engine catalog (typical annealed / handbook figures—not heat-specific MTRs).
+
+### ASME B36.10M vs B36.19M for weight geometry
+
+| Topic | B36.10M | B36.19M |
+| :--- | :--- | :--- |
+| Scope | CS and alloy steel pipe | Stainless steel pipe |
+| Schedules | Sch 10, 40, 80, STD, XS, … | 5S, 10S, **40S**, **80S**, … |
+| NPS ≤ 12 | Sch 40 ≈ Sch 40S walls | Same wall for common sizes |
+| NPS ≥ 14 | Sch 40 wall keeps growing | Sch 40S often capped (e.g. 9.53 mm) |
+
+Weight differences between “Sch 40” and “Sch 40S” on large stainless lines are **geometry first**, density second. Always lock the schedule designation on the MTO.
+
+---
+
+## How to calculate pipe weight per meter for SS316L and Inconel 625
+
+### Worked example — 6 m SS 316L spool (NPS 6 · Sch 40S)
+
+**Scenario:** MTO estimation for a **6-meter SS 316L** spool line (NPS 6″ Sch 40S, ASTM A312 TP316L, $L = 6.0\text{ m}$).
+
+| Input | Value |
+| :--- | :--- |
+| NPS / Schedule | NPS 6 · Sch **40S** (B36.19M) |
+| Material | SS 316L · $\rho = 8{,}000\text{ kg/m}^3$ |
+| Length | $6.0\text{ m}$ |
+| FEK catalog OD / $t$ / ID | $168.28\text{ mm}$ / $7.11\text{ mm}$ / $154.06\text{ mm}$ |
+
+#### Step 1 — Retrieve OD and wall (B36.19M)
+
+From the FEK pipe schedule catalog (ASME B36.19M screening):
+
+$$
+OD = 168.28\text{ mm},\quad t = 7.11\text{ mm},\quad ID = OD - 2t = 154.06\text{ mm}
+$$
+
+(Handbooks often round OD to $168.3\text{ mm}$; use one consistent set.)
+
+#### Step 2 — Metal cross-section
+
+$$
+A = \frac{\pi}{4}\left(168.28^2 - 154.06^2\right) = 3{,}600.0\text{ mm}^2 = 0.003600\text{ m}^2
+$$
+
+#### Step 3 — Apply SS 316L density and linear weight
+
+$$
+w_m = 0.003600\text{ m}^2 \cdot 8{,}000\text{ kg/m}^3 = 28.80\text{ kg/m}\ (19.35\text{ lb/ft})
+$$
+
+#### Step 4 — Total spool weight
+
+$$
+W_{\text{total}} = 28.80\text{ kg/m} \cdot 6.0\text{ m} = 172.80\text{ kg}\ (381.0\text{ lb})
+$$
+
+This matches the FEK [Stainless Steel & Special Alloy Weight & Density](/calculator/stainless-alloy-weight-density) calculator with shape **pipe**, material **SS316L**, OD $168.28\text{ mm}$, wall $7.11\text{ mm}$, length $6{,}000\text{ mm}$.
+
+<Callout title="Field callout" variant="tip">
+Same OD/wall in **carbon steel** ($\rho = 7{,}850$) yields $\approx 169.6\text{ kg}$ for 6 m — about **1.9% lighter**. The same spool in **Inconel 625** ($\rho = 8{,}440$) yields $\approx 182.3\text{ kg}$ — about **5.5% heavier** than 316L.
+</Callout>
+
+---
+
+## Interactive tool CTA
+
+<Callout title="Try the live alloy weight tool" variant="tip">
+Open [Stainless Steel & Special Alloy Weight & Density](/calculator/stainless-alloy-weight-density) → choose **Round pipe / tube** → pick **SS316L** (or Inconel 625 / Duplex 2205) → enter OD, wall, and length. For carbon-steel plate / general metals, use [Metal Weight & Cost Estimator](/calculator/metal-weight-cost). Confirm wall vs design pressure with [Pipe Wall Thickness](/calculator/pipe-wall-thickness), and flange mass with [Flange Dimension & Weight](/calculator/flange-dimension-weight).
+</Callout>
+
+---
+
+## Frequently Asked Questions (FAQ)
+
+### Q1. How to calculate pipe weight per meter for SS316L and Inconel 625?
+
+Use $w_m = A\cdot\rho$ with $A = \frac{\pi}{4}(OD^2 - ID^2)$ from B36.19M OD and wall. FEK catalog densities: **SS316L = 8,000 kg/m³**, **Inconel 625 = 8,440 kg/m³**. For NPS 6 Sch 40S, SS316L screens at **28.80 kg/m**; Inconel 625 at about **30.4 kg/m** on the same geometry.
+
+### Q2. What is the difference between carbon steel and stainless steel pipe density factors?
+
+Carbon steel screening density is **7.85 g/cm³**. SS304/304L is **7.93 g/cm³** and SS316/316L is **8.00 g/cm³** in the FEK catalog—about **1.9%** heavier than CS for identical OD and wall. Duplex 2205 is slightly lighter (**7.80 g/cm³**). Do not reuse the CS-only $0.0246615\cdot t\cdot(OD-t)$ constant without rescaling $\rho$.
+
+### Q3. How do ASME B36.10M vs ASME B36.19M weight schedule differences show up?
+
+B36.10M covers CS/alloy schedules; B36.19M covers stainless **S** schedules. Through NPS 12, Sch 40 and Sch 40S walls often match; at larger NPS, Sch 40S may stay thinner than B36.10M Sch 40, so stainless “40S” can weigh less than a CS Sch 40 of the same NPS even before density is applied. Always specify **40S vs 40** on the MTO.
+
+### Q4. Why does my mill ticket weight differ from this calculation?
+
+Nominal B36 walls ignore the ASTM A312 / A53 **−12.5%** wall under-tolerance band, weld reinforcement, bevels, and fittings. FEK (and this guide) are **screening** tools—expect roughly **±10%** on shipped mass versus a perfect nominal calculation. Contractual weight should follow the purchase order and MTRs.
+
+### Q5. Can I use the same calculator for plate and bar MTO?
+
+Yes. The [Stainless Steel & Special Alloy Weight & Density](/calculator/stainless-alloy-weight-density) tool also screens plate, round bar, and rectangular bar with the same density catalog ($m = \rho V$). Pipe mode is the hollow-cylinder path used in the worked example above.

@@ -15,6 +15,8 @@ export const PATH_OWNED_PARAMS = new Set([
   "size",
   "fittingType",
   "qty",
+  "re",
+  "reynoldsNumber",
   "bolts",
   "pattern",
   "hnps",
@@ -99,6 +101,18 @@ export const PATH_OWNED_PARAMS = new Set([
   "rise",
   "run",
   "mat",
+  "fluidType",
+  "massFlow",
+  "cv",
+  "p1",
+  "p2",
+  "orificeDiameter",
+  "deltaP",
+  "fluidDensity",
+  "dynamicViscosity",
+  "tap",
+  "inputMode",
+  "steamQuality",
 ]);
 
 /**

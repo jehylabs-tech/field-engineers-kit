@@ -80,6 +80,14 @@ export const CATALOG_SEO_BLURBS: Record<string, string> = {
     "Pipe slope %, drainage ratio, and IPC minimum slope check from rise, run, and NPS.",
   "piping-equivalent-length":
     "Crane TP-410 fitting and valve equivalent length L_eq from L/D, pipe ID, and quantity.",
+  "darby-3k-fitting-loss":
+    "Darby 3-K fitting resistance K and L_eq across laminar, transition, and turbulent Re with Crane comparison.",
+  "steam-properties-iapws":
+    "IAPWS-IF97 steam enthalpy, entropy, density, and saturation properties for saturated and superheated steam.",
+  "control-valve-noise":
+    "ISA/IEC 60534 control valve noise prediction L_p,1m (dBA) for gas and liquid service.",
+  "orifice-plate-flow-meter":
+    "ISO 5167-2 orifice plate flow Q and permanent pressure loss from β, Δp, and Reader-Harris/Gallagher C.",
   "valve-cv-sizing":
     "ISA / IEC 60534 control-valve Cv sizing for liquid and gas service.",
   "bolt-torque-tensioning":
