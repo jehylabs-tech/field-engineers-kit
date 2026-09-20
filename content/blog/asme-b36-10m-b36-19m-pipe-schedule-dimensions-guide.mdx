@@ -1,27 +1,43 @@
 ---
 title: "ASME B36.10M & B36.19M Pipe Schedule & Dimensions: Complete Engineering Guide"
-description: "A comprehensive guide to Nominal Pipe Size (NPS), Outside Diameter (OD), Schedule numbers, and linear weight calculations under ASME B36.10M and B36.19M."
+description: "ASME B36.10M / B36.19M NPS, OD, schedule wall t, ID, and plain-end linear weight — with STD vs Sch 40 traps and a verified NPS 8 Sch 80 worked example for FEK."
 date: "2026-09-02"
 category: "Piping Engineering"
-tags: ["ASME B36.10M", "ASME B36.19M", "Pipe Schedule", "NPS vs DN", "Piping Weight", "Pipe Dimensions"]
-relatedCalculatorUrl: "/calculators/pipe-schedule-dimensions"
-relatedCalculatorName: "Pipe Schedule & Dimensions Calculator"
+tags:
+  - ASME B36.10M
+  - ASME B36.19M
+  - Pipe Schedule
+  - NPS vs DN
+  - Piping Weight
+  - Pipe Dimensions
+relatedCalculatorUrl: "/calculator/pipe-schedule-dimension"
+relatedCalculatorName: "Pipe Schedule & Dimension"
 ---
 
-In process plant design, converting Nominal Pipe Size (NPS) and Schedule numbers into precise physical dimensions—Outside Diameter, wall thickness, Inside Diameter, and linear weight—is a daily task. Confusing actual OD with NPS, or Standard Weight (STD) with Schedule 40, causes procurement errors and field fit-up failures.
+Converting Nominal Pipe Size (NPS) and Schedule into OD, wall $t$, ID, and linear weight is daily plant work. Confusing NPS with OD, or STD with Sch 40, drives procurement errors and field fit-up failures.
 
----
+Look up NPS ½–24 schedules, ID/OD, $W_m$, and MTO totals in the [Pipe Schedule & Dimension](/calculator/pipe-schedule-dimension) calculator.
 
 ## Quick Summary (TL;DR)
 
-* **NPS vs actual OD**: NPS is dimensionless. For NPS 1/8 through NPS 12, OD exceeds the nominal inch size (e.g., NPS 4 = $114.30\text{ mm}$ OD). For NPS 14 and larger, OD equals nominal inches (NPS 14 = $355.60\text{ mm}$).
-* **Inside diameter**: $ID = OD - 2t$. Use $ID$ for flow and velocity; use $OD$ for pressure design and insulation.
-* **Plain-end steel weight**: $W_m = 0.0246615 \times t \times (OD - t)$ in $\text{kg/m}$ (carbon steel $\rho = 7,850\text{ kg/m}^3$).
-* **STD/XS trap**: STD = Sch 40 through NPS 10; XS = Sch 80 through NPS 8. Above those sizes, walls diverge.
+- **Takeaway:** NPS is a tag, not OD. Use catalog OD and schedule $t$; flow uses $ID = OD - 2t$; pressure design uses $OD$.
+- **Governing relation:** Plain-end CS mass $W_m = 0.0246615 \cdot t \cdot (OD - t)$ ($\text{kg/m}$, $\rho = 7{,}850\text{ kg/m}^3$).
+- **Code / basis:** ASME B36.10M (CS/alloy) and B36.19M (S-schedules); STD ≠ Sch 40 above NPS 10.
 
----
+| Item | Field takeaway |
+| :--- | :--- |
+| **NPS ≤ 12 OD** | OD larger than nominal inch (e.g. NPS 4 = 114.30 mm) |
+| **NPS ≥ 14 OD** | OD equals nominal inches (NPS 14 = 355.60 mm) |
+| **STD vs Sch 40** | Match through NPS 10; diverge at NPS 12+ |
+| **XS vs Sch 80** | Match through NPS 8; diverge above |
+| **Worked NPS 8 Sch 80** | OD 219.08 mm · $t$ 12.70 mm · $W_m \approx 64.64\text{ kg/m}$ |
+| **Limits** | Catalog nominal wall — apply mill under-tolerance in B31.3 thickness design |
 
-## 1. Standards & Naming Rules
+<Callout title="Screening vs. mill certificate" variant="info">
+FEK schedule dimensions are **ASME B36 catalog screening**. Confirm heat OD/wall on the mill cert before hydrotest or fit-up. Pressure design must still apply mill under-tolerance (typically $t_m / 0.875$) in the [ASME B31.3 Pipe Thickness](/calculator/pipe-wall-thickness) calculator.
+</Callout>
+
+## Pipe schedule dimensions in the field
 
 ### ASME B36.10M vs ASME B36.19M
 * **ASME B36.10M**: Wrought welded and seamless carbon and alloy steel pipe.
@@ -36,15 +52,15 @@ In process plant design, converting Nominal Pipe Size (NPS) and Schedule numbers
 | **$W_m$** | Plain-end linear weight | $\text{kg/m}$ ($\text{lb/ft}$) | $W_m = 0.0246615 \cdot t \cdot (OD - t)$. |
 | **$A_{\text{flow}}$** | Flow area | $\text{mm}^2$ ($\text{in}^2$) | $A_{\text{flow}} = \frac{\pi \cdot ID^2}{4}$. |
 
----
-
-## 2. Worked Example — NPS 8 Schedule 80
+## Worked example — NPS 8 Schedule 80 dimensions
 
 ### Given Parameters
 * **Nominal Size**: NPS 8 (DN 200)
 * **Schedule**: Schedule 80 (XS)
 * **Material**: ASTM A106 Gr. B ($\rho = 7,850\text{ kg/m}^3$)
 * **Fluid**: Water @ 20°C ($\rho_w = 998\text{ kg/m}^3$)
+
+Open the same row in FEK: [Pipe Schedule & Dimension](/calculator/pipe-schedule-dimension) (NPS 8 · Sch 80).
 
 ### Step 1 — Table lookup (B36.10M)
 $$ OD = 219.08\text{ mm } (8.625\text{ in}) $$
@@ -63,11 +79,11 @@ $$ W_{\text{pipe}} = 0.0246615 \times 12.70 \times (219.08 - 12.70) = 64.64\text
 * **Water weight**: $W_{\text{water}} = 0.02946 \times 998 = 29.40\text{ kg/m}$
 * **Total weight**: $W_{\text{total}} = 64.64 + 29.40 = 94.04\text{ kg/m } (63.19\text{ lb/ft})$
 
-> 📌 **Structural Loading Note**: Pipe rack and spring support design must use filled line weight (operating fluid or hydrotest water), not empty pipe weight alone.
+<Callout title="Field callout — filled line weight" variant="tip">
+Pipe rack and spring support design must use **filled** line weight (operating fluid or hydrotest water), not empty $W_m$ alone.
+</Callout>
 
----
-
-## 3. Procurement & Engineering Traps
+## Procurement & engineering traps
 
 ### Trap 1 — STD/XS vs Sch 40/80 Divergence
 STD and Sch 40 match only for NPS 1/8 through NPS 10. Example NPS 12:
@@ -77,22 +93,18 @@ STD and Sch 40 match only for NPS 1/8 through NPS 10. Example NPS 12:
 | **STD** | $9.53\text{ mm}$ ($0.375\text{ in}$) |
 | **Sch 40** | $10.31\text{ mm}$ ($0.406\text{ in}$) |
 
-> ⚠️ **Procurement Trap**: Ordering NPS 12 STD when the line class requires Sch 40 delivers an under-designed spool.
+Ordering NPS 12 STD when the line class requires Sch 40 delivers an under-designed spool.
 
 ### Trap 2 — B36.19M Sch 40S vs B36.10M Sch 40
 For $\text{NPS} \le 12$, Sch 40 and Sch 40S walls match. At $\text{NPS} \ge 14$, Sch 40S is capped at $9.53\text{ mm}$ while B36.10M Sch 40 continues to grow (NPS 16 Sch 40 = $12.70\text{ mm}$).
 
----
+## Interactive tool CTA
 
-## 4. Interactive Engineering Tool
+<Callout title="Open the Pipe Schedule & Dimension calculator" variant="tip">
+Look up OD, $t$, ID, and $W_m$ in [Pipe Schedule & Dimension](/calculator/pipe-schedule-dimension). Continue to pressure design with [ASME B31.3 Pipe Thickness](/calculator/pipe-wall-thickness).
+</Callout>
 
-Look up NPS 1/2–24 schedules, ID/OD, linear weight, and MTO totals in the live FEK tool:
-
-> 🛠️ **[Try Live Tool: Pipe Schedule & Dimensions Calculator](/calculators/pipe-schedule-dimensions)**
-
----
-
-## 5. Frequently Asked Questions (FAQ)
+## Frequently Asked Questions (FAQ)
 
 ### Q1. Why is NPS 4 OD 114.3 mm, not 101.6 mm?
 Historical NPS tags reflect nominal internal capacity, not OD. Only at NPS 14+ does NPS equal OD in inches.
@@ -102,4 +114,7 @@ Historical NPS tags reflect nominal internal capacity, not OD. Only at NPS 14+ d
 * **ASME B31.3 Pressure Design & Insulation**: Outside Diameter ($OD$).
 
 ### Q3. What is the standard mill under-tolerance for pipe?
-ASTM A106 / A53 / A312 allow $-12.5\%$ on nominal wall. Minimum delivered wall can be $0.875 \times t$ — always account for this in pressure design.
+ASTM A106 / A53 / A312 typically allow $-12.5\%$ on nominal wall. Minimum delivered wall can be $0.875 \times t$ — always account for this in pressure design.
+
+### Q4. Why do some websites list STD = Sch 40 for NPS 12?
+That is a common internet shortcut and **wrong for NPS 12+**. FEK and B36.10M keep STD and Sch 40 as separate walls above NPS 10 — verify the schedule tag on the MTO, not a blog table that merges them.

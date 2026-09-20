@@ -1815,6 +1815,37 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
       "ASME Steam Tables (IAPWS-IF97 basis)",
       "IAPWS Release on the Viscosity of Ordinary Water Substance (2008)",
     ],
+    allowancesAndTolerances: {
+      title: "Screening Rules Matching This Calculator",
+      summary:
+        "Returns IAPWS-IF97 Region 1–aligned liquid water properties at a single (T, P) point. Phase, steam, and two-phase duties remain out of scope.",
+      items: [
+        {
+          label: "Valid state",
+          value: "Compressed / subcooled liquid (Region 1)",
+          description:
+            "Hero ρ and C_p assume liquid water. Confirm T < Tsat(P) before using values in Darcy or heat-balance screens.",
+        },
+        {
+          label: "Input band (this app)",
+          value: "≈ 0–350 °C · 0.1–200 bar",
+          description:
+            "Stay inside the industrial liquid screening window (or °F / psi equivalents via UnitSwitcher).",
+        },
+        {
+          label: "Default ambient case",
+          value: "20 °C · 1.013 bar → ρ ≈ 998.2 kg/m³",
+          description:
+            "Matches the Quick Reference row and the calculator default (C_p ≈ 4.182 kJ/kg·K, μ ≈ 1.00 cP).",
+        },
+        {
+          label: "Out of scope here",
+          value: "Steam · two-phase · supercritical · brine",
+          description:
+            "Use a full steam-table / IAPWS multi-region tool for vapor or near-critical states. Dissolved solids are not modeled.",
+        },
+      ],
+    },
     tableCaption:
       "IAPWS-IF97 liquid water density & C_p screening chart (compressed / near-sat liquid)",
     tableHeaders: ["T", "P", "ρ", "C_p", "μ", "Phase note"],
@@ -1834,6 +1865,45 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
     ],
     tableFootnote:
       "Screening values from IAPWS-IF97 Region 1–aligned liquid polynomials. Near-saturation duties (100 °C · 1 bar) evaluate as liquid for field use — verify phase with a full steam table when P < Psat(T).",
+    materialLimitations: {
+      title: "Applicability & Fluid Limits",
+      summary:
+        "This tool is pure water (H₂O) liquid screening. Fluid chemistry and phase boundaries are outside the property polynomials.",
+      items: [
+        {
+          materialGroup: "Pure liquid water (Region 1)",
+          temperatureLimit: "≈ 0–350 °C (industrial liquid band)",
+          stressLimit: "N/A — thermodynamic properties",
+          notes:
+            "Default medium. Density and C_p follow IAPWS-IF97 Region 1–aligned screening; μ from IAPWS viscosity release.",
+        },
+        {
+          materialGroup: "Near-saturation liquid",
+          temperatureLimit: "T approaching Tsat(P)",
+          stressLimit: "Verify P ≥ Psat(T)",
+          notes:
+            "Values may still be reported as liquid near boiling — confirm phase before using in hydraulic models.",
+        },
+        {
+          materialGroup: "Steam / wet steam / supercritical",
+          temperatureLimit: "Outside Region 1 liquid",
+          stressLimit: "Out of scope",
+          notes:
+            "Do not treat vapor or critical states with this calculator. Open a full steam-table evaluation.",
+        },
+        {
+          materialGroup: "Brine / glycol / process mixtures",
+          temperatureLimit: "Not modeled",
+          stressLimit: "Out of scope",
+          notes:
+            "Dissolved solids and antifreeze shift ρ, μ, and C_p. Use mixture property data instead.",
+        },
+      ],
+      codeRestrictions: [
+        "IAPWS-IF97 Region 1 liquid screening only — not a multi-region steam-table substitute",
+        "Phase status is indicative; critical duties need ASME steam tables or equivalent software",
+      ],
+    },
     workedExample: {
       title: "Worked example — 20 °C · 1.013 bar",
       scenario:
@@ -1952,6 +2022,37 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
       "ANSI/ASA S12.2 Criteria for Evaluating Room Noise (Noise Criterion curves)",
       "ASHRAE Handbook — HVAC Applications (recommended NC by space type)",
     ],
+    allowancesAndTolerances: {
+      title: "Screening Rules Matching This Calculator",
+      summary:
+        "Rates NC by the ANSI/ASA S12.2 octave-band tangent method and compares to an ASHRAE space maximum. Calibrated dBA and RC/NCB remain site measurements.",
+      items: [
+        {
+          label: "NC rating method",
+          value: "Lowest clear NC-15…65 curve",
+          description:
+            "Every octave band L_p(f_i) must sit at or below the chosen NC curve limit (tangent method).",
+        },
+        {
+          label: "Space Pass / Fail",
+          value: "NC ≤ ASHRAE max for space type",
+          description:
+            "Control Room, office, equipment room, and workshop presets set the recommended maximum NC.",
+        },
+        {
+          label: "dBA estimate",
+          value: "≈ NC + 5…8 dB",
+          description:
+            "Coarse A-weighted screening only — not a substitute for a calibrated sound-level meter.",
+        },
+        {
+          label: "Out of scope here",
+          value: "RC · NCB · tonal / rumble metrics",
+          description:
+            "Use RC or NCB analysis when low-frequency rumble or tonal complaints dominate.",
+        },
+      ],
+    },
     tableCaption:
       "ANSI/ASA S12.2 NC curve octave-band limits (dB) — tangent screening table",
     tableHeaders: [
@@ -1980,6 +2081,44 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
     ],
     tableFootnote:
       "Values from the ANSI/ASA S12.2 NC curve family used for FEK tangent screening. Verify against the current published standard for final HVAC design.",
+    materialLimitations: {
+      title: "Applicability & Space Limits",
+      summary:
+        "NC screening applies to occupied HVAC spaces with measured octave-band spectra. Metallurgy is not applicable — limits are acoustic / space criteria.",
+      items: [
+        {
+          materialGroup: "Quiet occupied rooms",
+          temperatureLimit: "N/A — acoustic criterion",
+          stressLimit: "Typical max NC-25…35",
+          notes:
+            "Control rooms, executive offices, and similar ASHRAE quiet spaces.",
+        },
+        {
+          materialGroup: "General offices / classrooms",
+          temperatureLimit: "N/A",
+          stressLimit: "Typical max NC-30…40",
+          notes: "Speech intelligibility driven; verify project ASHRAE table.",
+        },
+        {
+          materialGroup: "Equipment / mechanical rooms",
+          temperatureLimit: "N/A",
+          stressLimit: "Typical max NC-45…55",
+          notes:
+            "Higher NC allowed; still rate the spectrum — do not skip NC for “loud rooms.”",
+        },
+        {
+          materialGroup: "Tonal / rumble complaints",
+          temperatureLimit: "N/A",
+          stressLimit: "Out of scope (use RC / NCB)",
+          notes:
+            "NC tangent can miss low-frequency or tonal issues that RC/NCB catch.",
+        },
+      ],
+      codeRestrictions: [
+        "ANSI/ASA S12.2 tangent NC only — not a full room-acoustics model",
+        "ASHRAE maxima are recommended screening values; project specs may be stricter",
+      ],
+    },
     workedExample: {
       title: "Worked example — Control Room NC-35 duty",
       scenario:
@@ -2110,6 +2249,76 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
     ],
     tableFootnote:
       "Building-drain screening minima. Plant process gravity lines may require steeper slopes — confirm project specs. Example duties (4\"·2.5 in/10 ft, 100A·60 mm/3 m) are on the pSEO paths, not code minima.",
+    allowancesAndTolerances: {
+      title: "Screening Rules Matching This Calculator",
+      summary:
+        "Computes geometric slope from rise and run, then compares to IPC Table 704.1–style minimum bands by NPS. Full-pipe Manning velocity and pressurized-line hydraulics are out of scope.",
+      items: [
+        {
+          label: "IPC minimum slope (this app)",
+          value: "≤3 in → 1/4 in/ft · 4–6 in → 1/8 in/ft · ≥8 in → 1/16 in/ft",
+          description:
+            "NPS selects the Pass/Fail band. Steeper slopes still comply.",
+        },
+        {
+          label: "Default example duties",
+          value: '4" · 2.5 in / 10 ft → 2.08% Pass',
+          description:
+            "Hero reports percent slope, in/ft or mm/m, 1:N ratio, and IPC Pass/Fail.",
+        },
+        {
+          label: "Plant gravity lines",
+          value: "May need > IPC minima",
+          description:
+            "Process drains and slurry lines often require steeper slopes than building-drain screening — confirm project specs.",
+        },
+        {
+          label: "Out of scope here",
+          value: "Manning velocity · pressurized · two-phase",
+          description:
+            "This tool is geometric slope and IPC minimum-slope screening only — not open-channel flow or line sizing.",
+        },
+      ],
+    },
+    materialLimitations: {
+      title: "Applicability & Drain Limits",
+      summary:
+        "Slope screening applies to gravity drainage and vent stacks. Metallurgy is not applicable — limits are geometry and service type.",
+      items: [
+        {
+          materialGroup: "Gravity sanitary / storm drains",
+          temperatureLimit: "N/A — geometric criterion",
+          stressLimit: "IPC Table 704.1–style minima",
+          notes:
+            "Primary use case. Pass/Fail follows NPS band minima in this app.",
+        },
+        {
+          materialGroup: "Process gravity drains",
+          temperatureLimit: "N/A",
+          stressLimit: "Project slope may exceed IPC",
+          notes:
+            "Hydrocarbon, condensate, and slurry drains often need steeper slopes than IPC building minima.",
+        },
+        {
+          materialGroup: "Pressurized / two-phase lines",
+          temperatureLimit: "N/A",
+          stressLimit: "Out of scope",
+          notes:
+            "Do not use IPC drain slopes for live process piping — slope here is drainage geometry only.",
+        },
+        {
+          materialGroup: "Open-channel Manning checks",
+          temperatureLimit: "N/A",
+          stressLimit: "Out of scope",
+          notes:
+            "Full-pipe velocity and roughness-based capacity need diameter and Manning n — not solved here.",
+        },
+      ],
+      codeRestrictions: [
+        "IPC Table 704.1–style screening minima — not a substitute for project drainage specs",
+        "Geometric slope only; no hydraulic capacity or trap-seal verification",
+      ],
+    },
     workedExample: {
       title: "Worked example — 4 in · 10 ft · 2.5 in rise",
       scenario:
@@ -2249,6 +2458,76 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
     ],
     tableFootnote:
       "L/D values are Crane TP-410 turbulent screening defaults used in this calculator. Manufacturer Cv/K data overrides Crane when available for purchase sizing.",
+    allowancesAndTolerances: {
+      title: "Screening Rules Matching This Calculator",
+      summary:
+        "Converts Crane TP-410 L/D ratios to equivalent straight-pipe length at fully turbulent f_T. Reynolds number is not entered — laminar and high-viscosity duties belong in Darby 3-K.",
+      items: [
+        {
+          label: "Equivalent length",
+          value: "L_eq = (L/D) × D_i",
+          description:
+            "D_i from ASME B36 schedule; quantity scales L_eq and K linearly.",
+        },
+        {
+          label: "Resistance coefficient",
+          value: "K = f_T × (L/D)",
+          description:
+            "Crane fully turbulent f_T by NPS band (e.g. NPS 2 → 0.019).",
+        },
+        {
+          label: "Flow regime",
+          value: "Fully turbulent (Crane TP-410)",
+          description:
+            "Valid for Re ≫ 4000 on commercial steel pipe. Transition and laminar K are not modeled.",
+        },
+        {
+          label: "Out of scope here",
+          value: "Re-dependent K · manufacturer Cv",
+          description:
+            "For Re < ~2000 or size-dependent turbulent K, use darby-3k-fitting-loss. Vendor Cv/K overrides Crane when available.",
+        },
+      ],
+    },
+    materialLimitations: {
+      title: "Fitting Type & Regime Limits",
+      summary:
+        "Crane L/D tables assume commercial steel pipe under turbulent flow. Metallurgy does not change L/D — fitting geometry and flow regime govern.",
+      items: [
+        {
+          materialGroup: "Standard elbows & tees",
+          temperatureLimit: "N/A — L/D screening",
+          stressLimit: "Crane TP-410 defaults",
+          notes:
+            "90° std elbow L/D = 30; long-radius 16; tee run 20 / branch 60 — most common process losses.",
+        },
+        {
+          materialGroup: "Block valves (gate / globe / check)",
+          temperatureLimit: "N/A",
+          stressLimit: "L/D 8–340",
+          notes:
+            "Globe valves dominate (L/D ≈ 340). Gate and ball valves are low-loss shortcuts.",
+        },
+        {
+          materialGroup: "Turbulent commercial steel (Re > 4000)",
+          temperatureLimit: "N/A",
+          stressLimit: "Crane f_T basis",
+          notes:
+            "Default regime for this calculator. Plastic or lined pipe may need project L/D — not auto-adjusted.",
+        },
+        {
+          materialGroup: "Laminar / viscous / Re < 2000",
+          temperatureLimit: "N/A",
+          stressLimit: "Out of scope (use Darby 3-K)",
+          notes:
+            "Crane L/D and f_T overstate or understate K in laminar service — switch calculators.",
+        },
+      ],
+      codeRestrictions: [
+        "Crane TP-410 turbulent L/D screening only — not IEC 60534 installed-loss geometry",
+        "Manufacturer published K or Cv overrides Crane defaults for purchase sizing",
+      ],
+    },
     workedExample: {
       title: "Worked example — NPS 2 Sch 40 · 90° standard elbow",
       scenario:
@@ -2391,6 +2670,76 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
     ],
     tableFootnote:
       "Values are FEK IEC-style single-stage screening results. Manufacturer multi-stage or silencer packages override these levels.",
+    allowancesAndTolerances: {
+      title: "Screening Rules Matching This Calculator",
+      summary:
+        "Predicts external A-weighted sound pressure at 1 m from the downstream pipe for standard single-stage trims. Multi-stage low-noise packages and silencers need OEM attenuation data.",
+      items: [
+        {
+          label: "Hero output",
+          value: "L_p,1m dBA at 1 m from pipe",
+          description:
+            "L_p,1m ≈ L_wA − ΔL_TL − RAD with IEC-style jet power and pipe-wall transmission loss.",
+        },
+        {
+          label: "Gas vs liquid path",
+          value: "IEC 60534-8-3 / 8-4",
+          description:
+            "Gas uses aerodynamic efficiency η_a; liquid uses hydrodynamic cavitation / flashing proxies from ΔP/P1.",
+        },
+        {
+          label: "Downstream pipe",
+          value: "ΔL_TL = 17 log10(t_w/D_i) + 36",
+          description:
+            "NPS × schedule sets ID and wall thickness for transmission loss — thicker walls attenuate more.",
+        },
+        {
+          label: "Out of scope here",
+          value: "Multi-stage trim · silencer · in-valve dBA",
+          description:
+            "Quiet plates, diffuser silencers, and OEM low-noise trims are outside single-stage screening.",
+        },
+      ],
+    },
+    materialLimitations: {
+      title: "Regime & Trim Limits",
+      summary:
+        "Acoustic screening depends on fluid regime, trim style, and downstream pipe geometry — not valve body metallurgy.",
+      items: [
+        {
+          materialGroup: "Gas / vapor letdown (aerodynamic)",
+          temperatureLimit: "Per process T, P",
+          stressLimit: "Choked jet common at high ΔP",
+          notes:
+            "IEC 60534-8-3 path. Sonic or near-sonic jets drive high L_p,1m — pair with control-valve-choked-screening.",
+        },
+        {
+          materialGroup: "Liquid cavitating / flashing (hydrodynamic)",
+          temperatureLimit: "Per P_v at T",
+          stressLimit: "ΔP/P1 governs η_a",
+          notes:
+            "IEC 60534-8-4 screening. Severe cavitation may exceed prediction — anti-cavitation trim is a separate selection.",
+        },
+        {
+          materialGroup: "Standard single-stage trim",
+          temperatureLimit: "N/A — acoustic model",
+          stressLimit: "Globe / butterfly presets",
+          notes:
+            "Default scope. Multi-stage, cage, or attenuator trims need manufacturer noise tables.",
+        },
+        {
+          materialGroup: "Downstream pipe wall (CS Sch 40 typical)",
+          temperatureLimit: "N/A",
+          stressLimit: "t_w/D_i sets ΔL_TL",
+          notes:
+            "Heavier schedule or larger NPS changes external level — not body material grade.",
+        },
+      ],
+      codeRestrictions: [
+        "IEC 60534-8-3 / 8-4 single-stage screening — not a certified noise compliance report",
+        "OEM multi-stage attenuation, pipe insulation, and site acoustics can shift measured dBA significantly",
+      ],
+    },
     workedExample: {
       title: "Worked example — NPS 4 Sch 40 · gas · Cv 120",
       scenario:
@@ -2532,6 +2881,76 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
     ],
     tableFootnote:
       "Hero flow follows ISO 5167-2 physics (not marketing round-ups). Confirm tap type and straight-run lengths before purchase metering.",
+    allowancesAndTolerances: {
+      title: "Screening Rules Matching This Calculator",
+      summary:
+        "Mass flow from ISO 5167-2 Reader-Harris/Gallagher C with iterative Re_D. Liquid screening holds expansibility ε = 1; gas compressibility corrections are simplified.",
+      items: [
+        {
+          label: "Beta ratio band",
+          value: "0.10 ≤ β ≤ 0.75",
+          description:
+            "β = d / D_i. Outside this band, ISO 5167-2 accuracy and straight-run rules degrade.",
+        },
+        {
+          label: "Reynolds number",
+          value: "Re_D ≥ 5000",
+          description:
+            "Pipe Reynolds must sit in the turbulent ISO range; viscosity updates C through iteration.",
+        },
+        {
+          label: "Permanent loss",
+          value: "Δϖ ≈ Δp · (1 − β^1.9)",
+          description:
+            "Non-recoverable pressure drop across the meter run — separate from tap Δp.",
+        },
+        {
+          label: "Out of scope here",
+          value: "Straight-run layout · gas ε · calibration",
+          description:
+            "Confirm flange / corner / D–D/2 tap type and upstream/downstream lengths per ISO 5167-2 §6.2 before purchase.",
+        },
+      ],
+    },
+    materialLimitations: {
+      title: "Fluid & Metering Limits",
+      summary:
+        "Orifice sizing is governed by fluid properties, beta ratio, and tap geometry — not plate metallurgy in this screening tool.",
+      items: [
+        {
+          materialGroup: "Incompressible liquid (ε = 1)",
+          temperatureLimit: "ρ, μ at flowing T",
+          stressLimit: "Default water 998.2 kg/m³",
+          notes:
+            "Primary screening mode. Hero Q follows ISO 5167-2 mass flow with user density.",
+        },
+        {
+          materialGroup: "Gas / vapor (compressible)",
+          temperatureLimit: "Per process T, P",
+          stressLimit: "ε held at 1 here",
+          notes:
+            "Compressible duties need full ISO 5167 expansibility — this app is liquid-first screening.",
+        },
+        {
+          materialGroup: "Beta ratio & bore",
+          temperatureLimit: "N/A",
+          stressLimit: "0.10–0.75",
+          notes:
+            "High-β plates increase permanent loss; low-β raises sensitivity but needs longer straight runs.",
+        },
+        {
+          materialGroup: "Two-phase / wet gas / pulsating flow",
+          temperatureLimit: "N/A",
+          stressLimit: "Out of scope",
+          notes:
+            "Slugs, high void fraction, and pulsating service invalidate standard orifice C — use project metering spec.",
+        },
+      ],
+      codeRestrictions: [
+        "ISO 5167-2 screening physics — not a stamped flow-calibration certificate",
+        "Tap type, straight lengths, and plate edge condition must match the installed meter",
+      ],
+    },
     workedExample: {
       title: "Worked example — NPS 4 Sch 40 · d 50 mm · 25 kPa",
       scenario:
@@ -2674,6 +3093,76 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
     ],
     tableFootnote:
       "Hero K follows Darby 3-K physics. L_eq uses Crane f_T so lengths compare with TP-410 L/D tables.",
+    allowancesAndTolerances: {
+      title: "Screening Rules Matching This Calculator",
+      summary:
+        "Resistance coefficient K from Darby 3-K constants with explicit Reynolds number. L_eq converts through Crane f_T so results compare with TP-410 L/D tables.",
+      items: [
+        {
+          label: "Darby 3-K form",
+          value: "K = K₁/Re + Kᵢ(1 + K_d/D_in^0.3)",
+          description:
+            "D_in in inches for the diameter term; quantity scales total K and L_eq.",
+        },
+        {
+          label: "Equivalent length",
+          value: "L_eq = K · D_i / f_T",
+          description:
+            "Crane fully turbulent f_T by NPS — bridges Darby K to TP-410 L_eq screening.",
+        },
+        {
+          label: "Regime weighting",
+          value: "K₁/Re dominant below Re ~2000",
+          description:
+            "At high Re the turbulent asymptote Kᵢ governs; transition is not specially smoothed.",
+        },
+        {
+          label: "Out of scope here",
+          value: "Two-phase · non-Newtonian · OEM Cv",
+          description:
+            "Slurries, polymers, and manufacturer valve Cv data need separate models.",
+        },
+      ],
+    },
+    materialLimitations: {
+      title: "Fitting Type & Regime Limits",
+      summary:
+        "Darby constants are fitting-specific and Re-dependent. Pipe material grade does not enter the 3-K equation — diameter and flow regime do.",
+      items: [
+        {
+          materialGroup: "Laminar / viscous (Re < 2000)",
+          temperatureLimit: "N/A — Re-driven",
+          stressLimit: "K₁/Re term governs",
+          notes:
+            "Primary reason to choose Darby over Crane L/D. High-μ fluids at low velocity need this path.",
+        },
+        {
+          materialGroup: "Turbulent (Re > 4000)",
+          temperatureLimit: "N/A",
+          stressLimit: "Kᵢ asymptote",
+          notes:
+            "Approaches Crane-style K at high Re but retains size correction via K_d/D_in^0.3.",
+        },
+        {
+          materialGroup: "Elbows, tees, valves (preset constants)",
+          temperatureLimit: "N/A",
+          stressLimit: "Per fitting K₁ · Kᵢ · K_d",
+          notes:
+            "90° std elbow, gate, globe, and tee paths use published Darby constants in this app.",
+        },
+        {
+          materialGroup: "Transition band (2000 ≲ Re ≲ 4000)",
+          temperatureLimit: "N/A",
+          stressLimit: "Screening interpolation",
+          notes:
+            "Neither pure laminar nor fully turbulent — treat as order-of-magnitude and confirm on line ΔP if critical.",
+        },
+      ],
+      codeRestrictions: [
+        "Darby 3-K + Crane f_T L_eq conversion — not a CFD or vendor certified K",
+        "For high-Re turbulent-only shortcuts, piping-equivalent-length Crane L/D may suffice",
+      ],
+    },
     workedExample: {
       title: "Worked example — NPS 2 Sch 40 · 90° elbow · Re 50k",
       scenario:
@@ -2817,6 +3306,76 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
     ],
     tableFootnote:
       "Values from IAPWS-IF97 Region 2 / 4 evaluation in this app. Spec sheet density at 20 bar · 300 °C uses IF97 ρ ≈ 7.97 kg/m³ (not ideal-gas estimates).",
+    allowancesAndTolerances: {
+      title: "Screening Rules Matching This Calculator",
+      summary:
+        "Returns IAPWS-IF97 steam properties at a single (P, T) or saturation point with quality x. Critical and supercritical states above Pc are out of scope.",
+      items: [
+        {
+          label: "Saturation mode",
+          value: "Region 4 Tsat(P) · quality x",
+          description:
+            "h, s, v mix between sat. liquid (Region 1) and sat. vapor (Region 2) at Tsat.",
+        },
+        {
+          label: "Superheated mode",
+          value: "Region 2 · T ≥ Tsat(P)",
+          description:
+            "Single-phase vapor evaluation at absolute P and T above the saturation line.",
+        },
+        {
+          label: "Pressure band (this app)",
+          value: "≈ 0.01–100 bar abs",
+          description:
+            "Stay below critical Pc = 22.064 MPa (220.64 bar). Imperial inputs convert via UnitSwitcher.",
+        },
+        {
+          label: "Out of scope here",
+          value: "Supercritical · brine · mixtures",
+          description:
+            "Pressures at/above Pc and non-H₂O fluids need full ASME steam tables or mixture property data.",
+        },
+      ],
+    },
+    materialLimitations: {
+      title: "Applicability & Phase Limits",
+      summary:
+        "Pure water / steam (H₂O) only. Phase and region boundaries — not metallurgy — govern validity.",
+      items: [
+        {
+          materialGroup: "Saturated steam (Region 4 + x)",
+          temperatureLimit: "Tsat(P)",
+          stressLimit: "0 ≤ x ≤ 1",
+          notes:
+            "Hero h with Tsat for saturation duties. Wet steam uses quality mixing at Tsat.",
+        },
+        {
+          materialGroup: "Superheated steam (Region 2)",
+          temperatureLimit: "T > Tsat(P)",
+          stressLimit: "Subcritical P only",
+          notes:
+            "Hero h with density ρ for superheat. Confirm T ≥ Tsat before treating as single-phase vapor.",
+        },
+        {
+          materialGroup: "Subcooled liquid / condensate",
+          temperatureLimit: "T < Tsat(P)",
+          stressLimit: "Use water-thermodynamic-properties",
+          notes:
+            "Liquid-only duties belong in the Region 1 liquid calculator — not this steam tool.",
+        },
+        {
+          materialGroup: "Supercritical & near-critical",
+          temperatureLimit: "P ≥ 22.064 MPa",
+          stressLimit: "Out of scope",
+          notes:
+            "Region 3 and supercritical states are outside this app — open full IAPWS / ASME tables.",
+        },
+      ],
+      codeRestrictions: [
+        "IAPWS-IF97 Region 2 / 4 screening — not a certified steam-table printout",
+        "Pure H₂O only; dissolved solids and glycol shift properties and are not modeled",
+      ],
+    },
     workedExample: {
       title: "Worked example — 10 bar saturated dry steam",
       scenario:
@@ -2887,6 +3446,861 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
         question: "How is wet steam enthalpy calculated?",
         answer:
           "At Tsat(P): **h = hf + x·(hg − hf)** (same mixing for s and v).",
+      },
+    ],
+  },
+
+  "pipe-support-span": {
+    slug: "pipe-support-span",
+    formulaTitle: "Core Formula & Variable Definitions",
+    formulaHtml:
+      '<p class="eng-eq"><i>L</i><sub>def</sub> = (<span class="eng-frac"><span class="eng-num">384 · <i>E</i> · <i>I</i> · <i>y</i><sub>max</sub></span><span class="eng-den">5 · <i>w</i><sub>total</sub></span></span>)<sup>1/4</sup> &nbsp;[m]</p>' +
+      '<p class="eng-eq"><i>L</i><sub>str</sub> = √(<span class="eng-frac"><span class="eng-num">10 · <i>Z</i> · <i>S</i><sub>allow</sub></span><span class="eng-den"><i>w</i><sub>total</sub></span></span>) &nbsp;[m]</p>' +
+      '<p class="eng-eq"><i>L</i><sub>rec</sub> = min(<i>L</i><sub>def</sub>, <i>L</i><sub>str</sub>, <i>L</i><sub>chart</sub>)</p>' +
+      '<p class="eng-plain">ASME B31.3 ¶321 screening · B31.1 Table 121.5–style chart · ASME B36 geometry</p>',
+    formulaLatex:
+      "L_{def}=\\left(\\frac{384 E I y_{max}}{5 w_{total}}\\right)^{1/4},\\quad L_{str}=\\sqrt{\\frac{10 Z S_{allow}}{w_{total}}},\\quad L_{rec}=\\min(L_{def},L_{str},L_{chart})",
+    formulaNotes:
+      "Uniform dead-weight span screening for process piping. w_total includes pipe steel (B36, stainless density-scaled), fluid contents, and optional insulation. S_allow = 0.5 S_h. L_str uses continuous-span M ≈ wL²/10. Layout recommendation is the lesser of beam theory and the ASME B31.1 Table 121.5–style chart. Default mid-span deflection limit is 12.7 mm (0.5 in).",
+    formulaBadges: [
+      { label: "Hero", value: "L_rec" },
+      { label: "L_def", value: "Deflection limit" },
+      { label: "L_str", value: "Sustained bending" },
+      { label: "L_chart", value: "B31.1 T121.5" },
+    ],
+    variables: [
+      {
+        symbol: "L_rec",
+        name: "Recommended support span",
+        definition: "min(L_def, L_str, L_chart) for layout screening.",
+      },
+      {
+        symbol: "E",
+        name: "Modulus of elasticity",
+        definition: "Pipe material modulus (200 GPa CS · 193 GPa SS).",
+      },
+      {
+        symbol: "I",
+        name: "Moment of inertia",
+        definition: "I = π/64 (OD⁴ − ID⁴) from ASME B36 OD/ID.",
+      },
+      {
+        symbol: "Z",
+        name: "Section modulus",
+        definition: "Z = 2I/OD for sustained bending.",
+      },
+      {
+        symbol: "y_max",
+        name: "Allowable mid-span deflection",
+        definition: "Default 12.7 mm (0.5 in) screening limit.",
+      },
+      {
+        symbol: "S_allow",
+        name: "Allowable sustained bending stress",
+        definition: "Taken as 0.5 S_h for dead-weight span screening.",
+      },
+      {
+        symbol: "w_total",
+        name: "Total linear weight",
+        definition: "w_pipe + w_fluid + w_insulation (force/length uses g).",
+      },
+    ],
+    standards: [
+      "ASME B31.3-2022 — Process Piping, Paragraph 321 (Piping Support Layout & Design)",
+      "ASME B31.1 — Table 121.5–style recommended maximum support spacing (also common in MSS hanger guides)",
+      "ASME B36.10M / B36.19M — Welded and Seamless Wrought Steel Pipe",
+    ],
+    tableCaption:
+      "Default screening duty (NPS 4 Sch 40 · water · y_max = 12.7 mm · CS)",
+    tableHeaders: ["Quantity", "Value", "Unit", "Notes"],
+    tableRows: [
+      ["OD × ID", "114.3 × 102.26", "mm", "B36 Sch 40"],
+      ["w_total", "≈ 24.28", "kg/m", "Steel + water"],
+      ["L_def", "≈ 7.05", "m", "y ≤ 12.7 mm"],
+      ["L_str", "≈ 12.35", "m", "S_allow = 0.5 S_h"],
+      ["L_chart", "4.27", "m", "B31.1 T121.5 water (14 ft)"],
+      ["L_rec", "4.27", "m", "Chart governs"],
+    ],
+    tableFootnote:
+      "Hero L_rec is the lesser of beam theory and the B31.1 Table 121.5–style chart. Beam spans use w in N/m (mass × g).",
+    allowancesAndTolerances: {
+      title: "Screening Rules Matching This Calculator",
+      summary:
+        "Uniform dead-weight span from deflection and sustained bending, then min with the B31.1 Table 121.5–style chart. Thermal expansion, seismic, and live loads are out of scope.",
+      items: [
+        {
+          label: "Recommended span",
+          value: "L_rec = min(L_def, L_str, L_chart)",
+          description:
+            "Hero uses the most conservative of beam theory and published hanger chart spacing.",
+        },
+        {
+          label: "Allowable deflection",
+          value: "Default y_max = 12.7 mm (0.5 in)",
+          description:
+            "Mid-span deflection limit for simply supported uniform load — common hanger screening default.",
+        },
+        {
+          label: "Sustained stress",
+          value: "S_allow = 0.5 S_h",
+          description:
+            "L_str from continuous-span moment M ≈ wL²/10 with material S_h at ambient screening.",
+        },
+        {
+          label: "Out of scope here",
+          value: "Thermal growth · seismic · live load",
+          description:
+            "Dead-weight layout screening only — not a full B31.3 support design package or spring hanger selection.",
+        },
+      ],
+    },
+    materialLimitations: {
+      title: "Pipe Material & Fluid Limits",
+      summary:
+        "Modulus E and allowable S_h set beam spans; fluid and insulation add to w_total. Material choice directly affects L_str.",
+      items: [
+        {
+          materialGroup: "Carbon steel (E = 200 GPa · S_h = 138 MPa)",
+          temperatureLimit: "Ambient screening S_h",
+          stressLimit: "S_allow = 0.5 S_h",
+          notes:
+            "Default material. B36 steel weight plus fluid fills w_total.",
+        },
+        {
+          materialGroup: "Stainless 304 / 316 (E = 193 GPa · S_h = 138 MPa)",
+          temperatureLimit: "Ambient screening S_h",
+          stressLimit: "ρ higher than CS · E slightly lower",
+          notes:
+            "Slightly lower E and higher alloy density than CS — spans differ modestly at the same schedule.",
+        },
+        {
+          materialGroup: "Water-filled (1000 kg/m³)",
+          temperatureLimit: "N/A",
+          stressLimit: "Often governs w_total",
+          notes:
+            "Default fluid. Chart limits for water frequently govern before beam theory (e.g. NPS 4 → ~4.3 m).",
+        },
+        {
+          materialGroup: "Steam / gas / empty / insulated",
+          temperatureLimit: "Fixed ρ presets or zero",
+          stressLimit: "Insulation adds annular mass",
+          notes:
+            "Steam (~2.5 kg/m³) and gas (~1.2 kg/m³) are screening densities. Insulation thickness adds w_total and shortens spans.",
+        },
+      ],
+      codeRestrictions: [
+        "ASME B31.3 ¶321 uniform-load screening — not anchor, guide, or spring-hanger design",
+        "Hot S_h, sustained + occasional loads, and local stress intensification are not evaluated",
+      ],
+    },
+    workedExample: {
+      title: "Worked example — NPS 4 Sch 40 water-filled CS",
+      scenario:
+        "Carbon-steel process line, NPS 4 Sch 40, water-filled, no insulation, y_max = 12.7 mm.",
+      designConditions: [
+        { label: "NPS × Sch", value: '4" × 40' },
+        { label: "OD / ID", value: "114.3 / 102.26 mm" },
+        { label: "Fluid", value: "Water (1000 kg/m³)" },
+        { label: "y_max", value: "12.7 mm (0.5 in)" },
+      ],
+      steps: [
+        {
+          step: "Step 1",
+          name: "Unit weight",
+          calculation: "w_pipe (B36) + ρ_water · A_ID",
+          result: "≈ 24.28 kg/m",
+        },
+        {
+          step: "Step 2",
+          name: "Beam spans",
+          calculation: "L_def from y_max; L_str from 0.5 S_h",
+          result: "L_def ≈ 7.05 m · L_str ≈ 12.35 m",
+        },
+        {
+          step: "Step 3",
+          name: "Layout recommendation",
+          calculation: "L_rec = min(L_beam, L_chart)",
+          result: "L_chart = 4.27 m → L_rec = 4.27 m",
+        },
+      ],
+      conclusion:
+        "Default metric duty returns L_rec = 4.27 m (14 ft), chart-limited. Beam theory alone would allow ≈ 7.05 m.",
+    },
+    ...howTo("How to calculate pipe support span", [
+      {
+        name: "1. Select NPS and schedule",
+        text: "Loads ASME B36 OD, ID, wall, and steel linear weight.",
+      },
+      {
+        name: "2. Choose fluid, insulation, and material",
+        text: "Builds w_total and sets E / S_allow for the pipe material.",
+      },
+      {
+        name: "3. Set allowable mid-span deflection",
+        text: "Default 12.7 mm (0.5 in) is the common hanger-span screening limit.",
+      },
+      {
+        name: "4. Read L_rec and beam / chart split",
+        text: "Hero shows the conservative layout span; rows split L_def, L_str, L_chart, and weight.",
+      },
+    ]),
+    faq: [
+      {
+        question: "What is a pipe support span calculator?",
+        answer:
+          "A tool that estimates **hanger / support spacing** from dead-weight deflection and sustained bending, then takes the lesser of beam theory and the **B31.1 Table 121.5–style** chart.",
+      },
+      {
+        question: "Which code governs pipe support layout?",
+        answer:
+          "**ASME B31.3 Paragraph 321** covers piping support layout and design. This calculator is a **uniform-load screening** aid, not a full support design package.",
+      },
+      {
+        question: "Why does the chart often govern?",
+        answer:
+          "Beam theory with a **0.5 in** deflection limit is often less conservative than published hanger charts. The hero uses the **smaller** of L_beam and L_chart for layout screening.",
+      },
+      {
+        question: "Does insulation change the span?",
+        answer:
+          "**Yes.** Insulation adds annular mass to **w_total**, which shortens both L_def and L_str (and may move governing from chart to beam).",
+      },
+    ],
+  },
+
+  "control-valve-choked-screening": {
+    slug: "control-valve-choked-screening",
+    formulaTitle: "Core Formula & Variable Definitions",
+    formulaHtml:
+      '<p class="eng-eq"><i>x</i> = (<i>P</i><sub>1</sub> − <i>P</i><sub>2</sub>) / <i>P</i><sub>1</sub></p>' +
+      '<p class="eng-eq"><i>x</i><sub>choked</sub> = <i>F</i><sub><i>k</i></sub> · <i>x</i><sub><i>T</i></sub> &nbsp;·&nbsp; <i>F</i><sub><i>k</i></sub> = <i>k</i> / 1.40</p>' +
+      '<p class="eng-eq">Δ<i>P</i><sub>cav</sub> = <i>F</i><sub><i>L</i></sub><sup>2</sup> · (<i>P</i><sub>1</sub> − <i>r</i><sub><i>c</i></sub> · <i>P</i><sub><i>v</i></sub>) &nbsp;·&nbsp; <i>r</i><sub><i>c</i></sub> = 0.96 − 0.28√(<i>P</i><sub><i>v</i></sub>/<i>P</i><sub><i>c</i></sub>)</p>' +
+      '<p class="eng-plain">ISA-75.01.01 / IEC 60534-2-1 §5 · F_P = 1 (no reducers)</p>',
+    formulaLatex:
+      "x=(P_1-P_2)/P_1,\\quad x_{choked}=F_k x_T,\\quad \\Delta P_{cav}=F_L^2(P_1-r_c P_v)",
+    formulaNotes:
+      "Absolute pressures only. Gas choke when x ≥ F_k·x_T. Liquid cavitation when ΔP ≥ F_L²(P1 − r_c·Pv); flashing when P2 ≤ Pv. Manufacturer x_T / F_L preferred over typical trim presets.",
+    formulaBadges: [
+      { label: "Hero", value: "Regime · margin" },
+      { label: "Gas", value: "x vs x_choked" },
+      { label: "Liquid", value: "ΔP vs ΔP_cav" },
+      { label: "F_P", value: "1.0 assumed" },
+    ],
+    variables: [
+      {
+        symbol: "x",
+        name: "Pressure differential ratio",
+        definition: "x = (P1 − P2) / P1 for gas / vapor service.",
+      },
+      {
+        symbol: "x_T",
+        name: "Pressure differential ratio factor",
+        definition: "Valve trim factor without attached fittings (typ. 0.20–0.80).",
+      },
+      {
+        symbol: "F_k",
+        name: "Specific-heat ratio factor",
+        definition: "F_k = k / 1.40.",
+      },
+      {
+        symbol: "F_L",
+        name: "Liquid pressure recovery factor",
+        definition: "Trim recovery factor for cavitation screening (typ. 0.50–0.95).",
+      },
+      {
+        symbol: "r_c",
+        name: "Critical pressure ratio factor",
+        definition: "r_c = 0.96 − 0.28√(Pv/Pc).",
+      },
+      {
+        symbol: "ΔP_max",
+        name: "Maximum effective differential",
+        definition: "Gas: x_choked·P1. Liquid: ΔP_cav.",
+      },
+    ],
+    standards: [
+      "ANSI/ISA-75.01.01-2012 (IEC 60534-2-1 Mod) — Flow capacity equations, §5 choked flow",
+      "IEC 60534-2-1:2011 — Sizing equations for fluid flow under installed conditions",
+      "ISA-75.02.01-2008 — Capacity test procedures (x_T and F_L measurement)",
+    ],
+    tableCaption: "Default gas duty (P1 = 10 bar abs · P2 = 4 · x_T = 0.70 · k = 1.40)",
+    tableHeaders: ["Quantity", "Value", "Unit", "Notes"],
+    tableRows: [
+      ["x", "0.600", "—", "(10−4)/10"],
+      ["F_k", "1.000", "—", "k/1.40"],
+      ["x_choked", "0.700", "—", "F_k·x_T"],
+      ["Status", "Non-choked", "—", "x < x_choked"],
+      ["ΔP_max", "7.00", "bar", "If driven to choke"],
+    ],
+    tableFootnote:
+      "Hero reports regime and margin ratio. Absolute pressures required.",
+    allowancesAndTolerances: {
+      title: "Screening Rules Matching This Calculator",
+      summary:
+        "Checks gas choke (x vs F_k·x_T) and liquid cavitation / flashing (ΔP vs F_L² limit) using ISA-75.01 / IEC 60534-2-1 §5 forms. Absolute pressures only; F_P = 1.",
+      items: [
+        {
+          label: "Gas choke limit",
+          value: "x_choked = F_k · x_T · F_k = k / 1.40",
+          description:
+            "Choking when x = (P1 − P2)/P1 ≥ x_choked. Hero reports regime and margin ratio.",
+        },
+        {
+          label: "Liquid cavitation",
+          value: "ΔP_cav = F_L²(P1 − r_c·Pv)",
+          description:
+            "r_c = 0.96 − 0.28√(Pv/Pc). Flashing when P2 ≤ Pv.",
+        },
+        {
+          label: "Pressure basis",
+          value: "Absolute P1, P2 only",
+          description:
+            "Convert gauge to absolute before entry. Default gas duty uses bar abs.",
+        },
+        {
+          label: "Out of scope here",
+          value: "F_P reducers · two-phase · FF",
+          description:
+            "Installed piping geometry F_P, two-phase choke, and FF flashing factors are not solved — use full IEC worksheet.",
+        },
+      ],
+    },
+    materialLimitations: {
+      title: "Regime & Trim Limits",
+      summary:
+        "Choke and cavitation limits depend on fluid regime and valve trim factors — not body metallurgy in this screening tool.",
+      items: [
+        {
+          materialGroup: "Gas / vapor (x_T screening)",
+          temperatureLimit: "Per k at T",
+          stressLimit: "x_T typ. 0.20–0.80",
+          notes:
+            "Globe, butterfly, and ball presets in-app. Manufacturer x_T from ISA-75.02 test overrides presets.",
+        },
+        {
+          materialGroup: "Liquid (F_L · P_v · P_c)",
+          temperatureLimit: "Pv at flowing T",
+          stressLimit: "F_L typ. 0.50–0.95",
+          notes:
+            "High-recovery trims (high F_L) tolerate more ΔP before incipient cavitation.",
+        },
+        {
+          materialGroup: "Flashing service (P2 ≤ Pv)",
+          temperatureLimit: "N/A",
+          stressLimit: "Out of choked-gas model",
+          notes:
+            "Flashing is flagged separately from cavitation — needs hard-faced / anti-cav trim selection.",
+        },
+        {
+          materialGroup: "Installed reducers / expanders",
+          temperatureLimit: "N/A",
+          stressLimit: "F_P = 1 assumed",
+          notes:
+            "Upstream/downstream reducers change effective x_T and F_L — full IEC 60534-2-1 F_P correction required.",
+        },
+      ],
+      codeRestrictions: [
+        "ISA-75.01 / IEC 60534-2-1 §5 screening — not a vendor sizing sheet substitute",
+        "Pair with valve-cv-sizing for capacity and control-valve-noise when ΔP is high",
+      ],
+    },
+    workedExample: {
+      title: "Worked example — air, x_T = 0.70",
+      scenario: "Globe valve on air, P1 = 10 bar abs, P2 = 4 bar abs, x_T = 0.70.",
+      designConditions: [
+        { label: "Fluid", value: "Gas (k = 1.40)" },
+        { label: "P1 / P2", value: "10 / 4 bar abs" },
+        { label: "x_T", value: "0.70" },
+      ],
+      steps: [
+        {
+          step: "Step 1",
+          name: "Differential ratio",
+          calculation: "x = (10 − 4) / 10",
+          result: "0.600",
+        },
+        {
+          step: "Step 2",
+          name: "Choke limit",
+          calculation: "x_choked = (1.40/1.40)·0.70",
+          result: "0.700",
+        },
+        {
+          step: "Step 3",
+          name: "Compare",
+          calculation: "0.600 < 0.700",
+          result: "Non-choked · margin 0.86",
+        },
+      ],
+      conclusion:
+        "Default duty is non-choked. Dropping P2 to 2 bar abs (x = 0.80) crosses the sonic limit.",
+    },
+    ...howTo("How to screen control valve choked flow", [
+      {
+        name: "1. Choose gas or liquid",
+        text: "Gas uses x_T / k; liquid uses F_L, P_v, and P_c.",
+      },
+      {
+        name: "2. Enter absolute P1 and P2",
+        text: "Convert gauge to absolute before entry.",
+      },
+      {
+        name: "3. Set trim factors",
+        text: "Use a typical trim preset or manufacturer x_T / F_L.",
+      },
+      {
+        name: "4. Read regime and ΔP_max",
+        text: "Hero shows choke / cavitation status and margin; rows show limits.",
+      },
+    ]),
+    faq: [
+      {
+        question: "What is a control valve choked flow calculator?",
+        answer:
+          "A tool that checks whether valve ΔP reaches the **ISA-75.01 / IEC 60534-2-1** gas choke limit (**x_T**) or liquid cavitation limit (**F_L**).",
+      },
+      {
+        question: "What does x_T mean?",
+        answer:
+          "**x_T** is the valve’s terminal pressure-drop ratio factor for gas service. Choking starts near **x = F_k·x_T**.",
+      },
+      {
+        question: "What does F_L mean?",
+        answer:
+          "**F_L** is the liquid pressure recovery factor. Cavitation screening uses **ΔP_cav = F_L²(P1 − r_c·Pv)**.",
+      },
+      {
+        question: "Does this include pipe reducers (F_P)?",
+        answer:
+          "**No.** This screening assumes **F_P = 1**. Installed reducers need the full IEC 60534-2-1 piping geometry correction.",
+      },
+    ],
+  },
+
+  "psv-prv-screening": {
+    slug: "psv-prv-screening",
+    formulaTitle: "Core Formula & Variable Definitions",
+    formulaHtml:
+      '<p class="eng-eq"><b>Gas / vapor (API 520 §5.2, critical):</b> <i>A</i><sub>req</sub> = <i>W</i> / (<i>C</i> · <i>K</i><sub><i>d</i></sub> · <i>P</i><sub>1</sub>) · √(<i>T</i> · <i>Z</i> / <i>M</i>)</p>' +
+      '<p class="eng-eq"><b>Liquid (API 520 §5.6):</b> <i>A</i><sub>req</sub> = <i>Q</i> / (38 · <i>K</i><sub><i>d</i></sub>) · √(<i>G</i> / Δ<i>P</i>)</p>' +
+      '<p class="eng-eq"><i>P</i><sub>1</sub> = <i>P</i><sub>set</sub> · (1 + OP%/100) + <i>P</i><sub>atm</sub> &nbsp;·&nbsp; select smallest API 526 letter with <i>A</i><sub>API</sub> ≥ <i>A</i><sub>req</sub></p>' +
+      '<p class="eng-plain">API 520 Part I (10th Ed.) · API 526 Table 1 · ASME VIII UG-131 screening Kd</p>',
+    formulaLatex:
+      "A_{req}=\\frac{W}{C K_d P_1}\\sqrt{\\frac{TZ}{M}}\\ (\\mathrm{gas}),\\quad A_{req}=\\frac{Q}{38 K_d}\\sqrt{\\frac{G}{\\Delta P}}\\ (\\mathrm{liquid})",
+    formulaNotes:
+      "US customary API 520 equations with metric/imperial I/O conversion. Screening Kd = 0.975 (gas) / 0.650 (liquid); Kb = Kw = Kv = Kc = Z = 1 (atmospheric discharge, non-viscous, no rupture disk). Orifice letters D–T from API 526 effective areas.",
+    formulaBadges: [
+      { label: "Hero", value: "API 526 letter" },
+      { label: "Gas Kd", value: "0.975" },
+      { label: "Liquid Kd", value: "0.650" },
+      { label: "Letters", value: "D–T" },
+    ],
+    variables: [
+      {
+        symbol: "A_req",
+        name: "Required effective orifice area",
+        definition: "Minimum API 520 discharge area (mm² / in²).",
+      },
+      {
+        symbol: "P1",
+        name: "Relieving absolute pressure",
+        definition: "P_set × (1 + OP/100) + Patm (bar abs / psia).",
+      },
+      {
+        symbol: "W / Q",
+        name: "Required relieving capacity",
+        definition: "Gas mass flow (kg/h or lb/h) or liquid volume flow (L/min or GPM).",
+      },
+      {
+        symbol: "Kd",
+        name: "Effective discharge coefficient",
+        definition: "Preliminary API 520 Kd (0.975 gas / 0.650 liquid).",
+      },
+      {
+        symbol: "C",
+        name: "Gas constant from k",
+        definition: "C = 520 √[k (2/(k+1))^((k+1)/(k−1))] (US customary).",
+      },
+      {
+        symbol: "A_API",
+        name: "API 526 effective orifice area",
+        definition: "Standard letter area D–T selected ≥ A_req.",
+      },
+    ],
+    standards: [
+      "API Standard 520 Part I (10th Edition, 2020) — §5.2 gas/vapor, §5.6 liquid sizing",
+      "API Standard 526 (7th Edition, 2017) — Table 1 standard effective orifice areas D–T",
+      "ASME BPVC Section VIII Division 1 UG-131 — certified relieving capacity (nameplate Kd)",
+    ],
+    tableCaption:
+      "Default gas duty (air · P_set = 10 bar g · W = 5000 kg/h · OP = 10% · T = 25 °C · k = 1.40)",
+    tableHeaders: ["Quantity", "Value", "Unit", "Notes"],
+    tableRows: [
+      ["P1", "12.01", "bar abs", "10×1.10 + 1.013"],
+      ["C", "356.1", "—", "k = 1.40"],
+      ["A_req", "506", "mm²", "≈ 0.785 in²"],
+      ["Orifice", "H", "—", "API 526 A = 506 mm²"],
+      ["Margin", "~0%", "—", "Selected ≈ required"],
+    ],
+    tableFootnote:
+      "Hero reports the selected API 526 letter and effective area. Default air duty (10 bar g · 5000 kg/h · 10% OP) selects orifice H (~506 mm²).",
+    allowancesAndTolerances: {
+      title: "Screening Rules Matching This Calculator",
+      summary:
+        "Preliminary API 520 required effective area with screening Kd, then maps to the smallest API 526 letter D–T with A_API ≥ A_req. Certified nameplate Kd and backpressure corrections are purchase steps.",
+      items: [
+        {
+          label: "Relieving pressure",
+          value: "P1 = P_set × (1 + OP/100) + P_atm",
+          description:
+            "Absolute relieving pressure. Typical non-fire overpressure OP = 10%; fire cases often 21%.",
+        },
+        {
+          label: "Screening Kd",
+          value: "0.975 gas · 0.650 liquid",
+          description:
+            "Preliminary API 520 defaults. ASME VIII UG-131 certified Kd overrides for final selection.",
+        },
+        {
+          label: "Correction factors",
+          value: "Kb = Kw = Kv = Kc = Z = 1",
+          description:
+            "Atmospheric discharge, non-viscous, no rupture disk in series — screening simplification.",
+        },
+        {
+          label: "Out of scope here",
+          value: "Backpressure · two-phase HEM · viscosity Kv",
+          description:
+            "Balanced bellows Kb, superimposed backpressure, two-phase relief, and rupture-disk Kc need full API 520 Part I analysis.",
+        },
+      ],
+    },
+    materialLimitations: {
+      title: "Fluid & Service Limits",
+      summary:
+        "PSV orifice screening is fluid- and service-driven. Body metallurgy is a separate corrosion / temperature selection — not computed here.",
+      items: [
+        {
+          materialGroup: "Gas / vapor (API 520 §5.2 critical)",
+          temperatureLimit: "T at relieving conditions",
+          stressLimit: "k sets C constant",
+          notes:
+            "Mass flow W with M, Z = 1 screening. Choked critical flow assumed.",
+        },
+        {
+          materialGroup: "Liquid (API 520 §5.6)",
+          temperatureLimit: "N/A",
+          stressLimit: "G = specific gravity",
+          notes:
+            "Volumetric Q with Kd = 0.650. Viscous correction Kv not applied in this tool.",
+        },
+        {
+          materialGroup: "API 526 orifice letters D–T",
+          temperatureLimit: "N/A",
+          stressLimit: "Smallest A_API ≥ A_req",
+          notes:
+            "Hero reports selected letter and area margin — confirm inlet loss and chatter on the data sheet.",
+        },
+        {
+          materialGroup: "Two-phase / reactive / viscous relief",
+          temperatureLimit: "N/A",
+          stressLimit: "Out of scope",
+          notes:
+            "HEM, runaway reaction, and high-viscosity duties need specialist API 520 methods — not this screening path.",
+        },
+      ],
+      codeRestrictions: [
+        "API 520 Part I preliminary sizing — not ASME UG-125 / UG-131 certified relieving capacity",
+        "Backpressure, inlet loss, dual-phase flow, and rupture-disk combinations require full API 520 analysis before purchase",
+      ],
+    },
+    workedExample: {
+      title: "Worked example — air PSV, 10 bar g · 5000 kg/h",
+      scenario:
+        "Preliminary gas PSV sizing for air at 10 bar g set, 10% overpressure, 25 °C, W = 5000 kg/h.",
+      designConditions: [
+        { label: "Fluid", value: "Air (M = 28.97, k = 1.40)" },
+        { label: "P_set / OP", value: "10 bar g / 10%" },
+        { label: "W", value: "5000 kg/h" },
+      ],
+      steps: [
+        {
+          step: "Step 1",
+          name: "Relieving pressure",
+          calculation: "P1 = 10 × 1.10 + 1.013",
+          result: "12.01 bar abs",
+        },
+        {
+          step: "Step 2",
+          name: "Required area",
+          calculation: "API 520 critical gas (Kd = 0.975, Z = 1)",
+          result: "A_req ≈ 506 mm²",
+        },
+        {
+          step: "Step 3",
+          name: "API 526 letter",
+          calculation: "Smallest A_API ≥ A_req",
+          result: "H (506 mm²)",
+        },
+      ],
+      conclusion:
+        "Select API 526 orifice H for this screening duty. Confirm manufacturer Kd, backpressure, and installation before purchase.",
+    },
+    ...howTo("How to screen PSV / PRV orifice area", [
+      {
+        name: "1. Choose gas or liquid",
+        text: "Gas uses W, M, T, and k; liquid uses Q and specific gravity G.",
+      },
+      {
+        name: "2. Enter set pressure and overpressure",
+        text: "Typical non-fire OP = 10%; fire case often 21%.",
+      },
+      {
+        name: "3. Enter relieving capacity",
+        text: "Mass flow for gas or volumetric flow for liquid in the active unit system.",
+      },
+      {
+        name: "4. Read letter and margin",
+        text: "Hero shows the API 526 letter; badges show A_req, P1, and capacity margin.",
+      },
+    ]),
+    faq: [
+      {
+        question: "What is a PSV orifice area calculator?",
+        answer:
+          "A screening tool that sizes the **API 520** required effective discharge area and maps it to the nearest **API 526** orifice letter (**D–T**).",
+      },
+      {
+        question: "Which Kd values are used?",
+        answer:
+          "Preliminary **API 520** values: **Kd = 0.975** (gas/vapor) and **Kd = 0.650** (liquid). Certified ASME **UG-131** nameplate Kd overrides these for purchase.",
+      },
+      {
+        question: "What are API 526 orifice letters?",
+        answer:
+          "Standard effective areas **D through T** (e.g. F = 0.307 in², H = 0.785 in², J = 1.287 in²). The calculator picks the smallest letter with **A_API ≥ A_req**.",
+      },
+      {
+        question: "Is this certified PSV selection?",
+        answer:
+          "**No.** It is preliminary MTO / line screening. Backpressure, two-phase HEM, viscosity (**Kv**), and rupture disks (**Kc**) are out of scope.",
+      },
+    ],
+  },
+
+  "natural-gas-z-density": {
+    slug: "natural-gas-z-density",
+    formulaTitle: "Core Formula & Variable Definitions",
+    formulaHtml:
+      '<p class="eng-eq"><b>Real-gas density:</b> <i>ρ</i> = <i>P</i> · <i>M</i> / (<i>Z</i> · <i>R</i> · <i>T</i>) = <i>P</i> · <i>SG</i> · <i>M</i><sub>air</sub> / (<i>Z</i> · <i>R</i> · <i>T</i>)</p>' +
+      '<p class="eng-eq"><b>Standing pseudo-criticals (sweet gas):</b> <i>T</i><sub>pc</sub> = 168 + 325·<i>SG</i> − 12.5·<i>SG</i>² [°R], &nbsp; <i>P</i><sub>pc</sub> = 677 + 15·<i>SG</i> − 37.5·<i>SG</i>² [psia]</p>' +
+      '<p class="eng-eq"><b>Reduced properties:</b> <i>T</i><sub>r</sub> = <i>T</i>/<i>T</i><sub>pc</sub>, &nbsp; <i>P</i><sub>r</sub> = <i>P</i>/<i>P</i><sub>pc</sub> &nbsp;·&nbsp; <i>Z</i> = <i>f</i>(<i>P</i><sub>r</sub>, <i>T</i><sub>r</sub>) via Hall–Yarborough (CNGA fallback)</p>' +
+      '<p class="eng-plain">AGA Report No. 8 / API MPMS 14.2 screening · Wichert–Aziz CO₂ · Kay N₂ blend · ISO 12213-2 composition methods out of scope</p>',
+    formulaLatex:
+      "\\rho=\\frac{P\\cdot M}{Z\\cdot R\\cdot T}=\\frac{P\\cdot SG\\cdot M_{air}}{Z\\cdot R\\cdot T},\\quad T_{pc}=168+325\\,SG-12.5\\,SG^{2},\\quad P_{pc}=677+15\\,SG-37.5\\,SG^{2}",
+    formulaNotes:
+      "Screening Z from Standing Ppc/Tpc with Wichert–Aziz CO₂ correction and Kay N₂ blend, then Hall–Yarborough (CNGA fallback). Density uses the real-gas law with M = SG · 28.9625 g/mol. Not a full AGA-8 Detail or GERG-2008 composition equation of state.",
+    formulaBadges: [
+      { label: "Hero", value: "Z · ρ" },
+      { label: "Method", value: "Hall–Yarborough" },
+      { label: "Ppc/Tpc", value: "Standing" },
+      { label: "M_air", value: "28.9625 g/mol" },
+    ],
+    variables: [
+      {
+        symbol: "Z",
+        name: "Compressibility factor",
+        definition: "Real-gas Z from Hall–Yarborough on reduced P_r, T_r (ideal gas Z = 1).",
+      },
+      {
+        symbol: "ρ",
+        name: "Real-gas density",
+        definition: "ρ = P M / (Z R T) in kg/m³ or lb/ft³.",
+      },
+      {
+        symbol: "SG",
+        name: "Specific gravity (air = 1)",
+        definition: "Typical lean natural gas 0.55–0.75. M = SG · M_air.",
+      },
+      {
+        symbol: "P / T",
+        name: "Absolute pressure / temperature",
+        definition: "Absolute operating P (bar abs or psia) and T (°C/°F → K/°R).",
+      },
+      {
+        symbol: "P_pc / T_pc",
+        name: "Pseudo-critical pressure / temperature",
+        definition: "Standing correlations; CO₂ via Wichert–Aziz; N₂ via Kay blend.",
+      },
+      {
+        symbol: "P_r / T_r",
+        name: "Reduced pressure / temperature",
+        definition: "P/P_pc and T/T_pc used by the Z correlation.",
+      },
+    ],
+    standards: [
+      "AGA Report No. 8 / API MPMS Chapter 14.2 — Compressibility Factor of Natural Gas and Related Hydrocarbon Gases (screening use)",
+      "Standing / Sutton pseudo-critical correlations; Hall–Yarborough Z; CNGA method fallback",
+      "Wichert–Aziz acid-gas correction (CO₂); Kay mixing rule for N₂",
+      "ISO 12213-2 — molar-composition compression factor (full GERG/AGA-8 Detail out of scope here)",
+    ],
+    tableCaption:
+      "Default duty (30 bar abs · 25 °C · SG 0.60 · CO₂ 0% · N₂ 0%) — engine assert",
+    tableHeaders: ["Quantity", "Value", "Unit", "Notes"],
+    tableRows: [
+      ["Z", "0.935", "—", "Hall–Yarborough"],
+      ["ρ (real)", "22.50", "kg/m³", "1.404 lb/ft³"],
+      ["ρ (ideal)", "21.03", "kg/m³", "Z = 1"],
+      ["Deviation", "+7.0%", "—", "(ρ − ρ_ideal)/ρ_ideal"],
+      ["P_r / T_r", "0.647 / 1.497", "—", "Reduced properties"],
+      ["P_pc / T_pc", "46.37 / 199.2", "bar / K", "672.5 psia / 358.5 °R"],
+      ["M", "17.38", "g/mol", "SG × 28.9625"],
+      ["50 bar · 40 °C · SG 0.65", "Z 0.896 · ρ 40.33", "kg/m³", "High-pressure duty"],
+      ["10 bar · 15 °C · SG 0.55", "Z 0.979 · ρ 6.79", "kg/m³", "Distribution duty"],
+      ["80 bar · 50 °C · SG 0.60", "Z 0.883 · ρ 58.60", "kg/m³", "Transmission duty"],
+    ],
+    tableFootnote:
+      "Hero reports Z and real density from Standing Ppc/Tpc + Hall–Yarborough. Default duty (30 bar abs · 25 °C · SG 0.60) asserts Z ≈ 0.935 and ρ ≈ 22.50 kg/m³.",
+    allowancesAndTolerances: {
+      title: "Screening Rules Matching This Calculator",
+      summary:
+        "Standing sweet-gas Ppc/Tpc, optional Wichert–Aziz CO₂ and Kay N₂ blend, then Hall–Yarborough Z with CNGA fallback. Real density from the real-gas law. Full AGA-8 Detail / GERG-2008 composition EOS is out of scope.",
+      items: [
+        {
+          label: "Default duty",
+          value: "30 bar abs · 25 °C · SG 0.60",
+          description:
+            "Lean natural gas M ≈ 17.38 g/mol. Hero ≈ Z = 0.935 · ρ = 22.50 kg/m³ (P_r ≈ 0.65, T_r ≈ 1.50).",
+        },
+        {
+          label: "Input ranges",
+          value: "P 0.5–250 bar abs · T −50–150 °C · SG 0.55–0.90",
+          description:
+            "CO₂ and N₂ each 0–20 mol%. Combined non-hydrocarbon fraction capped for this screening path.",
+        },
+        {
+          label: "Impurity corrections",
+          value: "Wichert–Aziz (CO₂) · Kay (N₂)",
+          description:
+            "H₂S not entered in this tool (treated as zero). High acid-gas fractions need composition EOS verification.",
+        },
+        {
+          label: "Out of scope here",
+          value: "AGA-8 Detail · GERG-2008 · LNG envelopes",
+          description:
+            "For P ≳ 150 bar, supercritical transport, or cryogenic phase envelopes, verify with full molar-composition methods (ISO 12213-2 / AGA-8 Detail).",
+        },
+      ],
+    },
+    materialLimitations: {
+      title: "Applicability & Fluid Limits",
+      summary:
+        "This tool is fluid-property screening for lean-to-moderately rich natural gas. Metallurgy is not computed — apply pipe/valve material selection separately.",
+      items: [
+        {
+          materialGroup: "Lean natural gas (SG ≈ 0.55–0.70)",
+          temperatureLimit: "−50 to 150 °C screening band",
+          stressLimit: "Standing Ppc/Tpc valid",
+          notes:
+            "Typical transmission / distribution SG. Default SG 0.60 is the worked example.",
+        },
+        {
+          materialGroup: "CO₂ / N₂ impurities (≤ 20 mol% each)",
+          temperatureLimit: "Same screening band",
+          stressLimit: "Wichert–Aziz · Kay blend",
+          notes:
+            "Acid-gas and inert corrections adjust Ppc/Tpc only — not a full multicomponent EOS.",
+        },
+        {
+          materialGroup: "High-pressure / supercritical NG (P ≳ 150 bar)",
+          temperatureLimit: "N/A",
+          stressLimit: "Out of screening confidence",
+          notes:
+            "Verify Z and density with AGA-8 Detail or GERG-2008 before custody transfer or dense-phase design.",
+        },
+        {
+          materialGroup: "LNG / cryogenic phase envelopes",
+          temperatureLimit: "Below screening band",
+          stressLimit: "Out of scope",
+          notes:
+            "Two-phase and cryogenic properties require composition-based flash calculations — not this Z/ρ path.",
+        },
+      ],
+      codeRestrictions: [
+        "Screening Z/ρ only — not AGA-8 Detail or ISO 12213-2 certified composition compressibility",
+        "Absolute pressure required (bar abs / psia). Do not enter gauge pressure without adding atmospheric pressure",
+      ],
+    },
+    workedExample: {
+      title: "Worked example — 30 bar abs · 25 °C · SG 0.60",
+      scenario:
+        "Lean natural gas at 30 bar absolute and 25 °C with SG = 0.60 (air = 1), no CO₂ or N₂.",
+      designConditions: [
+        { label: "P", value: "30 bar abs" },
+        { label: "T", value: "25 °C (298.15 K)" },
+        { label: "SG", value: "0.60 → M = 17.38 g/mol" },
+      ],
+      steps: [
+        {
+          step: "Step 1",
+          name: "Pseudo-criticals (Standing)",
+          calculation: "T_pc = 168 + 325·0.60 − 12.5·0.60²; P_pc = 677 + 15·0.60 − 37.5·0.60²",
+          result: "T_pc = 358.5 °R (199.2 K); P_pc = 672.5 psia (46.37 bar)",
+        },
+        {
+          step: "Step 2",
+          name: "Reduced properties",
+          calculation: "T_r = T/T_pc; P_r = P/P_pc",
+          result: "T_r ≈ 1.497; P_r ≈ 0.647",
+        },
+        {
+          step: "Step 3",
+          name: "Z and density",
+          calculation: "Hall–Yarborough Z(P_r, T_r); ρ = P M / (Z R T)",
+          result: "Z ≈ 0.935; ρ ≈ 22.50 kg/m³ (ideal ρ ≈ 21.03 kg/m³, +7.0%)",
+        },
+      ],
+      conclusion:
+        "Hero screening value is Z = 0.935 · Density = 22.50 kg/m³. Use AGA-8 Detail / GERG-2008 when composition or supercritical duty requires certified compressibility.",
+    },
+    ...howTo("How to calculate natural gas Z-factor and density", [
+      {
+        name: "1. Enter absolute pressure and temperature",
+        text: "Use bar abs or psia (not gauge) and operating °C or °F in the active unit system.",
+      },
+      {
+        name: "2. Enter specific gravity and impurities",
+        text: "SG relative to air (typical 0.55–0.75). Optionally add CO₂ and N₂ mole % for Wichert–Aziz / Kay adjustments.",
+      },
+      {
+        name: "3. Read Z and real density",
+        text: "Hero shows Z and ρ. Badges summarize SG, P_r, T_r, and ideal-vs-real density deviation.",
+      },
+      {
+        name: "4. Export or carry to related tools",
+        text: "Export CSV/text/PDF for the duty pack, or continue to valve Cv / choked / noise screening with the same pressure context.",
+      },
+    ]),
+    faq: [
+      {
+        question: "What is a natural gas compressibility factor (Z) calculator?",
+        answer:
+          "A screening tool that estimates **Z** from reduced pressure and temperature (Standing **P_pc**/**T_pc** + Hall–Yarborough) and converts that into **real-gas density** ρ = P M / (Z R T).",
+      },
+      {
+        question: "Which method does FieldEngineersKit use for Z?",
+        answer:
+          "**Standing** pseudo-criticals, optional **Wichert–Aziz** (CO₂) and **Kay** (N₂), then **Hall–Yarborough** with a **CNGA** fallback. It is **not** a full **AGA-8 Detail** or **GERG-2008** composition EOS.",
+      },
+      {
+        question: "Why does density differ from the ideal-gas value?",
+        answer:
+          "Ideal density assumes **Z = 1**. Real density divides by **Z**, so when Z < 1 the gas is denser than ideal. The default duty shows about **+7%** denser than ideal.",
+      },
+      {
+        question: "When should I use AGA-8 or GERG-2008 instead?",
+        answer:
+          "For **custody transfer**, **P ≳ 150 bar**, **supercritical** transport, **LNG** envelopes, or rich acid-gas compositions — verify with full molar-composition methods (**ISO 12213-2** / AGA-8 Detail).",
       },
     ],
   },
@@ -3397,6 +4811,85 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
         "1 → 13 → 7 → 19 → 4 → 16 → 10 → 22 → 2 → 14 → 8 → 20 → 5 → 17 → 11 → 23 → 3 → 15 → 9 → 21 → 6 → 18 → 12 → 24",
       ],
     ],
+    tableFootnote:
+      "Star/cross order for even bolt counts with bolt 1 at top, numbered clockwise. Round fractions match FEK Bolt Torque screening (30% / 60% / 100% / circular 100%).",
+    materialLimitations: {
+      title: "Joint Types, Gaskets & Sequence Applicability",
+      summary:
+        "Star/cross and circular patterns apply to even-count ASME flange joints assembled per PCC-1. Gasket type governs whether the default four-round pattern is sufficient — not bolt numbering.",
+      items: [
+        {
+          materialGroup: "ASME B16.5 RF / FF flanges (NPS ½–24)",
+          temperatureLimit: "Per flange material group Table 2",
+          stressLimit: "Even bolt counts 4–64 only",
+          notes:
+            "Primary scope. Optional NPS × class helper fills N from the same B16.5 table used by Bolt Torque.",
+        },
+        {
+          materialGroup: "Spiral-wound & compressed-fiber gaskets",
+          temperatureLimit: "Per gasket specification",
+          stressLimit: "Requires incremental star passes",
+          notes:
+            "Soft gaskets need 30% / 60% / 100% star rounds before the circular check pass.",
+        },
+        {
+          materialGroup: "RTJ metal ring joints (Class ≥ 300)",
+          temperatureLimit: "Per ring and flange material",
+          stressLimit: "Parallel close-up before full torque",
+          notes:
+            "Ring joints need metal-to-metal contact before final torque — follow site appendix when it differs.",
+        },
+        {
+          materialGroup: "A193 B7 / B8 Class 2 studs",
+          temperatureLimit: "B7 −29…427 °C · B8 Cl 2 cryogenic/hot",
+          stressLimit: "Torque from Bolt Torque calculator",
+          notes:
+            "This tool outputs sequence order only. Lubricant K and grade change wrench targets, not numbering.",
+        },
+      ],
+      codeRestrictions: [
+        "Even bolt counts 4–64 only — does not compute target torque T or gasket stress",
+        "B16.47 Series A/B bolt counts differ from B16.5 — confirm N before applying presets",
+      ],
+    },
+    workedExample: {
+      title: "Worked example — NPS 4 Class 300 · 8-bolt star",
+      scenario:
+        "Generate the PCC-1 star/cross order for an 8-stud joint, then carry into Bolt Torque for Round 1–4 targets.",
+      designConditions: [
+        { label: "Flange", value: "NPS 4 Class 300 RF" },
+        { label: "Bolt count", value: "8 × 3/4\"" },
+        { label: "Pattern", value: "Star Rounds 1–3 · Circular Round 4" },
+      ],
+      steps: [
+        {
+          step: "Step 1",
+          name: "Number bolts",
+          calculation: "Bolt 1 at 12 o'clock; 2–8 clockwise",
+          result: "N = 8 numbered",
+        },
+        {
+          step: "Step 2",
+          name: "Star sequence",
+          calculation: "1 → 5 → 3 → 7 → 2 → 6 → 4 → 8",
+          result: "8-bolt star order",
+        },
+        {
+          step: "Step 3",
+          name: "Rounds 1–3",
+          calculation: "Same order at 30% / 60% / 100% T",
+          result: "Three star passes",
+        },
+        {
+          step: "Step 4",
+          name: "Round 4 circular",
+          calculation: "1 → 2 → … → 8 at 100% T",
+          result: "Circular check complete",
+        },
+      ],
+      conclusion:
+        "NPS 4 Class 300 uses **1 → 5 → 3 → 7 → 2 → 6 → 4 → 8** for star rounds, then a clockwise circular check. Pair with Bolt Torque for wrench targets.",
+    },
     ...howTo("How to generate a flange bolt tightening sequence", [
       {
         name: "1. Select bolt count",
@@ -3937,6 +5430,77 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
       ["Carbon steel", "7850", "7.85", "0.284", "Other"],
       ["Titanium Gr. 2", "4510", "4.51", "0.163", "Other"],
     ],
+    tableFootnote:
+      "Catalog screening densities used by this calculator. Mill chemistry and wall tolerance shift actual piece mass — confirm certificates for contractual shipping weight.",
+    materialLimitations: {
+      title: "Catalog Alloy Groups & Density Screening Limits",
+      summary:
+        "Densities are typical annealed / catalog values for MTO and freight screening. Mill certificates govern contractual mass.",
+      items: [
+        {
+          materialGroup: "SS304 / SS304L (austenitic)",
+          temperatureLimit: "Ambient catalog ρ",
+          stressLimit: "ρ = 7.93 g/cm³",
+          notes: "Baseline austenitic grade — ~0.9% lighter than SS316 at the same volume.",
+        },
+        {
+          materialGroup: "SS316 / SS316L (austenitic)",
+          temperatureLimit: "Ambient catalog ρ",
+          stressLimit: "ρ = 8.00 g/cm³",
+          notes: "Default material in the calculator. Mo addition raises density vs 304/304L.",
+        },
+        {
+          materialGroup: "Duplex 2205 / Super Duplex 2507",
+          temperatureLimit: "Ambient catalog ρ",
+          stressLimit: "ρ = 7.80 g/cm³",
+          notes:
+            "Lower density than austenitic 316 but higher strength — do not substitute 316 ρ for duplex MTO.",
+        },
+        {
+          materialGroup: "Inconel / Hastelloy / Monel (nickel alloys)",
+          temperatureLimit: "Ambient catalog ρ",
+          stressLimit: "ρ ≈ 8.44–8.89 g/cm³",
+          notes:
+            "Among the densest catalog entries — same envelope weighs significantly more than SS304.",
+        },
+      ],
+      codeRestrictions: [
+        "Screening tool only — not ASTM A6 / A480 mass tolerances or scale weights",
+        "Optional unit-price output is logistics screening — not a binding quotation",
+      ],
+    },
+    workedExample: {
+      title: "Worked example — SS316L plate 2000 × 1000 × 10 mm",
+      scenario:
+        "Estimate piece mass for one SS316L plate at the calculator default dimensions.",
+      designConditions: [
+        { label: "Material", value: "SS316 / SS316L (ρ = 8.00 g/cm³)" },
+        { label: "Shape", value: "Flat plate" },
+        { label: "L × W × t", value: "2000 × 1000 × 10 mm" },
+      ],
+      steps: [
+        {
+          step: "Step 1",
+          name: "Volume",
+          calculation: "V = 2.0 × 1.0 × 0.010 = 0.020 m³",
+          result: "V = 0.020 m³",
+        },
+        {
+          step: "Step 2",
+          name: "Mass",
+          calculation: "m = 8,000 × 0.020 = 160.0 kg",
+          result: "m = 160.0 kg",
+        },
+        {
+          step: "Step 3",
+          name: "Compare SS304",
+          calculation: "7,930 × 0.020 = 158.6 kg (−1.4 kg)",
+          result: "SS316 ~0.9% heavier",
+        },
+      ],
+      conclusion:
+        "One SS316L plate 2000 × 1000 × 10 mm weighs **160.0 kg** at catalog ρ = 8.00 g/cm³. Confirm mill cert for PO mass.",
+    },
     ...howTo("How to estimate SS / alloy piece weight", [
       {
         name: "1. Select material",
@@ -5335,6 +6899,85 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
       ["DN400 / DN250 STD", "55 bar", "Repad required"],
       ['8" STD / 4" STD', "600 psi @ 90°", "Screen A₁ vs A₂–A₄"],
     ],
+    tableFootnote:
+      "Illustrative Pass / Pad-required duties for STD headers. Live results use mill under-tolerance and user-entered S values — re-run before fabrication.",
+    materialLimitations: {
+      title: "Header / Branch Materials & Reinforcement Applicability",
+      summary:
+        "Area replacement per ASME B31.3 Para. 304.3.3 when a branch opening removes pressure-boundary metal. S_h, S_b, and S_r are user inputs at design temperature.",
+      items: [
+        {
+          materialGroup: "A106 Gr. B / A53 Gr. B (CS header & branch)",
+          temperatureLimit: "−29 °C to 427 °C typical",
+          stressLimit: "S ≈ 138 MPa / 20 ksi @ ambient",
+          notes:
+            "Default imperial preset. Most common STD / Sch 40 set-on branches on utility and hydrocarbon lines.",
+        },
+        {
+          materialGroup: "A312 TP304L / TP316L (austenitic)",
+          temperatureLimit: "Cryogenic to ~427 °C",
+          stressLimit: "Lower ambient S than CS",
+          notes:
+            "Excess wall may be insufficient at the same P vs A106 — pad may be required sooner.",
+        },
+        {
+          materialGroup: "A335 Cr-Mo (elevated temperature)",
+          temperatureLimit: "Per Table A-1 derating",
+          stressLimit: "Enter hot S for header / branch / pad",
+          notes:
+            "Required thickness includes weld strength reduction W — do not use ambient S for hot service.",
+        },
+        {
+          materialGroup: "Dissimilar-metal / duplex on CS",
+          temperatureLimit: "Per project combination rules",
+          stressLimit: "S_r may differ from S_h",
+          notes:
+            "Pad allowable must reflect pad stock — not assumed equal to header S_h.",
+        },
+      ],
+      codeRestrictions: [
+        "Screening area method only — not integrally reinforced fittings (Weldolet) or Para. 304.3.2 exemptions",
+        "Branch NPS ≤ header NPS; angles outside 45–90° need detailed analysis",
+      ],
+    },
+    workedExample: {
+      title: "Worked example — 10\" STD / 6\" STD @ 500 psi",
+      scenario:
+        "Screen a 90° set-on branch: NPS 10 header × NPS 6 branch, both Sch 40, P = 500 psi, S = 20 ksi.",
+      designConditions: [
+        { label: "Header / branch", value: '10" Sch 40 / 6" Sch 40' },
+        { label: "Pressure", value: "500 psi" },
+        { label: "Allowable", value: "S_h = S_b = S_r = 20,000 psi" },
+      ],
+      steps: [
+        {
+          step: "Step 1",
+          name: "Bar walls after mill",
+          calculation: "T_H ≈ 0.318 in · T_B ≈ 0.245 in (−12.5%)",
+          result: "Mill-reduced walls",
+        },
+        {
+          step: "Step 2",
+          name: "Required thickness",
+          calculation: "t_h ≈ 0.133 in · t_b ≈ 0.082 in",
+          result: "t from PD/(2(SEW+PY))",
+        },
+        {
+          step: "Step 3",
+          name: "Required area A₁",
+          calculation: "A₁ ≈ 0.833 in²",
+          result: "A₁ = 0.833 in²",
+        },
+        {
+          step: "Step 4",
+          name: "Available A₂+A₃+A₄",
+          calculation: "≈ 1.148 in² > A₁",
+          result: "Adequate without pad",
+        },
+      ],
+      conclusion:
+        "NPS 10 × 6 Sch 40 at **500 psi** provides excess area — **no pad required**. Higher P or larger openings can flip to pad-required.",
+    },
     ...howTo("How to check branch reinforcement", [
       {
         name: "1. Select header and branch NPS × schedule",
@@ -6784,6 +8427,44 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
         "Heavy hex AF from FEK table; confirm OEM nut / stud PO.",
         "PDF / export is a field worksheet, not a torque procedure (use Bolt Torque / Sequence).",
       ],
+    },
+    workedExample: {
+      title: "Worked example — NPS 4 Class 300 RF wrench AF",
+      scenario:
+        "Look up heavy-hex across-flats, stud diameter, bolt count, and RF stud length for the calculator default joint.",
+      designConditions: [
+        { label: "NPS / class", value: "NPS 4 Class 300" },
+        { label: "Facing", value: "Raised Face (RF)" },
+        { label: "Nut", value: "ASME B18.2.2 heavy hex" },
+      ],
+      steps: [
+        {
+          step: "Step 1",
+          name: "Bolting row",
+          calculation: "N = 8 · d_b = 3/4\" · AF = 1-1/4\" (32 mm)",
+          result: "8 × 3/4\" · AF 1-1/4\"",
+        },
+        {
+          step: "Step 2",
+          name: "Heavy-hex check",
+          calculation: "W = 1.5 × 0.75 + 0.125 = 1.25 in",
+          result: "Matches tabulated AF",
+        },
+        {
+          step: "Step 3",
+          name: "Pitch & stud length",
+          calculation: "P_c ≈ π·BCD/N · L_stud RF table",
+          result: "Layout + RF stud length",
+        },
+        {
+          step: "Step 4",
+          name: "Next tools",
+          calculation: "Bolt Torque for T · Sequence for star order",
+          result: "Wrench + torque + sequence",
+        },
+      ],
+      conclusion:
+        "NPS 4 Class 300 RF needs **1-1/4\" (32 mm) heavy-hex AF** on **8 × 3/4\"** studs. Facing does not change AF — only stud length.",
     },
     ...howTo("How to look up flange bolt & wrench size", [
       {

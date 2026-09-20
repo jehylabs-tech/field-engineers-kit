@@ -249,7 +249,9 @@ export default function CalculatorSeoContent({
           {/* Section 2: Allowances, Tolerances & Standards */}
           <section className={GUIDE_CARD} aria-labelledby="section-2-heading">
             <h2 id="section-2-heading" className="mb-2 text-lg font-semibold text-slate-800 dark:text-slate-100">
-              2. Allowances, Tolerances &amp; Standards
+              2.{" "}
+              {data.allowancesAndTolerances.title ??
+                "Allowances, Tolerances & Standards"}
             </h2>
             <p className="mb-4 text-sm leading-relaxed text-slate-700 dark:text-slate-300">
               {data.allowancesAndTolerances.summary}
@@ -304,7 +306,9 @@ export default function CalculatorSeoContent({
           {/* Section 3: Material & Code Limitations */}
           <section className={GUIDE_CARD} aria-labelledby="section-3-heading">
             <h2 id="section-3-heading" className="mb-2 text-lg font-semibold text-slate-800 dark:text-slate-100">
-              3. Material &amp; Code Limitations
+              3.{" "}
+              {data.materialLimitations.title ??
+                "Material & Code Limitations"}
             </h2>
             <p className="mb-4 text-sm leading-relaxed text-slate-700 dark:text-slate-300">
               {data.materialLimitations.summary}
@@ -313,10 +317,31 @@ export default function CalculatorSeoContent({
               <table className="min-w-full divide-y divide-slate-200 text-left text-xs dark:divide-slate-800">
                 <thead className="bg-slate-50 dark:bg-slate-800/60 font-semibold text-slate-700 dark:text-slate-300">
                   <tr>
-                    <th className="px-3.5 py-2.5">Material Group</th>
-                    <th className="px-3.5 py-2.5">Temperature Range</th>
-                    <th className="px-3.5 py-2.5">Allowable Stress / Limit</th>
-                    <th className="px-3.5 py-2.5">Engineering Notes</th>
+                    {(() => {
+                      const t = (data.materialLimitations.title ?? "").toLowerCase();
+                      const applicability =
+                        /applicab|fluid|regime|fitting|space|drain|phase|service|trim|metering/.test(
+                          t,
+                        );
+                      return (
+                        <>
+                          <th className="px-3.5 py-2.5">
+                            {applicability ? "Group / Regime" : "Material Group"}
+                          </th>
+                          <th className="px-3.5 py-2.5">
+                            {applicability
+                              ? "Range / Condition"
+                              : "Temperature Range"}
+                          </th>
+                          <th className="px-3.5 py-2.5">
+                            {applicability
+                              ? "Limit / Criterion"
+                              : "Allowable Stress / Limit"}
+                          </th>
+                          <th className="px-3.5 py-2.5">Engineering Notes</th>
+                        </>
+                      );
+                    })()}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200 bg-white dark:divide-slate-800 dark:bg-slate-900">
@@ -458,15 +483,44 @@ export default function CalculatorSeoContent({
             </details>
           </section>
 
-          {/* Section 5: FAQ */}
-          <section className={GUIDE_CARD} id="faq" aria-labelledby="section-5-heading">
+          {/* Section 5: How to use (JSON-LD HowTo already emitted above) */}
+          {howToSteps.length > 0 ? (
+            <section className={GUIDE_CARD} aria-labelledby="section-5-howto-heading">
+              <h2
+                id="section-5-howto-heading"
+                className="mb-3 text-lg font-semibold text-slate-800 dark:text-slate-100"
+              >
+                5. {data.howToName ?? "How to use this calculator"}
+              </h2>
+              <ol className="space-y-2.5">
+                {howToSteps.map((step, index) => (
+                  <li key={step.name} className="flex gap-2.5">
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded border border-slate-200 bg-slate-50 text-xs font-semibold text-slate-700 dark:border-spec-border dark:bg-spec-bg dark:text-slate-300">
+                      {index + 1}
+                    </span>
+                    <div className="min-w-0 space-y-0.5">
+                      <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 md:text-base">
+                        {stripStepNumber(step.name)}
+                      </p>
+                      <p className="text-sm leading-snug text-slate-600 dark:text-slate-300">
+                        <UnitAwareCopy text={step.text} />
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </section>
+          ) : null}
+
+          {/* Section 6: FAQ */}
+          <section className={GUIDE_CARD} id="faq" aria-labelledby="section-6-heading">
             <details className="group" open>
               <summary className="mb-0 flex cursor-pointer list-none flex-wrap items-center justify-between gap-2 border-b border-transparent pb-0 marker:content-none group-open:mb-4 group-open:border-slate-100 group-open:pb-3 dark:group-open:border-slate-800 [&::-webkit-details-marker]:hidden">
                 <h2
-                  id="section-5-heading"
+                  id="section-6-heading"
                   className="text-xl font-bold text-slate-900 dark:text-slate-100"
                 >
-                  5. Frequently Asked Questions &amp; Technical References
+                  6. Frequently Asked Questions &amp; Technical References
                 </h2>
                 <span className="text-xs font-medium text-slate-500 group-open:hidden dark:text-slate-400">
                   Show

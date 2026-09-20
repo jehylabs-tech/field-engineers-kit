@@ -1,25 +1,25 @@
 ---
-title: "ASME B16.20 Spiral Wound & RTJ Gasket Dimensions and Sealing Stress Guide"
-description: "Look up ASME B16.20 spiral-wound and RTJ gasket dimensions (ID, SE_OD, OR_OD), ring numbers, and PCC-1 / VIII-1 m·y sealing stress for B16.5 flanges."
+title: "ASME B16.20 Spiral Wound & RTJ Gasket Dimensions Guide"
+description: "ASME B16.20 spiral-wound and RTJ gasket dimensions (ID, SE_OD, OR_OD, ring numbers) for B16.5 flanges — then m·y seating in the gasket-stress calculator."
 date: "2026-09-17"
 category: "ASME Standards"
 tags:
   - ASME B16.20
   - Spiral Wound Gasket
   - Ring Type Joint
-  - Gasket Sealing Stress
+  - Gasket Dimensions
   - Flange Sealing
   - ASME PCC-1
 relatedCalculatorUrl: "/calculator/gasket-dimension-selection"
 relatedCalculatorName: "Gasket Dimension & Selection"
 ---
 
-Wrong gasket OD on an RF flange, a missing inner ring on a spiral-wound (SWG) order, or an RTJ ring number that does not match the groove class turns a “standard” B16.5 joint into a hydrotest leak or a crushed sealing element. **ASME B16.20 gasket dimensions** fix the geometry; **ASME PCC-1** / **VIII-1 Appendix 2** $m$ and $y$ factors bound how hard you must seat that geometry.
+Wrong gasket OD on an RF flange, a missing inner ring on a spiral-wound (SWG) order, or an RTJ ring number that does not match the groove class turns a “standard” B16.5 joint into a hydrotest leak or a crushed sealing element. **This guide owns ASME B16.20 geometry** (ID / SE_OD / OR_OD / RTJ ring number). For assembly **$m$·$y$ seating stress** and crush bands, continue in [Flange Gasket Stress](/calculator/flange-gasket-stress) after the dimension lookup.
 
 ## Quick Summary (TL;DR)
 
-- **Takeaway:** Size SWG / RTJ from **ASME B16.20** (NPS × class), then check seating with **$y$** and operating stress with **$m\cdot P$** before locking bolt load.
-- **Governing relation:** Contact area $A_g = \pi/4\,(OD_g^2 - ID_g^2)$; seating floor $\ge \max(y,\sigma_{g,\min})$.
+- **Takeaway:** Size SWG / RTJ from **ASME B16.20** (NPS × class) first — wrong OR_OD or ring number fails the joint before bolt load is even set.
+- **Governing relation:** Contact area $A_g = \pi/4\,(OD_g^2 - ID_g^2)$ once diameters are known; seating floor $\ge \max(y,\sigma_{g,\min})$ is a **follow-on** stress screen.
 - **Code / basis:** ASME B16.20 · ASME B16.5 facing · ASME PCC-1 App. O screening · ASME VIII-1 App. 2 $m$, $y$.
 
 | Item | Field takeaway |
@@ -28,9 +28,8 @@ Wrong gasket OD on an RF flange, a missing inner ring on a spiral-wound (SWG) or
 | **Inner ring** | Order **inner + outer** rings when the datasheet / class requires crush control and bore protection |
 | **RTJ identity** | Ring **number + pitch $P$ + $w\times h$** must match the flange groove class |
 | **Class trap** | NPS 4 **Class 300 → R-37**; **Class 600 → R-38**; **Class 900 → R-39** (FEK catalog) |
-| **SWG $m$, $y$** | Flexible-graphite filled SWG screening: **$m = 3.0$**, **$y = 10{,}000$ psi** |
-| **Stress band** | Seating floor $\max(y,\sigma_{g,\min})$; FEK PCC-1-style **$\sigma_{g,\max}$ ≈ 25 ksi** for filled SWG |
-| **Tooling** | Dimensions → [Gasket Dimension & Selection](/calculator/gasket-dimension-selection); stress → [Flange Gasket Stress](/calculator/flange-gasket-stress) |
+| **Stress follow-on** | $m$, $y$, crush band → [Flange Gasket Stress](/calculator/flange-gasket-stress) (not this page’s primary job) |
+| **Tooling** | Dimensions → [Gasket Dimension & Selection](/calculator/gasket-dimension-selection) |
 
 ---
 
@@ -71,9 +70,9 @@ Hero string format matches the calculator: **ID × SE_OD × OR_OD**.
 
 Ring-type joints are identified by **ring number**, **pitch diameter $P$**, and section **width × height** ($w \times h$). Octagonal rings are the FEK default style for standard R-number grooves; oval rings use the same pitch family but a different section profile — always match **ring style to the groove** stamped on the flange.
 
-### Seating and operating stress (VIII-1 App. 2 / PCC-1 screen)
+### Seating and operating stress (follow-on screen)
 
-Appendix 2 gasket factors for a flexible-graphite-filled spiral wound (FEK `spiral_wound_filled`):
+After B16.20 diameters are locked, Appendix 2 gasket factors for a flexible-graphite-filled spiral wound (FEK `spiral_wound_filled`) are the usual **next** screen in [Flange Gasket Stress](/calculator/flange-gasket-stress):
 
 $$
 m = 3.0,\qquad y = 10{,}000\ \mathrm{psi}\ (69\ \mathrm{MPa})
@@ -132,9 +131,9 @@ From `gasketDimension.json` / [Gasket Dimension & Selection](/calculator/gasket-
 
 Calculator hero (metric): **ID × SE_OD × OR_OD ≈ 98.400 × 149.400 × 266.700 mm**.
 
-### Step 2 — Map seating stress to bolt target
+### Step 2 — Map seating stress to bolt target (sister tool)
 
-Using FEK [Flange Gasket Stress](/calculator/flange-gasket-stress) factors for filled SWG:
+Using FEK [Flange Gasket Stress](/calculator/flange-gasket-stress) factors for filled SWG (geometry stays on this page; stress math lives in that calculator):
 
 | Factor | FEK screening value |
 | :--- | :--- |
@@ -171,8 +170,8 @@ Reproduce Class 300 in the calculator: NPS **4**, class **300**, type **RTJ** �
 ## Interactive tool CTA
 
 <Callout title="Open the FEK gasket tools" variant="tip">
-1. Dimensions: [Gasket Dimension & Selection](/calculator/gasket-dimension-selection) — set **Spiral Wound** or **RTJ**, NPS, and class (example: NPS **6** / Class **300** / SWG).  
-2. Sealing stress: [Flange Gasket Stress & Sealing](/calculator/flange-gasket-stress) — same NPS / class with **spiral-wound filled** for $m$, $y$, and $\sigma_g$ screening.  
+1. **This page’s primary CTA — dimensions:** [Gasket Dimension & Selection](/calculator/gasket-dimension-selection) — set **Spiral Wound** or **RTJ**, NPS, and class (example: NPS **6** / Class **300** / SWG).  
+2. **Sister tool — sealing stress:** [Flange Gasket Stress & Sealing](/calculator/flange-gasket-stress) — same NPS / class with **spiral-wound filled** for $m$, $y$, and $\sigma_g$ screening.  
 3. Makeup: [Bolt Torque & Tensioning](/calculator/bolt-torque-tensioning) and [ASME B16.5 Flange Dimensions & Weight](/calculator/flange-dimension-weight) for stud count, length, and wrench envelope.
 </Callout>
 

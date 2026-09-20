@@ -129,6 +129,23 @@ export const WORKSTATION_DOMAINS: WorkstationDomain[] = [
         ],
       },
       {
+        id: "pipe-support-span",
+        title: "Pipe Support Span",
+        seoLabel:
+          "ASME B31.3 B31.1 Pipe Support Span Spacing Calculator",
+        standard: "ASME B31.3 / B31.1 T121.5",
+        href: "/calculator/pipe-support-span/4inch-sch40-water",
+        keywords: [
+          "pipe support span",
+          "support spacing",
+          "MSS SP-58",
+          "B31.3",
+          "pipe hanger span",
+          "deflection",
+          "hanger spacing",
+        ],
+      },
+      {
         id: "pipe-slope-calculator",
         title: "Pipe Slope & Drainage",
         seoLabel:
@@ -177,6 +194,55 @@ export const WORKSTATION_DOMAINS: WorkstationDomain[] = [
           "laminar fitting loss",
           "K1 Ki Kd",
           "equivalent length",
+        ],
+      },
+      {
+        id: "control-valve-choked-screening",
+        title: "Control Valve Choked Flow",
+        seoLabel:
+          "ISA 75.01 Control Valve Choked Flow xT FL Screening Calculator",
+        standard: "ISA-75.01 / IEC 60534-2-1",
+        href: "/calculator/control-valve-choked-screening/gas-p1-10bar-p2-4bar-xt070",
+        keywords: [
+          "choked flow",
+          "xT",
+          "FL",
+          "cavitation",
+          "flashing",
+          "control valve",
+          "ISA 75.01",
+        ],
+      },
+      {
+        id: "psv-prv-screening",
+        title: "PSV / PRV Orifice Screening",
+        seoLabel:
+          "API 520 PSV Orifice Area Calculator API 526 Letter Designation",
+        standard: "API 520 / API 526",
+        href: "/calculator/psv-prv-screening/gas-p10barg-w5000kgh",
+        keywords: [
+          "psv orifice area calculator",
+          "API 520",
+          "API 526",
+          "relief valve sizing",
+          "orifice letter",
+          "pressure safety valve",
+          "PRV sizing",
+        ],
+      },
+      {
+        id: "natural-gas-z-density",
+        title: "Natural Gas Z & Density",
+        seoLabel:
+          "Natural Gas Compressibility Factor Z and Density Calculator AGA 8",
+        standard: "AGA 8 / Standing–HY",
+        href: "/calculator/natural-gas-z-density/30bar-25c-sg060",
+        keywords: [
+          "natural gas compressibility factor calculator z factor",
+          "natural gas density calculator AGA 8",
+          "real gas z factor calculator",
+          "Standing Katz z factor",
+          "natural gas specific gravity to density",
         ],
       },
       {

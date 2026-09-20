@@ -62,6 +62,22 @@ import {
   parseSteamPropertiesIapwsSpec,
 } from "@/lib/calculators/pseo/steam-properties-iapws-routes";
 import {
+  listPipeSupportSpanPseoRoutes,
+  parsePipeSupportSpanSpec,
+} from "@/lib/calculators/pseo/pipe-support-span-routes";
+import {
+  listControlValveChokedPseoRoutes,
+  parseControlValveChokedSpec,
+} from "@/lib/calculators/pseo/control-valve-choked-screening-routes";
+import {
+  listPsvPrvPseoRoutes,
+  parsePsvPrvSpec,
+} from "@/lib/calculators/pseo/psv-prv-screening-routes";
+import {
+  listNaturalGasZDensityPseoRoutes,
+  parseNaturalGasZDensitySpec,
+} from "@/lib/calculators/pseo/natural-gas-z-density-routes";
+import {
   listAvailableNps,
   listFlangeClassesForNps,
   listFlangeNps,
@@ -212,6 +228,18 @@ export function parseSpecToQuery(spec: string): Record<string, string> | null {
 
   const steamIapws = parseSteamPropertiesIapwsSpec(value);
   if (steamIapws) return steamIapws;
+
+  const pipeSupportSpan = parsePipeSupportSpanSpec(value);
+  if (pipeSupportSpan) return pipeSupportSpan;
+
+  const chokedScreening = parseControlValveChokedSpec(value);
+  if (chokedScreening) return chokedScreening;
+
+  const psvPrv = parsePsvPrvSpec(value);
+  if (psvPrv) return psvPrv;
+
+  const naturalGasZ = parseNaturalGasZDensitySpec(value);
+  if (naturalGasZ) return naturalGasZ;
 
   const inchClassBlind = value.match(
     /^(\d+(?:\.\d+)?)-inch-class-(\d+)(?:-blind)?$/,
@@ -750,6 +778,14 @@ export function listSpecRoutesForSlug(slug: string): SpecRoute[] {
       return listDarby3kFittingLossPseoRoutes(slug);
     case "steam-properties-iapws":
       return listSteamPropertiesIapwsPseoRoutes(slug);
+    case "pipe-support-span":
+      return listPipeSupportSpanPseoRoutes(slug);
+    case "control-valve-choked-screening":
+      return listControlValveChokedPseoRoutes(slug);
+    case "psv-prv-screening":
+      return listPsvPrvPseoRoutes(slug);
+    case "natural-gas-z-density":
+      return listNaturalGasZDensityPseoRoutes(slug);
     case "pneumatic-safety":
       return listPneumaticSafetyPseoRoutes(slug);
     case "pump-npsh":
@@ -1675,6 +1711,160 @@ export function findSpecRouteForInputs(
     if (hit) return hit;
   }
 
+  // Pipe support span: nps + schedule + fluidType (+ units).
+  // Skip control-valve-noise duties (they also carry fluidType + cv).
+  const fluidTypeKey =
+    partial.fluidType != null && partial.fluidType !== ""
+      ? String(partial.fluidType)
+      : "";
+  if (nps && scheduleKey && fluidTypeKey) {
+    const supportHit = routes.find((route) => {
+      if (!route.query.fluidType || route.query.cv) return false;
+      if (route.query.nps !== nps) return false;
+      if (route.query.fluidType !== fluidTypeKey) return false;
+      if (units && route.query.units && route.query.units !== units) {
+        return false;
+      }
+      const routeSch = route.query.schedule || route.query.sch || "";
+      return routeSch === scheduleKey;
+    });
+    if (supportHit) return supportHit;
+  }
+
+  // Control valve choked screening: fluidState + p1 + p2 (+ units).
+  const fluidStateKey =
+    partial.fluidState != null && partial.fluidState !== ""
+      ? String(partial.fluidState)
+      : "";
+  const chokedP1 =
+    partial.p1 != null && partial.p1 !== "" ? String(partial.p1) : "";
+  const chokedP2 =
+    partial.p2 != null && partial.p2 !== "" ? String(partial.p2) : "";
+  if (fluidStateKey && chokedP1 && chokedP2) {
+    const numEq = (a: string, b: string) => {
+      const na = Number(a);
+      const nb = Number(b);
+      return Number.isFinite(na) && Number.isFinite(nb)
+        ? Math.abs(na - nb) < 1e-2
+        : a === b;
+    };
+    const chokedHit = routes.find((route) => {
+      if (!route.query.fluidState || !route.query.p1 || !route.query.p2) {
+        return false;
+      }
+      if (route.query.fluidState !== fluidStateKey) return false;
+      if (units && route.query.units && route.query.units !== units) {
+        return false;
+      }
+      return (
+        numEq(route.query.p1, chokedP1) && numEq(route.query.p2, chokedP2)
+      );
+    });
+    if (chokedHit) return chokedHit;
+    if (
+      routes.length > 0 &&
+      routes.every((route) => Boolean(route.query.fluidState)) &&
+      routes.every((route) => !route.query.nps)
+    ) {
+      return undefined;
+    }
+  }
+
+  // PSV / PRV screening: fluidType + setPressure + requiredCapacity (+ units).
+  const psvSet =
+    partial.setPressure != null && partial.setPressure !== ""
+      ? String(partial.setPressure)
+      : "";
+  const psvCap =
+    partial.requiredCapacity != null && partial.requiredCapacity !== ""
+      ? String(partial.requiredCapacity)
+      : "";
+  if (fluidTypeKey && psvSet && psvCap) {
+    const numEq = (a: string, b: string) => {
+      const na = Number(a);
+      const nb = Number(b);
+      return Number.isFinite(na) && Number.isFinite(nb)
+        ? Math.abs(na - nb) < 1e-2
+        : a === b;
+    };
+    const psvHit = routes.find((route) => {
+      if (
+        !route.query.fluidType ||
+        !route.query.setPressure ||
+        !route.query.requiredCapacity
+      ) {
+        return false;
+      }
+      if (route.query.nps || route.query.cv) return false;
+      if (route.query.fluidType !== fluidTypeKey) return false;
+      if (units && route.query.units && route.query.units !== units) {
+        return false;
+      }
+      return (
+        numEq(route.query.setPressure, psvSet) &&
+        numEq(route.query.requiredCapacity, psvCap)
+      );
+    });
+    if (psvHit) return psvHit;
+    if (
+      routes.length > 0 &&
+      routes.every((route) => Boolean(route.query.setPressure)) &&
+      routes.every((route) => !route.query.nps)
+    ) {
+      return undefined;
+    }
+  }
+
+  // Natural gas Z & density: pressure + temperature + specificGravity (+ units).
+  const ngP =
+    partial.pressure != null && partial.pressure !== ""
+      ? String(partial.pressure)
+      : "";
+  const ngT =
+    partial.temperature != null && partial.temperature !== ""
+      ? String(partial.temperature)
+      : "";
+  const ngSg =
+    partial.specificGravity != null && partial.specificGravity !== ""
+      ? String(partial.specificGravity)
+      : "";
+  if (
+    ngP &&
+    ngT &&
+    ngSg &&
+    routes.every((route) => Boolean(route.query.specificGravity))
+  ) {
+    const numEq = (a: string, b: string) => {
+      const na = Number(a);
+      const nb = Number(b);
+      return Number.isFinite(na) && Number.isFinite(nb)
+        ? Math.abs(na - nb) < 1e-2
+        : a === b;
+    };
+    const ngHit = routes.find((route) => {
+      if (
+        !route.query.pressure ||
+        !route.query.temperature ||
+        !route.query.specificGravity
+      ) {
+        return false;
+      }
+      if (route.query.nps || route.query.fluidType || route.query.inputMode) {
+        return false;
+      }
+      if (units && route.query.units && route.query.units !== units) {
+        return false;
+      }
+      return (
+        numEq(route.query.pressure, ngP) &&
+        numEq(route.query.temperature, ngT) &&
+        numEq(route.query.specificGravity, ngSg)
+      );
+    });
+    if (ngHit) return ngHit;
+    return undefined;
+  }
+
   if (nps && sch) {
     const withMat =
       material !== ""
@@ -2329,6 +2519,98 @@ export function buildSpecSeoCopy(
       description: clipped,
       h1: `${shortTitle} — ${focus}`,
       h2: `${focus} steam properties summary`,
+    };
+  }
+
+  if (
+    q.fluidType &&
+    (calculatorType === "pipe-support-span" ||
+      route.slug === "pipe-support-span")
+  ) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus} | ${brand}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `ASME B31.3 / B31.1 chart pipe support span for ${focus} (deflection, sustained bending, and chart screening).`;
+    const clipped =
+      description.length > 160
+        ? `${description.slice(0, 157).trimEnd()}…`
+        : description;
+    return {
+      title,
+      description: clipped,
+      h1: `${shortTitle} — ${focus}`,
+      h2: `${focus} support span summary`,
+    };
+  }
+
+  if (
+    q.fluidState &&
+    (calculatorType === "control-valve-choked-screening" ||
+      route.slug === "control-valve-choked-screening")
+  ) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus} | ${brand}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `ISA-75.01 / IEC 60534-2-1 choked flow and x_T / F_L screening for ${focus}.`;
+    const clipped =
+      description.length > 160
+        ? `${description.slice(0, 157).trimEnd()}…`
+        : description;
+    return {
+      title,
+      description: clipped,
+      h1: `${shortTitle} — ${focus}`,
+      h2: `${focus} choked-flow summary`,
+    };
+  }
+
+  if (
+    q.fluidType &&
+    (calculatorType === "psv-prv-screening" ||
+      route.slug === "psv-prv-screening")
+  ) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus} | ${brand}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `API 520 / API 526 PSV orifice area screening for ${focus}.`;
+    const clipped =
+      description.length > 160
+        ? `${description.slice(0, 157).trimEnd()}…`
+        : description;
+    return {
+      title,
+      description: clipped,
+      h1: `${shortTitle} — ${focus}`,
+      h2: `${focus} PSV orifice summary`,
+    };
+  }
+
+  if (
+    q.specificGravity &&
+    (calculatorType === "natural-gas-z-density" ||
+      route.slug === "natural-gas-z-density")
+  ) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus} | ${brand}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `Natural gas compressibility Z-factor and real density for ${focus} (Standing–Katz / Hall–Yarborough screening).`;
+    const clipped =
+      description.length > 160
+        ? `${description.slice(0, 157).trimEnd()}…`
+        : description;
+    return {
+      title,
+      description: clipped,
+      h1: `${shortTitle} — ${focus}`,
+      h2: `${focus} Z-factor & density summary`,
     };
   }
 

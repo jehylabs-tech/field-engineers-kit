@@ -1,6 +1,6 @@
 ---
 title: "ASME B31.3 Allowable Stress (S) & Y-Factor Temperature Derating Guide"
-description: "Engineering guide to ASME B31.3 Table A-1 allowable stress derating for CS, SS, and Cr–Mo alloys, Table 304.1.1 Y-Factor transitions, and a verified high-temperature wall-thickness worked example."
+description: "ASME B31.3 Table A-1 allowable stress derating and Table 304.1.1 Y-factor for CS, SS, and Cr–Mo — why falling S (not Y) drives hot-line schedule jumps."
 date: "2026-09-09"
 category: "Piping Engineering"
 tags:
@@ -13,21 +13,23 @@ relatedCalculatorUrl: "/calculator/pipe-wall-thickness"
 relatedCalculatorName: "ASME B31.3 Pipe Thickness Calculator"
 ---
 
-Under ASME B31.3 internal-pressure design, required wall thickness depends not only on pressure $P$ and outside diameter $D$, but also on **Allowable Stress ($S$) at metal design temperature** and the **coefficient $Y$ (Y-Factor)**. As temperature rises, Table A-1 $S$ falls sharply; for ferritic steels above $482^\circ\text{C}$ ($900^\circ\text{F}$), Table 304.1.1 $Y$ also increases. Together, those shifts can move schedule selection by one or more steps.
+Under ASME B31.3 internal-pressure design, **Allowable Stress ($S$) at metal design temperature** and the **coefficient $Y$ (Y-Factor)** often decide whether a hot line stays on carbon steel or must move to Cr–Mo. As temperature rises, Table A-1 $S$ falls sharply; for ferritic steels above $482^\circ\text{C}$ ($900^\circ\text{F}$), Table 304.1.1 $Y$ also increases. Those inputs feed Para. 304.1.2 thickness screening:
 
 $$
 t = \frac{P \cdot D}{2(S \cdot E \cdot W + P \cdot Y)}
 $$
 
-$$
-t_m = t + c,\qquad t_{\text{nom,req}} = \frac{t_m}{0.875}
-$$
+**This page owns Table A-1 $S$ derating, material-group traps, and $Y$ interpolation.** For the full **$t \to t_m \to$ mill factor $\to$ B36 schedule** procedure, use the sister guide [Pipe Wall Thickness Calculation](/docs/asme-b31-3-pipe-wall-thickness-calculation).
 
 <Callout title="Screening vs. code book" variant="info">
 $S$ values in this guide are **engineering screening** figures drawn from ASME B31.3 Appendix A **Table A-1** (representative edition). Final PMS and calculations must use the project edition of Table A-1 and its Notes. Weld Joint Strength Reduction Factor $W$ is typically $1.0$ for seamless pipe outside the creep range; welded joints in creep service require separate evaluation.
 </Callout>
 
 ## Quick Summary (TL;DR)
+
+- **Takeaway:** Hot-line schedule jumps are driven mainly by **falling Table A-1 $S$**, not by the modest rise in $Y$.
+- **Governing inputs:** $S(T)$ from Table A-1 · $Y(T)$ from Table 304.1.1 · then $t = P D / [2(S E W + P Y)]$ in the thickness calculator.
+- **Code / basis:** ASME B31.3 Appendix A Table A-1 · Table 304.1.1 $Y$ · Para. 304.1.2 screening in FEK.
 
 | Item | Field takeaway |
 | :--- | :--- |
@@ -36,7 +38,7 @@ $S$ values in this guide are **engineering screening** figures drawn from ASME B
 | **Stainless (L vs Standard)** | L-Grades improve weldability / sensitization resistance but carry **lower high-temperature $S$**. For $t \gtrsim 150^\circ\text{C}$ strength-driven lines, consider TP304/316 (or H). |
 | **Cr–Mo Alloy** | P11 / P22 / P91 retain usable $S$ above $500^\circ\text{C}$ — standard choice for hot / high-pressure steam and process lines. |
 | **$Y$ (Table 304.1.1)** | Ferritic: $Y=0.4$ up to $482^\circ\text{C}$, then $0.5\to0.7$. Austenitic rises later. Cast iron $Y=0$. |
-| **Thickness effect** | Falling $S$ increases $t$; rising $Y$ slightly reduces $t$ via $P\cdot Y$. **$S$ derating dominates schedule selection.** |
+| **Sister procedure** | Mill under-tolerance + schedule pick → [Wall thickness guide](/docs/asme-b31-3-pipe-wall-thickness-calculation) |
 
 ---
 
@@ -163,7 +165,9 @@ Austenitic steels keep $Y=0.4$ through $1000^\circ\text{F}$, so their $Y$ rise l
 
 ---
 
-## 4. Worked Example — $200^\circ\text{C}$ vs $485^\circ\text{C}$ Derating
+## 4. Worked illustration — how $S$ derating moves schedule ($200^\circ\text{C}$ vs $485^\circ\text{C}$)
+
+Numbers below show **why Table A-1 $S$ dominates**. They use the same $t_m/0.875$ arithmetic as the wall guide so you can see the schedule consequence — they are **not** a substitute for the full mill/schedule procedure in [Pipe Wall Thickness Calculation](/docs/asme-b31-3-pipe-wall-thickness-calculation).
 
 ### Common design data
 
@@ -241,22 +245,23 @@ Changing only $Y: 0.4\to0.5$ at fixed $S=39.4\text{ MPa}$ reduces $t$ from about
 | **3. Creep / Graphitization** | Ban long-term CS above $427^\circ\text{C}$ unless owner standard explicitly allows; prefer alloy PMS. |
 | **4. $Y$ interpolation** | Ferritic above $482^\circ\text{C}$: interpolate $0.4/0.5/0.7$. Austenitic thresholds are higher. |
 | **5. $E$ and $W$** | ERW → $E<1$. Creep-range welds → evaluate $W$. |
-| **6. Mill tolerance** | Apply $t_m/0.875$, then pick B36 schedule. Use measured ID when available. |
+| **6. Mill / schedule** | After $S$ and $Y$ are fixed, apply $t_m/0.875$ and pick B36 schedule in the [wall thickness guide](/docs/asme-b31-3-pipe-wall-thickness-calculation) / calculator. |
 | **7. Flange / valve rating** | Co-derate **B16.5 / B16.34** $P$–$T$ ratings with the pipe wall. |
 | **8. Thermal fatigue / flexibility** | Hot $\Delta T$ needs expansion loops, supports, and SIF checks — thickness alone is insufficient. |
 | **9. Creep rupture life** | Critical lines may need remaining-life / advanced creep assessment beyond hoop screening. |
 
 ### Interactive calculator
 
-<Callout title="Run the thickness screen" variant="tip">
-Reproduce $P$, $D$, $c$, $S$, and $Y$ instantly in the  
+<Callout title="Enter $S$ and $Y$ in the thickness screen" variant="tip">
+Reproduce $P$, $D$, $c$, **temperature-specific $S$**, and **$Y$** in the  
 **[ASME B31.3 Pipe Wall Thickness Calculator](/calculator/pipe-wall-thickness)**.  
-Default $Y=0.4$ for ferritic metal temperature $\le 482^\circ\text{C}$; for hotter cases enter Table A-1 $S$ and Table 304.1.1 $Y$ manually to match Cases A and B.
+Default $Y=0.4$ for ferritic metal temperature $\le 482^\circ\text{C}$; for hotter cases enter Table A-1 $S$ and Table 304.1.1 $Y$ manually to match Cases A and B.  
+Step-by-step mill factor and schedule pick → [Pipe Wall Thickness Calculation](/docs/asme-b31-3-pipe-wall-thickness-calculation).
 </Callout>
 
 ---
 
-## FAQ
+## Frequently Asked Questions (FAQ)
 
 ### Q1. Why does schedule jump so hard at high temperature?
 

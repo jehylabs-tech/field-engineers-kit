@@ -49,6 +49,10 @@ export const CALCULATOR_TYPE_SLUG: Record<CalculatorType, string> = {
   "orifice-plate-flow-meter": "orifice-plate-flow-meter",
   "darby-3k-fitting-loss": "darby-3k-fitting-loss",
   "steam-properties-iapws": "steam-properties-iapws",
+  "pipe-support-span": "pipe-support-span",
+  "control-valve-choked-screening": "control-valve-choked-screening",
+  "psv-prv-screening": "psv-prv-screening",
+  "natural-gas-z-density": "natural-gas-z-density",
 };
 
 export const SLUG_TO_CALCULATOR_TYPE: Record<string, CalculatorType> =
@@ -223,6 +227,22 @@ export const CALCULATOR_PLANT_TAGS: Record<CalculatorType, CalculatorPlantTags> 
     "steam-properties-iapws": {
       consumes: ["temperature", "pressure"],
       produces: ["temperature", "pressure"],
+    },
+    "pipe-support-span": {
+      consumes: ["size", "schedule"],
+      produces: ["size", "schedule"],
+    },
+    "control-valve-choked-screening": {
+      consumes: ["pressure"],
+      produces: ["pressure"],
+    },
+    "psv-prv-screening": {
+      consumes: ["pressure", "temperature"],
+      produces: ["pressure"],
+    },
+    "natural-gas-z-density": {
+      consumes: ["pressure", "temperature"],
+      produces: ["pressure", "temperature"],
     },
   };
 

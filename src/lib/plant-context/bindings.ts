@@ -368,6 +368,65 @@ export function applyPlantContext<T extends Record<string, unknown>>(
       }
       return next as T;
     }
+    case "control-valve-choked-screening": {
+      const unitSystem =
+        inputs.unitSystem === "imperial" ? "imperial" : "metric";
+      const next = { ...inputs } as T & {
+        p1?: number;
+        unitSystem?: string;
+      };
+      if (ctx.pressure) {
+        next.p1 =
+          unitSystem === "imperial"
+            ? pressureToPsi(ctx.pressure)
+            : pressureToBar(ctx.pressure);
+      }
+      return next as T;
+    }
+    case "psv-prv-screening": {
+      const unitSystem =
+        inputs.unitSystem === "imperial" ? "imperial" : "metric";
+      const next = { ...inputs } as T & {
+        setPressure?: number;
+        relievingTemperature?: number;
+        unitSystem?: string;
+      };
+      if (ctx.pressure) {
+        next.setPressure =
+          unitSystem === "imperial"
+            ? pressureToPsi(ctx.pressure)
+            : pressureToBar(ctx.pressure);
+      }
+      if (ctx.temperature) {
+        next.relievingTemperature =
+          unitSystem === "imperial"
+            ? temperatureToF(ctx.temperature)
+            : temperatureToC(ctx.temperature);
+      }
+      return next as T;
+    }
+    case "natural-gas-z-density": {
+      const unitSystem =
+        inputs.unitSystem === "imperial" ? "imperial" : "metric";
+      const next = { ...inputs } as T & {
+        pressure?: number;
+        temperature?: number;
+        unitSystem?: string;
+      };
+      if (ctx.pressure) {
+        next.pressure =
+          unitSystem === "imperial"
+            ? pressureToPsi(ctx.pressure)
+            : pressureToBar(ctx.pressure);
+      }
+      if (ctx.temperature) {
+        next.temperature =
+          unitSystem === "imperial"
+            ? temperatureToF(ctx.temperature)
+            : temperatureToC(ctx.temperature);
+      }
+      return next as T;
+    }
     case "pipe-slope-calculator": {
       const next = { ...inputs } as T & { pipeNps?: string };
       const nps = normalizeNps(ctx.size);
@@ -377,6 +436,7 @@ export function applyPlantContext<T extends Record<string, unknown>>(
     case "piping-equivalent-length":
     case "orifice-plate-flow-meter":
     case "darby-3k-fitting-loss":
+    case "pipe-support-span":
     case "pressure-drop":
     case "flow-velocity":
       return applySchedule(applyNps(inputs, ctx), ctx) as T;
@@ -594,6 +654,39 @@ export function extractPlantContext(
       unitSystem === "imperial"
         ? { value: Number(inputs.pressure.toFixed(1)), unit: "psi" }
         : { value: Number(inputs.pressure.toFixed(3)), unit: "bar" };
+  }
+
+  if (
+    (type === "control-valve-noise" ||
+      type === "control-valve-choked-screening") &&
+    typeof inputs.p1 === "number"
+  ) {
+    ctx.pressure =
+      unitSystem === "imperial"
+        ? { value: Number(inputs.p1.toFixed(1)), unit: "psi" }
+        : { value: Number(inputs.p1.toFixed(3)), unit: "bar" };
+  }
+
+  if (type === "psv-prv-screening" && typeof inputs.setPressure === "number") {
+    ctx.pressure =
+      unitSystem === "imperial"
+        ? { value: Number(inputs.setPressure.toFixed(1)), unit: "psi" }
+        : { value: Number(inputs.setPressure.toFixed(3)), unit: "bar" };
+  }
+  if (
+    type === "psv-prv-screening" &&
+    typeof inputs.relievingTemperature === "number"
+  ) {
+    ctx.temperature =
+      unitSystem === "imperial"
+        ? {
+            value: Number(inputs.relievingTemperature.toFixed(1)),
+            unit: "F",
+          }
+        : {
+            value: Number(inputs.relievingTemperature.toFixed(1)),
+            unit: "C",
+          };
   }
 
   if (

@@ -8,11 +8,29 @@ relatedCalculatorUrl: "/calculator/thermal-expansion-loop"
 relatedCalculatorName: "Thermal Expansion & Loop Sizing Calculator"
 ---
 
-Thermal expansion is one of the primary drivers of mechanical fatigue, pipe rack overload, and rotating equipment nozzle misalignment in industrial process plants. When a piping system experiences temperature swings from ambient installation ($T_1$) to high-temperature operating conditions ($T_2$), the unrestrained metal grows proportionally to its length and temperature change. 
+Thermal expansion drives mechanical fatigue, pipe-rack overload, and rotating-equipment nozzle misalignment. Unrestrained metal grows with length and $\Delta T$; if anchors block that growth without flexibility, axial force rises until shoes lift, flanges leak, or nozzles overload.
 
-If this growth is restricted by rigid anchors without adequate flexibility, enormous axial forces build up—leading to bowed pipe runs, overloaded support bents, or catastrophic flange leakage.
+## Quick Summary (TL;DR)
 
----
+- **Takeaway:** Size a mid-span U-loop so each guided-cantilever leg absorbs $\Delta L/2$ without exceeding the B31.3 displacement stress range $S_A$.
+- **Governing relation:** $\Delta L = \alpha L \Delta T$; $L_{\text{leg}} = \sqrt{3 E D \Delta L_{\text{leg}} / S_A}$; $F_{\text{anchor}} = 12 E I \Delta L / L_{\text{leg}}^3$.
+- **Code / basis:** ASME B31.3 Chapter II Part 5 (flexibility) · Appendix C ($\alpha$, $E$) — screening before CAESAR II / AutoPIPE.
+
+| Item | Field takeaway |
+| :--- | :--- |
+| **$\Delta L$** | Unrestrained growth between anchors |
+| **U-loop split** | Mid-loop → $\Delta L_{\text{leg}} = \Delta L / 2$ |
+| **Guides** | $G_1 \le 4D$ from tangent; $G_2 \le 14D$ from $G_1$ |
+| **SS vs CS** | Austenitic $\alpha$ ≈ 43% higher → deeper legs ($\propto \sqrt{\Delta L}$) |
+| **Limits** | Guided-cantilever screening — not a substitute for 3D stress analysis |
+
+<Callout title="Screening vs. formal stress analysis" variant="info">
+This guide and the [Thermal Expansion & Loop Sizing](/calculator/thermal-expansion-loop) calculator provide **guided-cantilever field screening**. ASME B31.3 still requires computer stress analysis for multi-plane systems, severe cyclic service, relief dynamics, or nozzles on strain-sensitive rotating equipment.
+</Callout>
+
+## Thermal expansion loop sizing in the field
+
+When a line moves from install ambient $T_1$ to operating $T_2$, unrestrained growth must be absorbed in loops, offsets, or expansion joints. Use the interactive [Thermal Expansion & Loop Sizing Calculator](/calculator/thermal-expansion-loop) for $\Delta L$, leg height, anchor force, and guide spacing. Pair material $S$ / $Y$ checks with [ASME B31.3 Pipe Thickness](/calculator/pipe-wall-thickness).
 
 ## 1. Core Engineering Formulas & Parameter Definitions
 
@@ -212,6 +230,6 @@ No. Cold pre-springing (cutting the pipe short during fabrication and stretching
 
 ## Related Tools & Resources
 
-**Interactive Calculator:** Use our [Thermal Expansion & Loop Sizing Calculator](/calculator/thermal-expansion-loop) to instantly compute loop dimensions, anchor forces, and guide spacing for your specific piping configuration.
-
-**Advanced Topics:** Learn more about ASME B31.3 displacement stress range $S_A$ equations, cyclic service factors, and material temperature derating in our comprehensive piping stress analysis guides.
+<Callout title="Open the Thermal Expansion & Loop Sizing calculator" variant="tip">
+Compute $\Delta L$, loop $H$/$W$, anchor force, and guide spacing in the [Thermal Expansion & Loop Sizing Calculator](/calculator/thermal-expansion-loop). Continue wall selection with [ASME B31.3 Pipe Thickness](/calculator/pipe-wall-thickness).
+</Callout>

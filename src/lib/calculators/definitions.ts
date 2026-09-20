@@ -38,7 +38,11 @@ export type CalculatorType =
   | "control-valve-noise"
   | "orifice-plate-flow-meter"
   | "darby-3k-fitting-loss"
-  | "steam-properties-iapws";
+  | "steam-properties-iapws"
+  | "pipe-support-span"
+  | "control-valve-choked-screening"
+  | "psv-prv-screening"
+  | "natural-gas-z-density";
 
 export type FaqItem = {
   q: string;

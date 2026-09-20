@@ -1,22 +1,45 @@
 ---
 title: "ASME B16.5 Flange Weight & Dimensions: Rigging & Bolting Calculation Guide"
-description: "A comprehensive engineering guide for ASME B16.5 flange dimensions, stud bolt specs, wrench sizes, and total mated-pair assembly weight calculation for crane lifting and piping stress analysis."
+description: "ASME B16.5 flange OD, PCD, stud count, wrench size, and mated-pair assembly weight for crane rigging and pipe-rack deadload — aligned to the FEK flange calculator."
 date: "2026-09-03"
 category: "Piping Engineering"
-tags: ["ASME B16.5", "Flange Dimensions", "Flange Weight", "Bolting Specs", "Piping Stress"]
-relatedCalculatorUrl: "/calculators/asme-b16-5-flange-weight-dimensions"
-relatedCalculatorName: "ASME B16.5 Flange Dimension & Weight Calculator"
+tags:
+  - ASME B16.5
+  - Flange Dimensions
+  - Flange Weight
+  - Bolting Specs
+  - Piping Stress
+relatedCalculatorUrl: "/calculator/flange-dimension-weight"
+relatedCalculatorName: "Flange Dimension & Weight"
 ---
 
-In piping engineering and site construction, specifying flange connection dimensions is only half the job. Calculating the **Total Mated-Pair Assembly Weight**—combining two forged flanges, a metallic/spiral-wound gasket, and a complete set of stud bolts with heavy hex nuts—is critical for pipe rack deadload calculations, structural support design, and crane rigging safety plans.
+Specifying flange face dimensions is only half the field job. Crane lifts, pipe-rack deadload, and stress models need the **total mated-pair assembly weight**—two flanges, gasket, studs, and heavy hex nuts—not a single catalog flange mass.
 
-To instantly look up dimensional standards or calculate complex combined assembly weights for various pressure classes and pipe schedules, you can utilize our interactive [ASME B16.5 Flange Dimension & Weight Calculator](/calculators/asme-b16-5-flange-weight-dimensions).
+Look up OD, thickness, PCD, bolting, and $W_{\text{pair}}$ in the interactive [Flange Dimension & Weight](/calculator/flange-dimension-weight) calculator (ASME B16.5 NPS ½–24).
 
----
+## Quick Summary (TL;DR)
+
+- **Takeaway:** Rigging and rack loads use mated-pair mass $W_{\text{pair}} = 2 W_f + W_g + n(W_{\text{stud}} + 2 W_{\text{nut}})$, not bare flange weight alone.
+- **Governing relation:** $\text{PCD} = 2 R_{\text{bc}}$; WN hub bore follows Sch 40 / STD ID (B36.10M) in the FEK table.
+- **Code / basis:** ASME B16.5 dimensional tables; gasket mass screening from B16.20-style catalog values in FEK.
+
+| Item | Field takeaway |
+| :--- | :--- |
+| **Scope** | ASME B16.5 NPS ½–24 (use B16.47 Series A/B above NPS 24) |
+| **RF height** | Cl 150/300: 1.6 mm **in** $T_f$; Cl 600–2500: 6.4 mm **added** to $T_f$ |
+| **PCD tolerance** | $\pm 1.5\text{ mm}$ on bolt circle |
+| **Worked NPS 6 Cl 300 WN RF** | 12 × ¾″ studs · PCD 269.9 mm · $W_{\text{pair}} \approx 61.5\text{ kg}$ |
+| **Limits** | Screening catalog weights — confirm mill certs and project MTO |
+
+<Callout title="Screening vs. stamped B16.5 edition" variant="info">
+FEK flange dimensions and assembly weights are **field screening** from ASME B16.5 tables. Final MTO, mill certificates, and the project edition of B16.5 govern purchase. WN hub bore in FEK uses Sch 40 / STD ID — confirm matching pipe schedule on the isometric.
+</Callout>
+
+## Flange weight and dimensions in the field
+
+Class, NPS, facing, and flange type set the envelope for wrench clearance, stud length, and lift plan. Pair this lookup with [Gasket Dimension Selection](/calculator/gasket-dimension-selection) for SWG / RTJ face sizes and [Bolt Torque & Tensioning](/calculator/bolt-torque-tensioning) for PCC-1-style screening torque.
 
 ## 1. Core Formulas & Assembly Mass Calculation
-
-The total weight of a flanged joint assembly ($W_{\text{pair}}$) must account for all components in the mated pair, rather than relying solely on single-flange catalog values:
 
 $$
 W_{\text{pair}} = 2 \cdot W_f + W_g + n \cdot \left( W_{\text{stud}} + 2 \cdot W_{\text{nut}} \right)
@@ -31,17 +54,12 @@ $$
 | Parameter | Symbol | Engineering Unit | Description |
 | :--- | :---: | :---: | :--- |
 | **Single Flange Mass** | $W_f$ | $\text{kg}$ ($\text{lb}$) | Bare catalog weight of forged flange (WN, SO, BL, SW). |
-| **Gasket Mass** | $W_g$ | $\text{kg}$ ($\text{lb}$) | Metallic or spiral-wound gasket weight per ASME B16.20. |
+| **Gasket Mass** | $W_g$ | $\text{kg}$ ($\text{lb}$) | Metallic or spiral-wound gasket weight (B16.20-style screening). |
 | **Fastener Set Mass** | $W_{\text{fasteners}}$ | $\text{kg}$ ($\text{lb}$) | Total weight of $n$ stud bolts and $2n$ heavy hex nuts. |
-| **Pitch Circle Diameter** | $\text{PCD}$ | $\text{mm}$ ($\text{in}$) | Diameter of the bolt circle passing through hole centers. |
-| **Bolt Hole Count / Size** | $n \times d_h$ | $\text{ea} \times \text{mm}$ | Total bolt hole count and hole diameter ($d_h = d_{\text{stud}} + 1/8$"). |
-
----
-
+| **Pitch Circle Diameter** | $\text{PCD}$ | $\text{mm}$ ($\text{in}$) | Diameter of the bolt circle through hole centers. |
+| **Bolt Hole Count / Size** | $n \times d_h$ | $\text{ea} \times \text{mm}$ | Hole count and diameter ($d_h = d_{\text{stud}} + 1/8$"). |
 
 ## 2. ASME B16.5 Dimensional Tolerances & Facing Specifications
-
-ASME B16.5 establishes strict tolerances to ensure leak-tight seating and prevent stud binding during field makeup:
 
 ### Raised Face (RF) Height Differences
 * **Class 150 & 300**: Feature a $1.6\text{ mm}$ ($1/16"$) raised face, which is **included** inside the nominal flange thickness ($T_f$).
@@ -50,24 +68,20 @@ ASME B16.5 establishes strict tolerances to ensure leak-tight seating and preven
 ### Key Standard Tolerances
 * **Bolt Circle Diameter (PCD)**: Tolerance limit of $\pm 1.5\text{ mm}$ ($\pm 0.06"$).
 * **Adjacent Bolt Hole Spacing**: Tolerance limit of $\pm 0.8\text{ mm}$ ($\pm 0.03"$).
-* **Weld Neck Hub Bore**: $+0.8\text{ mm} / -0.0\text{ mm}$ for $\text{NPS} \le 10$ to prevent internal turbulence at the butt weld seam.
-
----
+* **Weld Neck Hub Bore**: $+0.8\text{ mm} / -0.0\text{ mm}$ for $\text{NPS} \le 10$ to limit internal step at the butt weld.
 
 ## 3. Step-by-Step Worked Example (NPS 6 Class 300 Joint)
 
 ### Field Problem Statement
-Calculate the complete envelope dimensions, stud bolting specifications, wrench size, and total mated-pair assembly weight for an **NPS 6 (DN 150) Class 300 Weld Neck Raised Face (WN RF)** joint connected to Schedule 40 pipe.
+Calculate envelope dimensions, stud bolting, wrench size, and total mated-pair assembly weight for an **NPS 6 (DN 150) Class 300 Weld Neck Raised Face (WN RF)** joint on Schedule 40 pipe.
 
----
+Open the same duty in FEK: [Flange Dimension & Weight](/calculator/flange-dimension-weight) (NPS 6 · Class 300 · WN · RF).
 
 ### Step 1: Extract ASME B16.5 Dimensions
 Per ASME B16.5 Table 11 for NPS 6 Class 300:
 * **Flange Outside Diameter ($OD_f$)**: $317.5\text{ mm}$ ($12.50"$)
 * **Flange Minimum Thickness ($T_f$)**: $36.5\text{ mm}$ ($1.44"$)
 * **Hub Bore Diameter**: $154.06\text{ mm}$ (Matches NPS 6 Sch 40 ID)
-
----
 
 ### Step 2: Determine Bolting Layout & Tool Specs
 Per ASME B16.5 Table 12:
@@ -76,16 +90,12 @@ Per ASME B16.5 Table 12:
 * **Bolt Hole Size ($d_h$)**: $22.2\text{ mm}$ ($7/8"$)
 * **Wrench / Spanner Size**: $1-1/4"$ ($32\text{ mm}$) heavy hex nut socket
 
----
-
 ### Step 3: Calculate Bare Flange Weight (2 Flanges)
 For a single NPS 6 Class 300 WN RF flange, $W_f \approx 26.50\text{ kg}$.
 
 $$
 W_{2f} = 2 \times 26.50\text{ kg} = 53.00\text{ kg}
 $$
-
----
 
 ### Step 4: Calculate Fastener Mass (12 Studs + 24 Heavy Hex Nuts)
 * Mass of one $3/4" \times 120\text{ mm}$ B7 stud $\approx 0.38\text{ kg}$.
@@ -96,34 +106,35 @@ $$
 W_{\text{fasteners}} = 12 \times 0.68\text{ kg} = 8.16\text{ kg}
 $$
 
----
-
 ### Step 5: Total Mated-Pair Assembly Rigging Mass
-Adding the ASME B16.20 spiral-wound gasket mass ($W_g \approx 0.35\text{ kg}$):
+Adding the spiral-wound gasket mass ($W_g \approx 0.35\text{ kg}$):
 
 $$
 W_{\text{pair}} = 53.00\text{ kg} + 0.35\text{ kg} + 8.16\text{ kg} = 61.51\text{ kg}
 $$
 
-**Conclusion**: Crane rigging and pipe rack load calculations must account for **$61.51\text{ kg}$** per joint for NPS 6 Class 300 WN RF.
+**Conclusion**: Crane rigging and pipe rack load calculations must account for **$\approx 61.5\text{ kg}$** per joint for NPS 6 Class 300 WN RF.
 
----
+<Callout title="Field callout" variant="tip">
+Confirm stud length and nut type (heavy hex vs standard) against the facing and gasket stack before ordering. FEK screening weights are catalog averages — use mill MTO for critical lifts.
+</Callout>
 
-## 4. Interactive Engineering Tool
+## Interactive tool CTA
 
-Simulate dimensions, bolt pattern details, and assembly weight for all ASME B16.5 sizes:
+<Callout title="Open the Flange Dimension & Weight calculator" variant="tip">
+Run NPS × class × type × facing lookups and mated-pair mass in [Flange Dimension & Weight](/calculator/flange-dimension-weight). Pair gasket face sizes with [Gasket Dimension Selection](/calculator/gasket-dimension-selection).
+</Callout>
 
-> 🛠️ **[Try Live Tool: ASME B16.5 Flange Dimension & Weight Calculator](/calculators/asme-b16-5-flange-weight-dimensions)**
-
----
-
-## 5. Frequently Asked Questions (FAQ)
+## Frequently Asked Questions (FAQ)
 
 ### Q1. Does Class 150 mean the maximum pressure is 150 psi?
-**No.** Pressure class is a dimensionless designator. Maximum Allowable Working Pressure (MAWP) depends on temperature and material group. For instance, ASTM A105 Class 150 is rated for $19.6\text{ bar}$ ($285\text{ psi}$) at $38^\circ\text{C}$, but derates to $6.5\text{ bar}$ ($95\text{ psi}$) at $300^\circ\text{C}$.
+**No.** Pressure class is a dimensionless designator. Maximum Allowable Working Pressure (MAWP) depends on temperature and material group. Check the [Flange Pressure-Temperature Rating](/calculator/flange-pressure-temperature-rating) calculator for Group 1.1 / 2.2 screening.
 
 ### Q2. When must ASME B16.47 be used instead of ASME B16.5?
-ASME B16.5 covers sizes up to **NPS 24**. For large-diameter piping (**NPS 26 to NPS 60**), you must use ASME B16.47. Note that **Series A** (MSS SP-44) and **Series B** (API 605) flanges have different bolt circles and are **not interchangeable**.
+ASME B16.5 covers sizes up to **NPS 24**. For **NPS 26 to NPS 60**, use ASME B16.47. **Series A** and **Series B** have different bolt circles and are **not interchangeable**.
 
 ### Q3. Can I bolt a Flat Face (FF) flange directly to a Raised Face (RF) flange?
-**Never mate carbon steel RF flanges to cast iron or bronze FF flanges** without removing the raised face or using a full-face gasket. The bending moment induced by tightening bolts across the raised face gap will fracture the fragile cast iron flange.
+**Never mate carbon steel RF flanges to cast iron or bronze FF flanges** without removing the raised face or using a full-face gasket. The bending moment from the raised-face gap can crack brittle FF flanges.
+
+### Q4. Why does the FEK pair weight differ from a single flange catalog sheet?
+Catalog sheets often list **one** flange. Field lifts and rack loads need **two flanges + gasket + full stud/nut set** ($W_{\text{pair}}$). That is why internet “flange only” masses understate crane demand.

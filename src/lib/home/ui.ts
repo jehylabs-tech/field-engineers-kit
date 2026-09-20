@@ -84,6 +84,14 @@ export const CATALOG_SEO_BLURBS: Record<string, string> = {
     "Darby 3-K fitting resistance K and L_eq across laminar, transition, and turbulent Re with Crane comparison.",
   "steam-properties-iapws":
     "IAPWS-IF97 steam enthalpy, entropy, density, and saturation properties for saturated and superheated steam.",
+  "pipe-support-span":
+    "ASME B31.3 / B31.1 chart pipe support span from deflection, sustained bending, and B36 pipe weight.",
+  "control-valve-choked-screening":
+    "ISA-75.01 / IEC 60534-2-1 choked flow and cavitation screening with x_T, F_L, and F_k limits.",
+  "psv-prv-screening":
+    "API 520 / API 526 PSV orifice area screening for gas and liquid with standard letter D–T selection.",
+  "natural-gas-z-density":
+    "Natural gas compressibility Z-factor and real density from Standing Ppc/Tpc and Hall–Yarborough (AGA 8 / CNGA screening).",
   "control-valve-noise":
     "ISA/IEC 60534 control valve noise prediction L_p,1m (dBA) for gas and liquid service.",
   "orifice-plate-flow-meter":

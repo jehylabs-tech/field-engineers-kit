@@ -1407,5 +1407,189 @@
     },
     "is_published": true,
     "created_at": "2026-09-19T00:00:00.000Z"
+  },
+  {
+    "id": "local-pipe-support-span",
+    "category": "piping",
+    "title": "Pipe Support Span Calculator (ASME B31.3 & B31.1 Chart)",
+    "slug": "pipe-support-span",
+    "meta_description": "ASME B31.3 Para. 321 pipe support span from deflection and sustained bending, with ASME B31.1 Table 121.5–style chart compare and ASME B36 pipe weight.",
+    "formula_json": {
+      "type": "pipe-support-span",
+      "standard": "ASME B31.3 ¶321 / B31.1 Table 121.5–style",
+      "formulaLatex": "L_{def}=(384 E I y_{max}/(5 w_{total}))^{1/4},\\quad L_{str}=\\sqrt{10 Z S_{allow}/w_{total}},\\quad L_{rec}=\\min(L_{def},L_{str},L_{chart})",
+      "formulaBasis": "Uniform dead-weight span screening per ASME B31.3 Para. 321. L_def uses simply-supported deflection; L_str uses continuous-span bending M ≈ wL²/10 with S_allow = 0.5 S_h. Layout recommendation is the lesser of beam theory and the ASME B31.1 Table 121.5–style support spacing chart (also common in MSS hanger guides). Pipe OD/ID/weight from ASME B36.10M/B36.19M; stainless weight scaled by density.",
+      "related": [
+        {
+          "slug": "pipe-slope-calculator",
+          "title": "Pipe Slope & Drainage",
+          "carry": "Same NPS"
+        },
+        {
+          "slug": "thermal-expansion-loop",
+          "title": "Thermal Expansion Loop",
+          "carry": "Same NPS / schedule"
+        },
+        {
+          "slug": "pipe-wall-thickness",
+          "title": "Pipe Wall Thickness",
+          "carry": "Same NPS / schedule"
+        }
+      ],
+      "faq": [
+        {
+          "q": "What governs the recommended support span?",
+          "a": "The hero span is the lesser of beam-theory L_beam = min(L_def, L_str) and the B31.1 Table 121.5–style chart. For water-filled carbon steel at the default 12.7 mm mid-span limit, the chart usually governs layout."
+        },
+        {
+          "q": "How does this relate to MSS hanger spacing charts?",
+          "a": "The chart values match ASME B31.1 Table 121.5 and the same numbers commonly reprinted in MSS hanger guides. Beam-theory spans are shown for comparison; prefer the more conservative chart for layout unless analysis justifies a longer run."
+        },
+        {
+          "q": "When should I shorten the calculated span?",
+          "a": "Reduce spans near concentrated loads (valves, heavy flanges, strainers), elbows and tees, and in high-vibration or slug-flow service per ASME B31.3 Para. 321 guidance."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-20T12:00:00.000Z"
+  },
+  {
+    "id": "local-control-valve-choked-screening",
+    "category": "piping",
+    "title": "Control Valve Choked Flow & xT / FL Screening Calculator",
+    "slug": "control-valve-choked-screening",
+    "meta_description": "ISA-75.01.01 / IEC 60534-2-1 control valve choked flow and liquid cavitation screening with x_T, F_L, F_k, and ΔP_max limits.",
+    "formula_json": {
+      "type": "control-valve-choked-screening",
+      "standard": "ISA-75.01.01 / IEC 60534-2-1",
+      "formulaLatex": "x=(P_1-P_2)/P_1,\\quad x_{choked}=F_k x_T,\\quad \\Delta P_{cav}=F_L^2(P_1-r_c P_v)",
+      "formulaBasis": "Choked-flow and cavitation screening per ANSI/ISA-75.01.01 (IEC 60534-2-1 Mod) §5 for standard trims without reducers (F_P = 1). Gas uses x vs F_k·x_T; liquid uses ΔP vs F_L²(P1 − r_c·Pv) with r_c = 0.96 − 0.28√(Pv/Pc).",
+      "related": [
+        {
+          "slug": "valve-cv-sizing",
+          "title": "Valve Cv Sizing",
+          "carry": "Same P1 / P2"
+        },
+        {
+          "slug": "control-valve-noise",
+          "title": "Control Valve Noise",
+          "carry": "Same P1 / P2"
+        },
+        {
+          "slug": "orifice-plate-flow-meter",
+          "title": "Orifice Plate Flow",
+          "carry": "Same differential pressure context"
+        }
+      ],
+      "faq": [
+        {
+          "q": "When is gas flow choked?",
+          "a": "When the pressure differential ratio x = (P1−P2)/P1 reaches or exceeds x_choked = F_k·x_T. Flow then caps at ΔP_max = x_choked·P1."
+        },
+        {
+          "q": "What is F_L used for?",
+          "a": "F_L is the liquid pressure recovery factor. Cavitation screening uses ΔP_cav = F_L²(P1 − r_c·Pv). If actual ΔP ≥ ΔP_cav, cavitation risk is flagged."
+        },
+        {
+          "q": "Are these absolute or gauge pressures?",
+          "a": "Absolute pressures (bar abs / psia). Convert gauge to absolute before entry (add atmospheric pressure)."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-20T13:00:00.000Z"
+  },
+  {
+    "id": "local-psv-prv-screening",
+    "category": "piping",
+    "title": "PSV / PRV Orifice Area Screening Calculator (API 520 / API 526)",
+    "slug": "psv-prv-screening",
+    "meta_description": "API 520 Part I / API 526 PSV orifice area screening for gas and liquid with standard effective orifice letters D through T.",
+    "formula_json": {
+      "type": "psv-prv-screening",
+      "standard": "API 520 Part I / API 526 / ASME VIII UG-131",
+      "formulaLatex": "A_{req}=\\frac{W}{C K_d P_1}\\sqrt{\\frac{TZ}{M}}\\ (\\mathrm{gas}),\\quad A_{req}=\\frac{Q}{38 K_d}\\sqrt{\\frac{G}{\\Delta P}}\\ (\\mathrm{liquid})",
+      "formulaBasis": "Critical gas/vapor sizing per API 520 Part I §5.2 and non-viscous liquid sizing per §5.6 (Kd = 0.975 gas / 0.650 liquid; Kb = Kw = Kv = Kc = Z = 1 for atmospheric discharge screening). Selected orifice is the smallest API 526 Table 1 effective area ≥ A_req (letters D–T).",
+      "related": [
+        {
+          "slug": "valve-cv-sizing",
+          "title": "Valve Cv Sizing",
+          "carry": "Related valve duty"
+        },
+        {
+          "slug": "control-valve-choked-screening",
+          "title": "Control Valve Choked Flow",
+          "carry": "Related pressure duty"
+        },
+        {
+          "slug": "pipe-wall-thickness",
+          "title": "Pipe Wall Thickness",
+          "carry": "Same design pressure context"
+        }
+      ],
+      "faq": [
+        {
+          "q": "What orifice letter does this calculator return?",
+          "a": "The smallest API 526 standard effective orifice (D through T) whose area is at least the API 520 required area A_req."
+        },
+        {
+          "q": "Are Kd values certified?",
+          "a": "No. Screening uses API 520 preliminary Kd = 0.975 (gas) and 0.650 (liquid). Certified ASME UG-131 nameplate Kd from the manufacturer must be used for purchase."
+        },
+        {
+          "q": "Does this include backpressure or two-phase flow?",
+          "a": "No. Atmospheric discharge and single-phase screening only. Built-up/superimposed backpressure, HEM two-phase, and viscosity (Kv) are out of scope."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-20T14:00:00.000Z"
+  },
+  {
+    "id": "local-natural-gas-z-density",
+    "category": "piping",
+    "title": "Natural Gas Compressibility Z-Factor & Density Calculator",
+    "slug": "natural-gas-z-density",
+    "meta_description": "Natural gas compressibility Z-factor and real density screening from Standing Ppc/Tpc, Hall-Yarborough Z, and the real-gas law (AGA 8 / CNGA screening).",
+    "formula_json": {
+      "type": "natural-gas-z-density",
+      "standard": "AGA Report No. 8 / API MPMS 14.2 / Standing–Hall–Yarborough / CNGA",
+      "formulaLatex": "\\rho=\\frac{P\\cdot SG\\cdot M_{air}}{Z\\cdot R\\cdot T},\\quad T_{pc}=168+325\\,SG-12.5\\,SG^{2},\\quad P_{pc}=677+15\\,SG-37.5\\,SG^{2}",
+      "formulaBasis": "Standing sweet-gas pseudo-criticals with optional Wichert-Aziz CO2 and Kay N2 blend; Z from Hall-Yarborough (CNGA fallback); density from the real-gas law. Screening only — AGA-8 Detail / GERG-2008 composition EOS out of scope.",
+      "related": [
+        {
+          "slug": "valve-cv-sizing",
+          "title": "Valve Cv Sizing",
+          "carry": "Same pressure duty"
+        },
+        {
+          "slug": "control-valve-noise",
+          "title": "Control Valve Noise",
+          "carry": "Related gas duty"
+        },
+        {
+          "slug": "control-valve-choked-screening",
+          "title": "Control Valve Choked Flow",
+          "carry": "Related pressure duty"
+        }
+      ],
+      "faq": [
+        {
+          "q": "What Z method is used?",
+          "a": "Standing Ppc/Tpc with Wichert-Aziz (CO2) and Kay (N2), then Hall-Yarborough with CNGA fallback."
+        },
+        {
+          "q": "Is absolute pressure required?",
+          "a": "Yes. Enter bar abs or psia — not gauge — unless you add atmospheric pressure yourself."
+        },
+        {
+          "q": "When is AGA-8 Detail required?",
+          "a": "For custody transfer, P ≳ 150 bar, supercritical transport, or LNG envelopes — verify with full composition EOS."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-20T15:00:00.000Z"
   }
 ]

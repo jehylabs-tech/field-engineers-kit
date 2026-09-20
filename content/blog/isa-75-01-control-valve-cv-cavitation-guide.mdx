@@ -1,0 +1,216 @@
+---
+title: "ISA 75.01.01 Control Valve Cv Sizing Guide"
+description: "ISA-75.01.01 liquid control valve Cv calculation with a FEK-verified cooling-water example (Cv≈87.7). Run F_L cavitation next in the choked-flow sister tool."
+date: "2026-09-21"
+category: "Piping Engineering"
+tags:
+  - Control Valve Cv
+  - ISA 75.01.01
+  - Valve Sizing
+  - Liquid Service
+  - Pressure Recovery Factor FL
+  - Choked Flow
+relatedCalculatorUrl: "/calculator/valve-cv-sizing"
+relatedCalculatorName: "Valve Cv Sizing Calculator"
+---
+
+Undersized control valves starve the loop; oversized valves hunt near the seat. Start with **required US $C_v$ vs catalog $C_{v,\mathrm{sel}}$** in the live [Valve Cv Sizing Calculator](/calculator/valve-cv-sizing), then run the separate $F_L$ cavitation screen in [Control Valve Choked Flow](/calculator/control-valve-choked-screening) before you lock the data sheet.
+
+## Quick Summary (TL;DR)
+
+- **Takeaway:** Compute liquid US $C_v$ from $Q$ and $\Delta P$, then confirm catalog headroom ($C_v \le C_{v,\mathrm{sel}}$). Cavitation is a **second** screen — not folded into the Cv hero.
+- **Governing relation:** $C_v = Q_{\mathrm{gpm}}\sqrt{\mathrm{SG}/\Delta P_{\mathrm{psi}}}$ (FEK US $C_v$).
+- **Code / basis:** ANSI/ISA-75.01.01 · IEC 60534-2-1 screening · $F_P = 1$ (no reducers) in FEK.
+
+| Item | Field takeaway |
+| :--- | :--- |
+| **Worked duty** | Water 25 °C · $Q = 120\text{ m}^3/\text{h}$ · $\Delta P = 2.5\text{ bar}$ |
+| **Required $C_v$** | **≈ 87.7** (US) · $\mathrm{Kv} \approx 75.9$ (reference only — app shows US $C_v$) |
+| **Next screen** | $F_L$ / $\Delta P_{\mathrm{cav}}$ → [Choked Flow](/calculator/control-valve-choked-screening) (this duty ≈ **4.84 bar**, normal liquid) |
+| **Pressure basis** | Cv tool: P1/P2 **gauge** · Cavitation tool: P1/P2 **absolute** |
+| **$F_L$ vs $x_T$** | $F_L$ = liquid recovery · $x_T$ = gas choke — do not mix |
+| **Internet trap** | $C_v = Q/1.17\cdot\sqrt{\mathrm{SG}/\Delta P_{\mathrm{bar}}}$ understates FEK US $C_v$ (~64.9 vs **87.7**) |
+| **Limits** | Screening only — OEM trim / certified noise govern purchase |
+
+---
+
+## Control valve Cv calculation (ISA 75.01) in the field
+
+Capacity and cavitation are **two separate screens**. FieldEngineersKit splits them on purpose:
+
+1. **Capacity** — required US $C_v$ vs catalog $C_{v,\mathrm{sel}}$ → [Valve Cv Sizing Calculator](/calculator/valve-cv-sizing)
+2. **Liquid cavitation / flashing** — $\Delta P$ vs $\Delta P_{\mathrm{cav}}$ with trim $F_L$ → [Control Valve Choked Flow](/calculator/control-valve-choked-screening)
+3. **Noise** — downstream $L_{p,1\mathrm{m}}$ when $\Delta P$ is high → [Control Valve Noise](/calculator/control-valve-noise)
+
+<Callout title="Screening vs. manufacturer software" variant="info">
+FEK $C_v$ and cavitation screens follow **ANSI/ISA-75.01.01** and **IEC 60534-2-1** for **unattached fittings** ($F_P = 1.0$). Final trim selection, anti-cavitation stages, and certified noise must be verified in the manufacturer sizing package. FieldEngineersKit is **not affiliated with** valve OEMs or their proprietary sizing tools.
+</Callout>
+
+---
+
+## Core formulas & parameter definitions
+
+### Liquid US $C_v$ (Valve Cv path)
+
+FEK converts metric liquid inputs to US customary units, then applies:
+
+$$
+C_v = Q_{\mathrm{gpm}} \sqrt{\frac{\mathrm{SG}}{\Delta P_{\mathrm{psi}}}}
+$$
+
+with $Q_{\mathrm{gpm}} = Q_{\mathrm{m}^3/\mathrm{h}} \times 4.402867655$ and $\Delta P_{\mathrm{psi}} = \Delta P_{\mathrm{bar}} \times 14.5037738$. For incompressible liquid, **gauge $\Delta P$ equals absolute $\Delta P$**.
+
+Approximate Kv (not shown in the Cv app):
+
+$$
+K_v \approx \frac{C_v}{1.156}
+$$
+
+### Liquid cavitation limit (choked-screening path)
+
+Pressures here are **absolute**:
+
+$$
+r_c = 0.96 - 0.28\sqrt{\frac{P_v}{P_c}}
+$$
+
+$$
+\Delta P_{\mathrm{cav}} = F_L^{2}\,(P_1 - r_c\,P_v)
+$$
+
+| Condition | FEK state |
+| :--- | :--- |
+| $P_2 \le P_v$ | **Flashing** |
+| $\Delta P \ge \Delta P_{\mathrm{cav}}$ | **Cavitating / choked liquid** |
+| otherwise | **Normal liquid** |
+
+### Gas note ($x_T$)
+
+Gas / vapor choking uses $x = \Delta P / P_1$ against $F_k\cdot x_T$. That is a separate FEK path — do not apply $x_T$ to water or $F_L$ to compressible gas.
+
+### Parameter definitions
+
+| Symbol | Name | Unit | Description |
+| :---: | :--- | :---: | :--- |
+| $C_v$ | Required US flow coefficient | — | FEK hero (liquid/gas screening) |
+| $C_{v,\mathrm{sel}}$ | Catalog full-open $C_v$ | — | Adequate when $C_v \le C_{v,\mathrm{sel}}$ |
+| $Q$ | Volumetric flow | $\mathrm{m}^3/\mathrm{h}$ or GPM | Liquid capacity basis |
+| $P_1$, $P_2$ | Upstream / downstream pressure | bar g or bar abs | **Gauge** in Cv tool · **absolute** in cavitation tool |
+| $\Delta P$ | Valve differential | bar / psi | $P_1 - P_2$ |
+| $F_L$ | Liquid pressure recovery factor | — | Trim-dependent (globe single ≈ 0.90) |
+| $x_T$ | Gas differential pressure ratio factor | — | Gas choke limit (sister tool) |
+| $P_v$, $P_c$ | Vapor / critical pressure | bar abs | Water @ 25 °C: $0.0317$ / $220.64$ |
+| $r_c$ | Critical pressure ratio factor | — | From $P_v/P_c$ |
+| $F_P$ | Piping geometry factor | — | FEK assumes $F_P = 1$ |
+
+### Typical trim $F_L$ / $x_T$ (FEK screening catalog)
+
+| Trim (screening) | $x_T$ | $F_L$ |
+| :--- | ---: | ---: |
+| Globe · single seated | 0.70 | 0.90 |
+| Globe · cage / contoured | 0.75 | 0.85 |
+| Butterfly · 60° open | 0.50 | 0.68 |
+| Butterfly · 90° open | 0.35 | 0.55 |
+| Ball · full port | 0.25 | 0.60 |
+| Ball · V-notch | 0.55 | 0.72 |
+
+Replace with manufacturer certified $F_L$ / $x_T$ when the data sheet provides them.
+
+---
+
+## How to calculate control valve Cv (liquid service worked example)
+
+### Cooling-water loop — worked example
+
+Cooling-water flow control. Water at $25^\circ\mathrm{C}$, $Q = 120\text{ m}^3/\mathrm{h}$, absolute line pressures $P_1 = 6.0\text{ bar abs}$, $P_2 = 3.5\text{ bar abs}$ ($\Delta P = 2.5\text{ bar}$), globe single-seat trim $F_L = 0.90$.
+
+| Input | Value |
+| :--- | :--- |
+| Fluid | Water, $\mathrm{SG} = 1.00$ |
+| $Q$ | $120\text{ m}^3/\mathrm{h}$ |
+| Absolute $P_1$ / $P_2$ | $6.0$ / $3.5\text{ bar abs}$ (cavitation tool) |
+| Cv-tool gauge example | $P_1 = 6.0\text{ bar g}$, $P_2 = 3.5\text{ bar g}$ → same $\Delta P = 2.5\text{ bar}$ |
+| $\Delta P$ | $2.5\text{ bar}$ ($36.26\text{ psi}$) |
+| $F_L$ | $0.90$ (globe · single seated) |
+| $P_v$ / $P_c$ | $0.0317$ / $220.64\text{ bar abs}$ (FEK @ 25 °C) |
+
+### Step 1 — Required US $C_v$ (capacity)
+
+$$
+Q_{\mathrm{gpm}} = 120 \times 4.402867655 = 528.34\text{ GPM}
+$$
+
+$$
+\Delta P_{\mathrm{psi}} = 2.5 \times 14.5037738 = 36.26\text{ psi}
+$$
+
+$$
+C_v = 528.34\sqrt{\frac{1.0}{36.26}} = \mathbf{87.74}
+$$
+
+Reference $\mathrm{Kv} \approx 87.74 / 1.156 \approx 75.9$. A catalog $C_{v,\mathrm{sel}}$ near **100–120** is a common headroom band (enter the actual OEM $C_v$ in the app).
+
+### Step 2 — Critical pressure ratio $r_c$
+
+$$
+r_c = 0.96 - 0.28\sqrt{\frac{0.0317}{220.64}} = 0.9566
+$$
+
+### Step 3 — Cavitation limit $\Delta P_{\mathrm{cav}}$
+
+$$
+\Delta P_{\mathrm{cav}} = 0.90^{2}\,(6.0 - 0.9566\cdot 0.0317) = 4.835\text{ bar}
+$$
+
+### Step 4 — Compare operating $\Delta P$
+
+$$
+\Delta P = 2.5\text{ bar} < 4.835\text{ bar} \implies \textbf{normal liquid (no cavitation)}
+$$
+
+Margin $\Delta P / \Delta P_{\mathrm{cav}} \approx 0.52$.
+
+| Check | Engine result |
+| :--- | :--- |
+| Required $C_v$ | **87.74** |
+| $\Delta P_{\mathrm{cav}}$ | **4.835 bar** |
+| Flow state | **Normal liquid** |
+| Suggested $C_{v,\mathrm{sel}}$ band | **100–120** (headroom guidance) |
+
+<Callout title="Try this duty in FEK" variant="tip">
+**Capacity:** [Valve Cv Sizing](/calculator/valve-cv-sizing?units=metric&fluid=liquid&flow=120&p1=6&p2=3.5&sg=1&temp=25&cv=110) — liquid · $Q=120$ · P1/P2 = 6.0/3.5 bar g · SG = 1 · $C_{v,\mathrm{sel}}=110$. Hero $C_v$ should read **≈ 87.7**.
+
+**Cavitation:** [Control Valve Choked Flow](/calculator/control-valve-choked-screening?units=metric&fluidState=liquid&p1=6&p2=3.5&flFactor=0.9&vaporPressure=0.0317&criticalPressure=220.64&trim=globe_single) — liquid · absolute 6.0/3.5 bar · $F_L=0.90$. Expect **normal liquid** with $\Delta P_{\mathrm{cav}} \approx 4.84\text{ bar}$.
+</Callout>
+
+<Callout title="Field callout — discard the /1.17 internet shortcut" variant="warning">
+Some web calculators publish $C_v = Q/1.17\cdot\sqrt{\mathrm{SG}/\Delta P_{\mathrm{bar}}}$ and would report ≈ 64.9 for this duty. That constant is **not** the FEK / ISA US-$C_v$ path. FieldEngineersKit converts to gpm/psi first → **$C_v \approx 87.7$**.
+</Callout>
+
+---
+
+## Interactive tool CTA
+
+<Callout title="Open the Valve Cv Sizing calculator" variant="tip">
+Run liquid/gas US $C_v$ and $C_v \le C_{v,\mathrm{sel}}$ headroom in [Valve Cv Sizing Calculator](/calculator/valve-cv-sizing). Check $F_L$ cavitation next in [Control Valve Choked Flow](/calculator/control-valve-choked-screening), then estimate downstream noise with [Control Valve Noise](/calculator/control-valve-noise) when $\Delta P$ is high.
+</Callout>
+
+---
+
+## Frequently Asked Questions (FAQ)
+
+### Q1. How do I size liquid Cv and then check cavitation?
+
+First compute required **US $C_v$** from $Q$ and $\Delta P$ in [Valve Cv Sizing](/calculator/valve-cv-sizing). Then, with **absolute** $P_1$, $P_v$, $P_c$, and trim $F_L$, verify $\Delta P < F_L^2(P_1 - r_c P_v)$ in [Control Valve Choked Flow](/calculator/control-valve-choked-screening). Capacity and cavitation are separate screens — FEK does not fold $F_L$ into the Cv hero.
+
+### Q2. What is the difference between $F_L$ pressure recovery factor and $x_T$ choked flow limit?
+
+**$F_L$** is the **liquid** pressure-recovery factor used in $\Delta P_{\mathrm{cav}}$. **$x_T$** is the **gas/vapor** differential-pressure ratio factor used with $x = \Delta P/P_1$ and $F_k$. Do not apply $x_T$ to water service or $F_L$ to compressible gas choking.
+
+### Q3. How does valve sizing affect downstream pipeline pressure drop and noise?
+
+A larger valve $\Delta P$ lowers required $C_v$ but raises jet velocity, cavitation risk, and noise. After capacity and $F_L$ checks, screen $L_{p,1\mathrm{m}}$ with [Control Valve Noise](/calculator/control-valve-noise) and close the line hydraulic balance separately (pipe $\Delta P$ is not the valve $\Delta P$).
+
+### Q4. Why does FieldEngineersKit report a different Cv than $Q/1.17\sqrt{\mathrm{SG}/\Delta P}$?
+
+Because FEK implements the **US $C_v$** definition after converting to **GPM** and **psi**. The $/1.17$ shortcut understates $C_v$ for this water duty (**87.7 vs ≈ 64.9**). Prefer the ISA/IEC unit-consistent path — or manufacturer software for purchase.

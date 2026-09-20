@@ -15,18 +15,25 @@ relatedCalculatorName: "ASME B31.3 Pipe Thickness Calculator"
 
 When designing process piping systems under **ASME B31.3 (Process Piping)**, selecting the correct commercial pipe schedule is one of the most critical safety tasks. Calculating pressure design thickness ($t$) alone is insufficient—engineers must incorporate corrosion allowances ($c$) and manufacturing mill under-tolerances (typically $-12.5\%$) before specifying a final schedule per ASME B36.10M.
 
+This page owns the **$t \to t_m \to t_{\text{nom,req}} \to$ schedule** path. For **Table A-1 $S$ temperature derating** and **Table 304.1.1 $Y$**, use the sister guide [Allowable Stress ($S$) & Y-Factor](/docs/asme-b31-3-allowable-stress-y-factor-temperature-derating-guide).
+
 <Callout title="Screening vs. formal analysis" variant="info">
 This guide covers code-aligned **screening** per Para. 304.1.2. It does not replace formal pipe stress analysis (sustained loads, expansion, seismic) or professional engineer certification.
 </Callout>
 
 ## Quick Summary (TL;DR)
 
-For quick field verification, below is the essential workflow for ASME B31.3 internal pressure design:
+- **Takeaway:** Buy schedule from $t_{\text{nom,req}} = (t + c) / 0.875$, not from pressure-design $t$ alone — mill under-tolerance and corrosion allowance drive the commercial wall.
+- **Governing relation:** $t = P D / [2(S E + P Y)]$; $t_m = t + c$; $t_{\text{nom,req}} = t_m / 0.875$ (12.5% mill).
+- **Code / basis:** ASME B31.3 Para. **304.1.2** Eq. (3a) · mill tolerance per ASTM A106/A53/A312 practice · B36.10M schedule tables.
 
-- **Pressure Design Thickness ($t$)**: Required thickness to withstand internal hoop stress strictly per ASME B31.3 Para. 304.1.2 Eq. (3a).
-- **Minimum Required Thickness ($t_m$)**: Sum of pressure design thickness ($t$) and allowances ($c$, such as corrosion or thread depth).
-- **Nominal Purchase Thickness ($t_{\text{req,nom}}$)**: Account for the standard $-12.5\%$ mill under-tolerance by dividing $t_m$ by $0.875$.
-- **Rule of Thumb**: $t_{\text{req,nom}} = \frac{t + c}{0.875}$. Choose the next standard schedule that meets or exceeds $t_{\text{req,nom}}$.
+| Item | Field takeaway |
+| :--- | :--- |
+| **$t$** | Pressure design thickness (hoop) |
+| **$t_m$** | $t + c$ (corrosion / mechanical) |
+| **$t_{\text{nom,req}}$** | $t_m / 0.875$ before schedule pick |
+| **$S$, $Y$ inputs** | Enter at design $T$; deep derating / $Y$ jumps → [S & Y guide](/docs/asme-b31-3-allowable-stress-y-factor-temperature-derating-guide) |
+| **Limits** | Screening — not sustained/expansion stress analysis |
 
 ## Engineering Standards & Core Formulas
 
@@ -67,7 +74,7 @@ Verify the minimum required wall thickness and select the appropriate commercial
 ### Step 1: Obtain Material & Geometrical Data
 
 - **Outside Diameter ($D$)**: For NPS 6 per ASME B36.10M, $D = 168.28\text{ mm}$.
-- **Allowable Stress ($S$)**: Per ASME B31.3 Table A-1, for ASTM A106 Gr. B at $150^\circ\text{C}$, $S = 137.9\text{ MPa}$ ($20.0\text{ ksi}$).
+- **Allowable Stress ($S$)**: Per ASME B31.3 Table A-1, for ASTM A106 Gr. B at $150^\circ\text{C}$, $S = 137.9\text{ MPa}$ ($20.0\text{ ksi}$). Hot-line Table A-1 derating and creep traps → [S & Y guide](/docs/asme-b31-3-allowable-stress-y-factor-temperature-derating-guide).
 - **Weld Joint Factor ($E$)**: $E = 1.00$ (Seamless pipe).
 - **Coefficient ($Y$)**: $Y = 0.40$ (Ferritic steel at $T \le 482^\circ\text{C}$).
 
@@ -115,9 +122,11 @@ Compare $t_{\text{req,nom}} = 4.702\text{ mm}$ with standard ASME B36.10M NPS 6 
 
 ## Interactive Engineering Calculator
 
-Want to run simulations with custom design pressure, temperature derating, or alternative materials? Use the live FEK calculator linked in the sidebar, or open it directly:
+Want to run simulations with custom design pressure, corrosion allowance, or mill factor? Open the live FEK calculator:
 
 **[ASME B31.3 Pipe Thickness Calculator](/calculator/pipe-wall-thickness)**
+
+For **why $S$ collapses at high temperature** (and when $Y$ barely moves the wall), continue in [Allowable Stress ($S$) & Y-Factor](/docs/asme-b31-3-allowable-stress-y-factor-temperature-derating-guide).
 
 ## Frequently Asked Questions (FAQ)
 

@@ -30,8 +30,8 @@
 날짜: YYYY-MM-DD
 카테고리: Piping Engineering | ASME Standards | Cryogenic | Equipment
 태그 (3–6개):
-관련 계산기 공개 슬러그: (CALCULATOR_TYPE_SLUG / localSeed 실존 값)
-관련 계산기 URL: /calculator/{slug}  (또는 대표 /calculator/{slug}/{spec})
+관련 계산기 공개 슬러그: (필수 — CALCULATOR_TYPE_SLUG / localSeed 실존 값. 계산기 페어 글에서 비우면 작업 중단)
+관련 계산기 URL: /calculator/{slug}  (또는 대표 /calculator/{slug}/{spec}) — 필수, /calculators/ 금지
 관련 계산기 이름: (UI/localSeed title과 일치)
 주 키워드:
 연관 롱테일 (H2/H3·FAQ용, 3개 이상):
@@ -39,12 +39,13 @@
   - 엔진 파일:
   - 카탈로그/JSON (있으면):
   - 참조 계산기 worked example / defaults:
-필수 교차검증 수치 (표에 넣을 값 — 엔진으로 재현 가능해야 함):
-Worked example 시나리오 (입력 → 기대 결과):
+필수 교차검증 수치 (표에 넣을 값 — 엔진으로 재현 가능해야 함; 스펙 기대값과 충돌 시 엔진 assert 채택):
+Worked example 시나리오 (입력 → 기대 결과 — 기대값은 힌트만, 최종 수치는 엔진/JSON):
 내부 교차 링크 계산기 (1–2개 추가 권장):
 톤 메모 / 면책 (OEM 브랜드, screening vs code):
 중복 주의: (유사 기존 글 slug가 있으면 통합·갱신 vs 신규 여부 명시)
 ```
+
 
 ---
 
@@ -73,15 +74,18 @@ relatedCalculatorName: "…"
 - `category`는 **정확히** 다음 중 하나:  
   `Piping Engineering` | `ASME Standards` | `Cryogenic` | `Equipment`  
   (오타 시 파서가 기본값으로 떨어짐 → 실패로 간주)
-- `relatedCalculatorUrl`은 **실제 공개 경로**만. `/calculators/…` **금지**.  
+- `relatedCalculatorUrl` / `relatedCalculatorName`은 **계산기 페어 글에서 필수** (비우면 페이지가 `/calculators`로 폴백 → 실패로 간주).  
+  **실제 공개 경로**만. `/calculators/…` **금지**.  
   `tags.ts` / `localSeed.json` / 기존 글과 대조. 추측 slug 금지  
   (예: Link-Seal = `/calculator/link-seal-penetration-sleeve` ≠ `…-sleeve-sizing`)
 
 ### 수치 / 공학
 - 수식·표·worked example·FAQ 숫자는 **지정 엔진/JSON과 100% 정합** (환각 금지)
+- 스펙「기대 결과」·LLM 통설과 엔진/JSON이 다르면 **엔진 assert를 채택**하고 표·FAQ·CTA 힌트도 그에 맞춘다 (스펙 기댓값을 SEO에 고정 금지)
 - Sch 40 vs STD, B16.5 vs B16.47, RF vs RTJ stud length, heavy hex vs standard hex 등 **FEK가 이미 구분한 규칙**을 따를 것
 - 계산기 공식과 다른 “인터넷 통설” 수식이면: FEK 식을 본문으로 쓰고, 통설은 왜 틀리는지 짧게 설명
 - 브랜드 도구(Link-Seal® 등): screening 고지 + **not affiliated** 문구 (기존 Link-Seal 글 톤)
+
 
 ### 링크
 - 내부 계산기: `[Name](/calculator/{slug})` 또는 listed spec 경로
@@ -100,9 +104,14 @@ relatedCalculatorName: "…"
 
 ## 본문 필수 구조 (순서 고정)
 
-기존 우수 글(`asme-pcc-1-…`, `pipe-penetration-sleeve-link-seal-…`) + Article SEO 규칙을 병합한 **고정 골격**:
+**구조·SEO 게이트 = 본 프롬프트 우선.**  
+톤·Callout·면책 문장만 도메인 참조 글에서 복제한다 (아래 「작성 전 조사」).  
+구형 우수 글(PCC-1 / Link-Seal)은 TL;DR이 표 위주일 수 있으나, **신규 글은 3줄 bullet + 표**를 반드시 채운다.
+
+고정 골격:
 
 1. **(선택, ≤2문장) Hook** — 현장 문제 한 줄. 길면 TL;DR을 가리므로 짧게.
+
 2. **`## Quick Summary (TL;DR)` — 본문 상단 필수**  
    - **추천 스니펫용:** 바로 아래에 **핵심 결론 / 대표 수식 / 핵심 규격**을 **3줄 bullet**로 먼저 배치  
    - 이어서 FEK 표준 **TL;DR 표** (`| Item | Field takeaway |`)로 규칙·패스·한계 요약 (5–8행)  
@@ -159,20 +168,25 @@ relatedCalculatorName: "…"
 ## 작성 전 조사 (필수)
 
 1. `content/blog/`에서 유사 제목/주제 검색 → 중복이면 신규 대신 **기존 글 갱신** 제안  
-2. `data/calculators/localSeed.json` + `src/lib/plant-context/tags.ts`로 **관련 계산기 URL 확정**  
-3. 엔진/JSON에서 worked example 수치 재계산 또는 표 row Read  
-4. 참조 글 1편 Read (구조·Callout·표 톤 복제)  
-   - 볼팅: `asme-pcc-1-flange-bolt-tightening-sequence-torque-guide.mdx`  
-   - 슬리브/실: `pipe-penetration-sleeve-link-seal-sizing-guide.mdx`
+2. `data/calculators/localSeed.json` + `src/lib/plant-context/tags.ts`로 **관련 계산기 URL 확정** (없으면 작업 중단)  
+3. 엔진/JSON에서 worked example 수치 재계산 또는 표 row Read — **스펙 기대값과 다르면 엔진 채택**  
+4. 참조 글 1편 Read (**구조·SEO는 본 프롬프트**, 톤·Callout·면책만 복제)  
+   - **구조·TL;DR(3 bullets+표) 참조 (우선):**  
+     `asme-b31-3-blind-flange-spectacle-blind-thickness-guide.mdx` ·  
+     `asme-b16-20-spiral-wound-rtj-gasket-dimensions-sealing-stress-guide.mdx` ·  
+     `stainless-steel-alloy-pipe-weight-density-guide.mdx`  
+   - **톤·면책만 (볼팅 / 슬리브):**  
+     `asme-pcc-1-flange-bolt-tightening-sequence-torque-guide.mdx` ·  
+     `pipe-penetration-sleeve-link-seal-sizing-guide.mdx`
 
 ---
 
 ## 구현 순서
 
-1. 스펙 검증 (URL·카테고리·수치 소스)  
+1. 스펙 검증 (URL·카테고리·수치 소스 · `relatedCalculatorUrl` 필수)  
 2. frontmatter 작성  
 3. TL;DR (3 bullets + 표) → Intro + Callout → 수식/표 → Worked example → CTA → FAQ  
-4. 링크 `/calculator/` only 전수 검색  
+4. 저장 후 해당 MDX에서 문자열 검색: `/calculators/` = 0건, 본문 단독 `# ` H1 = 0건; 링크는 `/calculator/` only  
 5. 완료 게이트 → 짧은 보고
 
 ---
@@ -181,13 +195,14 @@ relatedCalculatorName: "…"
 
 - [ ] `content/blog/{slug}.mdx` 존재, frontmatter 파싱 가능
 - [ ] `category` ∈ BLOG_CATEGORIES
-- [ ] `relatedCalculatorUrl`이 레포에 실존 (`/calculator/…` only)
+- [ ] `relatedCalculatorUrl` + `relatedCalculatorName` 필수 · 레포에 실존 (`/calculator/…` only)
 - [ ] TL;DR이 상단 + **3줄 bullet** + 요약 표
 - [ ] Intro / 수식·표 / Worked example / CTA / FAQ(≥3) 모두 존재
-- [ ] Worked example 수치가 엔진/JSON과 일치 (최소 1개 핵심 결과 재현)
-- [ ] 본문에 `#` H1 없음; `/calculators/` 문자열 없음
+- [ ] Worked example 수치가 엔진/JSON과 일치 (최소 1개 핵심 결과 재현; 스펙 기대값과 충돌 시 엔진 채택)
+- [ ] 본문에 `#` H1 없음; `/calculators/` 문자열 없음 (저장 후 검색으로 확인)
 - [ ] Callout으로 screening 한계 명시
 - [ ] 유사 글과 제목/의도 중복 없음 (또는 기존 글 업데이트로 처리)
+
 
 보고 형식:
 1. `/docs/{slug}` · 관련 `/calculator/…`  
@@ -201,6 +216,7 @@ relatedCalculatorName: "…"
 
 - 존재하지 않는 calculator slug 발명
 - 엔진과 다른 카탈로그 숫자를 “관례”로 우기기
+- 스펙 기대값을 엔진과 다르게 표·FAQ·CTA에 고정
 - sitemap 수동 수정, 계산기 코드 무단 변경
 - 동일 주제 두 번째 MDX로 SEO 중복 생성
 - 한국어 본문 (톤은 **Technical English**)
@@ -211,5 +227,6 @@ relatedCalculatorName: "…"
 ## (선택) 한 줄 실행 헤더
 
 ```text
-FEK 신규 아티클 — `.cursor/prompts/fek-new-article-master-prompt.md` 준수. 스펙 기입란 기준 MDX 1편 zero-rework 작성. /calculators/ 금지, 엔진·JSON 수치 100% 정합, TL;DR 상단.
+FEK 신규 아티클 — `.cursor/prompts/fek-new-article-master-prompt.md` 준수. 스펙 기입란 기준 MDX 1편 zero-rework. /calculators/ 금지 · relatedCalculatorUrl 필수 · 엔진 assert 우선(기대값 충돌 시) · TL;DR 3 bullets+표 상단 · 구조는 본 프롬프트(톤만 도메인 참조 글).
 ```
+

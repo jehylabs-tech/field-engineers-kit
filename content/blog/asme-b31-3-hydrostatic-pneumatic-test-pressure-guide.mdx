@@ -1,0 +1,202 @@
+---
+title: "ASME B31.3 Hydrostatic & Pneumatic Test Pressure Calculations"
+description: "ASME B31.3 Para. 345 hydrostatic and pneumatic test pressure with St/S ratio, yield-limit screening, and a FEK-verified A106 Gr.B worked example (Pt≈3.25 MPa)."
+date: "2026-09-21"
+category: "Piping Engineering"
+tags:
+  - ASME B31.3
+  - Hydrostatic Test
+  - Pneumatic Leak Test
+  - Test Pressure Calculation
+  - Allowable Stress Ratio
+  - Piping Proof Test
+relatedCalculatorUrl: "/calculator/hydro-test-pressure"
+relatedCalculatorName: "Hydro/Pneumatic Test Pressure"
+---
+
+Leaving the $S_t/S$ temperature correction out of an **ASME B31.3 hydrotest pressure calculation** **under-pressurizes** hot lines tested cold — hydro and pneumatic alike. Compute $P_t$ in the live [Hydro/Pneumatic Test Pressure](/calculator/hydro-test-pressure) calculator before writing the test pack.
+
+## Quick Summary (TL;DR)
+
+- **Takeaway:** Minimum $P_t = k\cdot P\cdot(S_t/S)$ with $k = 1.5$ (hydrostatic) or $1.1$ (pneumatic); FEK caps $S_t/S$ at **6.5** and stores $P$ in **MPa** (metric) or **psi** (imperial) — not bar.
+- **Governing relation:** $P_t = 1.5\,P\,(S_t/S)$ hydro · $P_t = 1.1\,P\,(S_t/S)$ pneumatic (FEK screening per ASME B31.3 Para. 345.4.2).
+- **Code / basis:** ASME B31.3 Para. **345.4** / **345.5** · Table A-1 allowables · site $\sigma_h \le 0.90\,S_y$ (callout only — not solved in-app).
+
+| Item | Field takeaway |
+| :--- | :--- |
+| **Worked duty** | A106 Gr.B · $P = 2.0\text{ MPa}$ ($20\text{ bar g}$) · $S = 127.5\text{ MPa}$ @ 300 °C · $S_t = 138\text{ MPa}$ @ 20 °C |
+| **$S_t/S$** | **1.082** (below 6.5 cap) |
+| **Hydro $P_t$** | **3.25 MPa** (**32.47 bar g**) |
+| **Pneumatic $P_t$** | **2.38 MPa** (**23.81 bar g**) — includes $S_t/S$, not bare $1.1P$ |
+| **Holding guide (NPS 6)** | **60 min** at $P_t$ (FEK NPS ≥ 6″ band) |
+| **Yield check** | Site $\sigma_h$ vs $0.90\,S_y$ — FEK warns; does not compute $\sigma_h$ |
+| **Limits** | Screening $P_t$ — QC manifold, gauges, and pneumatic barriers remain procedural |
+
+---
+
+## ASME B31.3 hydrotest pressure calculation in the field
+
+Hydrostatic leak tests prove joints with water; pneumatic tests use gas and store far more energy at the same pressure. When design metal temperature exceeds test temperature, both paths need the **temperature stress ratio** $S_t/S$.
+
+Use [Hydro/Pneumatic Test Pressure](/calculator/hydro-test-pressure) for $P_t$, $S_t/S$, and the NPS holding-time guide. Pair wall selection with [ASME B31.3 Pipe Thickness](/calculator/pipe-wall-thickness) and class limits with [Flange Pressure-Temperature Rating](/calculator/flange-pressure-temperature-rating). For gas tests, also screen exclusion distance with [Pneumatic Test Safety Distance](/calculator/pneumatic-test-safety-distance).
+
+<Callout title="Screening vs. site QC procedure" variant="info">
+FEK $P_t$ follows ASME B31.3 Para. **345.4.2** multipliers with $S_t/S$ (hydrostatic **1.5**, pneumatic **1.1**). Test stress must still respect yield at test temperature. On-site work needs a formal QC procedure, calibrated gauges (dial range typically about **1.5×–4×** $P_t$), and relief protection for pneumatic pressurization. FEK does **not** replace the stamped test package.
+</Callout>
+
+---
+
+## Core formulas & parameter definitions
+
+### Hydrostatic and pneumatic $P_t$ (FEK engine)
+
+$$
+P_t = 1.5\,P\,\frac{S_t}{S}\quad\text{(hydrostatic)}
+$$
+
+$$
+P_t = 1.1\,P\,\frac{S_t}{S}\quad\text{(pneumatic)}
+$$
+
+$$
+\frac{S_t}{S} \le 6.5\quad\text{(FEK field screening cap)}
+$$
+
+**Unit note:** Metric FEK inputs store $P$, $S$, and $S_t$ in **MPa** (same scale as allowables). Convert gauge bar with $P_{\mathrm{MPa}} = P_{\mathrm{bar}}/10$. Entering **20** instead of **2.0** overstates $P_t$ by **10×**.
+
+### Difference between hydrostatic 1.5× and pneumatic 1.1×
+
+| Mode | Multiplier | FEK formula | Field implication |
+| :--- | :---: | :--- | :--- |
+| Hydrostatic | **1.5** | $1.5\,P\,(S_t/S)$ | Preferred proof test when water fill is practical |
+| Pneumatic | **1.1** | $1.1\,P\,(S_t/S)$ | Lower $P_t$, much higher stored energy — written authorization |
+
+Field sheets that use **$1.1P$ without $S_t/S$** **understate** pneumatic $P_t$ on hot lines tested cold (see worked example: 22.0 vs **23.81 bar g**).
+
+### Maximum allowable test pressure vs yield (site check)
+
+ASME B31.3 expects test stress not to exceed yield at test temperature. A common screen is:
+
+$$
+\sigma_h = \frac{P_t\,D}{2\,t_{\mathrm{act}}} \le 0.90\,S_y
+$$
+
+with $t_{\mathrm{act}}$ often $0.875\times t_{\mathrm{nom}}$ for 12.5% mill under-tolerance. FEK shows a yield-limit **callout**; it does **not** solve $\sigma_h$.
+
+### Parameter definitions
+
+| Symbol | FEK label | Unit | Description |
+| :---: | :--- | :---: | :--- |
+| $P$ | Design pressure (P) | MPa / psi | Weakest-component design gauge pressure |
+| $P_t$ | Test pressure (Pt) | MPa / psi | Calculator hero |
+| $S$ | Design stress | MPa / psi | Table A-1 at design temperature |
+| $S_t$ | Test stress (St) | MPa / psi | Table A-1 at test temperature (ambient CS binding often **138 MPa**) |
+| $S_t/S$ | Stress ratio (St/S) | — | Default 1.0; FEK cap **6.5** |
+| $S_y$ | SMYS | MPa | e.g. A106 Gr.B **240 MPa** — site yield check |
+| NPS | Nominal pipe size | in | Sets FEK holding-time guide |
+
+### FEK NPS holding-time guide
+
+| NPS band | Minimum hold at $P_t$ |
+| :--- | :--- |
+| ≤ 2″ | 10 min |
+| 2½″–4″ | 30 min |
+| ≥ 6″ | 60 min (confirm site procedure) |
+
+Code minimum hold is **≥ 10 min**; FEK bands are a stricter field guide.
+
+---
+
+## How to calculate ASME B31.3 hydrostatic test pressure with temperature stress ratio
+
+### High-temperature process line — worked example
+
+ASTM A106 Grade B NPS 6 Sch 40 line. Design $P = 20.0\text{ bar g}$ → **enter $2.0\text{ MPa}$ in FEK**, $T_{\mathrm{des}} = 300^\circ\mathrm{C}$, hydrostatic water at $T_{\mathrm{test}} = 20^\circ\mathrm{C}$.
+
+| Input | Value |
+| :--- | :--- |
+| Material | ASTM A106 Gr.B ($S_y = 240\text{ MPa}$) |
+| NPS / Sch | NPS 6 · Sch 40 (holding guide + optional site hoop check) |
+| Design pressure $P$ | **2.0 MPa** ($20.0\text{ bar g}$) |
+| Design allowable $S$ | **127.5 MPa** @ 300 °C (Table A-1 screening) |
+| Test allowable $S_t$ | **138.0 MPa** @ 20 °C (FEK ambient CS binding) |
+| Test fluid | Hydrostatic water @ 20 °C |
+
+### Step 1 — Stress ratio $S_t/S$
+
+$$
+\frac{S_t}{S} = \frac{138.0}{127.5} = 1.08235\quad(\le 6.5)
+$$
+
+### Step 2 — Minimum hydrostatic $P_t$
+
+$$
+P_t = 1.5 \times 2.0 \times 1.08235 = \mathbf{3.247\text{ MPa}} = \mathbf{32.47\text{ bar g}}
+$$
+
+FEK hero displays **3.25 MPa** for this duty.
+
+### Step 3 — Alternative pneumatic $P_t$ (same $S_t/S$)
+
+$$
+P_{t,\mathrm{pneu}} = 1.1 \times 2.0 \times 1.08235 = \mathbf{2.381\text{ MPa}} = \mathbf{23.81\text{ bar g}}
+$$
+
+| Shortcut | Value | Verdict |
+| :--- | ---: | :--- |
+| Bare $1.1\times P$ (no $S_t/S$) | 22.0 bar g | **Understates** FEK / Para. 345.4.2 when $S_t/S > 1$ |
+| FEK pneumatic $P_t$ | **23.81 bar g** | Engine assert |
+
+### Step 4 — Holding time and site yield screen
+
+NPS 6 → FEK guide **60 minutes** at $P_t$, then examine per procedure.
+
+Optional site hoop check (not an in-app output), using ASME B36.10M NPS 6 Sch 40 $D = 168.28\text{ mm}$, $t_{\mathrm{nom}} = 7.11\text{ mm}$, $t_{\mathrm{act}} = 0.875\times 7.11 = 6.22\text{ mm}$:
+
+$$
+\sigma_h = \frac{3.247\times 168.28}{2\times 6.22} \approx 44\text{ MPa} \le 0.90\times 240 = 216\text{ MPa}
+$$
+
+| Check | Engine / site result |
+| :--- | :--- |
+| $S_t/S$ | **1.082** |
+| Hydro $P_t$ | **3.25 MPa (32.47 bar g)** |
+| Pneumatic $P_t$ | **2.38 MPa (23.81 bar g)** |
+| Holding guide | **60 min** (NPS ≥ 6″) |
+| $\sigma_h$ vs $0.90\,S_y$ | ≈ 44 MPa ≤ 216 MPa (site OK) |
+
+<Callout title="Try this duty in FEK" variant="tip">
+Open [Hydro/Pneumatic Test Pressure](/calculator/hydro-test-pressure?units=metric&fluid=hydrostatic&pressure=2&sdesign=127.5&stest=138&sts=1.08235&tempcorr=0&nps=6): metric · hydrostatic · **$P = 2$ MPa** (not 20) · $S = 127.5$ · $S_t = 138$ · **St/S = 1.08235** · NPS 6. Hero $P_t$ should read **≈ 3.25 MPa**. Switch fluid to **pneumatic** for **≈ 2.38 MPa**. Open Advanced **1.2** to confirm St/S.
+</Callout>
+
+<Callout title="Field callout — do not drop $S_t/S$ on pneumatic" variant="warning">
+Some field sheets compute pneumatic pressure as **$1.1\times P$ only**. FEK and B31.3 Para. 345.4.2 apply the same **$S_t/S$** used for hydro. For this hot-design / cold-test duty that raises pneumatic $P_t$ from **22.0** to **23.81 bar g**.
+</Callout>
+
+---
+
+## Interactive tool CTA
+
+<Callout title="Open the Hydro/Pneumatic Test Pressure calculator" variant="tip">
+Run hydrostatic or pneumatic $P_t$ with $S_t/S$ in [Hydro/Pneumatic Test Pressure](/calculator/hydro-test-pressure). Confirm design wall on [ASME B31.3 Pipe Thickness](/calculator/pipe-wall-thickness), flange class on [Flange Pressure-Temperature Rating](/calculator/flange-pressure-temperature-rating), and pneumatic exclusion distance on [Pneumatic Test Safety Distance](/calculator/pneumatic-test-safety-distance).
+</Callout>
+
+---
+
+## Frequently Asked Questions (FAQ)
+
+### Q1. How to calculate ASME B31.3 hydrostatic test pressure with temperature stress ratio?
+
+Enter design pressure $P$ in **MPa** (metric FEK), set $S_t$ and $S$ from Table A-1 (or enter St/S directly in Advanced 1.2), and compute $P_t = 1.5\,P\,(S_t/S)$ with the ratio capped at **6.5**. Reproduce the worked duty via the tip link above.
+
+### Q2. What is the difference between hydrostatic leak test 1.5× and pneumatic test 1.1× per B31.3 Para. 345?
+
+Hydrostatic uses multiplier **1.5**; pneumatic uses **1.1**. In FEK both multiply by **$S_t/S$**. Pneumatic stores much more energy — treat it as a controlled hazardous operation with written authorization and barriers, not a “lighter hydro.”
+
+### Q3. What is the maximum allowable hydrostatic test pressure avoiding yield stress failure?
+
+B31.3 expects test stress not to exceed yield at test temperature. A common screen is $\sigma_h = P_t D/(2 t_{\mathrm{act}}) \le 0.90\,S_y$. FEK warns on yield but **does not compute** $\sigma_h$ — confirm with actual $D$ and $t_{\mathrm{act}}$ on the isometric / mill cert.
+
+### Q4. Why does FEK ask for MPa when my isometric shows bar?
+
+Because the hydro calculator’s metric unit is **MPa** (consistent with stress inputs). Convert with $P_{\mathrm{MPa}} = P_{\mathrm{bar}}/10$. Entering **20** as if it were MPa would overstate $P_t$ by **10×**.

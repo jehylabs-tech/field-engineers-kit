@@ -316,6 +316,7 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
     "designTemperature",
     "fluidTemp",
     "temp",
+    "relievingTemperature",
   ]) {
     if (typeof next[key] === "number" && Number.isFinite(next[key] as number)) {
       convertNum(key, toImperial ? cToF : fToC, 0);
@@ -414,6 +415,9 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
     "pressure",
     "p1",
     "p2",
+    "vaporPressure",
+    "criticalPressure",
+    "setPressure",
   ]) {
     if (typeof next[key] === "number" && Number.isFinite(next[key] as number)) {
       convertNum(key, toImperial ? barToPsi : psiToBar, 3);
@@ -428,6 +432,33 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
       toImperial ? (n) => n * KG_TO_LB : (n) => n / KG_TO_LB,
       1,
     );
+  }
+
+  // PSV / PRV screening capacity: gas kg/h↔lb/h · liquid L/min↔GPM
+  if (
+    "setPressure" in next &&
+    "requiredCapacity" in next &&
+    typeof next.fluidType === "string" &&
+    typeof next.requiredCapacity === "number" &&
+    Number.isFinite(next.requiredCapacity)
+  ) {
+    if (next.fluidType === "liquid") {
+      const LMIN_TO_GPM = 0.2641720524;
+      convertNum(
+        "requiredCapacity",
+        toImperial
+          ? (n) => n * LMIN_TO_GPM
+          : (n) => n / LMIN_TO_GPM,
+        2,
+      );
+    } else {
+      const KG_TO_LB = 2.2046226218;
+      convertNum(
+        "requiredCapacity",
+        toImperial ? (n) => n * KG_TO_LB : (n) => n / KG_TO_LB,
+        1,
+      );
+    }
   }
 
   // Bolt / gasket target stress: MPa ↔ psi
@@ -509,6 +540,31 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
       toImperial ? mmToIn : inToMm,
       toImperial ? 3 : 1,
     );
+  }
+
+  // Pipe support span / similar: allowable mid-span deflection mm ↔ in
+  if (
+    typeof next.allowableDeflection === "number" &&
+    Number.isFinite(next.allowableDeflection)
+  ) {
+    convertNum(
+      "allowableDeflection",
+      toImperial ? mmToIn : inToMm,
+      toImperial ? 3 : 1,
+    );
+    // Snap common 12.7 mm ↔ 0.5 in screening default.
+    if (
+      toImperial &&
+      Math.abs((next.allowableDeflection as number) - 0.5) < 0.02
+    ) {
+      next.allowableDeflection = 0.5;
+    }
+    if (
+      !toImperial &&
+      Math.abs((next.allowableDeflection as number) - 12.7) < 0.3
+    ) {
+      next.allowableDeflection = 12.7;
+    }
   }
 
   // Wind speed: m/s ↔ mph

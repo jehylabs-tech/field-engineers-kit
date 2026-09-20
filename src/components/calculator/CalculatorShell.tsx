@@ -162,6 +162,22 @@ const CALCULATOR_VIEWS: Record<
     () => import("./calculators/SteamPropertiesIapwsCalculator"),
     { loading: loadingFallback },
   ),
+  "pipe-support-span": dynamic(
+    () => import("./calculators/PipeSupportSpanCalculator"),
+    { loading: loadingFallback },
+  ),
+  "control-valve-choked-screening": dynamic(
+    () => import("./calculators/ControlValveChokedScreeningCalculator"),
+    { loading: loadingFallback },
+  ),
+  "psv-prv-screening": dynamic(
+    () => import("./calculators/PsvPrvScreeningCalculator"),
+    { loading: loadingFallback },
+  ),
+  "natural-gas-z-density": dynamic(
+    () => import("./calculators/NaturalGasZDensityCalculator"),
+    { loading: loadingFallback },
+  ),
   "hydro-test": dynamic(() => import("./calculators/HydroTestCalculator"), {
     loading: loadingFallback,
   }),
@@ -244,7 +260,7 @@ function CalculatorMain({
     seo?.allowancesAndTolerances &&
     seo?.materialLimitations &&
     seo?.workedExample
-      ? 6
+      ? 7
       : 5;
 
   return (
