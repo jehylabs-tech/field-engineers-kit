@@ -2901,6 +2901,8 @@ describe("tank-vessel-volume", () => {
     expect(c.vTotalM3).toBeGreaterThan(c.vLiquidM3);
     const out = calculateTankVesselVolume(DEFAULT_TANK_VESSEL_VOLUME_INPUTS);
     expect(out.heroLabel).toMatch(/liquid volume/i);
+    expect(out.rows.length).toBeLessThanOrEqual(4);
+    expect(out.callouts?.length).toBe(1);
     expectNoPoison(out);
   });
 

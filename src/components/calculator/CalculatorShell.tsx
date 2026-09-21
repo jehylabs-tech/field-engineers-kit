@@ -178,6 +178,18 @@ const CALCULATOR_VIEWS: Record<
     () => import("./calculators/NaturalGasZDensityCalculator"),
     { loading: loadingFallback },
   ),
+  "heat-exchanger-lmtd-duty": dynamic(
+    () => import("./calculators/HeatExchangerLmtdDutyCalculator"),
+    { loading: loadingFallback },
+  ),
+  "compressor-polytropic-power": dynamic(
+    () => import("./calculators/CompressorPolytropicPowerCalculator"),
+    { loading: loadingFallback },
+  ),
+  "api650-tank-shell-thickness": dynamic(
+    () => import("./calculators/Api650TankShellThicknessCalculator"),
+    { loading: loadingFallback },
+  ),
   "hydro-test": dynamic(() => import("./calculators/HydroTestCalculator"), {
     loading: loadingFallback,
   }),

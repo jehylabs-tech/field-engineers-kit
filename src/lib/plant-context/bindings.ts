@@ -427,6 +427,60 @@ export function applyPlantContext<T extends Record<string, unknown>>(
       }
       return next as T;
     }
+    case "heat-exchanger-lmtd-duty": {
+      const unitSystem =
+        inputs.unitSystem === "imperial" ? "imperial" : "metric";
+      const next = { ...inputs } as T & {
+        tempHotIn?: number;
+        tempColdIn?: number;
+        unitSystem?: string;
+      };
+      if (ctx.temperature) {
+        const t =
+          unitSystem === "imperial"
+            ? temperatureToF(ctx.temperature)
+            : temperatureToC(ctx.temperature);
+        next.tempHotIn = t;
+        next.tempColdIn = t;
+      }
+      return next as T;
+    }
+    case "compressor-polytropic-power": {
+      const unitSystem =
+        inputs.unitSystem === "imperial" ? "imperial" : "metric";
+      const next = { ...inputs } as T & {
+        suctionPress?: number;
+        dischargePress?: number;
+        suctionTemp?: number;
+        unitSystem?: string;
+      };
+      if (ctx.pressure) {
+        const p =
+          unitSystem === "imperial"
+            ? pressureToPsi(ctx.pressure)
+            : pressureToBar(ctx.pressure);
+        next.suctionPress = p;
+      }
+      if (ctx.temperature) {
+        next.suctionTemp =
+          unitSystem === "imperial"
+            ? temperatureToF(ctx.temperature)
+            : temperatureToC(ctx.temperature);
+      }
+      return next as T;
+    }
+    case "api650-tank-shell-thickness": {
+      const next = { ...inputs } as T & { materialGrade?: string };
+      if (ctx.material) {
+        const m = String(ctx.material).toUpperCase();
+        if (m.includes("516")) next.materialGrade = "A516-70";
+        else if (m.includes("283")) next.materialGrade = "A283-C";
+        else if (m.includes("537")) next.materialGrade = "A537-1";
+        else if (m.includes("A36") || m.includes("36"))
+          next.materialGrade = "A36";
+      }
+      return next as T;
+    }
     case "pipe-slope-calculator": {
       const next = { ...inputs } as T & { pipeNps?: string };
       const nps = normalizeNps(ctx.size);

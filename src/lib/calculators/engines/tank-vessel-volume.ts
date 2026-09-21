@@ -550,10 +550,6 @@ export function calculateTankVesselVolume(
     heroStatus = `${c.fillPct.toFixed(1)} % of total capacity`;
   }
 
-  const vesselHeightM =
-    inputs.orientation === "vertical"
-      ? 2 * c.headDepthM + c.lengthM
-      : c.diM;
   const headDepthLabel = c.invalid
     ? "—"
     : fmtDimM(c.headDepthM, inputs.unitSystem);
@@ -561,18 +557,11 @@ export function calculateTankVesselVolume(
   const callouts: ResultCallout[] = [
     {
       tone: "info",
-      title: "ASME VIII Div 1 Head Geometry",
-      body: "Head volumes use ASME VIII Div 1 screening geometry: flat = 0; 2:1 SE = π/24·Di³; hemi = π/6·Di³; torispherical Klöpper / ASME F&D ≈ 0.084766·Di³ (R=Di, r_k=0.06·Di). Confirm stamped head drawings for contractual work.",
+      title: "ASME VIII / API 650 screening",
+      body: "Geometric level–capacity screening (ASME VIII Div 1 head volumes). No internals. Confirm with API 650 / ISO 7507 certified strapping for custody transfer.",
       items: [
-        `Head type: ${headMeta.label}`,
-        `One-head volume: ${fmtVolShort(c.vHeadM3, inputs.unitSystem)}`,
-        `One-head depth: ${headDepthLabel}`,
+        `${headMeta.shortLabel} · one-head ${fmtVolShort(c.vHeadM3, inputs.unitSystem)} · depth ${headDepthLabel}`,
       ],
-    },
-    {
-      tone: "warn",
-      title: "Calibration Chart Warning",
-      body: "Dipstick / strapping table is a geometric screening chart with no internals (coils, baffles, mixers, heaters). Per API 650 / ISO 7507 field practice, use certified strapping after fabrication for custody transfer.",
     },
   ];
 
@@ -585,62 +574,10 @@ export function calculateTankVesselVolume(
     },
     {
       section: "Capacity",
-      label: "Total capacity V_total",
-      value: c.invalid ? "—" : fmtVolShort(c.vTotalM3, inputs.unitSystem),
-    },
-    {
-      section: "Capacity",
-      label: "Shell volume V_shell",
-      value: c.invalid ? "—" : fmtVolShort(c.vShellM3, inputs.unitSystem),
-    },
-    {
-      section: "Capacity",
-      label: "Both heads 2×V_head",
-      value: c.invalid ? "—" : fmtVolShort(2 * c.vHeadM3, inputs.unitSystem),
-    },
-    {
-      section: "Capacity",
-      label: "One-head volume V_head",
-      value: c.invalid ? "—" : fmtVolShort(c.vHeadM3, inputs.unitSystem),
-    },
-    {
-      section: "Geometry",
-      label: "Inside diameter Di",
-      value: c.invalid ? "—" : fmtDimM(c.diM, inputs.unitSystem),
-    },
-    {
-      section: "Geometry",
-      label: "Shell straight length L",
-      value: c.invalid ? "—" : fmtDimM(c.lengthM, inputs.unitSystem),
-    },
-    {
-      section: "Geometry",
-      label: "Liquid level h",
-      value: c.invalid ? "—" : fmtDimM(c.hM, inputs.unitSystem),
-    },
-    {
-      section: "Geometry",
-      label: "One-head depth",
-      value: headDepthLabel,
-    },
-    {
-      section: "Geometry",
-      label:
-        inputs.orientation === "vertical"
-          ? "Vessel height (2·head + L)"
-          : "Fill height limit (Di)",
-      value: c.invalid ? "—" : fmtDimM(vesselHeightM, inputs.unitSystem),
-    },
-    {
-      section: "Surfaces",
-      label: "Wetted interior area",
-      value: c.invalid ? "—" : fmtArea(c.wettedAreaM2, inputs.unitSystem),
-      emphasis: true,
-    },
-    {
-      section: "Surfaces",
-      label: "Total interior metal area",
-      value: c.invalid ? "—" : fmtArea(c.totalInteriorAreaM2, inputs.unitSystem),
+      label: "Shell · both heads",
+      value: c.invalid
+        ? "—"
+        : `${fmtVolShort(c.vShellM3, inputs.unitSystem)} · ${fmtVolShort(2 * c.vHeadM3, inputs.unitSystem)}`,
     },
     {
       section: "Mass",
@@ -649,9 +586,9 @@ export function calculateTankVesselVolume(
       emphasis: true,
     },
     {
-      section: "Mass",
-      label: "Fluid density",
-      value: fmtDensity(c.densityKgM3, inputs.unitSystem),
+      section: "Surface",
+      label: "Wetted interior area",
+      value: c.invalid ? "—" : fmtArea(c.wettedAreaM2, inputs.unitSystem),
     },
   ];
 
@@ -666,7 +603,7 @@ export function calculateTankVesselVolume(
       value: dimLabel(inputs.liquidLevel, inputs.unitSystem),
     },
     { label: "Fluid", value: fluidMeta.label },
-    { label: "Density", value: `${c.densityKgM3.toFixed(0)} kg/m³` },
+    { label: "Density", value: fmtDensity(c.densityKgM3, inputs.unitSystem) },
     {
       label: "Liquid volume",
       value: c.invalid ? "—" : fmtVolMulti(c.vLiquidM3),
@@ -686,6 +623,10 @@ export function calculateTankVesselVolume(
     {
       label: "2 × V_head",
       value: c.invalid ? "—" : fmtVolShort(2 * c.vHeadM3, inputs.unitSystem),
+    },
+    {
+      label: "One-head depth",
+      value: headDepthLabel,
     },
     {
       label: "Ullage",
@@ -709,8 +650,12 @@ export function calculateTankVesselVolume(
     })),
   ];
 
-  const liters = c.vLiquidM3 * M3_TO_L;
   const bbl = c.vLiquidM3 * M3_TO_BBL;
+  const alsoVol = c.invalid
+    ? "—"
+    : inputs.unitSystem === "imperial"
+      ? `${c.vLiquidM3.toFixed(2)} m³`
+      : `${(c.vLiquidM3 * M3_TO_US_GAL).toFixed(0)} US gal`;
 
   return {
     heroLabel: "Partial liquid volume",
@@ -720,22 +665,9 @@ export function calculateTankVesselVolume(
     heroBadges: c.invalid
       ? undefined
       : [
-          {
-            label: "Fill",
-            value: `${c.fillPct.toFixed(1)} %`,
-          },
-          {
-            label: "Liters",
-            value: `${liters.toFixed(0)} L`,
-          },
-          {
-            label: "Oil bbl",
-            value: `${bbl.toFixed(2)} bbl`,
-          },
-          {
-            label: "Heads",
-            value: headMeta.shortLabel,
-          },
+          { label: "Also", value: alsoVol },
+          { label: "Fill", value: `${c.fillPct.toFixed(1)} %` },
+          { label: "Oil bbl", value: `${bbl.toFixed(2)} bbl` },
         ],
     summary: [
       {
@@ -743,16 +675,12 @@ export function calculateTankVesselVolume(
         value: c.invalid ? "—" : fmtVolShort(c.vTotalM3, inputs.unitSystem),
       },
       {
-        label: "Shell volume V_shell",
-        value: c.invalid ? "—" : fmtVolShort(c.vShellM3, inputs.unitSystem),
+        label: "Liquid mass",
+        value: c.invalid ? "—" : fmtMass(c.massKg, inputs.unitSystem),
       },
       {
-        label: "Both heads 2×V_head",
-        value: c.invalid ? "—" : fmtVolShort(2 * c.vHeadM3, inputs.unitSystem),
-      },
-      {
-        label: "Ullage volume",
-        value: c.invalid ? "—" : fmtVolShort(c.vUllageM3, inputs.unitSystem),
+        label: "One-head depth",
+        value: headDepthLabel,
       },
     ],
     summaryStatus: {

@@ -53,6 +53,9 @@ export const CALCULATOR_TYPE_SLUG: Record<CalculatorType, string> = {
   "control-valve-choked-screening": "control-valve-choked-screening",
   "psv-prv-screening": "psv-prv-screening",
   "natural-gas-z-density": "natural-gas-z-density",
+  "heat-exchanger-lmtd-duty": "heat-exchanger-lmtd-duty",
+  "compressor-polytropic-power": "compressor-polytropic-power",
+  "api650-tank-shell-thickness": "api650-tank-shell-thickness",
 };
 
 export const SLUG_TO_CALCULATOR_TYPE: Record<string, CalculatorType> =
@@ -243,6 +246,18 @@ export const CALCULATOR_PLANT_TAGS: Record<CalculatorType, CalculatorPlantTags> 
     "natural-gas-z-density": {
       consumes: ["pressure", "temperature"],
       produces: ["pressure", "temperature"],
+    },
+    "heat-exchanger-lmtd-duty": {
+      consumes: ["temperature", "pressure"],
+      produces: ["temperature"],
+    },
+    "compressor-polytropic-power": {
+      consumes: ["pressure", "temperature"],
+      produces: ["pressure", "temperature"],
+    },
+    "api650-tank-shell-thickness": {
+      consumes: ["material"],
+      produces: ["material"],
     },
   };
 

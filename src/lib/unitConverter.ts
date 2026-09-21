@@ -317,6 +317,11 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
     "fluidTemp",
     "temp",
     "relievingTemperature",
+    "tempHotIn",
+    "tempHotOut",
+    "tempColdIn",
+    "tempColdOut",
+    "suctionTemp",
   ]) {
     if (typeof next[key] === "number" && Number.isFinite(next[key] as number)) {
       convertNum(key, toImperial ? cToF : fToC, 0);
@@ -418,13 +423,27 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
     "vaporPressure",
     "criticalPressure",
     "setPressure",
+    "suctionPress",
+    "dischargePress",
   ]) {
     if (typeof next[key] === "number" && Number.isFinite(next[key] as number)) {
       convertNum(key, toImperial ? barToPsi : psiToBar, 3);
     }
   }
 
-  // Mass flow: kg/h ↔ lb/h (control valve noise)
+  // Compressor inlet volume flow: m³/h ↔ ICFM
+  if (typeof next.volFlow === "number" && Number.isFinite(next.volFlow)) {
+    const M3H_TO_ICFM = 0.58857777;
+    convertNum(
+      "volFlow",
+      toImperial
+        ? (n) => n * M3H_TO_ICFM
+        : (n) => n / M3H_TO_ICFM,
+      1,
+    );
+  }
+
+  // Mass flow: kg/h ↔ lb/h (control valve noise · heat exchanger)
   if (typeof next.massFlow === "number" && Number.isFinite(next.massFlow)) {
     const KG_TO_LB = 2.2046226218;
     convertNum(
@@ -432,6 +451,39 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
       toImperial ? (n) => n * KG_TO_LB : (n) => n / KG_TO_LB,
       1,
     );
+  }
+  if (
+    typeof next.massFlowHot === "number" &&
+    Number.isFinite(next.massFlowHot)
+  ) {
+    const KG_TO_LB = 2.2046226218;
+    convertNum(
+      "massFlowHot",
+      toImperial ? (n) => n * KG_TO_LB : (n) => n / KG_TO_LB,
+      0,
+    );
+  }
+
+  // Overall HTC U: W/m²·K ↔ BTU/hr·ft²·°F (heat exchanger)
+  if (typeof next.overallU === "number" && Number.isFinite(next.overallU)) {
+    const W_TO_BTU = 0.1761101837;
+    convertNum(
+      "overallU",
+      toImperial ? (n) => n * W_TO_BTU : (n) => n / W_TO_BTU,
+      toImperial ? 1 : 0,
+    );
+  }
+
+  // Custom fluid Cp: kJ/kg·K ↔ BTU/lb·°F
+  for (const key of ["cpHot", "cpCold"]) {
+    if (typeof next[key] === "number" && Number.isFinite(next[key] as number)) {
+      const KJ_TO_BTU = 0.2388458966;
+      convertNum(
+        key,
+        toImperial ? (n) => n * KJ_TO_BTU : (n) => n / KJ_TO_BTU,
+        3,
+      );
+    }
   }
 
   // PSV / PRV screening capacity: gas kg/h↔lb/h · liquid L/min↔GPM
@@ -488,6 +540,9 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
     "headRated",
     "headStatic",
     "headFrictionRated",
+    "tankDiameter",
+    "tankHeight",
+    "courseHeight",
   ]) {
     if (typeof next[key] === "number" && Number.isFinite(next[key] as number)) {
       convertNum(key, toImperial ? mToFt : ftToM, 3);

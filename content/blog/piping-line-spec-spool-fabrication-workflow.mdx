@@ -1,0 +1,220 @@
+---
+title: "Piping Line Spec & Spool Fabrication Workflow: Schedule, B31.3 Wall, Fit-Up, and Hydrotest"
+description: "End-to-end piping spool fabrication workflow: ASME B36.10M schedule lookup, B31.3 wall thickness, fit-up clearance, and hydrotest—aligned to FieldEngineersKit."
+date: "2026-09-22"
+category: "Piping Engineering"
+tags:
+  - Pipe Schedule
+  - ASME B31.3
+  - Spool Fabrication
+  - Piping Line Spec
+  - Hydrotest
+  - NDT Verification
+relatedCalculatorUrl: "/calculator/pipe-schedule-dimension"
+relatedCalculatorName: "Pipe Schedule & Dimension"
+---
+
+Wrong **pipe schedule**, understated **wall thickness**, or a spool cut that ignores flange take-off and root gap shows up as rejected hydrotests, field rework, and delayed mechanical completion. This pillar walks the **piping spool fabrication workflow** from line class → B36 dimensions → B31.3 thickness → shop cut length → test pack—using the same numbers as FieldEngineersKit.
+
+## Quick Summary (TL;DR)
+
+- **Takeaway:** Lock NPS/OD from ASME B36.10M, size wall with ASME B31.3 $t_{\min}=t+c$ and $t_{\mathrm{nom,req}}=t_{\min}/0.875$, then cut spools with flange take-off and fit-up root gap before writing the hydrotest pack.
+- **Governing relation:** $t = \dfrac{P D}{2(SE+PY)}$, $t_{\min}=t+c$, $t_{\mathrm{nom,req}}=t_{\min}/0.875$; catalog $ID = OD - 2t$.
+- **Code / basis:** ASME B36.10M / B36.19M · ASME B31.3 Para. **304.1** · B31.3 Chapter VI test pressure · project Line Class Spec (LCS).
+
+| Item | Field takeaway |
+| :--- | :--- |
+| **Primary lookup** | [Pipe Schedule & Dimension](/calculator/pipe-schedule-dimension) — OD, $t$, ID, $W_m$ |
+| **Thickness design** | [Pipe Wall Thickness](/calculator/pipe-wall-thickness) — $t$, $t_{\min}$, $t_{\mathrm{nom,req}}$, schedule pass |
+| **Worked NPS 6 · 35 bar · 120 °C · CA 1.6 mm** | $t\approx 2.11\text{ mm}$ · $t_{\min}\approx 3.71\text{ mm}$ · $t_{\mathrm{nom,req}}\approx 4.24\text{ mm}$ → **Sch 40 (7.11 mm)** |
+| **STD vs Sch 40** | Match through NPS 10; diverge at NPS 12+ |
+| **NPS 10 Sch 80 in FEK** | Wall **15.09 mm (0.594 in)** — not 12.70 mm |
+| **Shop cut** | Face-to-face − flange take-offs + root gaps (screening); confirm isometric BOM |
+| **Limits** | Screening workflow — LCS, stamped calcs, and certified NDT/hydro packs govern the job |
+
+---
+
+## Why a single piping line specification workflow matters
+
+EPC piping packages still fail when **schedule tables**, **pressure design**, **spool cut sheets**, and **hydrotest** are treated as separate silos. A buyer who picks Sch 40 from habit, a stress engineer who forgets mill under-tolerance, and a shop that cuts to isometric face-to-face without weld gap will each “pass” their discipline and still produce a non-compliant spool.
+
+Use the live [Pipe Schedule & Dimension](/calculator/pipe-schedule-dimension) calculator as the dimension source of truth for NPS → OD / $t$ / ID / plain-end weight, then pass the same OD into [ASME B31.3 Pipe Wall Thickness](/calculator/pipe-wall-thickness) for schedule acceptance.
+
+<Callout title="Screening vs Line Class Spec" variant="info">
+This article is a **field screening workflow** aligned to ASME B36.10M / B31.3 and the FEK engines. It is **not** a substitute for the project **Line Class Specification (LCS)**, approved design calculation sheets, WPS/PQR, or the official hydrotest procedure. Confirm mill certificates and isometric BOM before cut and test.
+</Callout>
+
+For topic depth on a single discipline, see also [ASME B36.10M / B36.19M Pipe Schedule Dimensions](/docs/asme-b36-10m-b36-19m-pipe-schedule-dimensions-guide), [ASME B31.3 Pipe Wall Thickness Calculation](/docs/asme-b31-3-pipe-wall-thickness-calculation), and [ASME B31.3 Hydrostatic & Pneumatic Test Pressure](/docs/asme-b31-3-hydrostatic-pneumatic-test-pressure-guide).
+
+---
+
+## Core formulas & parameter definitions
+
+### ASME B36.10M catalog geometry
+
+$$
+ID = OD - 2t,\qquad W_m = 0.0246615 \cdot t \cdot (OD - t)
+$$
+
+with $OD$, $t$ in **mm** and plain-end carbon-steel $W_m$ in **kg/m** at $\rho = 7{,}850\text{ kg/m}^3$ (FEK / B36 screening mass).
+
+### ASME B31.3 pressure design thickness (Para. 304.1.2)
+
+$$
+t = \frac{P D}{2(SE + PY)}
+$$
+
+$$
+t_{\min} = t + c,\qquad t_{\mathrm{nom,req}} = \frac{t_{\min}}{0.875}
+$$
+
+FEK symbols (do not mix with blind $t_m$): **$t$** = pressure design thickness; **$c$** = corrosion/mechanical allowance; **$t_{\min}=t+c$**; **$t_{\mathrm{nom,req}}=t_{\min}/0.875$** for 12.5% mill under-tolerance; **$t_{\mathrm{actual}}$** = selected schedule catalog wall.
+
+### Parameter definitions
+
+| Symbol | Parameter | Units | Description |
+| :---: | :--- | :---: | :--- |
+| **NPS / DN** | Nominal size | — | Tag only — not equal to OD for NPS ≤ 12 |
+| **$OD$ / $D$** | Outside diameter | mm (in) | B36 catalog OD used in B31.3 $t$ |
+| **$t$ (catalog)** | Nominal wall | mm (in) | Schedule wall from B36.10M / B36.19M |
+| **$t$ (B31.3)** | Pressure design thickness | mm (in) | From $P D / 2(SE+PY)$ |
+| **$t_{\min}$** | Minimum required with allowance | mm (in) | $t + c$ |
+| **$t_{\mathrm{nom,req}}$** | Ordered thickness screen | mm (in) | $t_{\min}/0.875$ |
+| **$P$** | Internal design pressure | MPa (psi) | Absolute design $P$ for thickness (FEK metric stores MPa) |
+| **$S$** | Basic allowable stress | MPa (psi) | Table A-1 at design metal temperature |
+| **$E$** | Quality factor | — | Seamless typically $1.00$; ERW often $0.85$ |
+| **$Y$** | Coefficient | — | Ferritic steels through 482 °C: **0.4** in FEK |
+| **$c$** | Corrosion allowance | mm (in) | From LCS (example below uses 1.6 mm) |
+
+### FEK B36.10M schedule scan (engine table)
+
+Values below are from the FEK `pipeSchedule` loader (ASME B36.10M screening)—the same source as [Pipe Schedule & Dimension](/calculator/pipe-schedule-dimension).
+
+| NPS (DN) | Schedule | OD | Wall $t$ | ID | Plain-end $W_m$ |
+| :--- | :--- | ---: | ---: | ---: | ---: |
+| NPS 2 (DN 50) | Sch 40 / STD | 2.375 in (60.33 mm) | 0.154 in (3.91 mm) | 2.067 in (52.51 mm) | 3.66 lb/ft (5.44 kg/m) |
+| NPS 2 (DN 50) | Sch 80 / XS | 2.375 in (60.33 mm) | 0.218 in (5.54 mm) | 1.939 in (49.25 mm) | 5.03 lb/ft (7.48 kg/m) |
+| NPS 6 (DN 150) | Sch 40 / STD | 6.625 in (168.28 mm) | 0.280 in (7.11 mm) | 6.065 in (154.06 mm) | 18.99 lb/ft (28.26 kg/m) |
+| NPS 6 (DN 150) | Sch 80 / XS | 6.625 in (168.28 mm) | 0.432 in (10.97 mm) | 5.761 in (146.34 mm) | 28.60 lb/ft (42.56 kg/m) |
+| NPS 10 (DN 250) | Sch 40 | 10.750 in (273.05 mm) | 0.365 in (9.27 mm) | 10.020 in (254.51 mm) | 40.51 lb/ft (60.29 kg/m) |
+| NPS 10 (DN 250) | Sch 80 | 10.750 in (273.05 mm) | **0.594 in (15.09 mm)** | 9.562 in (242.87 mm) | 64.52 lb/ft (96.01 kg/m) |
+
+<Callout title="NPS 10 Sch 80 trap" variant="warning">
+Some field cheat-sheets list NPS 10 Sch 80 as **0.500 in (12.70 mm)**. In **ASME B36.10M / FEK**, NPS 10 Sch 80 wall is **15.09 mm (0.594 in)**. Ordering 12.70 mm wall for “Sch 80” on NPS 10 understates catalog thickness and can fail LCS / MTO checks.
+</Callout>
+
+---
+
+## Worked example — NPS 6 line class thickness and Sch 40 selection
+
+### How do you run ASME B31.3 pipe wall thickness for an NPS 6 hydrocarbon line?
+
+**Given (screening duty):**
+
+| Input | Value |
+| :--- | :--- |
+| NPS / material | NPS 6 · ASTM A106 Gr.B seamless ($E = 1.00$) |
+| Line class cue | CS hydrocarbon (example LCS tag “A1A”-class duty) |
+| Design pressure $P$ | **35 bar g = 3.50 MPa** |
+| Design temperature | **120 °C** |
+| Corrosion allowance $c$ | **1.6 mm** |
+| $S$ (FEK A106-B preset) | **138 MPa** |
+| $Y$ | **0.4** |
+| OD (B36.10M / FEK) | **168.28 mm** |
+
+Open the same duty in FEK: [Pipe Wall Thickness](/calculator/pipe-wall-thickness) with NPS 6, Sch 40, $P = 3.50\text{ MPa}$, $T = 120\text{ °C}$, $c = 1.6\text{ mm}$, material A106 Gr.B. Confirm OD on [Pipe Schedule & Dimension](/calculator/pipe-schedule-dimension/6inch-sch40) (or NPS 6 · Sch 40 in the tool).
+
+#### Step 1 — Pressure design thickness $t$
+
+$$
+t = \frac{3.50 \times 168.28}{2\bigl(138\times 1 + 3.50\times 0.4\bigr)} = \frac{588.98}{2\times 139.4} = \mathbf{2.11\text{ mm}}
+$$
+
+#### Step 2 — Minimum required thickness $t_{\min}$
+
+$$
+t_{\min} = t + c = 2.11 + 1.6 = \mathbf{3.71\text{ mm}}
+$$
+
+#### Step 3 — Nominal ordered screen $t_{\mathrm{nom,req}}$ (12.5% mill)
+
+$$
+t_{\mathrm{nom,req}} = \frac{t_{\min}}{0.875} = \frac{3.71}{0.875} = \mathbf{4.24\text{ mm}}
+$$
+
+#### Step 4 — Select commercial schedule
+
+| Schedule | Catalog $t_{\mathrm{actual}}$ | Mill min $0.875\,t_{\mathrm{actual}}$ | vs $t_{\min}$ / $t_{\mathrm{nom,req}}$ |
+| :--- | ---: | ---: | :--- |
+| Sch 40 / STD | **7.11 mm** | **6.22 mm** | Pass ($6.22 > 3.71$ and $7.11 > 4.24$) |
+| Sch 80 / XS | 10.97 mm | 9.60 mm | Pass (heavier — use only if LCS requires) |
+
+**Selection:** **NPS 6 Schedule 40 (STD, 7.11 mm)** satisfies FEK B31.3 screening for this duty. Margin vs $t_{\mathrm{nom,req}}$: $(7.11/4.24 - 1)\times 100\% \approx +68\%$.
+
+<Callout title="Why not “$t_{req} = 4.82$ mm”?" variant="tip">
+Internet / LLM summaries sometimes quote a single “$t_{req}$” near **4.8 mm** for similar NPS 6 duties. In FEK symbols you must separate **$t$**, **$t_{\min}=t+c$**, and **$t_{\mathrm{nom,req}}=t_{\min}/0.875$**. For **$c = 1.6\text{ mm}$** at **3.50 MPa / 120 °C**, the engine asserts **$t_{\mathrm{nom,req}}\approx 4.24\text{ mm}$**, not 4.82 mm. Always recompute with the live calculator before freezing the LCS.
+</Callout>
+
+### Spool cut length & fit-up clearance (shop screening)
+
+After schedule acceptance, shop cut length is **not** equal to isometric centerline length:
+
+1. Read **flange face-to-face / take-out** from the isometric and [Flange Dimension / Weight](/calculator/flange-dimension-weight) (B16.5) or project MTO.
+2. Confirm flange **class / facing** against [Flange Pressure-Temperature Rating](/calculator/flange-pressure-temperature-rating).
+3. Add **fit-up root gap** per WPS (commonly on the order of **1.5–3 mm** per butt joint for CS open-root—**confirm WPS**; not a FEK engine output).
+4. Subtract gasket / RTJ ring stack-up where the joint detail requires it.
+
+$$
+L_{\text{cut,screen}} \approx L_{\text{ISO,F-F}} - \sum L_{\text{flange take-off}} + \sum g_{\text{root}}
+$$
+
+Use this only as a **screening check** against the spool sheet. Final cut lists remain under the fabricator’s approved isometric BOM.
+
+### Hydrotest before release
+
+With design $P = 3.50\text{ MPa}$, draft the Chapter VI test pressure in [Hydro/Pneumatic Test Pressure](/calculator/hydro-test-pressure) using the line’s $S_t/S$ ratio—do not assume bare $1.5P$ when design temperature exceeds test temperature. Pair NDT (RT/UT/MT/PT) with the LCS examination table before packing the spool.
+
+---
+
+## Interactive tools for the piping spool fabrication workflow
+
+<Callout title="Run the workflow in FieldEngineersKit" variant="tip">
+1. Look up OD / $t$ / ID / $W_m$: [Pipe Schedule & Dimension](/calculator/pipe-schedule-dimension) (try NPS 6 · Sch 40).
+2. Verify $t_{\min}$ and schedule pass: [Pipe Wall Thickness](/calculator/pipe-wall-thickness) — hint: NPS **6**, Sch **40**, $P=\mathbf{3.50}$ MPa, $T=\mathbf{120}$ °C, $c=\mathbf{1.6}$ mm, material **A106 Gr.B**.
+3. Check nozzle / mating flange class: [Flange Pressure-Temperature Rating](/calculator/flange-pressure-temperature-rating).
+4. Draft hydro $P_t$: [Hydro/Pneumatic Test Pressure](/calculator/hydro-test-pressure).
+</Callout>
+
+---
+
+## Frequently Asked Questions (FAQ)
+
+### What is the ASME B31.3 pipe wall thickness calculation formula used in FEK?
+
+FEK uses ASME B31.3 Para. 304.1.2:
+
+$$
+t = \frac{P D}{2(SE + PY)},\quad t_{\min}=t+c,\quad t_{\mathrm{nom,req}}=\frac{t_{\min}}{0.875}
+$$
+
+with ferritic $Y = 0.4$ through 482 °C in the screening preset. $D$ is **outside diameter** from B36, never NPS.
+
+### How do I convert pipe schedule NPS to outer diameter and wall thickness?
+
+Use the ASME B36.10M (CS/alloy) or B36.19M (S-schedules) catalog—or the [Pipe Schedule & Dimension](/calculator/pipe-schedule-dimension) calculator. NPS is a **label**; for NPS ≤ 12, OD is larger than the nominal inch (NPS 6 OD = **168.28 mm**, not 152.4 mm).
+
+### What piping spool fit-up weld gap and fabrication tolerance should I use?
+
+Root gap and high-low limits come from the **approved WPS/PQR** and project fabrication spec—not from B36 schedule tables. Common CS open-root gaps are often **~1.5–3 mm**, but treat that as shop folklore until the WPS confirms it. FEK does not compute weld gap; it supplies OD/wall and thickness acceptance so the cut sheet starts from the correct schedule.
+
+### How does hydrostatic test pressure relate to ASME B31.3 allowable stress?
+
+Minimum hydrotest pressure follows B31.3 Para. 345 with $P_t = 1.5\,P\,(S_t/S)$ (FEK screening), not bare $1.5P$, when design metal temperature exceeds test temperature. Compute $P_t$ in [Hydro/Pneumatic Test Pressure](/calculator/hydro-test-pressure) and see the dedicated [hydrotest guide](/docs/asme-b31-3-hydrostatic-pneumatic-test-pressure-guide).
+
+### Why does NPS 10 Schedule 80 wall in FEK differ from some internet charts?
+
+FEK’s B36.10M table lists NPS 10 Sch 80 as **15.09 mm (0.594 in)**. Charts that show **12.70 mm (0.500 in)** are mixing sizes/schedules (0.500 in is Sch 80 / XS on other NPS bands). Always trust the project B36 edition and the FEK loader over unmarked cheat-sheets.
+
+---
+
+*Disclaimer: This article is a field reference workflow based on ASME B36.10M / B31.3 screening practice as implemented in FieldEngineersKit. Actual process piping fabrication and hydrotest procedures must follow the project Line Class Specification (LCS) and approved design calculation sheets.*

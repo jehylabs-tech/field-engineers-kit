@@ -42,7 +42,10 @@ export type CalculatorType =
   | "pipe-support-span"
   | "control-valve-choked-screening"
   | "psv-prv-screening"
-  | "natural-gas-z-density";
+  | "natural-gas-z-density"
+  | "heat-exchanger-lmtd-duty"
+  | "compressor-polytropic-power"
+  | "api650-tank-shell-thickness";
 
 export type FaqItem = {
   q: string;

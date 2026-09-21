@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, type ReactNode } from "react";
 import CalculatorBaseLayout from "@/components/calculator/CalculatorBaseLayout";
 import FieldGroup, { FieldSelect } from "@/components/calculator/FieldGroup";
 import TankLevelSchematic from "@/components/calculator/schematics/TankLevelSchematic";
@@ -21,6 +21,7 @@ import {
 } from "@/lib/calculators/engines/tank-vessel-volume";
 import { useCalculatorUrlSync } from "@/lib/calculators/url-sync";
 import { TANK_VESSEL_VOLUME_URL_CONFIG } from "@/lib/calculators/url-configs/tank-vessel-volume";
+import { kgM3ToLbFt3, lbFt3ToKgM3 } from "@/lib/unitConverter";
 
 type Props = { title: string; standard?: string };
 
@@ -36,6 +37,14 @@ function dualDimLabel(m: number, unitSystem: "metric" | "imperial"): string {
     return `${inch.toFixed(2)} in · ${mm.toFixed(0)} mm`;
   }
   return `${mm.toFixed(0)} mm · ${inch.toFixed(2)} in`;
+}
+
+function SectionLabel({ children }: { children: ReactNode }) {
+  return (
+    <h4 className="mt-1 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+      {children}
+    </h4>
+  );
 }
 
 type Preset = {
@@ -92,7 +101,7 @@ const METRIC_PRESETS: Preset[] = [
 const IMPERIAL_PRESETS: Preset[] = [
   {
     id: "h-flat-96",
-    label: "H · flat · 96\"",
+    label: 'H · flat · 96"',
     patch: {
       unitSystem: "imperial",
       orientation: "horizontal",
@@ -106,7 +115,7 @@ const IMPERIAL_PRESETS: Preset[] = [
   },
   {
     id: "v-2to1-120",
-    label: "V · 2:1 · 120\"",
+    label: 'V · 2:1 · 120"',
     patch: {
       unitSystem: "imperial",
       orientation: "vertical",
@@ -133,7 +142,12 @@ export default function TankVesselVolumeCalculator({ title, standard }: Props) {
   const dipstick = useMemo(() => buildDipstickTable(inputs, 11), [inputs]);
   usePublishCalculatorOutput(output);
 
-  const dimUnit = inputs.unitSystem === "imperial" ? "in" : "mm";
+  const imperial = inputs.unitSystem === "imperial";
+  const dimUnit = imperial ? "in" : "mm";
+  const densUnit = imperial ? "lb/ft³" : "kg/m³";
+  const densDisplay = imperial
+    ? Number(kgM3ToLbFt3(inputs.densityKgM3).toFixed(2))
+    : inputs.densityKgM3;
   const headMeta =
     TANK_HEAD_TYPE_OPTIONS.find((h) => h.value === inputs.headType) ??
     TANK_HEAD_TYPE_OPTIONS[1];
@@ -141,14 +155,15 @@ export default function TankVesselVolumeCalculator({ title, standard }: Props) {
     TANK_FLUID_OPTIONS.find((f) => f.value === inputs.fluid) ??
     TANK_FLUID_OPTIONS[0];
 
-  const presets =
-    inputs.unitSystem === "imperial" ? IMPERIAL_PRESETS : METRIC_PRESETS;
+  const presets = imperial ? IMPERIAL_PRESETS : METRIC_PRESETS;
 
-  function applyPreset(preset: Preset) {
-    setInputs((current) => ({
-      ...current,
+  function applyPreset(
+    preset: (typeof METRIC_PRESETS)[number] | (typeof IMPERIAL_PRESETS)[number],
+  ) {
+    setInputs({
+      ...DEFAULT_TANK_VESSEL_VOLUME_INPUTS,
       ...preset.patch,
-    }));
+    });
   }
 
   const vesselHeightM =
@@ -156,8 +171,7 @@ export default function TankVesselVolumeCalculator({ title, standard }: Props) {
       ? 2 * computed.headDepthM + computed.lengthM
       : computed.diM;
 
-  const fillFraction =
-    vesselHeightM > 0 ? computed.hM / vesselHeightM : 0;
+  const fillFraction = vesselHeightM > 0 ? computed.hM / vesselHeightM : 0;
 
   const diDual = dualDimLabel(computed.diM, inputs.unitSystem);
   const lengthDual = dualDimLabel(computed.lengthM, inputs.unitSystem);
@@ -166,23 +180,9 @@ export default function TankVesselVolumeCalculator({ title, standard }: Props) {
     computed.headDepthM > 0
       ? dualDimLabel(computed.headDepthM, inputs.unitSystem)
       : "0 (flat)";
-  const vesselHeightDual = dualDimLabel(vesselHeightM, inputs.unitSystem);
   const fillPctLabel = computed.invalid
     ? "—"
     : `${computed.fillPct.toFixed(1)}%`;
-
-  const levelHint =
-    inputs.orientation === "horizontal"
-      ? `From bottom across diameter. Valid range 0–Di (${vesselHeightDual}).`
-      : `From vessel bottom through bottom head + shell + top head. Valid range 0–vessel height (${vesselHeightDual}).`;
-
-  const lengthHint =
-    "Straight shell between head tangent lines (TT length). Does not include head depth.";
-
-  const densityHint =
-    inputs.fluid === "custom"
-      ? "Enter process density at duty temperature for mass screening."
-      : `${fluidMeta.label} screening density — switch to Custom to override.`;
 
   const calibrationChart = (
     <div className="mt-2 overflow-hidden rounded-md border border-slate-200 dark:border-spec-border">
@@ -191,8 +191,7 @@ export default function TankVesselVolumeCalculator({ title, standard }: Props) {
           Dipstick calibration (screening)
         </p>
         <p className="text-[10px] text-slate-500 dark:text-slate-400">
-          Geometric chart — no internals. Confirm with API 650 / ISO 7507
-          certified strapping for custody transfer. Click a row to set h.
+          Geometric chart — no internals. Click a row to set liquid level h.
         </p>
       </div>
       <div className="max-h-[280px] overflow-auto">
@@ -214,15 +213,13 @@ export default function TankVesselVolumeCalculator({ title, standard }: Props) {
             {dipstick.map((row) => {
               const active =
                 Math.abs(row.dip - inputs.liquidLevel) <
-                (inputs.unitSystem === "imperial" ? 0.05 : 1);
-              const volPrimary =
-                inputs.unitSystem === "imperial"
-                  ? `${(row.volumeM3 * M3_TO_US_GAL).toFixed(0)} gal`
-                  : `${row.volumeM3.toFixed(2)} m³`;
-              const volSecondary =
-                inputs.unitSystem === "imperial"
-                  ? `${row.volumeM3.toFixed(2)} m³`
-                  : `${(row.volumeM3 * M3_TO_US_GAL).toFixed(0)} gal`;
+                (imperial ? 0.05 : 1);
+              const volPrimary = imperial
+                ? `${(row.volumeM3 * M3_TO_US_GAL).toFixed(0)} gal`
+                : `${row.volumeM3.toFixed(2)} m³`;
+              const volSecondary = imperial
+                ? `${row.volumeM3.toFixed(2)} m³`
+                : `${(row.volumeM3 * M3_TO_US_GAL).toFixed(0)} gal`;
               return (
                 <tr
                   key={row.dip}
@@ -268,44 +265,44 @@ export default function TankVesselVolumeCalculator({ title, standard }: Props) {
       output={output}
       exportTitle={title}
       standard={standard}
+      inputNaturalHeight
       inputRows={[
         {
-          label: "Orientation",
-          value:
-            inputs.orientation === "horizontal" ? "Horizontal" : "Vertical",
+          label: "Setup",
+          value: `${inputs.orientation === "horizontal" ? "H" : "V"} · ${headMeta.shortLabel}`,
         },
-        { label: "Heads", value: headMeta.shortLabel },
-        { label: "Di", value: `${inputs.diameter} ${dimUnit}` },
-        { label: "L", value: `${inputs.length} ${dimUnit}` },
-        { label: "h", value: `${inputs.liquidLevel} ${dimUnit}` },
+        { label: "Di × L", value: `${inputs.diameter} × ${inputs.length} ${dimUnit}` },
+        { label: "Level h", value: `${inputs.liquidLevel} ${dimUnit}` },
         { label: "Fluid", value: fluidMeta.label },
       ]}
-      visual={
-        <TankLevelSchematic
-          orientation={inputs.orientation}
-          headType={inputs.headType}
-          fillFraction={fillFraction}
-          diameterLabel={diDual}
-          lengthLabel={lengthDual}
-          levelLabel={levelDual}
-          headLabel={headMeta.shortLabel}
-          fillPctLabel={fillPctLabel}
-          headDepthLabel={headDepthDual}
-        />
+      afterHero={
+        !computed.invalid ? (
+          <>
+            <TankLevelSchematic
+              orientation={inputs.orientation}
+              headType={inputs.headType}
+              fillFraction={fillFraction}
+              diameterLabel={diDual}
+              lengthLabel={lengthDual}
+              levelLabel={levelDual}
+              headLabel={headMeta.shortLabel}
+              fillPctLabel={fillPctLabel}
+              headDepthLabel={headDepthDual}
+            />
+            {calibrationChart}
+          </>
+        ) : null
       }
-      afterHero={calibrationChart}
       inputPanel={
         <div className="flex w-full min-w-0 flex-col gap-2.5 [&_.calc-field]:mb-0 [&_.calc-field]:max-w-none">
-          <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300">
-            Vessel geometry &amp; level
-          </h3>
           <div className="flex flex-wrap gap-1.5">
             {presets.map((preset) => {
               const active =
                 inputs.orientation === preset.patch.orientation &&
                 inputs.headType === preset.patch.headType &&
                 inputs.diameter === preset.patch.diameter &&
-                inputs.length === preset.patch.length;
+                inputs.length === preset.patch.length &&
+                inputs.unitSystem === preset.patch.unitSystem;
               return (
                 <button
                   key={preset.id}
@@ -322,90 +319,109 @@ export default function TankVesselVolumeCalculator({ title, standard }: Props) {
               );
             })}
           </div>
-          <FieldSelect
-            label="Orientation"
-            value={inputs.orientation}
-            options={TANK_ORIENTATION_OPTIONS}
-            onChange={(value) =>
-              setField("orientation", value as TankOrientation)
-            }
-          />
-          <FieldSelect
-            label="Head type"
-            value={inputs.headType}
-            options={TANK_HEAD_TYPE_OPTIONS.map((h) => ({
-              value: h.value,
-              label: h.label,
-            }))}
-            onChange={(value) => setField("headType", value as TankHeadType)}
-          />
-          <p className="m-0 -mt-1 text-xs text-slate-500 dark:text-slate-400">
-            {headMeta.shortLabel} head depth ≈ {headDepthDual}
-            {computed.headDepthM > 0
-              ? ` · V_head ≈ ${computed.vHeadM3.toFixed(3)} m³`
-              : null}
-          </p>
-          <FieldGroup
-            label="Inside diameter Di"
-            unit={dimUnit}
-            hint={`Vessel ID used for shell and heads. Currently ${diDual}.`}
-            value={inputs.diameter}
-            onChange={(value) =>
-              setField("diameter", toNumber(value, inputs.diameter))
-            }
-          />
-          <FieldGroup
-            label="Shell straight length L"
-            unit={dimUnit}
-            hint={lengthHint}
-            value={inputs.length}
-            onChange={(value) =>
-              setField("length", toNumber(value, inputs.length))
-            }
-          />
-          <FieldGroup
-            label="Liquid level h"
-            unit={dimUnit}
-            allowZero
-            hint={levelHint}
-            value={inputs.liquidLevel}
-            onChange={(value) =>
-              setField("liquidLevel", toNumber(value, inputs.liquidLevel))
-            }
-          />
-          <FieldSelect
-            label="Fluid"
-            value={inputs.fluid}
-            options={TANK_FLUID_OPTIONS.map((f) => ({
-              value: f.value,
-              label: f.label,
-            }))}
-            onChange={(value) => {
-              const next = value as TankFluid;
-              const dens =
-                TANK_FLUID_OPTIONS.find((f) => f.value === next)?.densityKgM3 ??
-                inputs.densityKgM3;
-              setInputs((current) => ({
-                ...current,
-                fluid: next,
-                densityKgM3: next === "custom" ? current.densityKgM3 : dens,
-              }));
-            }}
-          />
-          <FieldGroup
-            label="Density"
-            unit="kg/m³"
-            hint={densityHint}
-            value={inputs.densityKgM3}
-            onChange={(value) => {
-              const dens = toNumber(value, inputs.densityKgM3);
-              setInputs((current) => ({
-                ...current,
-                densityKgM3: dens,
-                fluid: "custom",
-              }));
-            }}
-          />
+
+          <SectionLabel>Vessel geometry</SectionLabel>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <FieldSelect
+              label="Orientation"
+              value={inputs.orientation}
+              options={TANK_ORIENTATION_OPTIONS}
+              onChange={(value) =>
+                setField("orientation", value as TankOrientation)
+              }
+            />
+            <FieldSelect
+              label="Head type"
+              value={inputs.headType}
+              options={TANK_HEAD_TYPE_OPTIONS.map((h) => ({
+                value: h.value,
+                label: h.label,
+              }))}
+              onChange={(value) => setField("headType", value as TankHeadType)}
+              hint={
+                computed.headDepthM > 0
+                  ? `Depth ≈ ${headDepthDual}`
+                  : "Flat cover · depth = 0"
+              }
+            />
+            <FieldGroup
+              label="Inside diameter Di"
+              unit={dimUnit}
+              compactUnit
+              value={inputs.diameter}
+              onChange={(value) =>
+                setField("diameter", toNumber(value, inputs.diameter))
+              }
+            />
+            <FieldGroup
+              label="Shell straight length L"
+              unit={dimUnit}
+              compactUnit
+              value={inputs.length}
+              onChange={(value) =>
+                setField("length", toNumber(value, inputs.length))
+              }
+              hint="TT length between head tangent lines"
+            />
+          </div>
+
+          <SectionLabel>Level &amp; fluid</SectionLabel>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <FieldGroup
+              label="Liquid level h"
+              unit={dimUnit}
+              compactUnit
+              allowZero
+              value={inputs.liquidLevel}
+              onChange={(value) =>
+                setField("liquidLevel", toNumber(value, inputs.liquidLevel))
+              }
+              hint={
+                inputs.orientation === "horizontal"
+                  ? "From bottom · 0–Di"
+                  : "From vessel bottom · 0–(2·head + L)"
+              }
+            />
+            <FieldSelect
+              label="Fluid"
+              value={inputs.fluid}
+              options={TANK_FLUID_OPTIONS.map((f) => ({
+                value: f.value,
+                label: f.label,
+              }))}
+              onChange={(value) => {
+                const next = value as TankFluid;
+                const dens =
+                  TANK_FLUID_OPTIONS.find((f) => f.value === next)
+                    ?.densityKgM3 ?? inputs.densityKgM3;
+                setInputs((current) => ({
+                  ...current,
+                  fluid: next,
+                  densityKgM3: next === "custom" ? current.densityKgM3 : dens,
+                }));
+              }}
+            />
+            <FieldGroup
+              label="Density"
+              unit={densUnit}
+              compactUnit
+              value={densDisplay}
+              onChange={(value) => {
+                const raw = toNumber(value, densDisplay);
+                const dens = imperial ? lbFt3ToKgM3(raw) : raw;
+                setInputs((current) => ({
+                  ...current,
+                  densityKgM3: dens,
+                  fluid: "custom",
+                }));
+              }}
+              hint={
+                inputs.fluid === "custom"
+                  ? "Custom density at duty temperature"
+                  : `${fluidMeta.label} preset — edit to switch Custom`
+              }
+            />
+          </div>
         </div>
       }
     />

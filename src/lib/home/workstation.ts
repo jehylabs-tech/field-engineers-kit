@@ -246,6 +246,38 @@ export const WORKSTATION_DOMAINS: WorkstationDomain[] = [
         ],
       },
       {
+        id: "heat-exchanger-lmtd-duty",
+        title: "Heat Exchanger LMTD & Duty",
+        seoLabel:
+          "Heat Exchanger LMTD Calculator TEMA F Factor Duty Area IAPWS",
+        standard: "TEMA / IAPWS-IF97",
+        href: "/calculator/heat-exchanger-lmtd-duty/water-to-water-90c-60c-10000kgh",
+        keywords: [
+          "heat exchanger LMTD calculator",
+          "LMTD duty area calculation",
+          "TEMA F factor calculator",
+          "water steam heat duty IAPWS-IF97",
+          "shell and tube heat exchanger sizing",
+          "temperature cross LMTD",
+        ],
+      },
+      {
+        id: "compressor-polytropic-power",
+        title: "Compressor Polytropic Power",
+        seoLabel:
+          "Compressor Polytropic Power Calculator GPSA Head API 617 Discharge Temperature",
+        standard: "GPSA / API 617",
+        href: "/calculator/compressor-polytropic-power/natural-gas-5bar-to-25bar-5000m3h",
+        keywords: [
+          "compressor polytropic power calculator",
+          "gas polytropic head calculation",
+          "API 617 compressor power calculator",
+          "gas compressor discharge temperature",
+          "GPSA polytropic head formula",
+          "natural gas compressor sizing",
+        ],
+      },
+      {
         id: "control-valve-noise",
         title: "Control Valve Noise",
         seoLabel:
@@ -541,6 +573,22 @@ export const WORKSTATION_DOMAINS: WorkstationDomain[] = [
           "ullage",
           "ellipsoidal head",
           "level capacity",
+        ],
+      },
+      {
+        id: "api650-tank-shell-thickness",
+        title: "API 650 Tank Shell Thickness",
+        seoLabel:
+          "API 650 Tank Shell Thickness Calculator 1-Foot Method Course Plate",
+        standard: "API 650 §5.6.3",
+        href: "/calculator/api650-tank-shell-thickness/20m-diameter-15m-height-a36",
+        keywords: [
+          "API 650 tank shell thickness calculator",
+          "1 foot method tank calculation",
+          "API 650 minimum shell thickness table",
+          "storage tank course thickness calculation",
+          "API 650 allowable stress A36 A516",
+          "hydrostatic test shell thickness",
         ],
       },
       {

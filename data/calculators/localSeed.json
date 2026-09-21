@@ -1591,5 +1591,143 @@
     },
     "is_published": true,
     "created_at": "2026-09-20T15:00:00.000Z"
+  },
+  {
+    "id": "local-heat-exchanger-lmtd-duty",
+    "category": "mechanical",
+    "title": "Heat Exchanger LMTD & Duty Calculator",
+    "slug": "heat-exchanger-lmtd-duty",
+    "meta_description": "TEMA LMTD, F-factor correction, heat duty, and required area with IAPWS-IF97 water/steam properties for shell-and-tube screening.",
+    "formula_json": {
+      "type": "heat-exchanger-lmtd-duty",
+      "standard": "TEMA 9th Ed. Sec. 5 / IAPWS-IF97 / API 660 screening",
+      "formulaLatex": "\\Delta T_{lm}=\\frac{\\Delta T_1-\\Delta T_2}{\\ln(\\Delta T_1/\\Delta T_2)},\\quad \\Delta T_{lm,corr}=F\\,\\Delta T_{lm},\\quad A=Q/(U\\,\\Delta T_{lm,corr})",
+      "formulaBasis": "Counterflow LMTD with TEMA 1–2n / multi-shell F-factor. Water/steam enthalpy from IAPWS-IF97. Screening only — not a TEMA mechanical design or HTRI rating.",
+      "related": [
+        {
+          "slug": "pressure-drop-friction",
+          "title": "Pressure Drop & Friction",
+          "carry": "Related flow duty"
+        },
+        {
+          "slug": "valve-cv-sizing",
+          "title": "Valve Cv Sizing",
+          "carry": "Related flow control"
+        },
+        {
+          "slug": "pump-tdh-power",
+          "title": "Pump TDH & Power",
+          "carry": "Circulation pump"
+        }
+      ],
+      "faq": [
+        {
+          "q": "What F-factor method is used?",
+          "a": "TEMA / Bowman closed-form F for 1 shell–2n tube passes, with N-shell series mapping of P."
+        },
+        {
+          "q": "When is F < 0.75 a problem?",
+          "a": "Below F ≈ 0.75 the temperature approach is too steep for a practical 1-shell unit — increase shell passes or reduce effectiveness."
+        },
+        {
+          "q": "How is steam condenser duty calculated?",
+          "a": "When Th,in ≈ Th,out, Q = ṁ · h_fg at IAPWS saturation temperature equal to the hot terminal."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-21T12:00:00.000Z"
+  },
+  {
+    "id": "local-compressor-polytropic-power",
+    "category": "mechanical",
+    "title": "Compressor Gas Power & Polytropic Screening Calculator",
+    "slug": "compressor-polytropic-power",
+    "meta_description": "GPSA polytropic head, gas power, and discharge temperature for centrifugal/axial compressor screening per API 617 and ASME PTC 10.",
+    "formula_json": {
+      "type": "compressor-polytropic-power",
+      "standard": "GPSA Sec. 13 / API 617 / ASME PTC 10 screening",
+      "formulaLatex": "H_p=\\frac{Z_{avg} R T_1}{M}\\frac{n}{n-1}\\left[r_p^{(n-1)/n}-1\\right],\\quad P_{gas}=\\frac{\\dot m H_p}{\\eta_p},\\quad T_2=T_1 r_p^{(n-1)/n}",
+      "formulaBasis": "Polytropic exponent from (n−1)/n = (k−1)/(k η_p). Gas power from mass flow × polytropic head / η_p. Screening only — not an OEM performance map or PTC 10 acceptance test.",
+      "related": [
+        {
+          "slug": "pump-tdh-power",
+          "title": "Pump TDH & Power",
+          "carry": "Liquid vs gas power symmetry"
+        },
+        {
+          "slug": "pressure-drop-friction",
+          "title": "Pressure Drop & Friction",
+          "carry": "Suction/discharge piping loss"
+        },
+        {
+          "slug": "valve-cv-sizing",
+          "title": "Valve Cv Sizing",
+          "carry": "Recycle / anti-surge valve"
+        }
+      ],
+      "faq": [
+        {
+          "q": "What polytropic efficiency range is typical?",
+          "a": "Centrifugal compressor polytropic efficiencies commonly fall near 60–88%. This tool accepts 40–95% for screening."
+        },
+        {
+          "q": "When is multi-stage compression recommended?",
+          "a": "When single-stage r_p > 4.5 or discharge temperature exceeds ~150 °C (API 617 seal/gas-quality screen), split stages with intercooling."
+        },
+        {
+          "q": "Is constant Z_avg enough at high pressure?",
+          "a": "Above ~50 bar(a) discharge, confirm Z with Lee–Kesler or RK EOS — constant-Z screening may understate head."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-21T14:00:00.000Z"
+  },
+  {
+    "id": "local-api650-tank-shell-thickness",
+    "category": "mechanical",
+    "title": "API 650 Tank Shell Thickness Calculator (1-Foot Method)",
+    "slug": "api650-tank-shell-thickness",
+    "meta_description": "API 650 Section 5.6.3 1-foot method shell course thickness, Table 5.2a/5.2b minimums, commercial plate selection, and shell MTO screening.",
+    "formula_json": {
+      "type": "api650-tank-shell-thickness",
+      "standard": "API 650 13th Ed. §5.6.3 / Table 5.2a–5.2b",
+      "formulaLatex": "t_d=\\frac{4.9 D (H-0.3) G}{S_d E}+CA,\\quad t_t=\\frac{4.9 D (H-0.3)}{S_t}+CA,\\quad t_{nom}=\\mathrm{CeilPlate}(\\max(t_d,t_t,t_{min}))",
+      "formulaBasis": "API 650 1-foot method design and hydrotest shell thickness by course. H is liquid height above the bottom of the course. Screening only — Variable-Design-Point (§5.6.4), wind girders, and seismic buckling are out of scope.",
+      "related": [
+        {
+          "slug": "tank-vessel-volume",
+          "title": "Tank & Vessel Volume",
+          "carry": "Liquid height / inventory"
+        },
+        {
+          "slug": "pipe-wall-thickness",
+          "title": "Pipe Wall Thickness",
+          "carry": "Nozzle / piping thickness"
+        },
+        {
+          "slug": "flange-pressure-temperature-rating",
+          "title": "Flange P-T Rating",
+          "carry": "Nozzle flange class"
+        }
+      ],
+      "faq": [
+        {
+          "q": "When is the 1-foot method not allowed?",
+          "a": "API 650 §5.6.3 limits the 1-foot method to tanks with D ≤ 60 m (200 ft). Larger tanks require the Variable-Design-Point Method (§5.6.4)."
+        },
+        {
+          "q": "How is commercial plate selected?",
+          "a": "t_required = max(t_d, t_t, t_min). t_nom is the next standard mill plate thickness at or above t_required."
+        },
+        {
+          "q": "Are wind girders included?",
+          "a": "No. This tool sizes shell courses for product and hydrostatic head only. Intermediate wind girders and seismic buckling need a separate API 650 check."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-21T16:00:00.000Z"
   }
 ]

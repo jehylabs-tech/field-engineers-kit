@@ -92,6 +92,12 @@ export const CATALOG_SEO_BLURBS: Record<string, string> = {
     "API 520 / API 526 PSV orifice area screening for gas and liquid with standard letter D–T selection.",
   "natural-gas-z-density":
     "Natural gas compressibility Z-factor and real density from Standing Ppc/Tpc and Hall–Yarborough (AGA 8 / CNGA screening).",
+  "heat-exchanger-lmtd-duty":
+    "TEMA LMTD, F-factor, heat duty Q, and required area A with IAPWS-IF97 water/steam screening for shell-and-tube exchangers.",
+  "compressor-polytropic-power":
+    "GPSA polytropic head, gas power, and discharge temperature screening for centrifugal / axial compressors (API 617 / ASME PTC 10).",
+  "api650-tank-shell-thickness":
+    "API 650 §5.6.3 1-foot method tank shell course thickness, commercial plate selection, and shell MTO screening.",
   "control-valve-noise":
     "ISA/IEC 60534 control valve noise prediction L_p,1m (dBA) for gas and liquid service.",
   "orifice-plate-flow-meter":

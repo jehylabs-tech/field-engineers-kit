@@ -78,6 +78,21 @@ import {
   parseNaturalGasZDensitySpec,
 } from "@/lib/calculators/pseo/natural-gas-z-density-routes";
 import {
+  listHeatExchangerLmtdDutyPseoRoutes,
+  matchHeatExchangerLmtdDutySpecRoute,
+  parseHeatExchangerLmtdDutySpec,
+} from "@/lib/calculators/pseo/heat-exchanger-lmtd-duty-routes";
+import {
+  listCompressorPolytropicPowerPseoRoutes,
+  matchCompressorPolytropicPowerSpecRoute,
+  parseCompressorPolytropicPowerSpec,
+} from "@/lib/calculators/pseo/compressor-polytropic-power-routes";
+import {
+  listApi650TankShellThicknessPseoRoutes,
+  matchApi650TankShellThicknessSpecRoute,
+  parseApi650TankShellThicknessSpec,
+} from "@/lib/calculators/pseo/api650-tank-shell-thickness-routes";
+import {
   listAvailableNps,
   listFlangeClassesForNps,
   listFlangeNps,
@@ -240,6 +255,15 @@ export function parseSpecToQuery(spec: string): Record<string, string> | null {
 
   const naturalGasZ = parseNaturalGasZDensitySpec(value);
   if (naturalGasZ) return naturalGasZ;
+
+  const heatExchangerLmtd = parseHeatExchangerLmtdDutySpec(value);
+  if (heatExchangerLmtd) return heatExchangerLmtd;
+
+  const compressorPolytropic = parseCompressorPolytropicPowerSpec(value);
+  if (compressorPolytropic) return compressorPolytropic;
+
+  const api650Shell = parseApi650TankShellThicknessSpec(value);
+  if (api650Shell) return api650Shell;
 
   const inchClassBlind = value.match(
     /^(\d+(?:\.\d+)?)-inch-class-(\d+)(?:-blind)?$/,
@@ -786,6 +810,12 @@ export function listSpecRoutesForSlug(slug: string): SpecRoute[] {
       return listPsvPrvPseoRoutes(slug);
     case "natural-gas-z-density":
       return listNaturalGasZDensityPseoRoutes(slug);
+    case "heat-exchanger-lmtd-duty":
+      return listHeatExchangerLmtdDutyPseoRoutes(slug);
+    case "compressor-polytropic-power":
+      return listCompressorPolytropicPowerPseoRoutes(slug);
+    case "api650-tank-shell-thickness":
+      return listApi650TankShellThicknessPseoRoutes(slug);
     case "pneumatic-safety":
       return listPneumaticSafetyPseoRoutes(slug);
     case "pump-npsh":
@@ -1660,6 +1690,29 @@ export function findSpecRouteForInputs(
     if (steamHit) return steamHit;
   }
 
+  {
+    const hxHit = matchHeatExchangerLmtdDutySpecRoute(routes, partial, units);
+    if (hxHit) return hxHit;
+  }
+
+  {
+    const compHit = matchCompressorPolytropicPowerSpecRoute(
+      routes,
+      partial,
+      units,
+    );
+    if (compHit) return compHit;
+  }
+
+  {
+    const api650Hit = matchApi650TankShellThicknessSpecRoute(
+      routes,
+      partial,
+      units,
+    );
+    if (api650Hit) return api650Hit;
+  }
+
   // Piping equivalent length / Darby 3-K: nps + schedule + fittingType (+ re).
   const fittingType =
     partial.fittingType != null && partial.fittingType !== ""
@@ -2306,6 +2359,73 @@ export function buildSpecSeoCopy(
       description,
       h1: `${shortTitle} — ${focus}`,
       h2: `${focus} specification summary`,
+    };
+  }
+
+  if (
+    (q.th_in || q.fluid) &&
+    (calculatorType === "heat-exchanger-lmtd-duty" ||
+      route.slug === "heat-exchanger-lmtd-duty")
+  ) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus} | ${brand}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `TEMA LMTD, F-factor, heat duty, and required area for ${focus} (IAPWS-IF97 water/steam screening).`;
+    const clipped =
+      description.length > 160
+        ? `${description.slice(0, 157).trimEnd()}…`
+        : description;
+    return {
+      title,
+      description: clipped,
+      h1: `${shortTitle} — ${focus}`,
+      h2: `${focus} LMTD & duty summary`,
+    };
+  }
+
+  if (
+    calculatorType === "compressor-polytropic-power" ||
+    route.slug === "compressor-polytropic-power"
+  ) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus} | ${brand}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `GPSA polytropic head, gas power, and discharge temperature for ${focus} (API 617 / ASME PTC 10 screening).`;
+    const clipped =
+      description.length > 160
+        ? `${description.slice(0, 157).trimEnd()}…`
+        : description;
+    return {
+      title,
+      description: clipped,
+      h1: `${shortTitle} — ${focus}`,
+      h2: `${focus} polytropic power summary`,
+    };
+  }
+
+  if (
+    calculatorType === "api650-tank-shell-thickness" ||
+    route.slug === "api650-tank-shell-thickness"
+  ) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus} | ${brand}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `API 650 §5.6.3 1-foot method shell course thickness and plate MTO for ${focus}.`;
+    const clipped =
+      description.length > 160
+        ? `${description.slice(0, 157).trimEnd()}…`
+        : description;
+    return {
+      title,
+      description: clipped,
+      h1: `${shortTitle} — ${focus}`,
+      h2: `${focus} shell thickness summary`,
     };
   }
 

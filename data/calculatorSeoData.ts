@@ -9588,6 +9588,687 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
     ],
   },
 
+  "heat-exchanger-lmtd-duty": {
+    slug: "heat-exchanger-lmtd-duty",
+    formulaTitle: "Core Formula & Variable Definitions",
+    formulaHtml:
+      '<p class="eng-eq"><b>Heat duty:</b> <i>Q</i> = <i>ṁ</i><sub>h</sub>·(<i>h</i><sub>h,in</sub> − <i>h</i><sub>h,out</sub>) = <i>ṁ</i><sub>c</sub>·(<i>h</i><sub>c,out</sub> − <i>h</i><sub>c,in</sub>)</p>' +
+      '<p class="eng-eq"><b>Counterflow LMTD:</b> Δ<i>T</i><sub>1</sub> = <i>T</i><sub>h,in</sub> − <i>T</i><sub>c,out</sub>, Δ<i>T</i><sub>2</sub> = <i>T</i><sub>h,out</sub> − <i>T</i><sub>c,in</sub>, Δ<i>T</i><sub>lm</sub> = (Δ<i>T</i><sub>1</sub> − Δ<i>T</i><sub>2</sub>)/ln(Δ<i>T</i><sub>1</sub>/Δ<i>T</i><sub>2</sub>)</p>' +
+      '<p class="eng-eq"><b>Corrected LMTD &amp; area:</b> Δ<i>T</i><sub>lm,corr</sub> = <i>F</i>·Δ<i>T</i><sub>lm</sub>, &nbsp; <i>A</i> = <i>Q</i> / (<i>U</i>·Δ<i>T</i><sub>lm,corr</sub>)</p>' +
+      '<p class="eng-plain">TEMA 9th Ed. Section 5 · IAPWS-IF97 Region 1/2 · API 660 screening context</p>',
+    formulaLatex:
+      "\\Delta T_{lm}=\\frac{\\Delta T_1-\\Delta T_2}{\\ln(\\Delta T_1/\\Delta T_2)},\\quad \\Delta T_{lm,corr}=F\\,\\Delta T_{lm},\\quad A=\\frac{Q}{U\\,\\Delta T_{lm,corr}}",
+    formulaNotes:
+      "Water/steam enthalpies from IAPWS-IF97. F is the TEMA 1–2n / multi-shell LMTD correction. Screening only — confirm U, fouling, and mechanical design with TEMA / API 660 and vendor thermal rating software.",
+    formulaBadges: [
+      { label: "Hero", value: "Q · A" },
+      { label: "LMTD", value: "Counterflow" },
+      { label: "F", value: "TEMA 1–2n" },
+      { label: "Props", value: "IAPWS-IF97" },
+    ],
+    variables: [
+      {
+        symbol: "Q",
+        name: "Heat duty",
+        definition: "Hot-side enthalpy (or Cp·ΔT) release = cold-side absorption (kW / BTU/hr).",
+      },
+      {
+        symbol: "ΔT_lm",
+        name: "Log-mean temperature difference",
+        definition: "Counterflow LMTD from terminal differences ΔT₁ and ΔT₂.",
+      },
+      {
+        symbol: "F",
+        name: "TEMA correction factor",
+        definition: "1-shell / 2n-tube (and N-shell series) F from P and R. Design screen F ≥ 0.75.",
+      },
+      {
+        symbol: "U",
+        name: "Overall heat-transfer coefficient",
+        definition: "User-entered clean/fouled overall U (W/m²·K or BTU/hr·ft²·°F).",
+      },
+      {
+        symbol: "A",
+        name: "Required heat-transfer area",
+        definition: "A = Q / (U · F · ΔT_lm).",
+      },
+      {
+        symbol: "P, R",
+        name: "Temperature effectiveness / capacity ratio",
+        definition: "P = (Tc,out−Tc,in)/(Th,in−Tc,in); R = (Th,in−Th,out)/(Tc,out−Tc,in).",
+      },
+    ],
+    standards: [
+      "TEMA Standards of the Tubular Exchanger Manufacturers Association, 9th Edition — Section 5 Thermal Relations (LMTD & F)",
+      "IAPWS-IF97 Industrial Formulation 1997 — Region 1 liquid water and Region 2 / 4 steam",
+      "API Standard 660 — Shell-and-Tube Heat Exchangers for General Refinery Services (context)",
+    ],
+    tableCaption:
+      "Default water–water duty (90→60 °C · 10 000 kg/h · CW 20→50 °C · U = 1200 W/m²·K · 1 shell) — engine assert",
+    tableHeaders: ["Quantity", "Value", "Unit", "Notes"],
+    tableRows: [
+      ["Q", "349.4", "kW", "IAPWS Δh · ṁ"],
+      ["ΔT_lm", "40.0", "°C", "ΔT₁ = ΔT₂ = 40"],
+      ["F", "0.898", "—", "TEMA 1–2n · P≈0.429 · R=1"],
+      ["F·ΔT_lm", "35.9", "°C", "Corrected LMTD"],
+      ["A", "8.11", "m²", "Q/(U F ΔT_lm)"],
+      ["ṁ_c (required)", "≈ 10 000", "kg/h", "From cold Cp·ΔT"],
+      ["Steam condenser 120 °C · 5000 kg/h", "Q 3059 · A 29.2", "kW / m²", "F ≈ 1 · LMTD 87.3 °C"],
+      ["Imperial 194→140 °F · 22 000 lb/hr", "Q 1.19 MMBtu/hr · A 87.2", "ft²", "U ≈ 211 BTU/hr·ft²·°F"],
+      ["Imperial U = 200 · 15 000 lb/hr", "Q 752 kBTU/hr · A 59.1", "ft²", "200→150 / 80→130 °F"],
+      ["F design floor", "0.75", "—", "Warn when F < 0.75"],
+    ],
+    tableFootnote:
+      "Hero reports Q and required area from IAPWS-IF97 enthalpy (or custom Cp) with TEMA F-corrected LMTD. Default water–water duty asserts Q ≈ 349.4 kW, ΔT_lm = 40 °C, F ≈ 0.898, A ≈ 8.11 m².",
+    allowancesAndTolerances: {
+      title: "Screening Rules Matching This Calculator",
+      summary:
+        "Counterflow LMTD, TEMA F for 1/2/4 shell passes, IAPWS-IF97 water/steam enthalpies, and A = Q/(U F ΔT_lm). Mechanical TEMA design, fouling factors, and vendor HTRI ratings are out of scope.",
+      items: [
+        {
+          label: "Default duty",
+          value: "90→60 °C · 10 000 kg/h · 20→50 °C · U = 1200",
+          description:
+            "Hero ≈ 349.4 kW · 8.11 m² with ΔT_lm = 40 °C and F ≈ 0.898 (1 shell).",
+        },
+        {
+          label: "F design screen",
+          value: "F ≥ 0.75",
+          description:
+            "Below 0.75 the approach is too steep for a practical 1-shell 1–2 exchanger — raise shell passes or cut effectiveness P.",
+        },
+        {
+          label: "Steam condenser mode",
+          value: "Th,in ≈ Th,out",
+          description:
+            "Q = ṁ · h_fg at IAPWS saturation temperature equal to the hot terminal.",
+        },
+        {
+          label: "Out of scope here",
+          value: "TEMA mechanical · HTRI · multiphase",
+          description:
+            "No baffle design, vibration, or two-phase flow maps. Confirm U and area with the exchanger fabricator.",
+        },
+      ],
+    },
+    materialLimitations: {
+      title: "Applicability & Thermal Regime Limits",
+      summary:
+        "Fluid and configuration limits for this screening tool. Metallurgy is not computed — select materials from PMS / API 660 separately.",
+      items: [
+        {
+          materialGroup: "Liquid–liquid water (IAPWS Region 1)",
+          temperatureLimit: "0–600 °C hot · 0–400 °C cold screening",
+          stressLimit: "1 bar abs property reference",
+          notes:
+            "Liquid enthalpies evaluated at 1 bar abs. High-pressure liquid lines may need pressure-corrected properties.",
+        },
+        {
+          materialGroup: "Steam condenser / cool (IAPWS Region 2/4)",
+          temperatureLimit: "Saturation up to ~374 °C critical approach",
+          stressLimit: "Psat from T · Region 1/2 latent heat",
+          notes:
+            "Isothermal condenser when Th,in ≈ Th,out. Desuperheat+condense when Th,out < Th,in uses Psat(Th,in).",
+        },
+        {
+          materialGroup: "1-shell temperature cross",
+          temperatureLimit: "Th,out < Tc,out",
+          stressLimit: "F often collapses",
+          notes:
+            "Temperature cross on a 1-shell unit is inefficient — review 2+ shell passes.",
+        },
+        {
+          materialGroup: "Custom Cp fluids",
+          temperatureLimit: "User Cp band",
+          notes:
+            "Custom path uses constant Cp · ΔT only — not IAPWS. Confirm Cp at mean fluid temperature.",
+        },
+      ],
+      codeRestrictions: [
+        "Not a substitute for TEMA mechanical design or API 660 datasheet certification",
+        "F < 0.75 triggers a design-limit warning",
+        "IAPWS screening band ≈ 1–100 bar, 0–600 °C",
+      ],
+    },
+    workedExample: {
+      title: "Worked Example — Water–Water Cooler",
+      scenario:
+        "Cool 10 000 kg/h of hot water from 90 °C to 60 °C against cooling water heated from 20 °C to 50 °C in a 1-shell / 2n-tube exchanger with U = 1200 W/m²·K.",
+      designConditions: [
+        { label: "Hot water", value: "90 → 60 °C · 10 000 kg/h" },
+        { label: "Cold water", value: "20 → 50 °C" },
+        { label: "Shell passes", value: "1" },
+        { label: "Overall U", value: "1200 W/m²·K" },
+      ],
+      steps: [
+        {
+          step: "1",
+          name: "Hot-side duty from IAPWS enthalpy",
+          formula: "Q = ṁ (h_in − h_out)",
+          calculation: "ṁ = 10 000/3600 kg/s · Δh ≈ 125.77 kJ/kg",
+          result: "Q ≈ 349.4 kW",
+        },
+        {
+          step: "2",
+          name: "Counterflow LMTD",
+          formula: "ΔT₁ = 90−50 = 40 · ΔT₂ = 60−20 = 40",
+          calculation: "ΔT₁ = ΔT₂ → ΔT_lm = 40 °C",
+          result: "ΔT_lm = 40.0 °C",
+        },
+        {
+          step: "3",
+          name: "TEMA F from P, R",
+          formula: "R = 30/30 = 1 · P = 30/70 ≈ 0.429",
+          calculation: "1-shell R=1 closed form",
+          result: "F ≈ 0.898",
+        },
+        {
+          step: "4",
+          name: "Required area",
+          formula: "A = Q / (U F ΔT_lm)",
+          calculation: "349.4×1000 / (1200 × 0.898 × 40)",
+          result: "A ≈ 8.11 m²",
+        },
+      ],
+      conclusion:
+        "Screening duty is ≈ 349.4 kW with ≈ 8.11 m² at F ≈ 0.898. Confirm U, fouling, and TEMA mechanical layout with the fabricator.",
+    },
+    ...howTo("How to calculate heat exchanger LMTD and area", [
+      {
+        name: "Enter hot and cold terminal temperatures",
+        text: "Set Th,in / Th,out and Tc,in / Tc,out. Counterflow LMTD requires ΔT₁ and ΔT₂ positive.",
+      },
+      {
+        name: "Select fluid mode and hot mass flow",
+        text: "Use water (IAPWS), steam condenser/cool, or custom Cp. Enter hot mass flow in kg/h or lb/hr.",
+      },
+      {
+        name: "Set shell passes and overall U",
+        text: "Choose 1, 2, or 4 shell passes and the overall heat-transfer coefficient U.",
+      },
+      {
+        name: "Read Q, F, LMTD, and A",
+        text: "Hero shows duty and required area. Check F ≥ 0.75 and temperature-cross warnings before locking the datasheet.",
+      },
+    ]),
+    faq: [
+      {
+        question: "How is LMTD calculated for a shell-and-tube exchanger?",
+        answer:
+          "FEK uses **counterflow terminal differences** ΔT₁ = Th,in−Tc,out and ΔT₂ = Th,out−Tc,in, then ΔT_lm = (ΔT₁−ΔT₂)/ln(ΔT₁/ΔT₂). The TEMA **F** factor corrects for 1-shell / 2n-tube (and multi-shell) flow.",
+      },
+      {
+        question: "What does TEMA F < 0.75 mean?",
+        answer:
+          "An **F-factor below ≈ 0.75** means the temperature approach is too steep for a practical single-shell unit. Increase shell passes, reduce cold-side rise, or split the duty.",
+      },
+      {
+        question: "How does the steam condenser mode work?",
+        answer:
+          "When **Th,in ≈ Th,out**, FEK treats the hot side as isothermal condensation: **Q = ṁ · h_fg** at the IAPWS saturation temperature equal to the hot terminal.",
+      },
+      {
+        question: "Why does Area differ from a simple Q/(U·LMTD) estimate?",
+        answer:
+          "Simple Q/(U·LMTD) assumes **F = 1** (pure counterflow). Shell-and-tube 1–2 units need **A = Q/(U·F·LMTD)**. For the default water duty, F ≈ 0.898 raises area versus the F = 1 estimate.",
+      },
+    ],
+  },
+
+  "compressor-polytropic-power": {
+    slug: "compressor-polytropic-power",
+    formulaTitle: "Core Formula & Variable Definitions",
+    formulaHtml:
+      '<p class="eng-eq"><b>Pressure ratio:</b> <i>r</i><sub>p</sub> = <i>P</i><sub>2</sub> / <i>P</i><sub>1</sub></p>' +
+      '<p class="eng-eq"><b>Polytropic exponent:</b> (<i>n</i>−1)/<i>n</i> = (<i>k</i>−1)/(<i>k</i>·<i>η</i><sub>p</sub>)</p>' +
+      '<p class="eng-eq"><b>Polytropic head:</b> <i>H</i><sub>p</sub> = (<i>Z</i><sub>avg</sub>·<i>R</i>·<i>T</i><sub>1</sub>/<i>M</i>)·(<i>n</i>/(<i>n</i>−1))·[<i>r</i><sub>p</sub><sup>(<i>n</i>−1)/<i>n</i></sup> − 1]</p>' +
+      '<p class="eng-eq"><b>Gas power &amp; T₂:</b> <i>P</i><sub>gas</sub> = <i>ṁ</i>·<i>H</i><sub>p</sub>/<i>η</i><sub>p</sub> &nbsp;·&nbsp; <i>T</i><sub>2</sub> = <i>T</i><sub>1</sub>·<i>r</i><sub>p</sub><sup>(<i>n</i>−1)/<i>n</i></sup></p>' +
+      '<p class="eng-plain">GPSA Engineering Data Book Sec. 13 · API 617 · ASME PTC 10 screening</p>',
+    formulaLatex:
+      "H_p=\\frac{Z_{avg} R T_1}{M}\\frac{n}{n-1}\\left[r_p^{(n-1)/n}-1\\right],\\quad P_{gas}=\\frac{\\dot{m} H_p}{\\eta_p},\\quad T_2=T_1 r_p^{(n-1)/n}",
+    formulaNotes:
+      "R = 8.314462618 kJ/(kmol·K). M in kg/kmol (= g/mol numeric). ρ₁ = P₁ M /(Z R T₁) with absolute suction pressure. Screening only — confirm OEM performance maps, multi-stage layout, and real-gas EOS.",
+    formulaBadges: [
+      { label: "Hero", value: "P_gas · T₂" },
+      { label: "Head", value: "H_p polytropic" },
+      { label: "η_p", value: "in (n−1)/n" },
+      { label: "Screen", value: "API 617 T₂ / r_p" },
+    ],
+    variables: [
+      {
+        symbol: "r_p",
+        name: "Pressure ratio",
+        definition: "P₂/P₁ absolute suction and discharge pressures.",
+      },
+      {
+        symbol: "(n−1)/n",
+        name: "Polytropic exponent factor",
+        definition: "(k−1)/(k·η_p) with k = Cp/Cv and polytropic efficiency η_p.",
+      },
+      {
+        symbol: "H_p",
+        name: "Polytropic head",
+        definition: "Specific polytropic work (kJ/kg or ft·lbf/lb) from GPSA-style relation.",
+      },
+      {
+        symbol: "P_gas",
+        name: "Gas power",
+        definition: "ṁ·H_p/η_p (kW or hp). Mass flow from Q₁·ρ₁ at suction.",
+      },
+      {
+        symbol: "T₂",
+        name: "Discharge temperature",
+        definition: "T₁ · r_p^((n−1)/n) absolute temperatures.",
+      },
+      {
+        symbol: "Z_avg",
+        name: "Average compressibility",
+        definition: "User/screening Z between suction and discharge (not a full EOS solve).",
+      },
+    ],
+    standards: [
+      "GPSA Engineering Data Book — Section 13 Compressors and Expanders (polytropic head & power)",
+      "API Standard 617 — Axial and Centrifugal Compressors and Expander-compressors (Clause 4.1 & Annex E context)",
+      "ASME PTC 10 — Performance Test Codes on Compressors and Exhausters (acceptance context)",
+    ],
+    tableCaption:
+      "Default natural-gas duty (5→25 bar(a) · 35 °C · 5000 m³/h · η_p = 75% · M = 18.5 · k = 1.28 · Z = 0.95) — engine assert",
+    tableHeaders: ["Quantity", "Value", "Unit", "Notes"],
+    tableRows: [
+      ["r_p", "5.00", "—", "P₂/P₁"],
+      ["(n−1)/n", "0.2917", "—", "(k−1)/(k η_p)"],
+      ["H_p", "270.2", "kJ/kg", "GPSA polytropic head"],
+      ["T₂", "219.6", "°C", "High-temp alert (>150 °C)"],
+      ["ρ₁", "3.800", "kg/m³", "P M /(Z R T) at suction"],
+      ["ṁ", "19 002", "kg/h", "Q₁ · ρ₁"],
+      ["P_gas", "1902", "kW", "ṁ H_p / η_p"],
+      ["Air 1.013→7 bar · 1000 m³/h · 72%", "114 kW · 358 °C", "kW / °C", "H_p ≈ 244.5 kJ/kg"],
+      ["NG 70→350 psia · 3000 ICFM · 75%", "2510 hp · 427 °F", "hp / °F", "Same r_p = 5 polytropic path"],
+      ["N₂ 15→90 psia · 1500 ICFM · 70%", "370 hp · 641 °F", "hp / °F", "H_p ≈ 77 200 ft·lbf/lb"],
+    ],
+    tableFootnote:
+      "Hero reports polytropic gas power and discharge temperature. Default NG duty asserts H_p ≈ 270.2 kJ/kg, T₂ ≈ 219.6 °C, P_gas ≈ 1902 kW (suction density included). Spec LLM heroes that omit ρ₁ are discarded.",
+    allowancesAndTolerances: {
+      title: "Screening Rules Matching This Calculator",
+      summary:
+        "GPSA polytropic head with (n−1)/n = (k−1)/(k η_p), gas power = ṁ H_p / η_p, and T₂ = T₁ r_p^((n−1)/n). OEM maps, PTC 10 tests, and full EOS Z are out of scope.",
+      items: [
+        {
+          label: "Default duty",
+          value: "NG 5→25 bar(a) · 5000 m³/h · η_p 75%",
+          description:
+            "Hero ≈ 1902 kW · 219.6 °C with H_p ≈ 270.2 kJ/kg, r_p = 5 (high T₂ and high r_p alerts).",
+        },
+        {
+          label: "T₂ screen",
+          value: "T₂ ≤ 150 °C",
+          description:
+            "API 617 single-stage screening cue for seals/gas quality — recommend intercooled multi-stage above this band.",
+        },
+        {
+          label: "Pressure-ratio screen",
+          value: "r_p ≤ 4.5",
+          description:
+            "Single-stage centrifugal duties above ≈ 4.5 warrant stage split for stress and efficiency.",
+        },
+        {
+          label: "Out of scope here",
+          value: "OEM map · PTC 10 · EOS Z",
+          description:
+            "No impeller aerodynamics, surge control, or Lee–Kesler/RK Z solve. Confirm with vendor rating.",
+        },
+      ],
+    },
+    materialLimitations: {
+      title: "Applicability & Gas / Regime Limits",
+      summary:
+        "Fluid and single-stage regime limits for this screening tool. Metallurgy is not computed — select materials from PMS / API 617 separately.",
+      items: [
+        {
+          materialGroup: "Lean natural gas / air / nitrogen (constant k, Z)",
+          temperatureLimit: "T₁ −50–200 °C screening",
+          stressLimit: "Z_avg 0.5–1.5 user/screen",
+          notes:
+            "Uses handbook MW and k defaults. Custom gas requires user M, k, and Z_avg.",
+        },
+        {
+          materialGroup: "Single-stage high pressure ratio",
+          temperatureLimit: "r_p > 4.5 warn",
+          stressLimit: "Mechanical / efficiency screen",
+          notes:
+            "Split stages when r_p exceeds the single-stage screen to limit temperature rise and casing stress.",
+        },
+        {
+          materialGroup: "High discharge temperature",
+          temperatureLimit: "T₂ > 150 °C (302 °F)",
+          stressLimit: "Seal / O-ring / packing screen",
+          notes:
+            "API 617 context recommends intercooling / multi-stage when discharge temperature exceeds this band.",
+        },
+        {
+          materialGroup: "High-pressure real-gas band",
+          temperatureLimit: "P₂ > 50 bar(a)",
+          stressLimit: "Constant-Z may understate H_p",
+          notes:
+            "Confirm Z_avg with Lee–Kesler or Redlich–Kwong EOS — not solved inside this calculator.",
+        },
+      ],
+      codeRestrictions: [
+        "Not a substitute for OEM performance maps or ASME PTC 10 acceptance tests",
+        "T₂ > 150 °C and r_p > 4.5 trigger screening warnings",
+        "Constant Z_avg — no full EOS integration",
+      ],
+    },
+    workedExample: {
+      title: "Worked Example — Natural Gas 5→25 bar(a)",
+      scenario:
+        "Screen a single-stage centrifugal compressor raising lean natural gas from 5 bar(a) to 25 bar(a) at 35 °C suction with 5000 m³/h inlet volume flow, η_p = 75%, M = 18.5, k = 1.28, Z_avg = 0.95.",
+      designConditions: [
+        { label: "Gas", value: "Natural gas · M = 18.5 · k = 1.28 · Z = 0.95" },
+        { label: "Pressures", value: "P₁ = 5 bar(a) · P₂ = 25 bar(a)" },
+        { label: "Suction", value: "T₁ = 35 °C · Q₁ = 5000 m³/h" },
+        { label: "Efficiency", value: "η_p = 75%" },
+      ],
+      steps: [
+        {
+          step: "1",
+          name: "Pressure ratio and polytropic factor",
+          formula: "r_p = P₂/P₁ · (n−1)/n = (k−1)/(k η_p)",
+          calculation: "5/5 = 5 · (0.28)/(1.28·0.75) = 0.291667",
+          result: "r_p = 5.00 · (n−1)/n ≈ 0.2917",
+        },
+        {
+          step: "2",
+          name: "Polytropic head",
+          formula: "H_p = (Z R T₁/M)·(n/(n−1))·[r_p^((n−1)/n) − 1]",
+          calculation: "R = 8.314 · T₁ = 308.15 K · M = 18.5",
+          result: "H_p ≈ 270.2 kJ/kg",
+        },
+        {
+          step: "3",
+          name: "Discharge temperature",
+          formula: "T₂ = T₁ · r_p^((n−1)/n)",
+          calculation: "308.15 · 5^0.2917",
+          result: "T₂ ≈ 219.6 °C (high-temp alert)",
+        },
+        {
+          step: "4",
+          name: "Suction density, mass flow, gas power",
+          formula: "ρ₁ = P M/(Z R T) · P_gas = ṁ H_p / η_p",
+          calculation: "ρ₁ ≈ 3.80 kg/m³ · ṁ ≈ 19 002 kg/h",
+          result: "P_gas ≈ 1902 kW",
+        },
+      ],
+      conclusion:
+        "Screening duty is ≈ 1902 kW with T₂ ≈ 219.6 °C at r_p = 5. High temperature and pressure-ratio alerts recommend reviewing intercooled multi-stage compression before locking the datasheet.",
+    },
+    ...howTo("How to calculate compressor polytropic gas power", [
+      {
+        name: "Select gas and enter M, k, Z_avg",
+        text: "Choose air, natural gas, nitrogen, or custom. Confirm molecular weight, specific heat ratio, and average compressibility.",
+      },
+      {
+        name: "Enter absolute suction and discharge pressures",
+        text: "Use bar(a) or psia. Discharge must exceed suction. Pressure ratio r_p = P₂/P₁ drives head and T₂.",
+      },
+      {
+        name: "Set suction temperature, inlet volume flow, and η_p",
+        text: "Enter T₁, Q₁ (m³/h or ICFM), and polytropic efficiency percent (typically 60–88%).",
+      },
+      {
+        name: "Read P_gas, T₂, H_p, and screening alerts",
+        text: "Hero shows gas power and discharge temperature. Review T₂ > 150 °C and r_p > 4.5 warnings before OEM selection.",
+      },
+    ]),
+    faq: [
+      {
+        question: "How is polytropic head calculated?",
+        answer:
+          "FEK uses the GPSA form **H_p = (Z_avg·R·T₁/M)·(n/(n−1))·[r_p^((n−1)/n) − 1]** with **(n−1)/n = (k−1)/(k·η_p)**.",
+      },
+      {
+        question: "Why does gas power include suction density?",
+        answer:
+          "Inlet volume flow **Q₁** is converted with **ρ₁ = P₁ M /(Z R T₁)** so **ṁ = Q₁·ρ₁**. Omitting density understates power at elevated suction pressure.",
+      },
+      {
+        question: "When should I use multi-stage compression?",
+        answer:
+          "When **r_p > 4.5** or **T₂ > 150 °C** (302 °F), API 617 screening practice recommends splitting stages with intercooling to protect seals and limit mechanical stress.",
+      },
+      {
+        question: "Is this an OEM performance guarantee?",
+        answer:
+          "**No.** This is GPSA/API 617 **screening** only. Confirm head, power, and surge margin on the vendor map and ASME PTC 10 when required.",
+      },
+    ],
+  },
+
+  "api650-tank-shell-thickness": {
+    slug: "api650-tank-shell-thickness",
+    formulaTitle: "Core Formula & Variable Definitions",
+    formulaHtml:
+      '<p class="eng-eq"><b>Design thickness (SI):</b> <i>t</i><sub>d</sub> = 4.9·<i>D</i>·(<i>H</i>−0.3)·<i>G</i> / (<i>S</i><sub>d</sub>·<i>E</i>) + <i>CA</i></p>' +
+      '<p class="eng-eq"><b>Hydrotest thickness (SI):</b> <i>t</i><sub>t</sub> = 4.9·<i>D</i>·(<i>H</i>−0.3) / <i>S</i><sub>t</sub> + <i>CA</i></p>' +
+      '<p class="eng-eq"><b>USC:</b> replace 4.9→2.6 and (<i>H</i>−0.3)→(<i>H</i>−1) with <i>D</i>, <i>H</i> in ft and stresses in psi</p>' +
+      '<p class="eng-eq"><b>Governing plate:</b> <i>t</i><sub>required</sub> = max(<i>t</i><sub>d</sub>, <i>t</i><sub>t</sub>, <i>t</i><sub>min,API</sub>), &nbsp; <i>t</i><sub>nom</sub> = CeilToCommercialPlate(<i>t</i><sub>required</sub>)</p>' +
+      '<p class="eng-plain">API Standard 650 — Section 5.6.3 1-Foot Method · Table 5.2a / 5.2b minimums</p>',
+    formulaLatex:
+      "t_d=\\frac{4.9 D (H-0.3) G}{S_d E}+CA,\\quad t_t=\\frac{4.9 D (H-0.3)}{S_t}+CA,\\quad t_{nom}=\\mathrm{CeilPlate}(\\max(t_d,t_t,t_{min}))",
+    formulaNotes:
+      "H is the height from the bottom of the course under consideration to the design liquid level. Course-by-course screening uses successive H reductions by course height. Shell mass uses π·D·h_course·t_nom·ρ with ρ = 7850 kg/m³. Screening only — confirm with the project API 650 edition.",
+    formulaBadges: [
+      { label: "Hero", value: "t_nom · mass" },
+      { label: "Method", value: "1-foot §5.6.3" },
+      { label: "Floor", value: "Table 5.2a/b" },
+      { label: "Limit", value: "D ≤ 60 m" },
+    ],
+    variables: [
+      {
+        symbol: "t_d",
+        name: "Design shell thickness",
+        definition: "Product design thickness including CA (mm / in).",
+      },
+      {
+        symbol: "t_t",
+        name: "Hydrostatic test thickness",
+        definition: "Hydrotest condition thickness including CA (mm / in).",
+      },
+      {
+        symbol: "D, H",
+        name: "Diameter / liquid height",
+        definition: "Nominal inside diameter and liquid height above course bottom (m / ft).",
+      },
+      {
+        symbol: "G, E",
+        name: "Specific gravity / joint efficiency",
+        definition: "Design specific gravity (water = 1.0) and weld joint efficiency (0.70–1.0).",
+      },
+      {
+        symbol: "S_d, S_t",
+        name: "Allowable stresses",
+        definition: "Product design and hydrotest allowables from API 650 Table 5.2a/5.2b for the selected plate.",
+      },
+      {
+        symbol: "t_min, t_nom",
+        name: "Code floor / commercial plate",
+        definition: "Table 5.2a/b minimum by diameter; t_nom is next mill plate ≥ t_required.",
+      },
+    ],
+    standards: [
+      "API Standard 650 — Welded Tanks for Oil Storage, 13th Edition — Section 5.6.3 Calculation by 1-Foot Method",
+      "API Standard 650 — Section 5.6.1.1 / Table 5.2a & 5.2b Minimum Shell Thickness",
+      "API Standard 650 — Section 5.6.4 Variable-Design-Point Method (out of scope — diameter screen)",
+    ],
+    tableCaption:
+      "Default duty (D = 20 m · H = 15 m · course 2.5 m · G = 0.85 · A36 · E = 0.85 · CA = 2 mm) — engine assert",
+    tableHeaders: ["Quantity", "Value", "Unit", "Notes"],
+    tableRows: [
+      ["Bottom t_d", "11.00", "mm", "4.9 D (H−0.3) G /(S_d E) + CA"],
+      ["Bottom t_t", "10.42", "mm", "4.9 D (H−0.3)/S_t + CA"],
+      ["API 650 t_min", "6", "mm", "15 ≤ D < 36 m"],
+      ["Bottom t_nom", "12", "mm", "Ceil commercial plate"],
+      ["Courses", "6", "—", "15 / 2.5"],
+      ["Shell mass", "61.7", "t", "π D h t_nom ρ · Σ courses"],
+      ["40 m · 18 m · A516-70 · G=1 · CA=3 · E=1", "t_d 22.0 · t_nom 22", "mm", "S_d = 183 MPa"],
+      ["60 ft · 48 ft · A36 · CA=1/16\"", "t_d 0.378 · t_nom 0.500", "in", "Course height 8 ft"],
+      ["100 ft · 50 ft · A283-C · CA=1/8\"", "t_d 0.766 · t_nom 0.875", "in", "D ≈ 30.5 m < 60 m screen"],
+      ["1-foot diameter limit", "60 m / 200 ft", "—", "Above → §5.6.4 VDP"],
+    ],
+    tableFootnote:
+      "Hero reports bottom-course commercial plate and total shell mass. Default duty asserts t_d ≈ 11.00 mm, t_t ≈ 10.42 mm, t_nom = 12 mm, mass ≈ 61.7 t. Spec LLM heroes that omit course mass or mis-state t_t are discarded.",
+    allowancesAndTolerances: {
+      title: "Screening Rules Matching This Calculator",
+      summary:
+        "API 650 §5.6.3 1-foot equations, Table 5.2a/5.2b minimum shell thickness by diameter, and commercial plate ceil. Variable-Design-Point, wind girders, and seismic buckling are out of scope.",
+      items: [
+        {
+          label: "Default duty",
+          value: "20 m · 15 m · A36 · E 0.85 · CA 2 mm",
+          description:
+            "Bottom course hero ≈ 12 mm · 61.7 t with t_d ≈ 11.00 mm and t_t ≈ 10.42 mm.",
+        },
+        {
+          label: "1-foot diameter screen",
+          value: "D ≤ 60 m (200 ft)",
+          description:
+            "Larger tanks require Variable-Design-Point Method (§5.6.4) for final design.",
+        },
+        {
+          label: "Minimum thickness floor",
+          value: "Table 5.2a/5.2b",
+          description:
+            "D < 15 m → 5 mm; 15–36 m → 6 mm; 36–60 m → 8 mm; D > 60 m → 10 mm.",
+        },
+        {
+          label: "Out of scope here",
+          value: "VDP · wind girder · seismic",
+          description:
+            "No intermediate wind girders, annular plates, or appendix seismic checks.",
+        },
+      ],
+    },
+    materialLimitations: {
+      title: "Plate Metallurgy & Allowable Stress Limits",
+      summary:
+        "API 650 Table 5.2a/5.2b screening allowables for common carbon and HSLA tank plate. Confirm group, thickness category, and design metal temperature against the project edition.",
+      items: [
+        {
+          materialGroup: "ASTM A283 Grade C",
+          temperatureLimit: "Ambient design metal ≤ ~90 °C screening",
+          stressLimit: "S_d = 137 MPa · S_t = 154 MPa",
+          notes: "USC: 20,000 / 22,500 psi. Lower-cost CS plate.",
+        },
+        {
+          materialGroup: "ASTM A36",
+          temperatureLimit: "Ambient design metal ≤ ~90 °C screening",
+          stressLimit: "S_d = 160 MPa · S_t = 171 MPa",
+          notes: "USC: 23,200 / 24,900 psi. Default calculator material.",
+        },
+        {
+          materialGroup: "ASTM A516 Grade 70",
+          temperatureLimit: "Ambient design metal ≤ ~90 °C screening",
+          stressLimit: "S_d = 183 MPa · S_t = 196 MPa",
+          notes: "USC: 26,600 / 28,500 psi. Pressure-vessel quality CS.",
+        },
+        {
+          materialGroup: "ASTM A537 Class 1",
+          temperatureLimit: "Ambient design metal ≤ ~90 °C screening",
+          stressLimit: "S_d = 200 MPa · S_t = 214 MPa",
+          notes: "USC: 29,000 / 31,100 psi. HSLA quenched & tempered plate.",
+        },
+      ],
+      codeRestrictions: [
+        "Not a substitute for Variable-Design-Point (§5.6.4) when D > 60 m",
+        "Allowables are ambient screening — check elevated-temperature tables when required",
+        "Joint efficiency E must match the radiographic / examination plan",
+      ],
+    },
+    workedExample: {
+      title: "Worked Example — 20 m × 15 m A36 Tank",
+      scenario:
+        "Size bottom and upper shell courses for a 20 m diameter tank with 15 m design liquid height, 2.5 m courses, G = 0.85, ASTM A36, E = 0.85, CA = 2 mm using the API 650 1-foot method.",
+      designConditions: [
+        { label: "Geometry", value: "D = 20 m · H = 15 m · course = 2.5 m" },
+        { label: "Fluid / joint", value: "G = 0.85 · E = 0.85" },
+        { label: "Material", value: "A36 · S_d = 160 MPa · S_t = 171 MPa" },
+        { label: "CA", value: "2 mm" },
+      ],
+      steps: [
+        {
+          step: "1",
+          name: "Bottom-course design thickness",
+          formula: "t_d = 4.9 D (H−0.3) G /(S_d E) + CA",
+          calculation: "4.9·20·14.7·0.85/(160·0.85) + 2",
+          result: "t_d ≈ 11.00 mm",
+        },
+        {
+          step: "2",
+          name: "Hydrotest thickness",
+          formula: "t_t = 4.9 D (H−0.3)/S_t + CA",
+          calculation: "4.9·20·14.7/171 + 2",
+          result: "t_t ≈ 10.42 mm",
+        },
+        {
+          step: "3",
+          name: "Code floor and commercial plate",
+          formula: "t_required = max(t_d, t_t, t_min)",
+          calculation: "max(11.00, 10.42, 6) → ceil plate",
+          result: "t_nom = 12 mm",
+        },
+        {
+          step: "4",
+          name: "Course stack and shell mass",
+          formula: "Σ π D h_i t_nom,i ρ",
+          calculation: "6 courses · ρ = 7850 kg/m³",
+          result: "Shell mass ≈ 61.7 t",
+        },
+      ],
+      conclusion:
+        "Bottom course screens at 12 mm commercial plate (governed by t_d ≈ 11.00 mm). Total shell plate mass ≈ 61.7 t. Confirm wind girders and, if D exceeds 60 m, switch to Variable-Design-Point.",
+    },
+    ...howTo("How to calculate API 650 tank shell thickness (1-foot method)", [
+      {
+        name: "Enter tank diameter, liquid height, and course height",
+        text: "Use inside diameter D and design liquid height H. Course height sets how many shell rings are stacked.",
+      },
+      {
+        name: "Select plate material, joint efficiency, G, and CA",
+        text: "Choose A283-C / A36 / A516-70 / A537-1, set E from the RT plan, specific gravity, and corrosion allowance.",
+      },
+      {
+        name: "Review bottom-course t_nom and shell mass",
+        text: "Hero shows commercial bottom-course thickness and total shell weight. Summary lists t_d, t_t, and t_min.",
+      },
+      {
+        name: "Check course MTO table and diameter screen",
+        text: "Use the course step chart/table for plate take-off. If D > 60 m, apply Variable-Design-Point instead of 1-foot.",
+      },
+    ]),
+    faq: [
+      {
+        question: "What is the API 650 1-foot method?",
+        answer:
+          "Section **5.6.3** calculates each shell course using liquid height **H** measured from the **bottom of that course**, with the **(H − 1 ft)** or **(H − 0.3 m)** offset built into the code equations.",
+      },
+      {
+        question: "When must I use Variable-Design-Point instead?",
+        answer:
+          "When **D > 60 m (200 ft)**, API 650 requires the **Variable-Design-Point Method (§5.6.4)** for final shell design. This calculator still shows a screening thickness but raises a diameter-limit warning.",
+      },
+      {
+        question: "How does Table 5.2a minimum thickness interact with t_d?",
+        answer:
+          "**t_required = max(t_d, t_t, t_min)**. If calculated thicknesses fall below the diameter-based floor, the course is raised to **t_min** before commercial plate selection.",
+      },
+      {
+        question: "Is shell weight a certified MTO?",
+        answer:
+          "**No.** Mass is a **screening take-off** from π·D·h·t_nom·ρ. Fabrication scrap, weld overlay, and wind-girder steel are not included.",
+      },
+    ],
+  },
+
 };
 
 export function getCalculatorSeo(slug: string): CalculatorSeoEntry | undefined {
