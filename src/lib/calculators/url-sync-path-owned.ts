@@ -30,6 +30,7 @@ export const PATH_OWNED_PARAMS = new Set([
   "mode",
   "gas",
   "temp",
+  "temperature",
   "arr",
   "hs",
   "hf",
@@ -77,6 +78,7 @@ export const PATH_OWNED_PARAMS = new Set([
   "geometryType",
   "purgeMethod",
   "pipeNps",
+  "pipeSchedule",
   "pipeLength",
   "vesselDiameter",
   "vesselLength",
@@ -152,6 +154,15 @@ export const PATH_OWNED_PARAMS = new Set([
   "sg",
   "ca",
   "e",
+  // pipe-branch reinforcement duty fields (encoded in Pattern B path match)
+  "sh",
+  "sb",
+  "sr",
+  "legh",
+  "legb",
+  "w",
+  "y",
+  "mill",
 ]);
 
 /**
