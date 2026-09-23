@@ -5,7 +5,7 @@ type SchematicFrameProps = {
   children: ReactNode;
   caption?: string | null;
   /** Larger canvas for face-to-face / takeout diagrams. */
-  size?: "default" | "large";
+  size?: "default" | "large" | "xl";
 };
 
 export default function SchematicFrame({
@@ -15,16 +15,18 @@ export default function SchematicFrame({
   size = "default",
 }: SchematicFrameProps) {
   const canvasMax =
-    size === "large"
-      ? "mx-auto flex max-h-[280px] w-full min-w-0 max-w-full items-center justify-center md:max-h-[340px]"
-      : "mx-auto flex max-h-[200px] w-full min-w-0 max-w-full items-center justify-center md:max-h-[220px]";
+    size === "xl"
+      ? "mx-auto flex max-h-[380px] w-full min-h-0 min-w-0 max-w-full items-center justify-center md:max-h-[460px]"
+      : size === "large"
+        ? "mx-auto flex max-h-[280px] w-full min-h-0 min-w-0 max-w-full items-center justify-center md:max-h-[340px]"
+        : "mx-auto flex max-h-[200px] w-full min-h-0 min-w-0 max-w-full items-center justify-center md:max-h-[220px]";
 
   return (
     <div className="schematic-frame mt-2 border-t border-spec-border pt-2">
       <p className="mb-1 text-[10px] font-medium uppercase tracking-wide text-spec-text3">
         {title}
       </p>
-      <div className="overflow-hidden rounded-md border border-dashed border-spec-border bg-spec-bg">
+      <div className="overflow-hidden rounded-md border border-dashed border-spec-border bg-spec-bg p-2">
         <div className={canvasMax}>{children}</div>
       </div>
       {caption ? (

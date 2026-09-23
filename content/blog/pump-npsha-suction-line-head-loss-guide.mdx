@@ -1,0 +1,235 @@
+---
+title: "Pump NPSHa Calculation and Suction Line Head Loss Field Guide"
+description: "NPSHa calculation and suction-line friction for centrifugal pumps — HI 9.6.1 / API 610 screening with a FEK water flooded worked example (NPSHa ≈ 12.29 m)."
+date: "2026-09-24"
+category: "Equipment"
+tags:
+  - NPSHa
+  - Pump Cavitation
+  - Suction Head Loss
+  - Hydraulic Design
+  - API 610
+  - Hydraulic Institute
+relatedCalculatorUrl: "/calculator/pump-npsh-cavitation"
+relatedCalculatorName: "Pump NPSHa & Cavitation Calculator"
+---
+
+Undersized suction piping, ignored vapor pressure at pumping temperature, or a missing strainer $L/D$ turns a “comfortable” flooded tank into impeller pitting and vibration within weeks. This guide owns **NPSHa calculation** and suction-line head-loss screening with the same Hydraulic Institute / API 610 head terms implemented in FieldEngineersKit.
+
+Run the numbers in the live [Pump NPSH & Cavitation](/calculator/pump-npsh-cavitation) calculator (absolute surface pressure, signed static head, and $h_f$ in one screen).
+
+## Quick Summary (TL;DR)
+
+- **Takeaway:** Available NPSH is $\mathrm{NPSHa}=H_a+z_s-H_{vp}-h_f$; cavitation risk rises when $\mathrm{NPSHa}<\mathrm{NPSHr}$ from the OEM curve.
+- **Governing relation:** $H_a=P_s/(\rho g)$, $H_{vp}=P_v/(\rho g)$; flooded $z_s>0$, suction lift $z_s<0$.
+- **Code / basis:** ANSI/HI **9.6.1** NPSH margin · ASME **B73.1** · API **610** (purchaser-defined margin) — FEK screening densities and Antoine $P_v$.
+
+| Item | Field takeaway |
+| :--- | :--- |
+| **$H_a$ (atm, water 20 °C)** | **≈ 10.35 m** at $P_s=1.01325\text{ bar a}$ (FEK $\rho\approx 998\text{ kg/m}^3$) |
+| **$H_{vp}$ (water 20 °C)** | **≈ 0.24 m** (Antoine $P_v$ in FEK NPSH engine) |
+| **Worked $\mathrm{NPSHa}$** | **≈ 12.29 m** with $z_s=+3.0\text{ m}$, $h_f=0.82\text{ m}$ |
+| **Margin ratio** | $\mathrm{NPSHa}/\mathrm{NPSHr}\approx 3.51$ at $\mathrm{NPSHr}=3.5\text{ m}$ (Pass vs ≥1.1 screen) |
+| **Suction velocity (ex.)** | **≈ 1.75 m/s** in 3″ Sch 40 (ID **77.92 mm**) at $30\text{ m}^3/\text{h}$ |
+| **$h_f$ source** | Enter loss head in NPSH tool; estimate with [Pressure Drop & Friction](/calculator/pressure-drop-friction) |
+| **Limits** | Screening only — OEM $\mathrm{NPSHr}$ curve and project / API 610 margin govern |
+
+---
+
+## Why NPSHa calculation matters on the suction line
+
+Centrifugal pumps do not “pull” liquid against vapor pressure forever. When absolute pressure at the impeller eye approaches $P_v$, vapor cavities form, collapse, and erode metal. **NPSHa** is the surplus absolute head the **suction system** delivers; **NPSHr** is what the **pump** needs at the operating capacity on the OEM curve.
+
+Field failures usually come from the suction side: long small-bore runs, clogged strainers, hot liquid (high $P_v$), atmospheric tanks treated as if they were pressurized, or lift duties sized like flooded duties. Use [Pump NPSH & Cavitation](/calculator/pump-npsh-cavitation) for the head balance, then refine $h_f$ with [Pipe Pressure Drop & Friction Loss](/calculator/pressure-drop-friction) and suction velocity with [Flow Velocity & Erosion Limit](/calculator/flow-velocity-erosion). Pair Darcy / Crane fitting detail with the sister guide [Pipe Pressure Drop, Friction Loss & Erosion Velocity Limits](/docs/pipe-pressure-drop-friction-loss-api-rp-14e-guide).
+
+<Callout title="Screening vs OEM / project margin" variant="info">
+This article and the FEK NPSH tool provide **HI 9.6.1 / ASME B73.1 / API 610-aligned screening** using catalog densities and Antoine-style vapor pressure — not a process simulator and not a substitute for the pump supplier’s certified $\mathrm{NPSHr}$ curve. Final margin policy (often $\geq 1.1$–$1.5\times\mathrm{NPSHr}$ for continuous cold water; higher for hot or volatile service) is set by the purchaser / project specification. Confirm strainer, foot valve, and eccentric-reducer (flat-on-top) practice against the current Hydraulic Institute guidance and the OEM datasheet.
+</Callout>
+
+---
+
+## Core formulas & parameter definitions
+
+### Available NPSH (FEK engine)
+
+FieldEngineersKit computes:
+
+$$
+\mathrm{NPSHa} = H_a + z_s - H_{vp} - h_f
+$$
+
+with absolute surface and vapor heads:
+
+$$
+H_a = \frac{P_s}{\rho\, g},\qquad H_{vp} = \frac{P_v}{\rho\, g}
+$$
+
+Equivalently (same algebra):
+
+$$
+\mathrm{NPSHa} = \frac{P_s - P_v}{\rho\, g} + z_s - h_f
+$$
+
+where $g = 9.80665\text{ m/s}^2$ in the FEK engine.
+
+### Static arrangement
+
+| Arrangement | Sign of $z_s$ | Field meaning |
+| :--- | :---: | :--- |
+| **Flooded suction** | $+\,|z|$ | Liquid free surface **above** pump centerline |
+| **Suction lift** | $-\,|z|$ | Liquid free surface **below** pump centerline |
+
+### Margin screens
+
+$$
+\text{Margin} = \mathrm{NPSHa} - \mathrm{NPSHr},\qquad
+\text{Ratio} = \frac{\mathrm{NPSHa}}{\mathrm{NPSHr}}
+$$
+
+FEK flags **fail** when $\mathrm{NPSHa}<\mathrm{NPSHr}$, and **warn** when the ratio is below about **1.1** or the absolute margin is thin ($\lt\sim 0.5\text{ m}$), consistent with HI 9.6.1-style continuous-duty screening. API 610 expects the **purchaser** to state the required margin — do not invent OEM $\mathrm{NPSHr}$.
+
+### Parameter definitions
+
+| Symbol | Parameter | Typical units | Description |
+| :---: | :--- | :---: | :--- |
+| **$P_s$** | Absolute surface pressure | bar a (psi a) | Free-surface absolute pressure (atmospheric tank ≈ 1.01325 bar a at sea level) |
+| **$P_v$** | Liquid vapor pressure | Pa → head | At **pumping temperature** (FEK: Antoine water; seawater ≈ 0.98×; light HC screening curve) |
+| **$\rho$** | Liquid density | kg/m³ | FEK fluid preset at temperature |
+| **$H_a$** | Surface pressure head | m (ft) | $P_s/(\rho g)$ |
+| **$H_{vp}$** | Vapor pressure head | m (ft) | $P_v/(\rho g)$ |
+| **$z_s$** | Signed static head | m (ft) | Flooded positive / lift negative |
+| **$h_f$** | Suction friction + fittings head | m (ft) | Pipe, valves, strainer, entrance — **input** to NPSH tool |
+| **$\mathrm{NPSHr}$** | Required NPSH | m (ft) | From OEM curve at operating $Q$ |
+
+### FEK fluid screening presets (NPSH engine)
+
+| Fluid | Density / $P_v$ basis | Typical use |
+| :--- | :--- | :--- |
+| Fresh water | Soft density curve · Antoine $P_v$ | Cooling water, utility |
+| Seawater | ≈ 1.025× water density · $P_v\approx 0.98\times$ water | Marine / firewater screen |
+| Condensate | Water-like $\rho$ · water $P_v$ | Hot condensate (watch high $H_{vp}$) |
+| Light HC | Screening $\rho$ / Reid-style $P_v$ | Light ends — **not** a flash calculation |
+
+### Why not “10.33 m atmospheric head” forever?
+
+Many handbooks freeze $H_a=10.33\text{ m}$ for “water at sea level.” FEK converts **$P_s$ and $\rho$ at temperature**: for water at **20 °C** and $P_s=1.01325\text{ bar a}$, $H_a\approx\mathbf{10.35\text{ m}}$. Using 10.33 m without matching density understates FEK’s $H_a$ by a few centimetres — small on cold water, but the same habit applied to hot or light fluids hides real vapor-head growth.
+
+### Suction velocity & friction loss (companion tools)
+
+Mean velocity on schedule **inside** diameter:
+
+$$
+v = \frac{Q}{A},\qquad A = \pi D_{\mathrm{ID}}^2/4
+$$
+
+Darcy–Weisbach head loss (FEK pressure-drop path: Haaland $f$, Crane $L/D$ fittings):
+
+$$
+h_f = f\,\frac{L_{\mathrm{eq}}}{D}\,\frac{v^2}{2g}
+$$
+
+Estimate $h_f$ in [Pressure Drop & Friction](/calculator/pressure-drop-friction), then paste the head into the NPSH calculator — the NPSH engine does **not** invent pipe $L/D$ from NPS alone.
+
+---
+
+## How to calculate pump cavitation suction head loss (worked example)
+
+### Scenario
+
+**Atmospheric tank at sea level**, flooded suction, **water at 20 °C**, pumping **$30\text{ m}^3/\text{h}$** through **3″ Sch 40** carbon-steel suction piping. Static liquid level **3.0 m** above pump centerline. Screened suction losses **$h_f=0.82\text{ m}$** (pipe + fittings + strainer allowance — see Step 2). OEM curve $\mathrm{NPSHr}=3.5\text{ m}$ at this capacity.
+
+| Input | Value | Source |
+| :--- | :--- | :--- |
+| Liquid | Fresh water · 20 °C | FEK NPSH fluid preset |
+| $P_s$ | **1.01325 bar a** | Atmospheric tank, sea level |
+| Arrangement | Flooded | Tank level above pump CL |
+| $z_s$ | **+3.0 m** | Liquid surface elevation |
+| Suction pipe | 3″ Sch **40** · ID **77.92 mm** | FEK `pipeSchedule.json` (B36.10M) |
+| Flow $Q$ | **30 m³/h** | Duty |
+| $h_f$ | **0.82 m** | Entered in NPSH tool (Step 2) |
+| $\mathrm{NPSHr}$ | **3.5 m** | OEM curve (example) |
+
+#### Step 1 — Suction velocity (schedule ID)
+
+$$
+D = 77.92\text{ mm} = 0.07792\text{ m},\quad
+A = \pi D^2/4 \approx 0.00477\text{ m}^2
+$$
+
+$$
+v = \frac{30/3600}{0.00477} \approx \mathbf{1.75\text{ m/s}}
+$$
+
+Confirm velocity band in [Flow Velocity & Erosion Limit](/calculator/flow-velocity-erosion). Many plant standards keep continuous suction velocity near **1.5–2.5 m/s** on small CS lines; this duty sits in that band.
+
+#### Step 2 — Suction line friction loss $h_f$
+
+The NPSH calculator takes **$h_f$ as a head input**. Derive it from Darcy + fittings:
+
+| Screen | $L_{\mathrm{eq}}$ / fittings | FEK Haaland result (commercial steel $\varepsilon=0.045\text{ mm}$) |
+| :--- | :--- | :--- |
+| Straight pipe only | $L=15\text{ m}$, no fittings | $h_f\approx\mathbf{0.59\text{ m}}$ · $v\approx 1.75\text{ m/s}$ |
+| Pipe + fittings screen | $L_{\mathrm{eq}}\approx 21\text{ m}$ (≈ 15 m run + elbows / strainer $L/D$) | $h_f\approx\mathbf{0.82\text{ m}}$ |
+
+This worked example **adopts $h_f=0.82\text{ m}$** as the suction-loss input (realistic once entrance, elbows, and strainer equivalents are included). Recompute your $L_{\mathrm{eq}}$ in [Pressure Drop & Friction](/calculator/pressure-drop-friction) — do not hard-code 0.82 m for every layout.
+
+#### Step 3 — Surface and vapor heads (FEK NPSH engine)
+
+At water **20 °C**, FEK density $\rho\approx\mathbf{998.0\text{ kg/m}^3}$ and Antoine vapor pressure $P_v\approx\mathbf{2.33\text{ kPa}}$:
+
+$$
+H_a = \frac{1.01325\times 10^5}{998.0\times 9.80665} \approx \mathbf{10.35\text{ m}}
+$$
+
+$$
+H_{vp} = \frac{2329.6}{998.0\times 9.80665} \approx \mathbf{0.24\text{ m}}
+$$
+
+#### Step 4 — NPSHa and margin
+
+$$
+\mathrm{NPSHa} = 10.35 + 3.0 - 0.24 - 0.82 = \mathbf{12.29\text{ m}}
+$$
+
+$$
+\text{Margin} = 12.29 - 3.5 = \mathbf{8.79\text{ m}},\qquad
+\text{Ratio} = 12.29/3.5 \approx \mathbf{3.51}
+$$
+
+FEK status: **Pass** (comfortable continuous-duty screen vs HI-style ≥1.1 ratio). Still confirm the project / API 610 purchaser margin and the OEM curve at the actual operating point.
+
+<Callout title="Field callout" variant="tip">
+Open [Pump NPSH & Cavitation](/calculator/pump-npsh-cavitation) with metric units → fluid **water** → temp **20** → $P_s$ **1.01325** bar a → arrangement **flooded** → $h_s$ **3** → $h_f$ **0.82** → $\mathrm{NPSHr}$ **3.5**. Nearest listed Pattern B landing for cold flooded water: [water · 20 °C · flooded · 2 m](/calculator/pump-npsh-cavitation/water-20c-flooded-2m) (defaults $h_s=2\text{ m}$, $h_f=1\text{ m}$ — adjust query fields to match this example).
+</Callout>
+
+---
+
+## Interactive tool CTA
+
+<Callout title="Try the live NPSHa tool" variant="tip">
+Open [Pump NPSHa & Cavitation Calculator](/calculator/pump-npsh-cavitation) → set fluid, temperature, absolute surface pressure, flooded vs lift, static height, suction $h_f$, and OEM $\mathrm{NPSHr}$. Estimate suction friction first in [Pipe Pressure Drop & Friction Loss](/calculator/pressure-drop-friction), and check suction velocity in [Flow Velocity & Erosion Limit](/calculator/flow-velocity-erosion). After speed or impeller changes, re-screen NPSH and review [Pump Affinity Laws & Impeller Trimming](/calculator/pump-affinity-trimming).
+</Callout>
+
+---
+
+## Frequently Asked Questions (FAQ)
+
+### Q1. How do I include pump cavitation suction head loss in an NPSHa calculation?
+
+Compute or measure the suction-line head loss $h_f$ (straight pipe + Crane $L/D$ fittings + strainer), then subtract it in $\mathrm{NPSHa}=H_a+z_s-H_{vp}-h_f$. FEK’s NPSH tool expects $h_f$ as a **head**; use [Pressure Drop & Friction](/calculator/pressure-drop-friction) to get $\Delta P$, then $h_f=\Delta P/(\rho g)$. Omitting strainer / entrance losses is the most common optimistic error on lift and hot-liquid duties.
+
+### Q2. What suction line friction loss NPSH margin should I target for HI / API 610?
+
+ANSI/HI **9.6.1** treats margin as **service-dependent**. Many continuous **cold-water** duties screen at about **≥1.1×** $\mathrm{NPSHr}$ (FEK warns below that band). Hot condensate, boiler feed, and light hydrocarbons often need **larger** ratios. **API 610** expects the **purchaser** to specify margin — FEK’s 1.1 / thin-margin flags are screening aids, not a certified acceptance criterion.
+
+### Q3. How do vapor pressure and atmospheric pressure elevation correction affect NPSHa?
+
+$H_{vp}$ rises sharply with temperature (Antoine $P_v$ in FEK). $H_a$ falls if the tank sits at altitude (lower ambient absolute pressure) or if a blanketed vessel is below atmospheric absolute. Always enter **absolute** $P_s$ at the free surface — gauge “0 kPaG” at 2,000 m ASL is **not** 1.01325 bar a. FEK defaults sea-level atmosphere; correct $P_s$ for site elevation before blaming the pump.
+
+### Q4. Why does my spreadsheet show NPSHa ≈ 12.27 m when FEK shows ≈ 12.29 m?
+
+Two usual causes: (1) freezing $H_a=10.33\text{ m}$ instead of FEK’s temperature-density conversion (**≈ 10.35 m** for water at 20 °C / 1.01325 bar a), and/or (2) rounding $H_{vp}$. With $z_s=3.0\text{ m}$ and $h_f=0.82\text{ m}$, the FEK engine assert is **$\mathrm{NPSHa}\approx 12.29\text{ m}$** and ratio **≈ 3.51** at $\mathrm{NPSHr}=3.5\text{ m}$. Prefer the engine heads over handbook round numbers when documenting FEK-aligned screens.
+
+### Q5. Can I use NPSHa screening alone to accept an API 610 pump?
+
+**No.** Screening confirms the **suction system** can clear a stated $\mathrm{NPSHr}$. Final selection still needs the OEM performance curve at the operating capacity, purchaser margin, suction layout (eccentric reducer FOT, air pockets), and any HI viscosity corrections outside FEK’s scope. Treat this guide and calculator as **pre-order / troubleshooting** tools, then lock the datasheet with the vendor.

@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, type ReactNode } from "react";
+import { useId, type CSSProperties, type ReactNode } from "react";
 import {
   schematicClass,
   schematicStroke,
@@ -36,10 +36,15 @@ export function EngineeringCanvas({
   viewBox = "0 0 340 196",
   label,
   children,
+  className,
+  style,
 }: {
   viewBox?: string;
   label: string;
   children: (ids: SvgIds) => ReactNode;
+  /** Optional extra classes (e.g. explicit max-h so frame overflow does not clip). */
+  className?: string;
+  style?: CSSProperties;
 }) {
   const prefix = useId().replace(/:/g, "");
   const ids = makeIds(prefix);
@@ -50,8 +55,15 @@ export function EngineeringCanvas({
   return (
     <svg
       viewBox={viewBox}
+      width={width}
+      height={height}
       preserveAspectRatio="xMidYMid meet"
-      className="mx-auto block h-auto w-full max-w-full"
+      className={
+        className
+          ? `mx-auto block h-auto max-w-full ${className}`
+          : "mx-auto block h-auto max-h-full w-full max-w-full"
+      }
+      style={style}
       role="img"
       aria-label={label}
     >

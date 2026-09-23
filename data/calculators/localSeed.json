@@ -1729,5 +1729,286 @@
     },
     "is_published": true,
     "created_at": "2026-09-21T16:00:00.000Z"
+  },
+  {
+    "id": "local-olet-fitting-dimensions",
+    "category": "piping",
+    "title": "Olet Fitting Dimensions & Branch Sizing (Weldolet / Sockolet / Threadolet)",
+    "slug": "olet-fitting-dimensions",
+    "meta_description": "MSS SP-97 Weldolet, Sockolet, and Threadolet dimensions with run-size match, cutout diameter, and B31.3 branch t_b screening — not a pad area replacement.",
+    "formula_json": {
+      "type": "olet-fitting-dimensions",
+      "standard": "MSS SP-97 · ASME B31.3 §304.3.2 (screening)",
+      "formulaLatex": "D_{run,min}\\le D_{run}\\le D_{run,max},\\quad t_b=\\frac{P D_{ob}}{2(SEW+PY)}",
+      "formulaBasis": "MSS SP-97 envelope dimensions (A, B, d_hole, J) by olet type and outlet rating. Run NPS must fall in the consolidated run-size range. Optional branch design thickness t_b uses B31.3 §304.1.2 with screening S for A105 / A182 F316. Does not replace §304.3.2 area replacement.",
+      "related": [
+        {
+          "slug": "pipe-branch-reinforcement",
+          "title": "Pipe Branch Reinforcement",
+          "carry": "Same run / branch NPS"
+        },
+        {
+          "slug": "butt-weld-fitting-dimension",
+          "title": "Butt-Weld Fitting Dimensions",
+          "carry": "Related BW envelopes"
+        },
+        {
+          "slug": "pipe-coping-branch-cut-layout",
+          "title": "Pipe Coping & Branch Cut",
+          "carry": "Same run / branch NPS"
+        }
+      ],
+      "faq": [
+        {
+          "q": "Does this replace B31.3 area reinforcement?",
+          "a": "No. Use Pipe Branch Reinforcement for A1/A2 pad checks. This tool looks up MSS SP-97 olet envelopes only."
+        },
+        {
+          "q": "Why do Weldolets use STD/XS while Sockolets use Class 3000?",
+          "a": "Weldolet ends match pipe schedule wall; Sockolet and Threadolet are forged to pressure class (MSS SP-97 / B16.11 family)."
+        },
+        {
+          "q": "What if run size shows Fail?",
+          "a": "The selected header NPS is outside the screening consolidated run range for that outlet. Confirm size-on-size or OEM specials before ordering."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-23T12:00:00.000Z"
+  },
+  {
+    "id": "local-pipe-steam-tracing-duty",
+    "category": "piping",
+    "title": "Pipe Steam / Heat Tracing Duty & Steam Consumption",
+    "slug": "pipe-steam-tracing-duty",
+    "meta_description": "ISO 12241 insulated pipe heat loss with IAPWS saturated steam h_fg — steam consumption (kg/h per 100 m) and tracer line count for winterization / process maintain screening.",
+    "formula_json": {
+      "type": "pipe-steam-tracing-duty",
+      "standard": "ISO 12241 · IAPWS-IF97 · Spirax Sarco Heat Tracing Design Manual (screening)",
+      "formulaLatex": "Q_{loss}=(T_{maint}-T_{amb})/R_{tot},\\quad m_{steam}=Q_{loss}\\cdot F_{safety}\\cdot 3.6/h_{fg}",
+      "formulaBasis": "Radial insulation heat loss from ASTM C680 / ISO 12241 solve (same engine as Insulation Heat Loss). Saturated latent heat h_fg from IAPWS-IF97 at gauge+atm absolute pressure. Tracer count from bare-contact capacity K·(Tsat−Tmaint). Screening only — confirm OEM charts, cement, and trap spacing.",
+      "related": [
+        {
+          "slug": "insulation-heat-loss",
+          "title": "Insulation Thickness & Heat Loss",
+          "carry": "Same NPS / insulation thickness / ambient"
+        },
+        {
+          "slug": "steam-properties-iapws",
+          "title": "Steam Properties (IAPWS)",
+          "carry": "Saturated steam h_fg at supply pressure"
+        },
+        {
+          "slug": "heat-exchanger-lmtd-duty",
+          "title": "Heat Exchanger LMTD Duty",
+          "carry": "Related thermal duty screening"
+        }
+      ],
+      "faq": [
+        {
+          "q": "Is this for superheated steam tracers?",
+          "a": "No. Use saturated steam supply. Superheat reduces condensation heat transfer and can create local hot spots."
+        },
+        {
+          "q": "Does heat-transfer cement reduce tracer count?",
+          "a": "Yes — cement can raise capacity about 3–4× versus bare contact. This screen assumes bare contact."
+        },
+        {
+          "q": "Why report steam use per 100 m?",
+          "a": "Field trap and loop segmentation typically review duty on ~100 m runs; scale linearly for shorter segments."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-23T21:30:00.000Z"
+  },
+  {
+    "id": "local-socket-weld-threaded-fitting-dimension",
+    "category": "piping",
+    "title": "Socket Weld & Threaded Fitting Dimensions (ASME B16.11)",
+    "slug": "socket-weld-threaded-fitting-dimension",
+    "meta_description": "ASME B16.11 forged socket-weld and threaded fitting dimensions — center-to-end A, socket B/J, wall G, band OD, B31.3 SW gap, and B1.20.1 thread engagement L₂.",
+    "formula_json": {
+      "type": "socket-weld-threaded-fitting-dimension",
+      "standard": "ASME B16.11-2021 · ASME B1.20.1 · B31.3 §328.5.2",
+      "formulaLatex": "L_2=(0.80 D+6.86)p,\\quad g_{sw}=1.5\\,\\mathrm{mm}\\ (1/16\\,\\mathrm{in})",
+      "formulaBasis": "Envelope dimensions A/B/J/G/C from ASME B16.11 forged fitting tables (SW Class 3000/6000/9000; threaded Class 2000/3000/6000). NPT L₂ from B1.20.1. Socket weld gap g_sw = 1.5 mm per B31.3 Para. 328.5.2. Screening only — confirm OEM chart.",
+      "related": [
+        {
+          "slug": "butt-weld-fitting-dimension",
+          "title": "Butt-Weld Fitting Dimensions",
+          "carry": "Same NPS family"
+        },
+        {
+          "slug": "fitting-valve-dimension",
+          "title": "Fitting & Valve Dimensions",
+          "carry": "Same NPS / class"
+        },
+        {
+          "slug": "pipe-schedule-dimension",
+          "title": "Pipe Schedule Dimensions",
+          "carry": "Same NPS"
+        }
+      ],
+      "faq": [
+        {
+          "q": "Why is Class 2000 missing for socket weld?",
+          "a": "ASME B16.11 Class 2000 applies to threaded fittings only. Socket-weld ratings start at Class 3000."
+        },
+        {
+          "q": "What is the socket weld gap?",
+          "a": "B31.3 requires about 1.5 mm (1/16 in) between the pipe end and the socket bottom after insertion to absorb weld expansion."
+        },
+        {
+          "q": "Does this cover NPS above 4?",
+          "a": "Regular B16.11 forged SW/THRD fittings stop at NPS 4. Larger sizes are specials outside this chart."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-23T22:00:00.000Z"
+  },
+  {
+    "id": "local-pressure-vessel-head-thickness",
+    "category": "mechanical",
+    "title": "Pressure Vessel Head Thickness (ASME VIII-1 UG-32)",
+    "slug": "pressure-vessel-head-thickness",
+    "meta_description": "ASME Section VIII Div.1 UG-32 formed head thickness — 2:1 ellipsoidal, torispherical, hemispherical, and conical t_req / t_nom with II-D allowable stress S(T).",
+    "formula_json": {
+      "type": "pressure-vessel-head-thickness",
+      "standard": "ASME Section VIII Division 1 UG-32 (d–g) · Section II Part D Table 1A (screening)",
+      "formulaLatex": "t_{req}=\\frac{P D}{2SE-0.2P}\\ (2{:}1),\\quad t_{req}=\\frac{0.885 P L}{SE-0.1P}\\ (tori),\\quad t_{nom}=t_{req}+C.A.",
+      "formulaBasis": "Internal (concave-side) pressure thickness for formed heads per ASME VIII-1 UG-32(d) ellipsoidal, (e) torispherical with L=D, (f) hemispherical with R=D/2, (g) conical without knuckle α≤30°. Allowable stress S from Section II-D Table 1A screening curves. Screening only — not UG-22 loads or UG-28 external pressure.",
+      "related": [
+        {
+          "slug": "pipe-wall-thickness",
+          "title": "Pipe Wall Thickness",
+          "carry": "Same design pressure / temperature / material family"
+        },
+        {
+          "slug": "tank-vessel-volume",
+          "title": "Tank & Vessel Volume",
+          "carry": "Same inside diameter / head geometry"
+        },
+        {
+          "slug": "pressure-vessel-nozzle-reinforcement",
+          "title": "Pressure Vessel Nozzle Reinforcement",
+          "carry": "Same shell ID / design pressure / temperature / material"
+        },
+        {
+          "slug": "blind-flange-thickness",
+          "title": "Blind Flange Thickness",
+          "carry": "Related UG-34 flat cover thickness"
+        }
+      ],
+      "faq": [
+        {
+          "q": "Does this cover external pressure / vacuum?",
+          "a": "No. UG-32 addresses internal pressure on the concave side. External pressure and vacuum use UG-28 charts."
+        },
+        {
+          "q": "Why is torispherical thicker than 2:1 ellipsoidal?",
+          "a": "UG-32(e) with L=D uses a 0.885 crown factor that yields greater t_req than UG-32(d) for the same P, D, S, and E."
+        },
+        {
+          "q": "What does t_nom include?",
+          "a": "t_nom = t_req + corrosion allowance. It is the nominal design thickness before mill under-tolerance or forming thinning checks."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-23T23:00:00.000Z"
+  },
+  {
+    "id": "local-pressure-vessel-nozzle-reinforcement",
+    "category": "mechanical",
+    "title": "Pressure Vessel Nozzle Reinforcement Pad (ASME VIII-1 UG-37)",
+    "slug": "pressure-vessel-nozzle-reinforcement",
+    "meta_description": "ASME Section VIII Div.1 UG-37 / UG-40 nozzle opening area replacement — required A vs available A1–A42, repad thickness screen with II-D allowable stress S(T).",
+    "formula_json": {
+      "type": "pressure-vessel-nozzle-reinforcement",
+      "standard": "ASME Section VIII Division 1 UG-37 / UG-40 / UG-41 · Section II Part D Table 1A (screening)",
+      "formulaLatex": "A=d t_r F+2 t_n t_r F(1-f_{r1}),\\quad A_{avail}=A_1+A_2+A_3+A_{41}+A_{42}",
+      "formulaBasis": "Internal-pressure area replacement for openings in shells and formed heads per ASME VIII-1 UG-37 (required area), UG-40 (limits of reinforcement / available area), and UG-41 (strength of reinforcement with f_r ≤ 1). Allowable stress S from Section II-D Table 1A screening curves. Screening only — not WRC 107/537/297 local stresses or UG-28 external pressure.",
+      "related": [
+        {
+          "slug": "pressure-vessel-head-thickness",
+          "title": "Pressure Vessel Head Thickness",
+          "carry": "Same shell ID / design pressure / temperature / material"
+        },
+        {
+          "slug": "pipe-branch-reinforcement",
+          "title": "Pipe Branch Reinforcement",
+          "carry": "Related area-replacement concept for B31.3 branch openings"
+        },
+        {
+          "slug": "pipe-wall-thickness",
+          "title": "Pipe Wall Thickness",
+          "carry": "Same design pressure / temperature / material family"
+        }
+      ],
+      "faq": [
+        {
+          "q": "Does Pass mean no pad is required?",
+          "a": "Pass means A_avail ≥ A with the entered pad (t_p may be zero). If the engine reports a non-zero minimum pad thickness, excess shell/nozzle metal alone is insufficient without added pad metal."
+        },
+        {
+          "q": "Are WRC local stresses included?",
+          "a": "No. This tool covers UG-37 internal-pressure area replacement only. Piping loads and nozzle local stresses require WRC 107/537/297 or equivalent."
+        },
+        {
+          "q": "When is f_r2 less than 1.0?",
+          "a": "When nozzle allowable stress is below shell allowable (S_noz / S_shell < 1). Available nozzle wall and inward-projection areas are reduced by f_r2."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-24T00:00:00.000Z"
+  },
+  {
+    "id": "local-bearing-life-l10h",
+    "category": "mechanical",
+    "title": "Rolling Element Bearing Life L10h Calculator (ISO 281 / ABMA 9)",
+    "slug": "bearing-life-l10h",
+    "meta_description": "ISO 281 / ABMA 9 & 11 bearing L10h rating life calculator — equivalent dynamic load P = X·Fr + Y·Fa, L10 = (C/P)^p, L10h hours at 90% reliability for ball and roller bearings.",
+    "formula_json": {
+      "type": "bearing-life-l10h",
+      "standard": "ISO 281:2007 · ANSI/ABMA Std 9-1990 · ANSI/ABMA Std 11-1990",
+      "formulaLatex": "P=X F_r+Y F_a,\\quad L_{10}=(C/P)^p,\\quad L_{10h}=\\frac{10^6}{60 n}L_{10}",
+      "formulaBasis": "Basic rating life at 90% reliability per ISO 281 and ABMA 9 (ball) / ABMA 11 (roller). Equivalent dynamic load P = X·Fr + Y·Fa with catalog or screening X,Y factors. Life exponent p = 3 (ball) or 10/3 (roller). Modified life L10mh with a_ISO lubrication/contamination factors is out of scope — screening only.",
+      "related": [
+        {
+          "slug": "pump-tdh-power",
+          "title": "TDH & Pump Power",
+          "carry": "Related rotating equipment duty"
+        },
+        {
+          "slug": "pump-affinity-trimming",
+          "title": "Pump Affinity & Impeller Trim",
+          "carry": "Speed / RPM what-if"
+        },
+        {
+          "slug": "compressor-polytropic-power",
+          "title": "Compressor Polytropic Power",
+          "carry": "Related shaft-driven equipment"
+        }
+      ],
+      "faq": [
+        {
+          "q": "What is L10h?",
+          "a": "Basic rating life in hours at 90% reliability — the life that 90% of a group of identical bearings are expected to achieve or exceed under the stated duty."
+        },
+        {
+          "q": "When do I use p = 3 vs 10/3?",
+          "a": "Ball bearings use p = 3. Roller bearings (cylindrical, spherical, tapered) use p = 10/3 ≈ 3.333 per ISO 281 / ABMA."
+        },
+        {
+          "q": "Does this include a_ISO modified life?",
+          "a": "No. This tool reports basic L10h only. Lubrication, contamination, and material factors for L10mh require ISO 281 a_ISO review with OEM catalog data."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-24T12:00:00.000Z"
   }
 ]

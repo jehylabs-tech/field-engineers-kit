@@ -182,6 +182,9 @@ export function useCalculatorUrlSync<T extends Record<string, unknown>>(
           "pressure",
           "designPressure",
           "operatingPressure",
+          "dynamicLoadRating",
+          "radialLoad",
+          "axialLoad",
         ] as const;
         const bridge: Record<string, unknown> = {
           ...(next as Record<string, unknown>),

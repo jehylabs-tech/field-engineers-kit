@@ -373,6 +373,21 @@ export const WORKSTATION_DOMAINS: WorkstationDomain[] = [
         ],
       },
       {
+        id: "pipe-steam-tracing-duty",
+        title: "Pipe Steam / Heat Tracing Duty",
+        seoLabel:
+          "Pipe Steam Tracing Calculation Heat Loss Steam Consumption and Tracer Tubing Quantity",
+        standard: "ISO 12241 · IAPWS",
+        href: "/calculator/pipe-steam-tracing-duty/nps4-maintain50c-steam3.5bar-metric",
+        keywords: [
+          "steam tracing",
+          "heat tracing",
+          "steam consumption",
+          "winterization",
+          "tracer tubing",
+        ],
+      },
+      {
         id: "nitrogen-purging-volume",
         title: "Nitrogen Purging & Inerting",
         seoLabel:
@@ -434,6 +449,36 @@ export const WORKSTATION_DOMAINS: WorkstationDomain[] = [
           "pad thickness",
           "ASME B31.3 304.3",
           "area replacement",
+        ],
+      },
+      {
+        id: "olet-fitting-dimensions",
+        title: "Olet Fitting Dimensions",
+        seoLabel:
+          "MSS SP-97 Olet Dimensions — Weldolet Sockolet Threadolet Chart",
+        standard: "MSS SP-97",
+        href: "/calculator/olet-fitting-dimensions/weldolet-nps6-nps2-std-metric",
+        keywords: [
+          "MSS SP-97",
+          "Weldolet dimensions",
+          "Sockolet Class 3000",
+          "Threadolet",
+          "branch outlet",
+        ],
+      },
+      {
+        id: "socket-weld-threaded-fitting-dimension",
+        title: "Socket Weld & Threaded Fittings (B16.11)",
+        seoLabel:
+          "ASME B16.11 Fitting Dimensions Socket Weld Elbow Threaded Tee Coupling Chart",
+        standard: "ASME B16.11",
+        href: "/calculator/socket-weld-threaded-fitting-dimension/sw-elbow90-nps1-class3000-metric",
+        keywords: [
+          "b16.11",
+          "socket weld",
+          "threaded fitting",
+          "class 3000",
+          "forged fitting",
         ],
       },
       {
@@ -634,6 +679,48 @@ export const WORKSTATION_DOMAINS: WorkstationDomain[] = [
         standard: "UG-34",
         href: "/calculator/blind-flange-thickness",
         keywords: ["blind", "ug-34", "cover"],
+      },
+      {
+        id: "pressure-vessel-head-thickness",
+        title: "PV Head Thickness (UG-32)",
+        seoLabel: "ASME VIII Head Thickness Calculator UG-32 Formed Heads",
+        standard: "VIII-1 UG-32",
+        href: "/calculator/pressure-vessel-head-thickness/2to1-ellipsoidal-id1500-1.5mpa-metric",
+        keywords: [
+          "ASME VIII head thickness calculator",
+          "pressure vessel head minimum thickness",
+          "2:1 ellipsoidal head thickness ASME UG-32",
+          "torispherical head design calculator",
+          "hemispherical head thickness ASME Sec VIII",
+        ],
+      },
+      {
+        id: "pressure-vessel-nozzle-reinforcement",
+        title: "PV Nozzle Reinforcement (UG-37)",
+        seoLabel: "ASME Nozzle Reinforcement Pad Calculator",
+        standard: "VIII-1 UG-37",
+        href: "/calculator/pressure-vessel-nozzle-reinforcement/nps6-shell1200-2mpa-metric",
+        keywords: [
+          "ASME Nozzle Reinforcement Pad Calculator",
+          "ASME VIII UG-37 nozzle opening calculation",
+          "Pressure vessel repad area replacement",
+          "Nozzle reinforcement area A1 A2 A3 A4",
+          "Nozzle pad thickness calculation",
+        ],
+      },
+      {
+        id: "bearing-life-l10h",
+        title: "Bearing Life L10h (ISO 281)",
+        seoLabel: "Bearing Life L10h Calculator",
+        standard: "ISO 281 · ABMA 9/11",
+        href: "/calculator/bearing-life-l10h/ball-c32.5kn-fr4.5kn-1750rpm-metric",
+        keywords: [
+          "Bearing Life L10h Calculator",
+          "ISO 281 bearing fatigue life",
+          "ABMA 9 ball bearing rating life",
+          "Equivalent dynamic load P calculation",
+          "Bearing L10 hours calculator",
+        ],
       },
     ],
   },

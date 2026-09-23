@@ -45,7 +45,13 @@ export type CalculatorType =
   | "natural-gas-z-density"
   | "heat-exchanger-lmtd-duty"
   | "compressor-polytropic-power"
-  | "api650-tank-shell-thickness";
+  | "api650-tank-shell-thickness"
+  | "olet-fitting-dimensions"
+  | "pipe-steam-tracing-duty"
+  | "socket-weld-threaded-fitting-dimension"
+  | "pressure-vessel-head-thickness"
+  | "pressure-vessel-nozzle-reinforcement"
+  | "bearing-life-l10h";
 
 export type FaqItem = {
   q: string;

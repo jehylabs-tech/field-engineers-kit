@@ -131,7 +131,7 @@ Class 150 A105 is adequate for **12.5 bar at 200 °C** (MAWP **14.0 bar**, margi
 
 ---
 
-## Interactive engineering tool
+## Interactive tool CTA
 
 <Callout title="Open the P-T rating calculator" variant="tip">
 Compute derated **maximum allowable working pressure**, hydrostatic test pressure, and the interactive **flange rating curve** with the [ASME B16.5 Flange Pressure-Temperature Rating Calculator](/calculator/flange-pressure-temperature-rating). After the rating check, size temporary blinds with [Blind Flange Thickness](/calculator/blind-flange-thickness) and confirm pipe ID/wall on [Pipe Schedule & Dimension](/calculator/pipe-schedule-dimension).
@@ -141,22 +141,22 @@ Compute derated **maximum allowable working pressure**, hydrostatic test pressur
 
 ## Frequently Asked Questions (FAQ)
 
-### Why does Class 150 flange pressure rating temperature derating look so steep above 200 °C?
+### Q1. Why does Class 150 flange pressure rating temperature derating look so steep above 200 °C?
 
 Class 150 flanges are geometrically lighter (thinner rings, lower bolt loads). ASME B16.5 therefore applies aggressive Table 2 derating as temperature rises — Group 1.1 Class 150 falls from **19.6 bar** ambient to **14.0 bar** at 200 °C and **1.4 bar** at 538 °C. That is intentional code behavior, not a calculator bug.
 
-### How should dual certified flange rating (316/316L) be handled?
+### Q2. How should dual certified flange rating (316/316L) be handled?
 
 **Dual-certified** 316/316L forgings must follow the **governing** B16.5 material group on the MTR and design basis. FEK Phase-1 Group **2.2** covers typical A182 F316 / F316L screening. If the project assigns a different group (e.g. low-carbon high-temperature notes), use that group’s Table 2 — do not assume ambient Class 150 carbon-steel numbers apply to stainless.
 
-### Is Class the same as maximum allowable working pressure?
+### Q3. Is Class the same as maximum allowable working pressure?
 
 **No.** Class is a **dimensionless designator**. **MAWP** comes from **ASME B16.5 Table 2** by material group and temperature. Ambient Group 1.1 Class 150 ≈ **19.6 bar (285 psi customary)**; the same flange at 200 °C is only **14.0 bar**.
 
-### Does this guide cover ASME B16.47 large-diameter flanges?
+### Q4. Does this guide cover ASME B16.47 large-diameter flanges?
 
 **No.** ASME B16.5 covers NPS ½–24. Large-diameter steel flanges follow **ASME B16.47** Series A/B with separate P-T tables. Do not extrapolate B16.5 ratings to B16.47 geometries.
 
-### Why might customary psi values differ slightly from bar × 14.5038?
+### Q5. Why might customary psi values differ slightly from bar × 14.5038?
 
 ASME publishes **metric** and **US customary** Table 2 columns. FEK Phase-1 stores the **metric (bar)** extract and converts for display; published customary cells (e.g. **285 / 740 / 275 psi** at ambient for the cases above) can differ by a psi or two from a pure conversion. Stamp design from the unit system required by the project specification.

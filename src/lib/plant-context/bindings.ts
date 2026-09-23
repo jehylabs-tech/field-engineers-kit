@@ -481,6 +481,119 @@ export function applyPlantContext<T extends Record<string, unknown>>(
       }
       return next as T;
     }
+    case "olet-fitting-dimensions": {
+      const next = { ...inputs } as T & {
+        runNps?: string;
+        branchNps?: string;
+        material?: string;
+      };
+      const nps = normalizeNps(ctx.size);
+      if (nps) {
+        // Carry plant size into run (header); outlet stays user-selected.
+        next.runNps = nps;
+      }
+      if (ctx.material) {
+        const m = String(ctx.material).toUpperCase();
+        if (m.includes("316") || m.includes("304") || m.includes("F316")) {
+          next.material = "A182-F316";
+        } else if (m.includes("A105") || m.includes("CS")) {
+          next.material = "A105";
+        }
+      }
+      return next as T;
+    }
+    case "pipe-steam-tracing-duty": {
+      const next = { ...inputs } as T & {
+        nps?: string;
+        maintainTemp?: number;
+        ambientTemp?: number;
+        insulationThickness?: number;
+        unitSystem?: string;
+      };
+      const nps = normalizeNps(ctx.size);
+      if (nps) next.nps = nps;
+      if (ctx.temperature) {
+        next.maintainTemp =
+          next.unitSystem === "imperial"
+            ? temperatureToF(ctx.temperature)
+            : temperatureToC(ctx.temperature);
+      }
+      return next as T;
+    }
+    case "socket-weld-threaded-fitting-dimension": {
+      const next = { ...inputs } as T & {
+        nps?: string;
+        rating?: string;
+      };
+      const nps = normalizeNps(ctx.size);
+      if (nps) next.nps = nps;
+      const cls = normalizeClassRating(ctx.class_rating);
+      if (cls && ["2000", "3000", "6000", "9000"].includes(cls)) {
+        next.rating = cls;
+      }
+      return next as T;
+    }
+    case "pressure-vessel-head-thickness": {
+      const next = { ...inputs } as T & {
+        designPressure?: number;
+        designTemperature?: number;
+        materialId?: string;
+        unitSystem?: string;
+      };
+      if (ctx.pressure) {
+        next.designPressure =
+          next.unitSystem === "imperial"
+            ? pressureToPsi(ctx.pressure)
+            : pressureToMpa(ctx.pressure);
+      }
+      if (ctx.temperature) {
+        next.designTemperature =
+          next.unitSystem === "imperial"
+            ? temperatureToF(ctx.temperature)
+            : temperatureToC(ctx.temperature);
+      }
+      if (ctx.material) {
+        const m = String(ctx.material).toUpperCase();
+        if (m.includes("316")) next.materialId = "SA-240-316L";
+        else if (m.includes("304")) next.materialId = "SA-240-304L";
+        else if (m.includes("387") || m.includes("GR.11") || m.includes("GR11"))
+          next.materialId = "SA-387-11";
+        else if (m.includes("516")) next.materialId = "SA-516-70";
+      }
+      return next as T;
+    }
+    case "pressure-vessel-nozzle-reinforcement": {
+      const next = { ...inputs } as T & {
+        designPressure?: number;
+        designTemperature?: number;
+        shellMaterialId?: string;
+        nozzleNps?: string;
+        shellInsideDiameter?: number;
+        unitSystem?: string;
+      };
+      const nps = normalizeNps(ctx.size);
+      if (nps) next.nozzleNps = nps;
+      if (ctx.pressure) {
+        next.designPressure =
+          next.unitSystem === "imperial"
+            ? pressureToPsi(ctx.pressure)
+            : pressureToMpa(ctx.pressure);
+      }
+      if (ctx.temperature) {
+        next.designTemperature =
+          next.unitSystem === "imperial"
+            ? temperatureToF(ctx.temperature)
+            : temperatureToC(ctx.temperature);
+      }
+      if (ctx.material) {
+        const m = String(ctx.material).toUpperCase();
+        if (m.includes("316")) next.shellMaterialId = "SA-240-316L";
+        else if (m.includes("516")) next.shellMaterialId = "SA-516-70";
+      }
+      return next as T;
+    }
+    case "bearing-life-l10h":
+      return inputs;
     case "pipe-slope-calculator": {
       const next = { ...inputs } as T & { pipeNps?: string };
       const nps = normalizeNps(ctx.size);

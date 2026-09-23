@@ -1,0 +1,61 @@
+{
+  "standard": "ISO 281:2007 · ANSI/ABMA Std 9-1990 · ANSI/ABMA Std 11-1990",
+  "notes": "Screening X₂/Y₂ factors for Fa/Fr > e. Catalog e and Y vary with Fa/C₀ and contact angle — confirm OEM tables for final selection.",
+  "types": [
+    {
+      "id": "deep-groove-ball",
+      "label": "Deep Groove Ball",
+      "category": "ball",
+      "p": 3,
+      "e": 0.3,
+      "x1": 1,
+      "y1": 0,
+      "x2": 0.56,
+      "y2": 1.45
+    },
+    {
+      "id": "angular-contact-ball",
+      "label": "Angular Contact Ball",
+      "category": "ball",
+      "p": 3,
+      "e": 0.68,
+      "x1": 1,
+      "y1": 0,
+      "x2": 0.41,
+      "y2": 0.87
+    },
+    {
+      "id": "cylindrical-roller",
+      "label": "Cylindrical Roller",
+      "category": "roller",
+      "p": 3.3333333333333335,
+      "e": 0.2,
+      "x1": 1,
+      "y1": 0,
+      "x2": 0.92,
+      "y2": 0.6
+    },
+    {
+      "id": "spherical-roller",
+      "label": "Spherical Roller",
+      "category": "roller",
+      "p": 3.3333333333333335,
+      "e": 0.27,
+      "x1": 1,
+      "y1": 0,
+      "x2": 0.67,
+      "y2": 2.5
+    },
+    {
+      "id": "tapered-roller",
+      "label": "Tapered Roller",
+      "category": "roller",
+      "p": 3.3333333333333335,
+      "e": 0.4,
+      "x1": 1,
+      "y1": 0,
+      "x2": 0.4,
+      "y2": 1.5
+    }
+  ]
+}

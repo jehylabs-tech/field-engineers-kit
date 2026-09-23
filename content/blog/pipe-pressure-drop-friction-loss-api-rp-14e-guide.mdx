@@ -1,6 +1,6 @@
 ---
 title: "Pipe Pressure Drop, Friction Loss & Erosion Velocity Limits: Darcy–Weisbach & API RP 14E"
-description: "Field guide to Darcy–Weisbach ΔP, Haaland friction factor, Crane TP-410 fitting L/D, and API RP 14E erosion velocity — with a verified NPS 6 Sch 40 worked example aligned to the interactive calculator."
+description: "Field guide to pipe pressure drop: Darcy–Weisbach ΔP, Haaland friction factor, Crane TP-410 L/D, and API RP 14E erosion — FEK NPS 6 Sch 40 example."
 date: "2026-09-06"
 category: "Piping Engineering"
 tags:
@@ -18,10 +18,6 @@ Friction pressure drop ($\Delta P$) and line velocity govern pump head, control-
 
 Use the interactive [Pipe Pressure Drop & Friction Loss Calculator](/calculator/pressure-drop-friction) for schedule ID, Haaland $f$, Crane equivalents, and total $\Delta P$. Pair it with the [Flow Velocity & Erosion Limit Calculator](/calculator/flow-velocity-erosion) when you need an explicit API RP 14E $v_c$ screen.
 
-<Callout title="Screening vs. formal hydraulics" variant="info">
-This article and the linked tools provide **single-phase Newtonian screening** (Darcy–Weisbach + Haaland + Crane TP-410 $L/D$). They do not replace multiphase, compressible, or transient (water-hammer) analysis, nor a licensed PE sign-off for critical systems.
-</Callout>
-
 ## Quick Summary (TL;DR)
 
 - **Takeaway:** Single-phase $\Delta P$ screens use Darcy–Weisbach on schedule **ID**, Haaland $f$, and Crane TP-410 equivalent lengths — not NPS OD.
@@ -38,9 +34,15 @@ This article and the linked tools provide **single-phase Newtonian screening** (
 
 ---
 
-## 1. Core Engineering Formulas & Parameter Definitions
+## Pipe pressure drop & friction loss in the field
 
 Hydraulic friction loss for incompressible single-phase flow follows the **Darcy–Weisbach** equation. The Darcy friction factor $f$ is obtained from the **Haaland** explicit approximation to Colebrook–White. Fitting losses enter as **Crane TP-410** equivalent lengths. Erosion screening uses **API RP 14E**. Pipe bore $D$ must be the schedule **inside diameter** (ASME B36.10M / B36.19M).
+
+<Callout title="Screening vs. formal hydraulics" variant="info">
+This article and the linked tools provide **single-phase Newtonian screening** (Darcy–Weisbach + Haaland + Crane TP-410 $L/D$). They do not replace multiphase, compressible, or transient (water-hammer) analysis, nor a licensed PE sign-off for critical systems.
+</Callout>
+
+## 1. Core Engineering Formulas & Parameter Definitions
 
 $$
 \Delta P = f \cdot \left( \frac{L_{\text{total}}}{D} \right) \cdot \left( \frac{1}{2} \cdot \rho \cdot v^2 \right)
@@ -228,7 +230,7 @@ $$
 
 ---
 
-## 4. Interactive Engineering Tool
+## Interactive tool CTA
 
 Reproduce the example (or swap fluid, schedule, roughness, and fitting counts) in the live tool:
 
@@ -240,7 +242,7 @@ For dedicated API RP 14E $v$ vs $v_c$ status (Safe / Warning / Erosion Risk), us
 
 ---
 
-## 5. Frequently Asked Questions (FAQ)
+## Frequently Asked Questions (FAQ)
 
 ### Q1. Why use Haaland instead of Colebrook–White?
 

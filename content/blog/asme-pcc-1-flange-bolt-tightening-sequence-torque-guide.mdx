@@ -19,10 +19,6 @@ When nuts are run down in simple circumferential order (1-2-3-4…), elastic int
 
 Generate numbered star diagrams and Round 1–4 sequences with the interactive [Flange Bolt Tightening Sequence Generator](/calculator/flange-bolt-tightening-sequence). For B16.5 stud count and PCC-1-style screening torque, pair it with the [Bolt Torque & Tensioning Calculator](/calculator/bolt-torque-tensioning).
 
-<Callout title="Screening vs. project appendix" variant="info">
-This guide and the linked FEK tools are **field screening aids**. Owner PCC-1 appendices, calibrated wrench certificates, and gasket OEM seating data govern critical joints. FEK Round fractions are **30% / 60% / 100% / circular 100%** (aligned with the in-app Bolt Torque tool). ASME PCC-1 also discusses banded targets such as 20–30% and 50–60% — follow the site procedure when it differs.
-</Callout>
-
 ## Quick Summary (TL;DR)
 
 - **Takeaway:** Star / cross patterns on early torque passes limit flange tilt from elastic interaction; a final circular pass seats the joint at 100%.
@@ -40,6 +36,14 @@ This guide and the linked FEK tools are **field screening aids**. Owner PCC-1 ap
 | **B16.5 geometry** | NPS × class sets **stud count and size** (e.g. 8″ Cl 300 → 12 × ⅞″). |
 
 ---
+
+## ASME PCC-1 bolt tightening sequence in the field
+
+Flanged joint assembly fails when early passes walk the bolt circle in circumferential order. Use star patterns for Round 1–3 and a final circular pass at 100% target torque.
+
+<Callout title="Screening vs. project appendix" variant="info">
+This guide and the linked FEK tools are **field screening aids**. Owner PCC-1 appendices, calibrated wrench certificates, and gasket OEM seating data govern critical joints. FEK Round fractions are **30% / 60% / 100% / circular 100%** (aligned with the in-app Bolt Torque tool). ASME PCC-1 also discusses banded targets such as 20–30% and 50–60% — follow the site procedure when it differs.
+</Callout>
 
 ## 1. Core Engineering Formulas & Parameter Definitions
 
@@ -193,19 +197,23 @@ $$
 | **3** | Same star | **212 ft·lbf** (100%) |
 | **4** | Circular `1-2-…-12` | **212 ft·lbf** until nuts stop |
 
+---
+
+## Interactive tool CTA
+
 <Callout title="Try the live tools" variant="tip">
 Open the [Flange Bolt Tightening Sequence Generator](/calculator/flange-bolt-tightening-sequence/12-bolt-star) for the visual star diagram and optional Round 1–4 wrench values from a target $T$. Use [Bolt Torque & Tensioning](/calculator/bolt-torque-tensioning) for B16.5 stud lookup and moly-table screening torque with $K$ / grade rescale.
 </Callout>
 
 ---
 
-## 5. Frequently Asked Questions
+## Frequently Asked Questions (FAQ)
 
-### Why does ASME PCC-1 require a final circular (round-robin) pass?
+### Q1. Why does ASME PCC-1 require a final circular (round-robin) pass?
 
 Star passes build clamp load while limiting flange distortion, but **elastic interaction** still relaxes neighbors as each stud is tightened. The final **clockwise 100% pass** equalizes residual nut rotation so every stud ends near the same preload before hydrotest or startup.
 
-### What happens if the same torque is applied to dry threads?
+### Q2. What happens if the same torque is applied to dry threads?
 
 Raising $K$ from 0.14 to 0.20 at fixed $T = 2{,}545\ \text{in·lbf}$:
 
@@ -215,10 +223,10 @@ $$
 
 That is roughly a **30% loss of clamp force** versus the lubricated case ($F \approx 20{,}780\ \text{lbf}$). Under-loaded spiral-wound joints are a classic hydrotest leak or blowout risk.
 
-### What is ASME PCC-1 Alternative Pattern #1?
+### Q3. What is ASME PCC-1 Alternative Pattern #1?
 
 **Alternative Pattern #1** is a modern assembly option for **large bolt circles** (often ≥ 20 bolts / large NPS) or multi-tool setups. Instead of every move jumping across the flange, studs are grouped (quadrants / simultaneous tools) to cut walk time while still controlling gasket stress. Legacy star/cross remains the default teaching pattern for common 4–16 bolt B16.5 joints and is what FEK diagrams generate.
 
-### How do FEK Round percentages relate to PCC-1 “20–30% / 50–60%” wording?
+### Q4. How do FEK Round percentages relate to PCC-1 “20–30% / 50–60%” wording?
 
 PCC-1 discusses **banded** early-pass targets. FEK’s Sequence and Bolt Torque tools standardize on **30% / 60% / 100% / circular 100%** for consistent screening and export sheets. If the owner appendix specifies 20–30% and 50–60%, use those fractions on the same star order — do not mix two different pass plans on one joint.

@@ -56,6 +56,14 @@ export const CALCULATOR_TYPE_SLUG: Record<CalculatorType, string> = {
   "heat-exchanger-lmtd-duty": "heat-exchanger-lmtd-duty",
   "compressor-polytropic-power": "compressor-polytropic-power",
   "api650-tank-shell-thickness": "api650-tank-shell-thickness",
+  "olet-fitting-dimensions": "olet-fitting-dimensions",
+  "pipe-steam-tracing-duty": "pipe-steam-tracing-duty",
+  "socket-weld-threaded-fitting-dimension":
+    "socket-weld-threaded-fitting-dimension",
+  "pressure-vessel-head-thickness": "pressure-vessel-head-thickness",
+  "pressure-vessel-nozzle-reinforcement":
+    "pressure-vessel-nozzle-reinforcement",
+  "bearing-life-l10h": "bearing-life-l10h",
 };
 
 export const SLUG_TO_CALCULATOR_TYPE: Record<string, CalculatorType> =
@@ -258,6 +266,30 @@ export const CALCULATOR_PLANT_TAGS: Record<CalculatorType, CalculatorPlantTags> 
     "api650-tank-shell-thickness": {
       consumes: ["material"],
       produces: ["material"],
+    },
+    "olet-fitting-dimensions": {
+      consumes: ["size", "material", "pressure"],
+      produces: ["size", "material", "pressure"],
+    },
+    "pipe-steam-tracing-duty": {
+      consumes: ["size", "temperature"],
+      produces: ["size", "temperature"],
+    },
+    "socket-weld-threaded-fitting-dimension": {
+      consumes: ["size", "class_rating"],
+      produces: ["size", "class_rating"],
+    },
+    "pressure-vessel-head-thickness": {
+      consumes: ["pressure", "temperature", "material"],
+      produces: ["pressure", "temperature", "material"],
+    },
+    "pressure-vessel-nozzle-reinforcement": {
+      consumes: ["size", "pressure", "temperature", "material"],
+      produces: ["size", "pressure", "temperature", "material"],
+    },
+    "bearing-life-l10h": {
+      consumes: [],
+      produces: [],
     },
   };
 

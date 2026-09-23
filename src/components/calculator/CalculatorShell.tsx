@@ -190,6 +190,31 @@ const CALCULATOR_VIEWS: Record<
     () => import("./calculators/Api650TankShellThicknessCalculator"),
     { loading: loadingFallback },
   ),
+  "socket-weld-threaded-fitting-dimension": dynamic(
+    () =>
+      import("./calculators/SocketWeldThreadedFittingDimensionCalculator"),
+    { loading: loadingFallback },
+  ),
+  "pipe-steam-tracing-duty": dynamic(
+    () => import("./calculators/PipeSteamTracingDutyCalculator"),
+    { loading: loadingFallback },
+  ),
+  "pressure-vessel-head-thickness": dynamic(
+    () => import("./calculators/PressureVesselHeadThicknessCalculator"),
+    { loading: loadingFallback },
+  ),
+  "pressure-vessel-nozzle-reinforcement": dynamic(
+    () => import("./calculators/PressureVesselNozzleReinforcementCalculator"),
+    { loading: loadingFallback },
+  ),
+  "bearing-life-l10h": dynamic(
+    () => import("./calculators/BearingLifeL10hCalculator"),
+    { loading: loadingFallback },
+  ),
+  "olet-fitting-dimensions": dynamic(
+    () => import("./calculators/OletFittingDimensionsCalculator"),
+    { loading: loadingFallback },
+  ),
   "hydro-test": dynamic(() => import("./calculators/HydroTestCalculator"), {
     loading: loadingFallback,
   }),

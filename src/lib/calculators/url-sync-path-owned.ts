@@ -163,6 +163,48 @@ export const PATH_OWNED_PARAMS = new Set([
   "w",
   "y",
   "mill",
+  // olet fitting dimensions (MSS SP-97 Pattern B)
+  "type",
+  "runSize",
+  "branchSize",
+  "rating",
+  // pipe steam tracing duty
+  "tMaint",
+  "tAmb",
+  "insThk",
+  "pSteam",
+  "tracer",
+  "wind",
+  "maintainTemp",
+  "steamPressure",
+  // ASME B16.11 forged fittings
+  "conn",
+  "fitting",
+  "rating",
+  // ASME VIII-1 UG-32 formed head thickness
+  "id",
+  "p",
+  "alpha",
+  "units",
+  // ASME VIII-1 UG-37 nozzle reinforcement
+  "shell",
+  "shellId",
+  "shellThk",
+  "shellMat",
+  "nozThk",
+  "nozMat",
+  "dout",
+  "tp",
+  "weld",
+  // ISO 281 / ABMA bearing L10h
+  "type",
+  "c",
+  "fr",
+  "fa",
+  "rpm",
+  "x",
+  "y",
+  "xymode",
 ]);
 
 /**

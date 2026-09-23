@@ -10269,6 +10269,1679 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
     ],
   },
 
+  "olet-fitting-dimensions": {
+    slug: "olet-fitting-dimensions",
+    formulaTitle: "Core Formula & Variable Definitions",
+    formulaHtml:
+      '<p class="eng-eq"><i>D</i><sub>run,min</sub> ≤ <i>D</i><sub>run</sub> ≤ <i>D</i><sub>run,max</sub> &nbsp;·&nbsp; MSS SP-97 consolidated run size</p>' +
+      '<p class="eng-eq"><i>t</i><sub>b</sub> = <span class="eng-frac"><span class="eng-num"><i>P</i> · <i>D</i><sub>ob</sub></span><span class="eng-den">2(<i>S E W</i> + <i>P Y</i>)</span></span> &nbsp;·&nbsp; ASME B31.3 §304.1.2 screening</p>' +
+      '<p class="eng-plain">MSS SP-97 Weldolet / Sockolet / Threadolet envelope dimensions (A, B, d_hole, J)</p>',
+    formulaLatex:
+      "D_{run,min}\\le D_{run}\\le D_{run,max},\\quad t_b=\\frac{P\\cdot D_{ob}}{2(SEW+PY)}",
+    formulaNotes:
+      "Envelope dimensions A (height), B (base diameter), d_hole (header cutout), branch bore, and Sockolet socket depth J are taken from MSS SP-97 / Bonney Forge-style published charts by olet type and outlet rating. Weldolet uses schedule families (STD / XS / Sch 160); Sockolet and Threadolet use Class 3000 / 6000. Run NPS must fall inside the consolidated run-size band for Pass. Optional t_b uses B31.3 §304.1.2 with screening S for A105 (138 MPa) or A182 F316 (115 MPa), E = W = 1, Y = 0.4. Does not replace §304.3.2 area replacement.",
+    formulaBadges: [
+      { label: "Standard", value: "MSS SP-97" },
+      { label: "Hero", value: "Height A" },
+      { label: "Run match", value: "D_run,min…max" },
+      { label: "t_b screen", value: "B31.3 §304.1.2" },
+    ],
+    variables: [
+      {
+        symbol: "A",
+        name: "Outlet Height",
+        definition:
+          "Vertical envelope from run OD to olet top / face (mm or in) — hero output.",
+      },
+      {
+        symbol: "B",
+        name: "Base Diameter",
+        definition:
+          "Outside diameter of the olet reinforcement base at the header (mm or in).",
+      },
+      {
+        symbol: "d_hole",
+        name: "Header Cutout Diameter",
+        definition:
+          "Recommended hole diameter in the run pipe for olet installation (mm or in).",
+      },
+      {
+        symbol: "J",
+        name: "Socket Depth",
+        definition: "Sockolet socket engagement depth (mm or in). Not used on Weldolet / Threadolet.",
+      },
+      {
+        symbol: "D_ob",
+        name: "Outlet Outside Diameter",
+        definition:
+          "Branch pipe OD from B36.10M (Weldolet schedule) or screening OD for forged class outlets.",
+      },
+      {
+        symbol: "t_b",
+        name: "Branch Design Thickness",
+        definition:
+          "B31.3 §304.1.2 screening thickness for the outlet; export only — pad area is separate.",
+      },
+    ],
+    standards: [
+      "MSS SP-97 (Integrally Reinforced Forged Branch Outlet Fittings)",
+      "ASME B31.3 Para. 304.1.2 / 304.3.2 (branch design thickness & area replacement — screening note)",
+      "ASME B36.10M (matching Weldolet schedule OD / wall)",
+      "ASTM A105 / A182 (forging material families)",
+    ],
+    allowancesAndTolerances: {
+      title: "MSS SP-97 Lookup Rules & Scope",
+      summary:
+        "Field screening envelopes only. Confirm the current manufacturer dimensional chart and B31.3 reinforcement before purchase or fabrication.",
+      items: [
+        {
+          label: "Weldolet rating basis",
+          value: "STD / XS / Sch 160",
+          description:
+            "Butt-weld olet ends match pipe schedule wall. STD ≈ Sch 40; XS ≈ Sch 80 for common carbon-steel sizes.",
+        },
+        {
+          label: "Sockolet / Threadolet rating",
+          value: "Class 3000 / 6000",
+          description:
+            "Forged pressure-class outlets (MSS SP-97 / B16.11 family). Socket depth J applies to Sockolet only.",
+        },
+        {
+          label: "Consolidated run size",
+          value: "Pass / Fail",
+          description:
+            "Selected header NPS must lie between published runMin and runMax for that outlet. Outside range → Fail screening.",
+        },
+        {
+          label: "Out of scope",
+          value: "§304.3.2 area replacement",
+          description:
+            "Pad / excess area A1–A5 checks remain in the Pipe Branch Reinforcement calculator.",
+        },
+      ],
+    },
+    tableCaption:
+      "MSS SP-97 olet screening chart (selected outlets) — matches this app",
+    tableHeaders: [
+      "Type",
+      "Run × Outlet",
+      "Rating",
+      "A",
+      "B",
+      "Note",
+    ],
+    tableRows: [
+      ["Weldolet", "6 × 2", "STD", "38.1 mm", "58.7 mm", "Default duty"],
+      ["Sockolet", "8 × 1.5", "3000", "33.3 mm", "J = 12.7 mm", "Socket depth"],
+      ["Weldolet", "12 × 4", "XS", "2.25 in", "4.88 in", "Imperial"],
+      ["Threadolet", "4 × 1", "3000", "1.31 in", "NPT 1 in", "Threaded"],
+      ["Weldolet", "6 × 3", "STD", "44.5 mm", "84.1 mm", "Larger outlet"],
+      ["Sockolet", "6 × 2", "3000", "38.1 mm", "J = 15.7 mm", "Class 3000"],
+      ["Weldolet", "8 × 2", "XS", "42.9 mm", "65.1 mm", "XS family"],
+      ["Threadolet", "6 × 1.5", "3000", "33.3 mm", "NPT 1½ in", "Threaded"],
+    ],
+    tableFootnote:
+      "A / B from MSS SP-97 screening rows in this app. Confirm OEM chart; integrally reinforced fittings may still need B31.3 area checks on large/high-pressure duties.",
+    materialLimitations: {
+      title: "Applicability & Fitting / Material Limits",
+      summary:
+        "Use for MSS SP-97 forged olet envelope lookup. Not a substitute for OEM charts, size-on-size specials, or formal reinforcement calculations.",
+      items: [
+        {
+          materialGroup: "Weldolet (BW)",
+          notes:
+            "Schedule-rated BW branch outlets. Default duty: NPS 6 run × NPS 2 STD on A105.",
+        },
+        {
+          materialGroup: "Sockolet (SW)",
+          notes:
+            "Class 3000 / 6000 socket-weld outlets with published socket depth J.",
+        },
+        {
+          materialGroup: "Threadolet (NPT)",
+          notes:
+            "Class 3000 / 6000 threaded outlets. End prep lists NPT size matching the outlet NPS.",
+        },
+        {
+          materialGroup: "A105 / A182 F316",
+          temperatureLimit: "Screening S at entered T context",
+          stressLimit: "A105 138 MPa · F316 115 MPa",
+          notes:
+            "Forging material presets for t_b screening only — confirm Table A-1 / forging allowable at metal design temperature.",
+        },
+      ],
+      codeRestrictions: [
+        "Does not certify MSS SP-97 manufacturing tolerances or OEM weight.",
+        "Does not perform ASME B31.3 Para. 304.3.2 area replacement.",
+        "Size-on-size and special run cradles may differ from reducing consolidated ranges.",
+      ],
+    },
+    workedExample: {
+      title: "Worked Example — Weldolet 6×2 STD (metric)",
+      scenario:
+        "Look up a carbon-steel Weldolet on an NPS 6 header with an NPS 2 STD outlet for layout and cutout planning.",
+      designConditions: [
+        { label: "Olet type", value: "Weldolet" },
+        { label: "Run × Outlet", value: "NPS 6 × NPS 2" },
+        { label: "Rating", value: "STD" },
+        { label: "Material", value: "A105" },
+        { label: "Design P / T", value: "2.0 MPa · 150 °C" },
+      ],
+      steps: [
+        {
+          step: "1",
+          name: "Select MSS SP-97 row",
+          calculation: "Weldolet · STD · outlet NPS 2",
+          result: "A = 1.50 in = 38.1 mm · B = 2.3125 in ≈ 58.7 mm",
+        },
+        {
+          step: "2",
+          name: "Check consolidated run size",
+          calculation: "runMin = 2.5 · runMax = 36 · run = 6",
+          result: "Pass",
+        },
+        {
+          step: "3",
+          name: "Read cutout and bore",
+          calculation: "d_hole and branch ID from the same row",
+          result: "Use d_hole for header prep; bore ≈ STD ID family",
+        },
+        {
+          step: "4",
+          name: "Optional t_b screen",
+          formula: "t_b = P D_ob / (2(SE + PY))",
+          calculation: "P = 2 MPa · D_ob from Sch 40 · S = 138 MPa · Y = 0.4",
+          result: "Export t_b for wall context — still run pad area check if required",
+        },
+      ],
+      conclusion:
+        "Hero height A = 38.1 mm with base B ≈ 58.7 mm and Pass run match. Next: verify reinforcement in Pipe Branch Reinforcement if the duty is not exempt.",
+    },
+    ...howTo("How to look up MSS SP-97 olet dimensions", [
+      {
+        name: "Choose olet type and rating",
+        text: "Weldolet → STD / XS / Sch 160. Sockolet or Threadolet → Class 3000 / 6000.",
+      },
+      {
+        name: "Enter run and outlet NPS",
+        text: "Header (run) size and branch outlet size. Confirm Pass on the consolidated run-size band.",
+      },
+      {
+        name: "Read A, B, d_hole (and J)",
+        text: "Hero shows height A. Rows list cutout, base diameter, bore, and Sockolet socket depth when applicable.",
+      },
+      {
+        name: "Carry to reinforcement if needed",
+        text: "High-pressure or large outlets: open Pipe Branch Reinforcement with the same run / branch NPS.",
+      },
+    ]),
+    faq: [
+      {
+        question: "What is the difference between Weldolet STD and Sockolet Class 3000?",
+        answer:
+          "**Weldolet** ends are **butt-weld** and sized by **pipe schedule** (STD / XS / 160). **Sockolet** is a **socket-weld** forging sized by **pressure class** (3000 / 6000) with a published **socket depth J**.",
+      },
+      {
+        question: "Does MSS SP-97 olet sizing replace ASME B31.3 branch reinforcement?",
+        answer:
+          "**No.** Integrally reinforced fittings still need project confirmation against **Para. 304.3**. Use this chart for **envelope / cutout** dimensions, then run **Pipe Branch Reinforcement** when area replacement is required.",
+      },
+      {
+        question: "Why does run size show Fail for a size-on-size branch?",
+        answer:
+          "Reducing-olet screening rows often start the run band **above** the outlet NPS. **Size-on-size** cradles can differ — confirm the OEM chart before ordering.",
+      },
+      {
+        question: "Where do Threadolet thread sizes come from?",
+        answer:
+          "End-prep notes list **NPT** matching the **outlet NPS** (e.g. NPS 1 → NPT 1 in) for Class 3000 / 6000 Threadolet screening.",
+      },
+    ],
+  },
+
+  "pipe-steam-tracing-duty": {
+    slug: "pipe-steam-tracing-duty",
+    formulaTitle: "Core Formula & Variable Definitions",
+    formulaHtml:
+      '<p class="eng-eq"><i>Q</i><sub>loss</sub> = (<i>T</i><sub>maint</sub> − <i>T</i><sub>amb</sub>) / <i>R</i><sub>tot</sub> &nbsp;·&nbsp; ISO 12241 / ASTM C680 radial insulation</p>' +
+      '<p class="eng-eq"><i>m</i><sub>steam</sub> = (<i>Q</i><sub>loss</sub> · <i>F</i><sub>safety</sub> · 3.6) / <i>h</i><sub>fg</sub> &nbsp;·&nbsp; kg/(h·m)</p>' +
+      '<p class="eng-eq"><i>N</i><sub>tracer</sub> = ceil((<i>Q</i><sub>loss</sub> · <i>F</i>) / [<i>K</i><sub>tracer</sub> · (<i>T</i><sub>sat</sub> − <i>T</i><sub>maint</sub>)])</p>' +
+      '<p class="eng-plain">Saturated steam h<sub>fg</sub> from IAPWS-IF97 at P<sub>abs</sub> = P<sub>gauge</sub> + atm · bare-contact tracer capacity (no cement)</p>',
+    formulaLatex:
+      "Q_{loss}=(T_{maint}-T_{amb})/R_{tot},\\quad m_{steam}=Q_{loss}\\cdot F_{safety}\\cdot 3.6/h_{fg},\\quad N=\\lceil Q\\cdot F/[K(T_{sat}-T_{maint})]\\rceil",
+    formulaNotes:
+      "Heat loss reuses the FEK ASTM C680 / ISO 12241 insulation solver (mineral wool / calcium silicate / elastomeric→polyurethane k(T)). Latent heat h_fg is IAPWS-IF97 Region 4 at absolute pressure = gauge + atmosphere. Safety factor F = 1.25 covers wind and mounting resistance. Tracer capacity assumes bare copper tube contact (K ≈ 0.35–0.55 W/(m·K) by NPS); heat-transfer cement can raise capacity ~3–4×. Screening only — confirm OEM charts, trap spacing, and loop length.",
+    formulaBadges: [
+      { label: "Q_loss", value: "ISO 12241 / C680" },
+      { label: "h_fg", value: "IAPWS-IF97 sat." },
+      { label: "F_safety", value: "1.25" },
+      { label: "Tracer K", value: "Bare contact" },
+    ],
+    variables: [
+      {
+        symbol: "Q_loss",
+        name: "Insulated Heat Loss",
+        definition:
+          "Steady radial heat loss of the insulated process pipe (W/m or Btu/hr·ft).",
+      },
+      {
+        symbol: "T_maint",
+        name: "Maintain Temperature",
+        definition:
+          "Target process / winterization temperature (°C or °F).",
+      },
+      {
+        symbol: "T_amb",
+        name: "Minimum Ambient Temperature",
+        definition: "Lowest design outdoor air temperature (°C or °F).",
+      },
+      {
+        symbol: "h_fg",
+        name: "Latent Heat of Vaporization",
+        definition:
+          "Saturated steam condensation enthalpy from IAPWS-IF97 (kJ/kg or Btu/lb).",
+      },
+      {
+        symbol: "F_safety",
+        name: "Safety Factor",
+        definition:
+          "Default 1.25 for outdoor wind and tracer mounting thermal resistance.",
+      },
+      {
+        symbol: "N_tracer",
+        name: "Tracer Line Count",
+        definition:
+          "Integer number of bare tracer tubes required to match duty heat loss.",
+      },
+    ],
+    standards: [
+      "ISO 12241 (Thermal insulation for building equipment and industrial installations)",
+      "ASTM C680 (Heat Gain/Loss — insulation thickness / surface temperature methods)",
+      "IAPWS-IF97 (Industrial Formulation — Region 4 saturation properties)",
+      "VDI Heat Atlas Section C (heat transfer handbook — film / conduction screening context)",
+      "Spirax Sarco Heat Tracing Design Manual (tracer layout / trapping practice — screening)",
+    ],
+    tableCaption:
+      "Steam tracing duty screen — engine Q_loss, steam use per 100 m / 100 ft, tracer lines (F = 1.25, bare contact)",
+    tableHeaders: [
+      "NPS",
+      "Maintain / Amb",
+      "Insul.",
+      "Steam",
+      "Q_loss",
+      "Steam use",
+      "Lines",
+      "h_fg",
+    ],
+    tableRows: [
+      [
+        "4",
+        "50 / −10 °C",
+        "50 mm MW",
+        "3.5 bar.g",
+        "19.9 W/m",
+        "4.2 kg/h·100m",
+        "1",
+        "2120 kJ/kg",
+      ],
+      [
+        "8",
+        "100 / −15 °C",
+        "75 mm MW",
+        "7.0 bar.g",
+        "49.8 W/m",
+        "11.0 kg/h·100m",
+        "2",
+        "2047 kJ/kg",
+      ],
+      [
+        "3",
+        "120 / 0 °F",
+        "2 in MW",
+        "50 psig",
+        "18.7 Btu/hr·ft",
+        "2.6 lb/h·100ft",
+        "1",
+        "2121 kJ/kg",
+      ],
+      [
+        "6",
+        "180 / 10 °F",
+        "3 in MW",
+        "100 psig",
+        "33.6 Btu/hr·ft",
+        "4.8 lb/h·100ft",
+        "2",
+        "2049 kJ/kg",
+      ],
+      [
+        "6",
+        "60 / −5 °C",
+        "50 mm CaSi",
+        "5.0 bar.g",
+        "41.0 W/m",
+        "8.8 kg/h·100m",
+        "2",
+        "2085 kJ/kg",
+      ],
+      [
+        "2",
+        "40 / −20 °C",
+        "40 mm elast.",
+        "3.5 bar.g",
+        "9.3 W/m",
+        "2.0 kg/h·100m",
+        "1",
+        "2120 kJ/kg",
+      ],
+      [
+        "4",
+        "150 / 20 °F",
+        "2.5 in MW",
+        "75 psig",
+        "21.7 Btu/hr·ft",
+        "3.0 lb/h·100ft",
+        "1",
+        "2082 kJ/kg",
+      ],
+      [
+        "10",
+        "80 / 0 °C",
+        "80 mm MW",
+        "10 bar.g",
+        "38.6 W/m",
+        "8.7 kg/h·100m",
+        "2",
+        "1999 kJ/kg",
+      ],
+    ],
+    tableFootnote:
+      "Values from FEK insulation + IAPWS engines with F = 1.25 and bare-contact tracer K. Not an OEM tracer chart — confirm cement, trap sets, and loop segmentation for design.",
+    allowancesAndTolerances: {
+      title: "Screening Rules & Default Duty",
+      summary:
+        "Default winterization duty and out-of-scope limits for saturated steam tracing screens.",
+      items: [
+        {
+          label: "Default duty",
+          value: "NPS 4 · 50 °C maintain · −10 °C amb · 50 mm mineral wool · 3.5 bar.g",
+          description:
+            "Field winterization starting point. Wind default 5 m/s (≈11 mph).",
+        },
+        {
+          label: "Safety factor F",
+          value: "1.25",
+          description:
+            "Covers outdoor wind and tracer mounting resistance (Spirax-style 1.21–1.25 band).",
+        },
+        {
+          label: "Steam model",
+          value: "Saturated only",
+          description:
+            "Gauge pressure converted to absolute (atm) for IAPWS h_fg. Superheated supply is out of scope.",
+        },
+        {
+          label: "Run length",
+          value: "~100 m / 100 ft reporting basis",
+          description:
+            "Steam use and condensate load are reported per 100 m (or 100 ft). Longer runs need trap sets and loop splits.",
+        },
+        {
+          label: "Out of scope",
+          value: "Electric heat trace · jacketed pipe · detailed CFD",
+          description:
+            "Does not size electric tracers, full jacketing, or condensate return hydraulics.",
+        },
+      ],
+    },
+    materialLimitations: {
+      title: "Applicability & Service Limits",
+      summary:
+        "Steam tracing applicability by temperature regime, insulation moisture, and tracer mounting — not a metallurgy table.",
+      items: [
+        {
+          materialGroup: "Saturated steam winterization",
+          temperatureLimit: "T_maint typically 5–80 °C (40–175 °F)",
+          notes:
+            "Freeze protection / viscosity hold. Steam Tsat must exceed T_maint with margin for trap subcooling.",
+        },
+        {
+          materialGroup: "Process temperature maintain",
+          temperatureLimit: "T_maint up to ~200 °C (390 °F) screening",
+          notes:
+            "Higher maintain temps need thicker insulation and may need multiple tracers or cement. Confirm insulation continuous rating.",
+        },
+        {
+          materialGroup: "Elastomeric / foam insulation",
+          temperatureLimit: "~105 °C continuous typical",
+          notes:
+            "Mapped to ASTM C591-family k(T) in the insulation engine. Wet or compressed foam raises heat loss — re-screen if jacket fails.",
+        },
+        {
+          materialGroup: "Mineral wool / calcium silicate",
+          notes:
+            "Use dry, properly jacketing insulation. Moisture uptake increases effective k and steam duty.",
+        },
+        {
+          materialGroup: "Bare tracer vs heat-transfer cement",
+          notes:
+            "Bare contact capacity is used for line count. Cement can raise capacity ~3–4× — do not mix assumptions without re-running.",
+        },
+      ],
+      codeRestrictions: [
+        "Screening only — not a substitute for Spirax / Thermon / Chromalox OEM charts or project winterization standards.",
+        "Trap selection, condensate lift, and steam supply pressure drop are outside this calculator.",
+      ],
+    },
+    workedExample: {
+      title: "Worked Example — NPS 4 Maintain 50 °C at 3.5 bar.g",
+      scenario:
+        "Outdoor process line NPS 4 with 50 mm mineral wool must hold 50 °C against −10 °C ambient and 5 m/s wind using ½ in saturated steam tracers at 3.5 bar.g.",
+      designConditions: [
+        {
+          label: "Pipe / insulation",
+          value: "NPS 4 · mineral wool 50 mm · ε = 0.90",
+        },
+        {
+          label: "Temperatures / wind",
+          value: "T_maint = 50 °C · T_amb = −10 °C · wind = 5 m/s",
+        },
+        {
+          label: "Steam / tracer",
+          value:
+            "3.5 bar.g saturated (P_abs ≈ 4.51 bar) · tracer NPS 0.5 · F = 1.25",
+        },
+      ],
+      steps: [
+        {
+          step: "1",
+          name: "Insulated heat loss",
+          formula: "Q_loss from ISO 12241 / ASTM C680 radial solve",
+          calculation:
+            "FEK insulation engine → Q_loss ≈ 19.9 W/m (bare pipe ≈ 418 W/m).",
+          result: "Q_loss = 19.9 W/m",
+        },
+        {
+          step: "2",
+          name: "Saturated latent heat",
+          formula: "h_fg = hg − hf (IAPWS-IF97 Region 4)",
+          calculation:
+            "At P_abs = 3.5 + 1.01325 bar → h_fg ≈ 2120 kJ/kg · Tsat ≈ 148 °C.",
+          result: "h_fg ≈ 2120 kJ/kg",
+        },
+        {
+          step: "3",
+          name: "Steam consumption",
+          formula: "m = Q_loss · F · 3.6 / h_fg",
+          calculation:
+            "m = 19.9 · 1.25 · 3.6 / 2120 ≈ 0.0422 kg/(h·m) → 4.2 kg/h per 100 m.",
+          result: "4.2 kg/h per 100 m",
+        },
+        {
+          step: "4",
+          name: "Tracer line count",
+          formula: "N = ceil(Q·F / [K·(Tsat−Tmaint)])",
+          calculation:
+            "K_0.5 = 0.45 W/(m·K) · ΔT = 148−50 = 98 K → capacity ≈ 44 W/m. Duty = 24.8 W/m → N = 1.",
+          result: "1 tracer line",
+        },
+      ],
+      conclusion:
+        "For this winterization duty, report ≈4.2 kg/h steam per 100 m with one ½ in bare tracer. Add cement or a second line only if OEM charts or cement specs require higher capacity.",
+    },
+    ...howTo("How to size pipe steam tracing duty", [
+      {
+        name: "Set maintain and ambient temperatures",
+        text: "Enter T_maint for freeze protection or process hold and the lowest design ambient. Keep T_maint above T_amb.",
+      },
+      {
+        name: "Select insulation and thickness",
+        text: "Choose mineral wool, calcium silicate, or elastomeric foam and the installed thickness. Heat loss uses the same ISO 12241 / C680 engine as Insulation Heat Loss.",
+      },
+      {
+        name: "Enter saturated steam gauge pressure",
+        text: "Supply pressure is gauge (bar.g / psig). The engine converts to absolute for IAPWS h_fg and Tsat.",
+      },
+      {
+        name: "Pick tracer tube size",
+        text: "Common field sizes are ⅜, ½, and ¾ in. Line count assumes bare contact unless you separately credit heat-transfer cement.",
+      },
+      {
+        name: "Read steam use and tracer count",
+        text: "Hero shows steam consumption per 100 m (or 100 ft). Confirm trap sets and loop splits for runs longer than ~100 m.",
+      },
+    ]),
+    faq: [
+      {
+        question: "Why do steam use numbers differ from a handbook chart?",
+        answer:
+          "This tool uses the **FEK insulation + IAPWS engines** with **F = 1.25** and **bare-contact** tracer capacity. OEM charts may include cement, different wind, or jacket ε — compare assumptions before matching numbers.",
+      },
+      {
+        question: "Can I use superheated steam for tracers?",
+        answer:
+          "**Not with this screen.** Condensation heat transfer needs **saturated** supply. Superheat can reduce effective duty and create local hot spots.",
+      },
+      {
+        question: "How does heat-transfer cement change the result?",
+        answer:
+          "Cement can raise tracer capacity by roughly **3–4×**. The calculator reports bare-contact line count and calls out cement as an info limit — re-check OEM charts when cement is specified.",
+      },
+      {
+        question: "What related calculators should I open next?",
+        answer:
+          "Use **Insulation Heat Loss** for Ts / personnel checks, **Steam Properties (IAPWS)** for detailed h_fg / Tsat, and **Heat Exchanger LMTD Duty** for related thermal duty screening.",
+      },
+    ],
+  },
+
+  "socket-weld-threaded-fitting-dimension": {
+    slug: "socket-weld-threaded-fitting-dimension",
+    formulaTitle: "Core Formula & Variable Definitions",
+    formulaHtml:
+      '<p class="eng-eq"><i>L</i><sub>2</sub> = (0.80 <i>D</i> + 6.86) · <i>p</i> &nbsp;·&nbsp; ASME B1.20.1 thread engagement</p>' +
+      '<p class="eng-eq"><i>g</i><sub>sw</sub> = 1.5 mm (1/16 in) &nbsp;·&nbsp; ASME B31.3 Para. 328.5.2 socket gap</p>' +
+      '<p class="eng-plain">Envelope <i>A</i>/<i>B</i>/<i>J</i>/<i>G</i>/<i>C</i> from ASME B16.11 forged fitting tables (SW · threaded)</p>',
+    formulaLatex:
+      "L_2=(0.80 D+6.86)p,\\quad g_{sw}=1.5\\,\\mathrm{mm}\\ (1/16\\,\\mathrm{in})",
+    formulaNotes:
+      "Primary envelope dimensions (center-to-bottom / center-to-end A, coupling length W, cap height W, band OD C, socket B/J, wall G) are taken from ASME B16.11 screening tables. NPT L₂ uses B1.20.1 with D = B36 pipe OD and p = 1/TPI. Socket-weld insertion gap g_sw = 1.5 mm per B31.3 Para. 328.5.2. Class 2000 is threaded-only; Class 9000 is high-pressure SW-only. Regular size range ends at NPS 4. Confirm OEM chart before purchase.",
+    formulaBadges: [
+      { label: "Standard", value: "ASME B16.11" },
+      { label: "Thread L₂", value: "B1.20.1" },
+      { label: "SW gap", value: "1.5 mm" },
+      { label: "Max NPS", value: "4" },
+    ],
+    variables: [
+      {
+        symbol: "A",
+        name: "Center-to-Bottom / Center-to-End",
+        definition:
+          "SW: centerline to bottom of socket. Threaded: centerline to end of fitting (mm or in).",
+      },
+      {
+        symbol: "B",
+        name: "Socket Diameter",
+        definition: "Average socket bore diameter for socket-weld fittings (mm or in).",
+      },
+      {
+        symbol: "J",
+        name: "Socket Depth",
+        definition: "Minimum socket engagement depth (mm or in).",
+      },
+      {
+        symbol: "G",
+        name: "Minimum Body Wall",
+        definition: "Minimum fitting body wall thickness per B16.11 class (mm or in).",
+      },
+      {
+        symbol: "L₂",
+        name: "Thread Engagement Length",
+        definition: "Effective NPT thread length from ASME B1.20.1 (mm or in).",
+      },
+      {
+        symbol: "g_sw",
+        name: "Socket Weld Gap",
+        definition:
+          "1.5 mm (1/16 in) clearance between pipe end and socket bottom after insertion (B31.3).",
+      },
+    ],
+    standards: [
+      "ASME B16.11 (Forged Fittings, Socket-Welding and Threaded)",
+      "ASME B1.20.1 (Pipe Threads, General Purpose — NPT)",
+      "ASME B31.3 Para. 328.5.2 (socket weld gap practice)",
+      "ASME B36.10M / B36.19M (pipe OD for L₂)",
+    ],
+    tableCaption:
+      "ASME B16.11 forged fitting screening chart — engine A / G / J or L₂ (selected duties)",
+    tableHeaders: [
+      "Conn.",
+      "Fitting",
+      "NPS",
+      "Class",
+      "Primary",
+      "G",
+      "J / L₂",
+      "Note",
+    ],
+    tableRows: [
+      [
+        "SW",
+        "90° Elbow",
+        "1",
+        "3000",
+        "A 28.4 mm",
+        "4.98 mm",
+        "J 12.7 mm",
+        "Default duty",
+      ],
+      [
+        "THRD",
+        "Tee",
+        "2",
+        "3000",
+        "A 47.8 mm",
+        "6.05 mm",
+        "L₂ 19.3 mm",
+        "Metric pSEO",
+      ],
+      [
+        "SW",
+        "Coupling",
+        "1½",
+        "6000",
+        "W 2.88 in",
+        "0.315 in",
+        "J 0.62 in",
+        "Imperial pSEO",
+      ],
+      [
+        "THRD",
+        "Cap",
+        "¾",
+        "2000",
+        "W 1.44 in",
+        "0.140 in",
+        "L₂ 0.55 in",
+        "Band OD 1.46 in",
+      ],
+      [
+        "SW",
+        "45° Elbow",
+        "2",
+        "3000",
+        "A 33.3 mm",
+        "6.05 mm",
+        "J 19.1 mm",
+        "45° envelope",
+      ],
+      [
+        "THRD",
+        "90° Elbow",
+        "1",
+        "3000",
+        "A 1.38 in",
+        "0.196 in",
+        "L₂ 0.69 in",
+        "Imperial",
+      ],
+      [
+        "SW",
+        "Tee",
+        "¾",
+        "3000",
+        "A 24.6 mm",
+        "4.27 mm",
+        "J 11.2 mm",
+        "Small bore",
+      ],
+      [
+        "SW",
+        "Cap",
+        "1",
+        "3000",
+        "W 28.4 mm",
+        "4.98 mm",
+        "J 12.7 mm",
+        "SW cap",
+      ],
+      [
+        "THRD",
+        "Coupling",
+        "2",
+        "3000",
+        "W 69.9 mm",
+        "6.05 mm",
+        "L₂ 19.3 mm",
+        "Full coupling",
+      ],
+      [
+        "SW",
+        "90° Elbow",
+        "1½",
+        "6000",
+        "A 50.8 mm",
+        "8.00 mm",
+        "J 15.7 mm",
+        "Class 6000",
+      ],
+    ],
+    tableFootnote:
+      "Values from the FEK ASME B16.11 screening table (inch source × 25.4). Not a certified manufacturer chart — confirm OEM dimensions and class scope before purchase.",
+    allowancesAndTolerances: {
+      title: "Screening Rules & Class Scope",
+      summary:
+        "Default duty and out-of-scope limits for ASME B16.11 forged SW / threaded fittings.",
+      items: [
+        {
+          label: "Default duty",
+          value: "SW 90° Elbow · NPS 1 · Class 3000",
+          description:
+            "Most common forged SW elbow selection for instrument / small-bore process lines.",
+        },
+        {
+          label: "SW gap g_sw",
+          value: "1.5 mm (1/16 in)",
+          description:
+            "B31.3 Para. 328.5.2 practice — leave gap after pipe insertion before welding.",
+        },
+        {
+          label: "Class 2000",
+          value: "Threaded only",
+          description: "Not applicable to socket-weld forged fittings in B16.11.",
+        },
+        {
+          label: "Class 9000",
+          value: "Socket-weld only",
+          description: "High-pressure SW rating — not used for threaded fittings.",
+        },
+        {
+          label: "Out of scope",
+          value: "NPS > 4 · BW B16.9 · olet MSS SP-97",
+          description:
+            "Larger forged specials, butt-weld fittings, and olet outlets use other calculators.",
+        },
+      ],
+    },
+    materialLimitations: {
+      title: "Material & Code Limitations",
+      summary:
+        "Common B16.11 forging materials and temperature / pressure class context. Confirm Table A-1 / forging allowable at metal design temperature.",
+      items: [
+        {
+          materialGroup: "ASTM A105 (CS forging)",
+          temperatureLimit: "Typically −29 to 425 °C service band (project-dependent)",
+          stressLimit: "Screening S ≈ 138 MPa at ambient",
+          notes:
+            "Default carbon-steel forged fittings. Confirm low-temp toughness and PWHT project rules.",
+        },
+        {
+          materialGroup: "ASTM A182 F304L / F316L (SS forging)",
+          temperatureLimit: "Cryogenic to elevated — confirm grade table",
+          stressLimit: "Lower S than A105 at ambient screening",
+          notes:
+            "Stainless forged SW/THRD fittings for corrosive / clean service. Match gasket / thread sealant chemistry.",
+        },
+        {
+          materialGroup: "ASTM A350 LF2 (LTCS forging)",
+          temperatureLimit: "Low-temperature carbon steel service",
+          notes:
+            "Impact-tested forging for cold service. Do not substitute A105 without project approval.",
+        },
+        {
+          materialGroup: "Pressure class vs pipe schedule",
+          notes:
+            "B16.11 class is a forging pressure rating family — it is not a pipe schedule. Match pipe wall separately via Pipe Schedule Dimensions.",
+        },
+      ],
+      codeRestrictions: [
+        "Does not certify manufacturer tolerances or heat numbers.",
+        "Does not replace B31.3 branch reinforcement or olet (MSS SP-97) charts.",
+        "NPT L₂ is engagement screening — confirm sealant, taper, and makeup practice.",
+      ],
+    },
+    workedExample: {
+      title: "Worked Example — SW 90° Elbow NPS 1 Class 3000",
+      scenario:
+        "Select a forged socket-weld 90° elbow for NPS 1 Class 3000 carbon-steel small-bore piping and read envelope dimensions for layout.",
+      designConditions: [
+        { label: "Connection", value: "Socket weld" },
+        { label: "Fitting", value: "90° Elbow" },
+        { label: "NPS", value: "1 (DN 25)" },
+        { label: "Class", value: "3000" },
+        { label: "Unit system", value: "Metric" },
+      ],
+      steps: [
+        {
+          step: "1",
+          name: "Look up B16.11 SW Class 3000 row",
+          calculation: "NPS 1 · 90° elbow · Class 3000",
+          result: "A = 1.12 in = 28.4 mm",
+        },
+        {
+          step: "2",
+          name: "Read socket geometry",
+          calculation: "Socket bore B and depth J from the same class/NPS body",
+          result: "J = 0.50 in = 12.7 mm · B ≈ 1.33 in",
+        },
+        {
+          step: "3",
+          name: "Read minimum wall G",
+          calculation: "Class 3000 body wall for NPS 1",
+          result: "G = 0.196 in = 4.98 mm",
+        },
+        {
+          step: "4",
+          name: "Apply SW gap on install",
+          formula: "g_sw = 1.5 mm",
+          calculation: "Leave gap between pipe end and socket bottom before welding",
+          result: "g_sw = 1.5 mm (1/16 in)",
+        },
+      ],
+      conclusion:
+        "Hero center-to-bottom A = 28.4 mm with socket depth J = 12.7 mm and wall G = 4.98 mm. Use the size-scan table for adjacent NPS, and confirm the OEM chart before purchase.",
+    },
+    ...howTo("How to look up ASME B16.11 forged fitting dimensions", [
+      {
+        name: "Choose socket weld or threaded",
+        text: "SW uses Class 3000 / 6000 / 9000. Threaded (NPT) uses Class 2000 / 3000 / 6000.",
+      },
+      {
+        name: "Select fitting category and NPS",
+        text: "Elbows, tees, crosses, couplings, caps, and street elbows (threaded). Regular B16.11 sizes stop at NPS 4.",
+      },
+      {
+        name: "Pick pressure class",
+        text: "Match the project forged-fitting class. Class is not a pipe schedule.",
+      },
+      {
+        name: "Read A / W, G, and J or L₂",
+        text: "Hero shows the primary envelope. Summary chips show wall G and socket depth J or thread engagement L₂.",
+      },
+      {
+        name: "For SW, plan the 1.5 mm gap",
+        text: "Insert pipe, leave ~1.5 mm to the socket bottom, then weld per B31.3 practice.",
+      },
+    ]),
+    faq: [
+      {
+        question: "Why is center-to-bottom A 28.4 mm instead of 24.5 mm for NPS 1 Class 3000?",
+        answer:
+          "ASME B16.11 / catalog charts publish **A = 1.12 in (28.4 mm)** for SW 90° elbow NPS 1 Class 3000. Use the table value, not approximate handbook round-offs.",
+      },
+      {
+        question: "Is Class 2000 available for socket weld?",
+        answer:
+          "**No.** Class **2000** is **threaded-only**. Socket-weld ratings start at **Class 3000** (then 6000 / 9000).",
+      },
+      {
+        question: "What related tools should I open next?",
+        answer:
+          "Use **Butt-Weld Fitting Dimensions** for B16.9 BW elbows, **Fitting & Valve Dimensions** for face-to-face, and **Pipe Schedule Dimensions** for matching pipe OD / wall.",
+      },
+      {
+        question: "Does L₂ replace make-up length on the drawing?",
+        answer:
+          "**L₂** is **B1.20.1 engagement screening**. Shop make-up and sealant practice may differ — confirm with the piping class specification.",
+      },
+    ],
+  },
+
+  "pressure-vessel-head-thickness": {
+    slug: "pressure-vessel-head-thickness",
+    formulaTitle: "Core Formula & Variable Definitions",
+    formulaHtml:
+      '<p class="eng-eq"><i>t</i><sub>req</sub> = <span class="eng-frac"><span class="eng-num"><i>P</i> · <i>D</i></span><span class="eng-den">2 <i>S</i> <i>E</i> − 0.2 <i>P</i></span></span> <span class="eng-plain">(2:1 ellipsoidal · UG-32(d))</span></p>' +
+      '<p class="eng-eq"><i>t</i><sub>req</sub> = <span class="eng-frac"><span class="eng-num">0.885 <i>P</i> · <i>L</i></span><span class="eng-den"><i>S</i> <i>E</i> − 0.1 <i>P</i></span></span> <span class="eng-plain">(torispherical · <i>L</i> = <i>D</i> · UG-32(e))</span></p>' +
+      '<p class="eng-eq"><i>t</i><sub>req</sub> = <span class="eng-frac"><span class="eng-num"><i>P</i> · <i>R</i></span><span class="eng-den">2 <i>S</i> <i>E</i> − 0.2 <i>P</i></span></span> <span class="eng-plain">(hemispherical · <i>R</i> = 0.5 <i>D</i> · UG-32(f))</span></p>' +
+      '<p class="eng-eq"><i>t</i><sub>req</sub> = <span class="eng-frac"><span class="eng-num"><i>P</i> · <i>D</i></span><span class="eng-den">2 cos(<i>α</i>) (<i>S</i> <i>E</i> − 0.6 <i>P</i>)</span></span> <span class="eng-plain">(conical · <i>α</i> ≤ 30° · UG-32(g))</span></p>' +
+      '<p class="eng-eq"><i>t</i><sub>nom</sub> = <i>t</i><sub>req</sub> + C.A.</p>',
+    formulaLatex:
+      "t_{req}=\\frac{P D}{2SE-0.2P}\\ (2{:}1),\\quad t_{req}=\\frac{0.885 P L}{SE-0.1P}\\ (L=D),\\quad t_{req}=\\frac{P R}{2SE-0.2P}\\ (R=D/2),\\quad t_{req}=\\frac{P D}{2\\cos\\alpha(SE-0.6P)},\\quad t_{nom}=t_{req}+C.A.",
+    formulaNotes:
+      "ASME Section VIII Division 1 Paragraph UG-32 sizes formed heads for internal pressure on the concave side. Symbols use t_req for the pressure-resisting minimum and t_nom = t_req + corrosion allowance for nominal design thickness — distinct from B31.3 pipe t_nom_req (mill under-tolerance). Confirm allowable stress S from the project edition of Section II Part D Table 1A.",
+    formulaBadges: [
+      { label: "2:1 Ellipsoidal", value: "UG-32(d)" },
+      { label: "Torispherical L=D", value: "UG-32(e)" },
+      { label: "Hemispherical", value: "UG-32(f)" },
+      { label: "Conical α≤30°", value: "UG-32(g)" },
+    ],
+    variables: [
+      {
+        symbol: "t_req",
+        name: "Minimum required thickness",
+        definition:
+          "Pressure-resisting head thickness from UG-32 before corrosion allowance (mm or in).",
+      },
+      {
+        symbol: "t_nom",
+        name: "Nominal design thickness",
+        definition: "t_nom = t_req + C.A. — ordered plate / formed-head design thickness screen.",
+      },
+      {
+        symbol: "P",
+        name: "Internal design pressure",
+        definition: "Internal design gauge pressure (MPa or psi).",
+      },
+      {
+        symbol: "D",
+        name: "Inside diameter",
+        definition: "Head inside diameter at the skirt / attachment plane (mm or in).",
+      },
+      {
+        symbol: "L",
+        name: "Inside crown radius",
+        definition: "Torispherical crown radius. This calculator uses L = D for standard 6% knuckle F&D screening.",
+      },
+      {
+        symbol: "R",
+        name: "Inside radius",
+        definition: "Hemispherical inside radius R = 0.5 D.",
+      },
+      {
+        symbol: "α",
+        name: "Half-apex angle",
+        definition: "Conical half-apex angle (degrees). UG-32(g) without knuckle limited to α ≤ 30°.",
+      },
+      {
+        symbol: "S",
+        name: "Allowable stress",
+        definition:
+          "Maximum allowable tensile stress from ASME Section II Part D Table 1A at design metal temperature (MPa or psi).",
+      },
+      {
+        symbol: "E",
+        name: "Joint efficiency",
+        definition: "Weld joint efficiency (0.70 / 0.85 / 1.00) per radiography extent.",
+      },
+      {
+        symbol: "C.A.",
+        name: "Corrosion allowance",
+        definition: "Specified corrosion / erosion allowance added to t_req (mm or in).",
+      },
+    ],
+    standards: [
+      "ASME BPVC Section VIII Division 1 UG-32",
+      "ASME BPVC Section VIII Division 1 Mandatory Appendix 1",
+      "ASME BPVC Section II Part D Table 1A",
+    ],
+    allowancesAndTolerances: {
+      title: "Design Allowances & UG-32 Scope",
+      summary:
+        "Default screening duty is Metric 2:1 semi-ellipsoidal, ID 1500 mm, P 1.5 MPa, T 150 °C, SA-516 Gr.70, E = 1.00, C.A. = 3.0 mm. Results size concave-side internal pressure only.",
+      items: [
+        {
+          label: "Corrosion allowance (C.A.)",
+          value: "0–12.5 mm / 0–0.5 in",
+          description:
+            "Added after UG-32 pressure thickness: t_nom = t_req + C.A. Typical carbon-steel PV service uses 1.5–3.0 mm.",
+        },
+        {
+          label: "Joint efficiency (E)",
+          value: "0.70 / 0.85 / 1.00",
+          description:
+            "Radiography category per Section VIII joint type. Full radiography uses E = 1.00; spot radiography often E = 0.85.",
+        },
+        {
+          label: "Torispherical crown radius",
+          value: "L = D",
+          description:
+            "Standard ASME flanged-and-dished (≈6% knuckle) screening sets inside crown radius L equal to inside diameter D.",
+        },
+        {
+          label: "Out of scope",
+          value: "UG-22 / UG-28 / nozzles",
+          description:
+            "Wind, seismic, and nozzle local loads (UG-22), external pressure / vacuum (UG-28), and forming thinning / mill under-tolerance are not included. Complete a stamped vessel calculation package for fabrication.",
+        },
+      ],
+    },
+    tableCaption:
+      "UG-32(d) 2:1 ellipsoidal head thickness at P = 1.5 MPa, T = 150 °C, SA-516 Gr.70 (S ≈ 137.9 MPa), E = 1.00, C.A. = 3.0 mm",
+    tableHeaders: [
+      "Inside D (mm)",
+      "S (MPa)",
+      "t_req (mm)",
+      "t_nom (mm)",
+    ],
+    tableRows: [
+      ["1000", "137.9", "5.44", "8.44"],
+      ["1500", "137.9", "8.17", "11.17"],
+      ["2000", "137.9", "10.89", "13.89"],
+      ["2500", "137.9", "13.61", "16.61"],
+      ["3000", "137.9", "16.33", "19.33"],
+    ],
+    tableColumnUnits: [
+      { index: 0, quantity: "length", digits: 0 },
+      { index: 1, quantity: "pressure", digits: 1 },
+      { index: 2, quantity: "length", digits: 2 },
+      { index: 3, quantity: "length", digits: 2 },
+    ],
+    tableFootnote:
+      "At the same P/D/S/E/C.A. duty (ID 1500 mm), engine screens give torispherical t_nom ≈ 17.46 mm, hemispherical ≈ 7.08 mm, and conical (α = 30°) ≈ 12.48 mm — torispherical is thicker than 2:1 SE; hemispherical is thinnest.",
+    materialLimitations: {
+      title: "Material Specifications & Temperature Limits",
+      summary:
+        "Allowable stress S is interpolated from ASME Section II Part D Table 1A screening curves bound in this calculator. Confirm the project code edition before stamped design.",
+      items: [
+        {
+          materialGroup: "SA-516 Gr.70 (Carbon Steel Plate)",
+          temperatureLimit: "−29 °C to 482 °C (−20 °F to 900 °F) screening",
+          stressLimit: "20.0 ksi (137.9 MPa) through ≈400 °F; derates above 500 °F",
+          notes:
+            "Primary PV carbon plate. Long-term graphitization risk rises above ≈427 °C — follow project metallurgy limits.",
+        },
+        {
+          materialGroup: "SA-240 304L (Austenitic SS)",
+          temperatureLimit: "Cryogenic to ≈816 °C (1500 °F) stress table screen",
+          stressLimit: "16.7 ksi (115 MPa) near ambient; derates with temperature",
+          notes: "Low-carbon austenitic plate for corrosive / clean services.",
+        },
+        {
+          materialGroup: "SA-240 316L (Austenitic SS)",
+          temperatureLimit: "Cryogenic to ≈816 °C (1500 °F) stress table screen",
+          stressLimit: "16.7 ksi (115 MPa) near ambient; Mo grade for chloride service",
+          notes: "Molybdenum addition improves pitting resistance versus 304L.",
+        },
+        {
+          materialGroup: "SA-387 Gr.11 Cl.2 (1¼Cr–½Mo)",
+          temperatureLimit: "Up to ≈593 °C (1100 °F) screening",
+          stressLimit: "17.1 ksi (≈118 MPa) through mid-range temperatures",
+          notes: "Cr-Mo alloy plate for elevated-temperature hydrocarbon services.",
+        },
+      ],
+      codeRestrictions: [
+        "UG-32 formulas apply to internal pressure on the concave side only. External pressure / vacuum requires UG-28.",
+        "Conical heads without a knuckle are limited to half-apex angle α ≤ 30° under UG-32(g) as implemented here.",
+        "P/(S·E) > 0.385 triggers a thin-wall applicability REVIEW flag — confirm Appendix-1 / thick-wall rules for that duty.",
+      ],
+    },
+    workedExample: {
+      title: "Step-by-Step Worked Example: 2:1 Semi-Ellipsoidal Head",
+      scenario:
+        "Size the required and nominal thickness for a 2:1 semi-ellipsoidal pressure vessel head at 1.5 MPa and 150 °C using SA-516 Gr.70 plate with full radiography and 3.0 mm corrosion allowance.",
+      designConditions: [
+        { label: "Head type", value: "2:1 Semi-Ellipsoidal (UG-32(d))" },
+        { label: "Inside diameter (D)", value: "1500 mm" },
+        { label: "Design pressure (P)", value: "1.5 MPa" },
+        { label: "Design temperature (T)", value: "150 °C" },
+        { label: "Material", value: "SA-516 Gr.70" },
+        { label: "Allowable stress (S)", value: "137.9 MPa (20.0 ksi II-D screen)" },
+        { label: "Joint efficiency (E)", value: "1.00 (full radiography)" },
+        { label: "Corrosion allowance (C.A.)", value: "3.0 mm" },
+      ],
+      steps: [
+        {
+          step: "Step 1",
+          name: "Resolve allowable stress S at design temperature",
+          calculation:
+            "T = 150 °C ≈ 302 °F. SA-516 Gr.70 II-D Table 1A screen remains 20.0 ksi through 400 °F → S = 137.9 MPa.",
+          result: "S = 137.9 MPa",
+        },
+        {
+          step: "Step 2",
+          name: "Apply UG-32(d) for 2:1 ellipsoidal head",
+          formula: "t_req = P·D / (2·S·E − 0.2·P)",
+          calculation:
+            "t_req = 1.5 × 1500 / (2 × 137.9 × 1.00 − 0.2 × 1.5) = 2250 / (275.8 − 0.3) = 2250 / 275.5",
+          result: "t_req = 8.17 mm",
+        },
+        {
+          step: "Step 3",
+          name: "Add corrosion allowance for nominal design thickness",
+          formula: "t_nom = t_req + C.A.",
+          calculation: "t_nom = 8.17 mm + 3.00 mm",
+          result: "t_nom = 11.17 mm",
+        },
+        {
+          step: "Step 4",
+          name: "Back-calculate MAWP from t_req",
+          formula: "P_MAWP = 2·S·E·t / (D + 0.2·t)",
+          calculation:
+            "Using t = t_req = 8.17 mm returns MAWP ≈ 1.50 MPa, matching the design pressure for this screen.",
+          result: "MAWP ≈ 1.50 MPa",
+        },
+      ],
+      conclusion:
+        "Order / design around t_nom = 11.17 mm (t_req = 8.17 mm + 3.0 mm C.A.) for this Metric 2:1 SE duty. Confirm forming thinning, mill under-tolerance, and UG-22/UG-28 cases in the stamped calculation.",
+    },
+    ...howTo("How to calculate ASME VIII-1 UG-32 head thickness", [
+      {
+        name: "1. Select head geometry",
+        text: "Choose 2:1 ellipsoidal, torispherical (L = D), hemispherical, or conical (α ≤ 30°) to match the vessel drawing.",
+      },
+      {
+        name: "2. Enter D, P, T, material, E, and C.A.",
+        text: "Use inside diameter and internal design pressure. Material sets S(T) from the II-D screening curve; radiography sets E.",
+      },
+      {
+        name: "3. Read t_nom and t_req",
+        text: "Hero value is t_nom (with C.A.). Badge shows t_req without C.A. Review MAWP and UG-32 Pass/Fail status.",
+      },
+      {
+        name: "4. Export and carry related tools",
+        text: "Export JSON/CSV/PDF, then open Pipe Wall Thickness or Tank & Vessel Volume with the same D / P / T duty.",
+      },
+    ]),
+    faq: [
+      {
+        question: "Is UG-32 the same as B31.3 pipe wall thickness?",
+        answer:
+          "**No.** UG-32 sizes **formed pressure vessel heads**. ASME B31.3 Para. 304.1.2 sizes **straight pipe** and uses different symbols (including mill under-tolerance **t_nom_req**). Do not interchange the formulas.",
+      },
+      {
+        question: "Why does a torispherical head need more thickness than a 2:1 ellipsoidal head?",
+        answer:
+          "For the same **P, D, S, and E**, UG-32(e) with **L = D** applies the **0.885** crown factor and yields a **larger t_req** than UG-32(d). A **hemispherical** head (UG-32(f)) is typically the **thinnest**.",
+      },
+      {
+        question: "Can I use this calculator for vacuum or jacket external pressure?",
+        answer:
+          "**No.** This tool covers **internal pressure on the concave side** only. External pressure and vacuum are governed by **UG-28** charts and rules.",
+      },
+      {
+        question: "What corrosion allowance should I enter?",
+        answer:
+          "Use the project vessel specification. Typical carbon-steel process vessels use **1.5–3.0 mm**; stainless often uses **0 mm** when corrosion is negligible. The calculator adds C.A. after UG-32: **t_nom = t_req + C.A.**",
+      },
+    ],
+  },
+
+  "pressure-vessel-nozzle-reinforcement": {
+    slug: "pressure-vessel-nozzle-reinforcement",
+    formulaTitle: "Core Formula & Variable Definitions",
+    formulaHtml:
+      '<p class="eng-eq"><i>A</i> = <i>d</i> · <i>t</i><sub>r</sub> · <i>F</i> + 2 · <i>t</i><sub>n</sub> · <i>t</i><sub>r</sub> · <i>F</i> · (1 − <i>f</i><sub>r1</sub>) <span class="eng-plain">(UG-37(c))</span></p>' +
+      '<p class="eng-eq"><i>A</i><sub>avail</sub> = <i>A</i><sub>1</sub> + <i>A</i><sub>2</sub> + <i>A</i><sub>3</sub> + <i>A</i><sub>41</sub> + <i>A</i><sub>42</sub> <span class="eng-plain">(UG-40)</span></p>' +
+      '<p class="eng-eq"><i>A</i><sub>42</sub> = (<i>D</i><sub>p</sub> − <i>d</i><sub>out</sub>) · <i>t</i><sub>p</sub> · <i>f</i><sub>r4</sub></p>' +
+      '<p class="eng-eq"><i>A</i><sub>avail</sub> ≥ <i>A</i> ⇒ Pass · else Repad Required</p>',
+    formulaLatex:
+      "A=d t_r F+2 t_n t_r F(1-f_{r1}),\\quad A_{avail}=A_1+A_2+A_3+A_{41}+A_{42},\\quad A_{42}=(D_p-d_{out}) t_p f_{r4}",
+    formulaNotes:
+      "ASME Section VIII Division 1 Paragraphs UG-37 / UG-40 / UG-41 size openings by the area replacement method. F = 1.0 for radial openings in cylindrical shells and for openings in formed heads under this screen. Stress reduction factors f_r1, f_r2, f_r4 are capped at 1.0 (S_element / S_shell). Confirm allowable stress S from the project edition of Section II Part D Table 1A.",
+    formulaBadges: [
+      { label: "Required area", value: "UG-37(c)" },
+      { label: "Available area", value: "UG-40" },
+      { label: "Strength of reinforcement", value: "UG-41" },
+      { label: "Radial opening F", value: "1.0" },
+    ],
+    variables: [
+      {
+        symbol: "A",
+        name: "Required reinforcement area",
+        definition:
+          "Minimum cross-sectional area that must be replaced for the opening (mm² or in²).",
+      },
+      {
+        symbol: "A_avail",
+        name: "Total available reinforcement area",
+        definition: "Sum of A₁ + A₂ + A₃ + A₄₁ + A₄₂ within UG-40 limits of reinforcement.",
+      },
+      {
+        symbol: "d",
+        name: "Finished opening diameter",
+        definition:
+          "Finished diameter of the circular opening in the corroded condition — taken as nozzle ID after corrosion allowance (mm or in).",
+      },
+      {
+        symbol: "t_r",
+        name: "Required shell / head thickness",
+        definition:
+          "UG-27 (cylinder) or UG-32 (2:1 SE / spherical) minimum required thickness of the vessel wall (mm or in).",
+      },
+      {
+        symbol: "t",
+        name: "Corroded shell thickness",
+        definition: "Nominal shell thickness less corrosion allowance (mm or in).",
+      },
+      {
+        symbol: "t_n",
+        name: "Corroded nozzle thickness",
+        definition: "Nominal nozzle wall thickness less corrosion allowance (mm or in).",
+      },
+      {
+        symbol: "t_rn",
+        name: "Required nozzle thickness",
+        definition: "UG-27 required thickness of the nozzle neck under internal pressure (mm or in).",
+      },
+      {
+        symbol: "D_p",
+        name: "Reinforcement pad outside diameter",
+        definition: "Outer diameter of the added reinforcing element (mm or in).",
+      },
+      {
+        symbol: "t_p",
+        name: "Reinforcement pad thickness",
+        definition: "Thickness of the reinforcing pad / element (mm or in).",
+      },
+      {
+        symbol: "f_r1, f_r2, f_r4",
+        name: "Stress reduction factors",
+        definition:
+          "min(1, S_nozzle/S_shell) or min(1, S_pad/S_shell) per UG-41 — reduces credited area when the reinforcing element is weaker than the vessel wall.",
+      },
+      {
+        symbol: "F",
+        name: "Correction factor",
+        definition:
+          "Fig. UG-37 factor for nonradial openings. This calculator uses F = 1.0 for radial openings.",
+      },
+    ],
+    standards: [
+      "ASME BPVC Section VIII Division 1 UG-37",
+      "ASME BPVC Section VIII Division 1 UG-40",
+      "ASME BPVC Section VIII Division 1 UG-41",
+      "ASME BPVC Section VIII Division 1 UG-27 / UG-32",
+      "ASME BPVC Section II Part D Table 1A",
+    ],
+    allowancesAndTolerances: {
+      title: "Design Allowances & UG-37 Scope",
+      summary:
+        "Default screening duty is Metric cylindrical shell ID 1200 mm, P 2.0 MPa, T 150 °C, SA-516 Gr.70 shell, NPS 6 Sch 80 nozzle (SA-106 Gr.B), E₁ = 1.00, C.A. = 3.0 mm, pad D_p = 300 mm / t_p = 12 mm. Results verify internal-pressure area replacement only.",
+      items: [
+        {
+          label: "Corrosion allowance (C.A.)",
+          value: "0–10 mm / 0–0.4 in",
+          description:
+            "Deducted from shell and nozzle nominal walls before excess-area credits. Finished opening diameter uses the corroded nozzle ID.",
+        },
+        {
+          label: "Joint efficiency (E₁)",
+          value: "0.85 / 1.00",
+          description:
+            "Shell / head longitudinal joint efficiency used in t_r and A₁ excess terms.",
+        },
+        {
+          label: "Correction factor F",
+          value: "1.0 (radial)",
+          description:
+            "Radial openings in cylinders and openings in formed heads use F = 1.0 under this screen. Nonradial Fig. UG-37 cases are out of scope.",
+        },
+        {
+          label: "Out of scope",
+          value: "WRC / vacuum / Appendix-1-7",
+          description:
+            "WRC 107/537/297 nozzle local stresses, external pressure (UG-28), and large-opening Appendix 1-7 rules are not included. Complete a stamped vessel calculation for fabrication.",
+        },
+      ],
+    },
+    tableCaption:
+      "UG-37 required vs available area (no pad metal) at shell ID 1200 mm, P = 2.0 MPa, T = 150 °C, SA-516 Gr.70, t_shell = 16 mm, C.A. = 3.0 mm, E₁ = 1.00, SA-106 Gr.B nozzle Sch 80",
+    tableHeaders: [
+      "NPS",
+      "d_out (mm)",
+      "A (mm²)",
+      "A_avail (mm²)",
+      "Pad?",
+    ],
+    tableRows: [
+      ["2", "60.3", "485", "260", "Required"],
+      ["4", "114.3", "906", "569", "Required"],
+      ["6", "168.3", "1337", "916", "Required"],
+      ["8", "219.1", "1753", "1243", "Required"],
+      ["10", "273.1", "2185", "1671", "Required"],
+      ["12", "323.9", "2589", "2046", "Required"],
+    ],
+    tableColumnUnits: [
+      { index: 1, quantity: "length", digits: 1 },
+    ],
+    tableFootnote:
+      "With the default pad D_p = 300 mm and t_p = 12 mm on NPS 6, the engine returns Pass (A ≈ 1337 mm², A_avail ≈ 2664 mm², t_p min ≈ 2.88 mm). NPS 12 at this pad OD has D_p < d_out — increase pad diameter before sizing t_p.",
+    materialLimitations: {
+      title: "Material Specifications & Stress Reduction Limits",
+      summary:
+        "Allowable stresses are interpolated from ASME Section II Part D Table 1A screening curves. When nozzle or pad allowable stress is below shell allowable, UG-41 f_r factors reduce credited reinforcement area.",
+      items: [
+        {
+          materialGroup: "SA-516 Gr.70 (Carbon Steel Plate — shell / pad)",
+          temperatureLimit: "−29 °C to 482 °C (−20 °F to 900 °F) screening",
+          stressLimit: "20.0 ksi (137.9 MPa) through ≈400 °F; derates above 500 °F",
+          notes:
+            "Default shell and assumed pad grade. Pad f_r4 = 1.0 when pad S equals shell S.",
+        },
+        {
+          materialGroup: "SA-106 Gr.B (Carbon Steel Pipe — nozzle)",
+          temperatureLimit: "Up to ≈538 °C (1000 °F) screening",
+          stressLimit: "Same CS screen as SA-516 Gr.70 in this calculator (20.0 ksi ambient band)",
+          notes:
+            "Typical CS nozzle neck. Matched CS shell/nozzle pairs usually keep f_r1 = f_r2 = 1.0.",
+        },
+        {
+          materialGroup: "SA-240 316L (Austenitic SS Plate — shell)",
+          temperatureLimit: "Cryogenic to ≈816 °C (1500 °F) stress table screen",
+          stressLimit: "16.7 ksi (115 MPa) near ambient; derates with temperature",
+          notes: "Shell option for stainless vessels; pair carefully with nozzle grade for f_r.",
+        },
+        {
+          materialGroup: "SA-312 TP316L (Austenitic SS Pipe — nozzle)",
+          temperatureLimit: "Cryogenic to ≈816 °C (1500 °F) stress table screen",
+          stressLimit: "Same 316L screen as SA-240 316L in this calculator",
+          notes:
+            "When nozzle S < shell S (e.g. 316L nozzle on CS shell), f_r2 < 1 reduces A₂ and A₃ credits.",
+        },
+      ],
+      codeRestrictions: [
+        "UG-37 area replacement applies to internal pressure openings within the code size limits. Large openings may require Appendix 1-7.",
+        "This screen does not replace WRC 107/537/297 local stress evaluation for attached piping loads.",
+        "External pressure / vacuum on shells and nozzles requires UG-28 — not covered here.",
+      ],
+    },
+    workedExample: {
+      title: "Step-by-Step Worked Example: NPS 6 Nozzle on 1200 mm Shell",
+      scenario:
+        "Check ASME VIII-1 UG-37 area replacement for an NPS 6 Sch 80 nozzle in a 1200 mm ID cylindrical shell at 2.0 MPa / 150 °C with a 300 mm OD × 12 mm pad.",
+      designConditions: [
+        { label: "Shell type", value: "Cylindrical shell (UG-27 / UG-37)" },
+        { label: "Shell ID (D_i)", value: "1200 mm" },
+        { label: "Design pressure (P)", value: "2.0 MPa" },
+        { label: "Design temperature (T)", value: "150 °C" },
+        { label: "Shell material", value: "SA-516 Gr.70 · S = 137.9 MPa" },
+        { label: "Shell thickness", value: "16.0 mm (t = 13.0 mm after C.A.)" },
+        { label: "Nozzle", value: "NPS 6 · d_out = 168.3 mm · t_niz = 11.0 mm" },
+        { label: "Nozzle material", value: "SA-106 Gr.B · S = 137.9 MPa · f_r = 1.0" },
+        { label: "Corrosion allowance", value: "3.0 mm" },
+        { label: "Pad", value: "D_p = 300 mm · t_p = 12 mm" },
+      ],
+      steps: [
+        {
+          step: "Step 1",
+          name: "Required shell and nozzle thicknesses",
+          formula: "t_r = P·R / (S·E − 0.6·P)",
+          calculation:
+            "R = 600 mm → t_r = 2.0 × 600 / (137.9 − 1.2) ≈ 8.78 mm. Corroded nozzle ID gives t_rn ≈ 1.11 mm.",
+          result: "t_r ≈ 8.78 mm · t_rn ≈ 1.11 mm",
+        },
+        {
+          step: "Step 2",
+          name: "Required reinforcement area A",
+          formula: "A = d · t_r · F (f_r1 = 1)",
+          calculation:
+            "d = d_out − 2·t_n = 168.3 − 2×8.0 = 152.3 mm → A = 152.3 × 8.78 × 1.0",
+          result: "A ≈ 1337 mm²",
+        },
+        {
+          step: "Step 3",
+          name: "Available areas without relying on speculative welds",
+          calculation:
+            "A₁ ≈ 643 mm² (shell excess), A₂ ≈ 441 mm² (nozzle excess with pad limit), A₃ = A₄₁ = 0, A₄₂ = (300 − 168.3) × 12 ≈ 1580 mm².",
+          result: "A_avail ≈ 2664 mm²",
+        },
+        {
+          step: "Step 4",
+          name: "Pass / Fail and minimum pad thickness",
+          calculation:
+            "A_avail ≥ A → Pass. Without pad metal, A_avail ≈ 918 mm² < A, so a pad is required. Solving A_avail(t_p) ≥ A at D_p = 300 mm gives t_p min ≈ 2.88 mm.",
+          result: "Pass · t_p min ≈ 2.88 mm (entered t_p = 12 mm)",
+        },
+      ],
+      conclusion:
+        "The NPS 6 / 1200 mm / 2.0 MPa duty Passes with the 12 mm pad (A ≈ 1337 mm² vs A_avail ≈ 2664 mm²). Minimum pad thickness at D_p = 300 mm is ≈ 2.88 mm. Confirm WRC local stresses and UG-28 vacuum separately before fabrication.",
+    },
+    ...howTo("How to calculate ASME VIII-1 UG-37 nozzle reinforcement", [
+      {
+        name: "1. Enter shell duty and nozzle size",
+        text: "Set shell type, ID, P, T, shell thickness/material, joint efficiency, and nozzle NPS / wall / material with corrosion allowance.",
+      },
+      {
+        name: "2. Enter pad geometry",
+        text: "Provide reinforcement pad outside diameter D_p and thickness t_p (use 0 to screen without added pad metal).",
+      },
+      {
+        name: "3. Read Pass / Repad Required and t_p min",
+        text: "Hero status is Pass when A_avail ≥ A. Badge shows minimum pad thickness at the entered D_p. Review A₁–A₄₂ rows for where the metal comes from.",
+      },
+      {
+        name: "4. Export and open related tools",
+        text: "Export JSON/CSV/PDF, then carry shell ID / P / T / material into Pressure Vessel Head Thickness or Pipe Wall Thickness as needed.",
+      },
+    ]),
+    faq: [
+      {
+        question: "What does Pass mean if a pad is still shown?",
+        answer:
+          "**Pass** means **A_avail ≥ A** with the **entered** pad thickness. If **t_p min > 0**, excess shell/nozzle metal alone is **not** enough — a reinforcing element is required, but the entered pad is adequate.",
+      },
+      {
+        question: "Does this replace WRC 107 / 537 nozzle stress analysis?",
+        answer:
+          "**No.** UG-37 is an **internal-pressure area replacement** screen only. Piping deadweight, thermal, and seismic moments require **WRC 107/537/297** (or equivalent) local stress evaluation.",
+      },
+      {
+        question: "When is f_r2 less than 1.0?",
+        answer:
+          "When **nozzle allowable stress** is below **shell allowable** (**S_noz / S_shell < 1**). UG-41 then reduces credited **A₂** and **A₃** by **f_r2**.",
+      },
+      {
+        question: "Why can NPS 12 fail even with a thick pad?",
+        answer:
+          "If **D_p ≤ d_out**, pad width is zero and **A₄₂ = 0**. Increase pad outside diameter so **D_p > d_out**, then re-check **t_p min**.",
+      },
+    ],
+  },
+
+  "bearing-life-l10h": {
+    slug: "bearing-life-l10h",
+    formulaTitle: "Bearing Rating Life L₁₀h (ISO 281 / ABMA)",
+    formulaHtml:
+      '<p class="font-mono text-sm not-italic leading-relaxed text-slate-800 dark:text-slate-100 md:text-base">P = X·F<sub>r</sub> + Y·F<sub>a</sub></p>' +
+      '<p class="font-mono text-sm not-italic leading-relaxed text-slate-800 dark:text-slate-100 md:text-base">L<sub>10</sub> = (C/P)<sup>p</sup> &nbsp;·&nbsp; L<sub>10h</sub> = 10<sup>6</sup>/(60·n)·L<sub>10</sub></p>' +
+      '<p class="eng-plain">ISO 281:2007 · ANSI/ABMA Std 9-1990 (ball) · ANSI/ABMA Std 11-1990 (roller) — basic rating life, 90% reliability</p>',
+    formulaLatex:
+      "P=X F_r+Y F_a,\\quad L_{10}=(C/P)^p,\\quad L_{10h}=\\frac{10^6}{60 n}L_{10}",
+    formulaNotes:
+      "Basic rating life at 90% reliability. Ball bearings use p = 3; roller bearings use p = 10/3. Equivalent load uses radial/thrust factors X and Y from catalog or the screening table in this app. Modified rating life L₁₀mh with a_ISO (lubrication, contamination, material) is out of scope.",
+    formulaHighlight: true,
+    formulaBadges: [
+      { label: "Standard", value: "ISO 281" },
+      { label: "Hero", value: "L₁₀h" },
+      { label: "Ball p", value: "3" },
+      { label: "Roller p", value: "10/3" },
+    ],
+    variables: [
+      {
+        symbol: "C",
+        name: "Basic dynamic load rating",
+        definition:
+          "Catalog basic dynamic load rating of the bearing (kN or lbf).",
+      },
+      {
+        symbol: "F_r",
+        name: "Radial load",
+        definition: "Applied radial load on the bearing (kN or lbf).",
+      },
+      {
+        symbol: "F_a",
+        name: "Axial / thrust load",
+        definition: "Applied axial load on the bearing (kN or lbf).",
+      },
+      {
+        symbol: "X, Y",
+        name: "Radial / thrust factors",
+        definition:
+          "Dynamic load factors from ISO 281 / ABMA tables (or OEM catalog) based on bearing type and F_a/F_r.",
+      },
+      {
+        symbol: "P",
+        name: "Equivalent dynamic load",
+        definition: "P = X·F_r + Y·F_a — load used in the life equation.",
+      },
+      {
+        symbol: "p",
+        name: "Life exponent",
+        definition: "p = 3 for ball bearings; p = 10/3 for roller bearings.",
+      },
+      {
+        symbol: "n",
+        name: "Rotational speed",
+        definition: "Operating speed (rpm).",
+      },
+      {
+        symbol: "L₁₀h",
+        name: "Basic rating life (hours)",
+        definition:
+          "Life in hours at 90% reliability for the stated duty (basic rating, not a_ISO-modified).",
+      },
+    ],
+    standards: [
+      "ISO 281:2007 — Rolling bearings — Dynamic load ratings and rating life",
+      "ANSI/ABMA Std 9-1990 — Load Ratings and Fatigue Life for Ball Bearings",
+      "ANSI/ABMA Std 11-1990 — Load Ratings and Fatigue Life for Roller Bearings",
+    ],
+    allowancesAndTolerances: {
+      title: "Screening notes (basic L₁₀h)",
+      summary:
+        "Default metric duty: deep-groove ball, C = 32.5 kN, F_r = 4.5 kN, F_a = 1.2 kN, n = 1750 rpm, X = 0.56, Y = 1.45 (manual factors). Pass when L₁₀h ≥ 20,000 h continuous-duty screen.",
+      items: [
+        {
+          label: "Life exponent p",
+          value: "3 or 10/3",
+          description:
+            "Ball types use p = 3. Cylindrical, spherical, and tapered rollers use p = 10/3.",
+        },
+        {
+          label: "X / Y factors",
+          value: "Manual or auto vs e",
+          description:
+            "Manual uses entered X,Y. Auto applies screening X₁/Y₁ or X₂/Y₂ when F_a/F_r crosses type e — confirm OEM catalog for final selection.",
+        },
+        {
+          label: "Pass threshold",
+          value: "L₁₀h ≥ 20,000 h",
+          description:
+            "Field continuous-duty screening only. Project specs may require 40,000 h or OEM L₁₀mh targets.",
+        },
+        {
+          label: "Out of scope",
+          value: "a_ISO / L₁₀mh",
+          description:
+            "Lubrication viscosity ratio κ, contamination factor η_c, and material life factors are not applied.",
+        },
+      ],
+    },
+    tableCaption:
+      "Illustrative ISO 281 basic L₁₀h duties (this app — physics assert, not LLM placeholders)",
+    tableHeaders: ["Case", "P", "L₁₀h"],
+    tableAllNumeric: false,
+    tableRows: [
+      [
+        "Deep groove ball · C 32.5 kN · Fr 4.5 · Fa 1.2 · 1750 rpm · X0.56 Y1.45",
+        "4.26 kN",
+        "4,229 h",
+      ],
+      [
+        "Tapered roller · C 120 kN · Fr 25 · Fa 10 · 900 rpm · X0.4 Y1.5",
+        "25.0 kN",
+        "3,455 h",
+      ],
+      [
+        "Deep groove ball · C 7500 lbf · Fr 1000 · Fa 300 · 3600 rpm · X0.56 Y1.45",
+        "995 lbf",
+        "1,983 h",
+      ],
+      [
+        "Spherical roller · C 45000 lbf · Fr 8000 · Fa 2000 · 1200 rpm · X1.0 Y2.5",
+        "13,000 lbf",
+        "871 h",
+      ],
+    ],
+    tableFootnote:
+      "L₁₀ = (C/P)^p in millions of revolutions; L₁₀h = 10⁶/(60·n)·L₁₀. Values are from the ISO 281 basic life equation as implemented in this app.",
+    materialLimitations: {
+      title: "Applicability & steel / lubrication limits",
+      summary:
+        "Screening assumes through-hardened bearing steel (e.g. 100Cr6 / AISI 52100 class) under standard catalog lubrication. Not a substitute for OEM life software with a_ISO.",
+      items: [
+        {
+          materialGroup: "Through-hardened bearing steel (100Cr6 / AISI 52100 class)",
+          temperatureLimit: "Typical continuous −30 °C to +120 °C (catalog)",
+          stressLimit: "Use catalog C and C₀",
+          notes:
+            "Above ~120 °C, dimensional stability and lubricant film usually require special heat treatment / high-temperature grease — confirm OEM.",
+        },
+        {
+          materialGroup: "Standard grease / oil film (κ ≈ 1 screening)",
+          temperatureLimit: "Viscosity at operating temperature",
+          stressLimit: "N/A — basic L₁₀h",
+          notes:
+            "Poor lubrication or contamination can cut life far below basic L₁₀h; apply ISO 281 a_ISO when required.",
+        },
+        {
+          materialGroup: "Combined / oscillating / shock loads",
+          temperatureLimit: "N/A",
+          stressLimit: "May exceed C₀",
+          notes:
+            "Shock, misalignment, and oscillating motion need OEM static/dynamic checks beyond this basic fatigue screen.",
+        },
+      ],
+      codeRestrictions: [
+        "Field screening only — not a stamped bearing selection or OEM warranty life statement.",
+        "X and Y must match the bearing series and F_a/C₀ (or e) from the catalog when precision is required.",
+        "Static load rating C₀ and safety against permanent deformation are not evaluated here.",
+        "Export / PDF is a duty worksheet — verify final selection on the manufacturer life program.",
+      ],
+    },
+    workedExample: {
+      title:
+        "Step-by-Step Worked Example: Deep Groove Ball · C 32.5 kN · 1750 rpm",
+      scenario:
+        "Screen ISO 281 basic rating life for a deep-groove ball bearing with C = 32.5 kN, F_r = 4.5 kN, F_a = 1.2 kN, n = 1750 rpm, using catalog factors X = 0.56 and Y = 1.45 (ABMA 9 / ISO 281 ball, p = 3).",
+      designConditions: [
+        { label: "Bearing", value: "Deep groove ball · p = 3" },
+        { label: "C", value: "32.5 kN" },
+        { label: "F_r / F_a", value: "4.5 kN / 1.2 kN" },
+        { label: "X / Y", value: "0.56 / 1.45" },
+        { label: "n", value: "1750 rpm" },
+      ],
+      steps: [
+        {
+          step: "Step 1",
+          name: "Equivalent dynamic load P",
+          formula: "P=X F_r+Y F_a",
+          calculation: "P = 0.56×4.5 + 1.45×1.2 = 2.52 + 1.74 = 4.26 kN.",
+          result: "P = 4.26 kN",
+        },
+        {
+          step: "Step 2",
+          name: "Basic rating life in revolutions",
+          formula: "L_{10}=(C/P)^p",
+          calculation: "L₁₀ = (32.5/4.26)³ ≈ 444.0 (×10⁶ revolutions).",
+          result: "L₁₀ ≈ 444 ×10⁶ rev",
+        },
+        {
+          step: "Step 3",
+          name: "Life in hours",
+          formula: "L_{10h}=\\frac{10^6}{60 n}L_{10}",
+          calculation:
+            "L₁₀h = 10⁶/(60×1750)×444.0 ≈ 4,229 h (≈ 176 continuous days).",
+          result: "L₁₀h ≈ 4,229 h",
+          note: "Open /ball-c32.5kn-fr4.5kn-1750rpm-metric for the live default case. Status is Warning vs the 20,000 h continuous-duty screen — raise C, lower load, or reduce speed as needed.",
+        },
+      ],
+      conclusion:
+        "For this deep-groove duty, equivalent load is 4.26 kN and basic L₁₀h is about 4,229 hours at 1750 rpm — below a typical 20,000 h continuous screen, so treat as Warning and confirm OEM catalog / a_ISO if longer life is required.",
+    },
+    ...howTo("How to calculate ISO 281 bearing L₁₀h", [
+      {
+        name: "1. Select bearing type and C",
+        text: "Pick ball or roller type and enter the catalog basic dynamic load rating C (kN or lbf).",
+      },
+      {
+        name: "2. Enter loads and speed",
+        text: "Set radial F_r, axial F_a, and operating speed n (rpm).",
+      },
+      {
+        name: "3. Set X and Y",
+        text: "Enter catalog X,Y or use Auto from type (F_a/F_r vs e). Re-check OEM tables for the series.",
+      },
+      {
+        name: "4. Read L₁₀h and status",
+        text: "Hero shows L₁₀h hours and P. Pass means L₁₀h ≥ 20,000 h screening; Warning means review duty or catalog L₁₀mh.",
+      },
+    ]),
+    faq: [
+      {
+        question: "What is L₁₀h?",
+        answer:
+          "**L₁₀h** is the **basic rating life in hours** at **90% reliability** — the life that 90% of identical bearings are expected to achieve or exceed under the stated duty (ISO 281 / ABMA).",
+      },
+      {
+        question: "When do I use p = 3 vs 10/3?",
+        answer:
+          "**Ball** bearings use **p = 3**. **Roller** bearings (cylindrical, spherical, tapered) use **p = 10/3 ≈ 3.333**.",
+      },
+      {
+        question: "Does this include a_ISO modified life?",
+        answer:
+          "**No.** This tool reports **basic L₁₀h** only. Lubrication, contamination, and material factors for **L₁₀mh** require **ISO 281 a_ISO** with OEM data.",
+      },
+      {
+        question: "Why is status Warning at ~4,200 h?",
+        answer:
+          "The app uses a **20,000 h** continuous-duty **screening** threshold. Shorter basic L₁₀h is still valid physics — it means the duty is severe relative to that screen.",
+      },
+    ],
+  },
+
 };
 
 export function getCalculatorSeo(slug: string): CalculatorSeoEntry | undefined {

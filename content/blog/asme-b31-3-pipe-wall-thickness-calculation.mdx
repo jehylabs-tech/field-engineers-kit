@@ -1,6 +1,6 @@
 ---
 title: "ASME B31.3 Pipe Wall Thickness Calculation: Worked Example with Mill Tolerance"
-description: "A complete step-by-step engineering guide for ASME B31.3 Para. 304.1.2 pipe wall thickness calculations under internal design pressure, including corrosion allowance and 12.5% mill under-tolerance."
+description: "ASME B31.3 Para. 304.1.2 pipe wall thickness: corrosion allowance, 12.5% mill under-tolerance, and a worked NPS 6 example through schedule selection."
 date: "2026-09-01"
 category: "Piping Engineering"
 tags:
@@ -17,10 +17,6 @@ When designing process piping systems under **ASME B31.3 (Process Piping)**, sel
 
 This page owns the **$t \to t_m \to t_{\text{nom,req}} \to$ schedule** path. For **Table A-1 $S$ temperature derating** and **Table 304.1.1 $Y$**, use the sister guide [Allowable Stress ($S$) & Y-Factor](/docs/asme-b31-3-allowable-stress-y-factor-temperature-derating-guide).
 
-<Callout title="Screening vs. formal analysis" variant="info">
-This guide covers code-aligned **screening** per Para. 304.1.2. It does not replace formal pipe stress analysis (sustained loads, expansion, seismic) or professional engineer certification.
-</Callout>
-
 ## Quick Summary (TL;DR)
 
 - **Takeaway:** Buy schedule from $t_{\text{nom,req}} = (t + c) / 0.875$, not from pressure-design $t$ alone — mill under-tolerance and corrosion allowance drive the commercial wall.
@@ -34,6 +30,16 @@ This guide covers code-aligned **screening** per Para. 304.1.2. It does not repl
 | **$t_{\text{nom,req}}$** | $t_m / 0.875$ before schedule pick |
 | **$S$, $Y$ inputs** | Enter at design $T$; deep derating / $Y$ jumps → [S & Y guide](/docs/asme-b31-3-allowable-stress-y-factor-temperature-derating-guide) |
 | **Limits** | Screening — not sustained/expansion stress analysis |
+
+---
+
+## Pipe wall thickness calculation in the field
+
+Selecting schedule from pressure-design $t$ alone under-sizes walls once corrosion and mill under-tolerance are applied. Use the interactive [ASME B31.3 Pipe Thickness Calculator](/calculator/pipe-wall-thickness) for the same $t \to t_m \to t_{\text{nom,req}}$ path as this guide.
+
+<Callout title="Screening vs. formal analysis" variant="info">
+This guide covers code-aligned **screening** per Para. 304.1.2. It does not replace formal pipe stress analysis (sustained loads, expansion, seismic) or professional engineer certification.
+</Callout>
 
 ## Engineering Standards & Core Formulas
 
@@ -120,24 +126,26 @@ Compare $t_{\text{req,nom}} = 4.702\text{ mm}$ with standard ASME B36.10M NPS 6 
 
 **Final Selection**: **NPS 6 Schedule 40 (STD, $7.11\text{ mm}$ nominal wall)** is fully code-compliant, providing a minimum mill wall of $6.22\text{ mm}$ ($+51.2\%$ safety margin over $t_m$).
 
-## Interactive Engineering Calculator
+## Interactive tool CTA
 
-Want to run simulations with custom design pressure, corrosion allowance, or mill factor? Open the live FEK calculator:
-
-**[ASME B31.3 Pipe Thickness Calculator](/calculator/pipe-wall-thickness)**
-
-For **why $S$ collapses at high temperature** (and when $Y$ barely moves the wall), continue in [Allowable Stress ($S$) & Y-Factor](/docs/asme-b31-3-allowable-stress-y-factor-temperature-derating-guide).
+<Callout title="Try the live pipe thickness tool" variant="tip">
+Open the [ASME B31.3 Pipe Thickness Calculator](/calculator/pipe-wall-thickness) for custom design pressure, corrosion allowance, and mill factor. For **why $S$ collapses at high temperature** (and when $Y$ barely moves the wall), continue in [Allowable Stress ($S$) & Y-Factor](/docs/asme-b31-3-allowable-stress-y-factor-temperature-derating-guide). Confirm OD / schedule catalog values in [Pipe Schedule & Dimension](/calculator/pipe-schedule-dimension).
+</Callout>
 
 ## Frequently Asked Questions (FAQ)
 
-### Is ASME B31.3 $t_{\min}$ calculation identical to ASME B31.1 Power Piping?
+### Q1. Is ASME B31.3 $t_{\min}$ calculation identical to ASME B31.1 Power Piping?
 
 **No.** While the basic formulas appear similar, ASME B31.1 (Power Piping) uses different stress bases and weld strength reduction factors ($W$). Never apply B31.1 rules to chemical process plant piping without verification.
 
-### What if my pipe operates under full vacuum (external pressure)?
+### Q2. What if my pipe operates under full vacuum (external pressure)?
 
 Internal pressure equations (Para. 304.1.2) do **not** protect against buckling failures caused by external pressure or vacuum. Piping subject to vacuum must be analyzed using **ASME BPVC Section VIII, Division 1, Paragraph UG-28**.
 
-### When must I transition to thick-wall Lamé equations?
+### Q3. When must I transition to thick-wall Lamé equations?
 
 ASME B31.3 Equation (3a) is valid only for thin-wall conditions where $t < D/6$ or $P/SE \le 0.385$. For high-pressure thick-wall lines (e.g., LDPE plant piping), Lamé thick-wall equations per **Para. 304.1.2(b)** are mandatory.
+
+### Q4. Why does FEK require $t_{\text{nom,req}} = t_m / 0.875$ when some spreadsheets stop at $t_m$?
+
+ASTM A106 / A53 / A312 allow about **−12.5%** mill under-tolerance on wall. Sizing to $t_m$ alone lets delivered pipe legally fall below code minimum. FEK (and this guide) buy schedule from $t_m/0.875$ so the thinnest legal mill wall still clears $t_m$.

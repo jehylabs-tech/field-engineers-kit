@@ -98,6 +98,18 @@ export const CATALOG_SEO_BLURBS: Record<string, string> = {
     "GPSA polytropic head, gas power, and discharge temperature screening for centrifugal / axial compressors (API 617 / ASME PTC 10).",
   "api650-tank-shell-thickness":
     "API 650 §5.6.3 1-foot method tank shell course thickness, commercial plate selection, and shell MTO screening.",
+  "olet-fitting-dimensions":
+    "MSS SP-97 Weldolet / Sockolet / Threadolet dimensions, run-size match, cutout diameter, and B31.3 branch t_b screening.",
+  "pipe-steam-tracing-duty":
+    "ISO 12241 insulated pipe heat loss with saturated steam tracing consumption and tracer line count screening.",
+  "socket-weld-threaded-fitting-dimension":
+    "ASME B16.11 socket-weld and threaded forged fitting dimensions (A, B, J, G) with B31.3 SW gap and B1.20.1 L₂ screening.",
+  "pressure-vessel-head-thickness":
+    "ASME VIII-1 UG-32 formed head thickness t_req / t_nom for 2:1 ellipsoidal, torispherical, hemispherical, and conical heads.",
+  "pressure-vessel-nozzle-reinforcement":
+    "ASME VIII-1 UG-37 / UG-40 nozzle opening area replacement — required A vs A₁–A₄₂ and minimum repad thickness.",
+  "bearing-life-l10h":
+    "ISO 281 / ABMA bearing L₁₀h rating life: P = X·Fr + Y·Fa, L₁₀ = (C/P)^p, hours at 90% reliability.",
   "control-valve-noise":
     "ISA/IEC 60534 control valve noise prediction L_p,1m (dBA) for gas and liquid service.",
   "orifice-plate-flow-meter":

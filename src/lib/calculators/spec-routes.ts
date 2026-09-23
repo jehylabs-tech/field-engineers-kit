@@ -93,6 +93,35 @@ import {
   parseApi650TankShellThicknessSpec,
 } from "@/lib/calculators/pseo/api650-tank-shell-thickness-routes";
 import {
+  listOletFittingDimensionsPseoRoutes,
+  matchOletFittingDimensionsSpecRoute,
+  parseOletFittingDimensionsSpec,
+} from "@/lib/calculators/pseo/olet-fitting-dimensions-routes";
+import {
+  listPipeSteamTracingDutyPseoRoutes,
+  matchPipeSteamTracingDutySpecRoute,
+  parsePipeSteamTracingDutySpec,
+} from "@/lib/calculators/pseo/pipe-steam-tracing-duty-routes";
+import {
+  listSocketWeldThreadedFittingDimensionPseoRoutes,
+  matchSocketWeldThreadedFittingDimensionSpecRoute,
+  parseSocketWeldThreadedFittingDimensionSpec,
+} from "@/lib/calculators/pseo/socket-weld-threaded-fitting-dimension-routes";
+import {
+  listPressureVesselHeadThicknessPseoRoutes,
+  matchPressureVesselHeadThicknessSpecRoute,
+  parsePressureVesselHeadThicknessSpec,
+} from "@/lib/calculators/pseo/pressure-vessel-head-thickness-routes";
+import {
+  listPressureVesselNozzleReinforcementPseoRoutes,
+  matchPressureVesselNozzleReinforcementSpecRoute,
+  parsePressureVesselNozzleReinforcementSpec,
+} from "@/lib/calculators/pseo/pressure-vessel-nozzle-reinforcement-routes";
+import {
+  listBearingLifeL10hPseoRoutes,
+  matchBearingLifeL10hSpecRoute,
+} from "@/lib/calculators/pseo/bearing-life-l10h-routes";
+import {
   listAvailableNps,
   listFlangeClassesForNps,
   listFlangeNps,
@@ -264,6 +293,21 @@ export function parseSpecToQuery(spec: string): Record<string, string> | null {
 
   const api650Shell = parseApi650TankShellThicknessSpec(value);
   if (api650Shell) return api650Shell;
+
+  const oletFitting = parseOletFittingDimensionsSpec(value);
+  if (oletFitting) return oletFitting;
+
+  const pipeSteamTracing = parsePipeSteamTracingDutySpec(value);
+  if (pipeSteamTracing) return pipeSteamTracing;
+
+  const b1611Fitting = parseSocketWeldThreadedFittingDimensionSpec(value);
+  if (b1611Fitting) return b1611Fitting;
+
+  const headThickness = parsePressureVesselHeadThicknessSpec(value);
+  if (headThickness) return headThickness;
+
+  const nozzleReinforcement = parsePressureVesselNozzleReinforcementSpec(value);
+  if (nozzleReinforcement) return nozzleReinforcement;
 
   const inchClassBlind = value.match(
     /^(\d+(?:\.\d+)?)-inch-class-(\d+)(?:-blind)?$/,
@@ -816,6 +860,18 @@ export function listSpecRoutesForSlug(slug: string): SpecRoute[] {
       return listCompressorPolytropicPowerPseoRoutes(slug);
     case "api650-tank-shell-thickness":
       return listApi650TankShellThicknessPseoRoutes(slug);
+    case "olet-fitting-dimensions":
+      return listOletFittingDimensionsPseoRoutes(slug);
+    case "pipe-steam-tracing-duty":
+      return listPipeSteamTracingDutyPseoRoutes(slug);
+    case "socket-weld-threaded-fitting-dimension":
+      return listSocketWeldThreadedFittingDimensionPseoRoutes(slug);
+    case "pressure-vessel-head-thickness":
+      return listPressureVesselHeadThicknessPseoRoutes(slug);
+    case "pressure-vessel-nozzle-reinforcement":
+      return listPressureVesselNozzleReinforcementPseoRoutes(slug);
+    case "bearing-life-l10h":
+      return listBearingLifeL10hPseoRoutes(slug);
     case "pneumatic-safety":
       return listPneumaticSafetyPseoRoutes(slug);
     case "pump-npsh":
@@ -1713,6 +1769,56 @@ export function findSpecRouteForInputs(
     if (api650Hit) return api650Hit;
   }
 
+  {
+    const oletHit = matchOletFittingDimensionsSpecRoute(
+      routes,
+      partial,
+      units,
+    );
+    if (oletHit) return oletHit;
+  }
+
+  {
+    const steamTracingHit = matchPipeSteamTracingDutySpecRoute(
+      routes,
+      partial,
+      units,
+    );
+    if (steamTracingHit) return steamTracingHit;
+  }
+
+  {
+    const b1611Hit = matchSocketWeldThreadedFittingDimensionSpecRoute(
+      routes,
+      partial,
+      units,
+    );
+    if (b1611Hit) return b1611Hit;
+  }
+
+  {
+    const headHit = matchPressureVesselHeadThicknessSpecRoute(
+      routes,
+      partial,
+      units,
+    );
+    if (headHit) return headHit;
+  }
+
+  {
+    const nozzleHit = matchPressureVesselNozzleReinforcementSpecRoute(
+      routes,
+      partial,
+      units,
+    );
+    if (nozzleHit) return nozzleHit;
+  }
+
+  {
+    const bearingHit = matchBearingLifeL10hSpecRoute(routes, partial, units);
+    if (bearingHit) return bearingHit;
+  }
+
   // Piping equivalent length / Darby 3-K: nps + schedule + fittingType (+ re).
   const fittingType =
     partial.fittingType != null && partial.fittingType !== ""
@@ -2426,6 +2532,138 @@ export function buildSpecSeoCopy(
       description: clipped,
       h1: `${shortTitle} — ${focus}`,
       h2: `${focus} shell thickness summary`,
+    };
+  }
+
+  if (
+    calculatorType === "olet-fitting-dimensions" ||
+    route.slug === "olet-fitting-dimensions"
+  ) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `MSS SP-97 Weldolet / Sockolet / Threadolet dimensions and run-size match for ${focus}.`;
+    const clipped =
+      description.length > 160
+        ? `${description.slice(0, 157).trimEnd()}…`
+        : description;
+    return {
+      title,
+      description: clipped,
+      h1: `${shortTitle} — ${focus}`,
+      h2: `${focus} olet dimension summary`,
+    };
+  }
+
+  if (
+    calculatorType === "pipe-steam-tracing-duty" ||
+    route.slug === "pipe-steam-tracing-duty"
+  ) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus} | ${brand}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `Pipe steam tracing heat loss, steam consumption, and tracer line count for ${focus}.`;
+    const clipped =
+      description.length > 160
+        ? `${description.slice(0, 157).trimEnd()}…`
+        : description;
+    return {
+      title,
+      description: clipped,
+      h1: `${shortTitle} — ${focus}`,
+      h2: `${focus} steam tracing duty summary`,
+    };
+  }
+
+  if (
+    calculatorType === "socket-weld-threaded-fitting-dimension" ||
+    route.slug === "socket-weld-threaded-fitting-dimension"
+  ) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus} | ${brand}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `ASME B16.11 socket-weld and threaded forged fitting dimensions for ${focus}.`;
+    const clipped =
+      description.length > 160
+        ? `${description.slice(0, 157).trimEnd()}…`
+        : description;
+    return {
+      title,
+      description: clipped,
+      h1: `${shortTitle} — ${focus}`,
+      h2: `${focus} B16.11 dimension summary`,
+    };
+  }
+
+  if (
+    calculatorType === "pressure-vessel-head-thickness" ||
+    route.slug === "pressure-vessel-head-thickness"
+  ) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus} | ${brand}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `ASME VIII-1 UG-32 formed head thickness (t_req / t_nom) for ${focus}.`;
+    const clipped =
+      description.length > 160
+        ? `${description.slice(0, 157).trimEnd()}…`
+        : description;
+    return {
+      title,
+      description: clipped,
+      h1: `${shortTitle} — ${focus}`,
+      h2: `${focus} UG-32 head thickness summary`,
+    };
+  }
+
+  if (
+    calculatorType === "pressure-vessel-nozzle-reinforcement" ||
+    route.slug === "pressure-vessel-nozzle-reinforcement"
+  ) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus} | ${brand}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `ASME VIII-1 UG-37 nozzle opening reinforcement (A vs A₁–A₄₂) for ${focus}.`;
+    const clipped =
+      description.length > 160
+        ? `${description.slice(0, 157).trimEnd()}…`
+        : description;
+    return {
+      title,
+      description: clipped,
+      h1: `${shortTitle} — ${focus}`,
+      h2: `${focus} UG-37 nozzle reinforcement summary`,
+    };
+  }
+
+  if (
+    calculatorType === "bearing-life-l10h" ||
+    route.slug === "bearing-life-l10h"
+  ) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus} | ${brand}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `ISO 281 / ABMA bearing L₁₀h rating life and equivalent load P for ${focus}.`;
+    const clipped =
+      description.length > 160
+        ? `${description.slice(0, 157).trimEnd()}…`
+        : description;
+    return {
+      title,
+      description: clipped,
+      h1: `${shortTitle} — ${focus}`,
+      h2: `${focus} L₁₀h rating life summary`,
     };
   }
 

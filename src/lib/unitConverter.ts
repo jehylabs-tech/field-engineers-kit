@@ -322,6 +322,7 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
     "tempColdIn",
     "tempColdOut",
     "suctionTemp",
+    "maintainTemp",
   ]) {
     if (typeof next[key] === "number" && Number.isFinite(next[key] as number)) {
       convertNum(key, toImperial ? cToF : fToC, 0);
@@ -425,6 +426,7 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
     "setPressure",
     "suctionPress",
     "dischargePress",
+    "steamPressure",
   ]) {
     if (typeof next[key] === "number" && Number.isFinite(next[key] as number)) {
       convertNum(key, toImperial ? barToPsi : psiToBar, 3);
@@ -572,6 +574,15 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
       const s = next[key] as number;
       if (toImperial && Math.abs(s - 20000) <= 20) next[key] = 20000;
       else if (!toImperial && Math.abs(s - 138) <= 1) next[key] = 138;
+    }
+  }
+
+  // Bearing loads / rating: kN ↔ lbf (ISO 281 L10h)
+  const knToLbf = (kn: number) => kn * 224.808943;
+  const lbfToKn = (lbf: number) => lbf / 224.808943;
+  for (const key of ["dynamicLoadRating", "radialLoad", "axialLoad"]) {
+    if (typeof next[key] === "number" && Number.isFinite(next[key] as number)) {
+      convertNum(key, toImperial ? knToLbf : lbfToKn, toImperial ? 1 : 3);
     }
   }
 

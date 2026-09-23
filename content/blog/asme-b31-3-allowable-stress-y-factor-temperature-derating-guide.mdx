@@ -21,14 +21,10 @@ $$
 
 **This page owns Table A-1 $S$ derating, material-group traps, and $Y$ interpolation.** For the full **$t \to t_m \to$ mill factor $\to$ B36 schedule** procedure, use the sister guide [Pipe Wall Thickness Calculation](/docs/asme-b31-3-pipe-wall-thickness-calculation).
 
-<Callout title="Screening vs. code book" variant="info">
-$S$ values in this guide are **engineering screening** figures drawn from ASME B31.3 Appendix A **Table A-1** (representative edition). Final PMS and calculations must use the project edition of Table A-1 and its Notes. Weld Joint Strength Reduction Factor $W$ is typically $1.0$ for seamless pipe outside the creep range; welded joints in creep service require separate evaluation.
-</Callout>
-
 ## Quick Summary (TL;DR)
 
 - **Takeaway:** Hot-line schedule jumps are driven mainly by **falling Table A-1 $S$**, not by the modest rise in $Y$.
-- **Governing inputs:** $S(T)$ from Table A-1 · $Y(T)$ from Table 304.1.1 · then $t = P D / [2(S E W + P Y)]$ in the thickness calculator.
+- **Governing relation:** $S(T)$ from Table A-1 · $Y(T)$ from Table 304.1.1 · then $t = P D / [2(S E W + P Y)]$ in the thickness calculator.
 - **Code / basis:** ASME B31.3 Appendix A Table A-1 · Table 304.1.1 $Y$ · Para. 304.1.2 screening in FEK.
 
 | Item | Field takeaway |
@@ -39,6 +35,16 @@ $S$ values in this guide are **engineering screening** figures drawn from ASME B
 | **Cr–Mo Alloy** | P11 / P22 / P91 retain usable $S$ above $500^\circ\text{C}$ — standard choice for hot / high-pressure steam and process lines. |
 | **$Y$ (Table 304.1.1)** | Ferritic: $Y=0.4$ up to $482^\circ\text{C}$, then $0.5\to0.7$. Austenitic rises later. Cast iron $Y=0$. |
 | **Sister procedure** | Mill under-tolerance + schedule pick → [Wall thickness guide](/docs/asme-b31-3-pipe-wall-thickness-calculation) |
+
+---
+
+## Allowable stress ($S$) & Y-factor derating in the field
+
+Table A-1 $S$ and Table 304.1.1 $Y$ are inputs to the hoop-thickness screen — not a substitute for the full schedule pick. Enter temperature-specific values in the [ASME B31.3 Pipe Thickness Calculator](/calculator/pipe-wall-thickness), then finish mill factor and B36 selection in the sister [wall thickness guide](/docs/asme-b31-3-pipe-wall-thickness-calculation).
+
+<Callout title="Screening vs. code book" variant="info">
+$S$ values in this guide are **engineering screening** figures drawn from ASME B31.3 Appendix A **Table A-1** (representative edition). Final PMS and calculations must use the project edition of Table A-1 and its Notes. Weld Joint Strength Reduction Factor $W$ is typically $1.0$ for seamless pipe outside the creep range; welded joints in creep service require separate evaluation.
+</Callout>
 
 ---
 
@@ -234,9 +240,7 @@ Changing only $Y: 0.4\to0.5$ at fixed $S=39.4\text{ MPa}$ reduces $t$ from about
 
 ---
 
-## 5. Field Checklist & Calculator
-
-### High-temperature line-spec checklist
+## 5. Field Checklist
 
 | Check | Action |
 | :--- | :--- |
@@ -250,7 +254,9 @@ Changing only $Y: 0.4\to0.5$ at fixed $S=39.4\text{ MPa}$ reduces $t$ from about
 | **8. Thermal fatigue / flexibility** | Hot $\Delta T$ needs expansion loops, supports, and SIF checks — thickness alone is insufficient. |
 | **9. Creep rupture life** | Critical lines may need remaining-life / advanced creep assessment beyond hoop screening. |
 
-### Interactive calculator
+---
+
+## Interactive tool CTA
 
 <Callout title="Enter $S$ and $Y$ in the thickness screen" variant="tip">
 Reproduce $P$, $D$, $c$, **temperature-specific $S$**, and **$Y$** in the  

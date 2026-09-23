@@ -176,7 +176,7 @@ With design $P = 3.50\text{ MPa}$, draft the Chapter VI test pressure in [Hydro/
 
 ---
 
-## Interactive tools for the piping spool fabrication workflow
+## Interactive tool CTA
 
 <Callout title="Run the workflow in FieldEngineersKit" variant="tip">
 1. Look up OD / $t$ / ID / $W_m$: [Pipe Schedule & Dimension](/calculator/pipe-schedule-dimension) (try NPS 6 · Sch 40).
@@ -189,7 +189,7 @@ With design $P = 3.50\text{ MPa}$, draft the Chapter VI test pressure in [Hydro/
 
 ## Frequently Asked Questions (FAQ)
 
-### What is the ASME B31.3 pipe wall thickness calculation formula used in FEK?
+### Q1. What is the ASME B31.3 pipe wall thickness calculation formula used in FEK?
 
 FEK uses ASME B31.3 Para. 304.1.2:
 
@@ -199,19 +199,19 @@ $$
 
 with ferritic $Y = 0.4$ through 482 °C in the screening preset. $D$ is **outside diameter** from B36, never NPS.
 
-### How do I convert pipe schedule NPS to outer diameter and wall thickness?
+### Q2. How do I convert pipe schedule NPS to outer diameter and wall thickness?
 
 Use the ASME B36.10M (CS/alloy) or B36.19M (S-schedules) catalog—or the [Pipe Schedule & Dimension](/calculator/pipe-schedule-dimension) calculator. NPS is a **label**; for NPS ≤ 12, OD is larger than the nominal inch (NPS 6 OD = **168.28 mm**, not 152.4 mm).
 
-### What piping spool fit-up weld gap and fabrication tolerance should I use?
+### Q3. What piping spool fit-up weld gap and fabrication tolerance should I use?
 
 Root gap and high-low limits come from the **approved WPS/PQR** and project fabrication spec—not from B36 schedule tables. Common CS open-root gaps are often **~1.5–3 mm**, but treat that as shop folklore until the WPS confirms it. FEK does not compute weld gap; it supplies OD/wall and thickness acceptance so the cut sheet starts from the correct schedule.
 
-### How does hydrostatic test pressure relate to ASME B31.3 allowable stress?
+### Q4. How does hydrostatic test pressure relate to ASME B31.3 allowable stress?
 
 Minimum hydrotest pressure follows B31.3 Para. 345 with $P_t = 1.5\,P\,(S_t/S)$ (FEK screening), not bare $1.5P$, when design metal temperature exceeds test temperature. Compute $P_t$ in [Hydro/Pneumatic Test Pressure](/calculator/hydro-test-pressure) and see the dedicated [hydrotest guide](/docs/asme-b31-3-hydrostatic-pneumatic-test-pressure-guide).
 
-### Why does NPS 10 Schedule 80 wall in FEK differ from some internet charts?
+### Q5. Why does NPS 10 Schedule 80 wall in FEK differ from some internet charts?
 
 FEK’s B36.10M table lists NPS 10 Sch 80 as **15.09 mm (0.594 in)**. Charts that show **12.70 mm (0.500 in)** are mixing sizes/schedules (0.500 in is Sch 80 / XS on other NPS bands). Always trust the project B36 edition and the FEK loader over unmarked cheat-sheets.
 
