@@ -353,6 +353,10 @@ export function calculateNonMetallicGasketB1621(
       heroStatus: d.invalidReason ?? "Invalid selection",
       heroStatusLevel: "warn",
       summary: [],
+      summaryStatus: {
+        label: d.invalidReason ?? "Invalid selection",
+        level: "warn",
+      },
       rows: [],
       callouts: [
         {

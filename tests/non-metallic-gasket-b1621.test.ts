@@ -33,8 +33,8 @@ describe("non-metallic-gasket-b1621", () => {
     expect(out.heroValue).toMatch(/157/);
     expect(out.heroValue).toMatch(/114/);
     expect(out.rows.length).toBeLessThanOrEqual(3);
-    expect(out.callouts.some((c) => c.tone === "info")).toBe(true);
-    expect(out.callouts.every((c) => c.tone !== "warn")).toBe(true);
+    expect(out.callouts?.some((c) => c.tone === "info")).toBe(true);
+    expect(out.callouts?.every((c) => c.tone !== "warn")).toBe(true);
   });
 
   it("NPS8 Class300 full-face PTFE uses flange OD", () => {
@@ -63,7 +63,7 @@ describe("non-metallic-gasket-b1621", () => {
       thicknessId: "3.2",
       pressure: 20,
     });
-    expect(out.callouts.some((c) => c.tone === "warn")).toBe(true);
+    expect(out.callouts?.some((c) => c.tone === "warn")).toBe(true);
   });
 
   it("imperial graphite NPS3 IBC", () => {

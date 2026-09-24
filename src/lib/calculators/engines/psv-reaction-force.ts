@@ -291,6 +291,10 @@ export function calculatePsvReactionForce(
       heroStatus: d.invalidReason ?? "Invalid outlet pipe",
       heroStatusLevel: "warn",
       summary: [],
+      summaryStatus: {
+        label: d.invalidReason ?? "Invalid outlet pipe",
+        level: "warn",
+      },
       rows: [],
       callouts: [
         {

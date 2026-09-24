@@ -43,7 +43,7 @@ describe("heat-exchanger-lmtd-duty", () => {
     expect(out.heroValue).toMatch(/349\.|8\.1/);
     expect(out.heroStatus).toBe("Screening OK");
     expect(out.callouts).toHaveLength(1);
-    expect(out.callouts[0]?.tone).toBe("info");
+    expect(out.callouts?.[0]?.tone).toBe("info");
     expect(out.rows.length).toBeLessThanOrEqual(4);
     expect(out.summary.some((s) => /LMTD/i.test(s.label))).toBe(true);
     expectNoPoison(out);

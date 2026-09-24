@@ -43,7 +43,7 @@ describe("natural-gas-z-density", () => {
     expect(out.heroValue).toMatch(/Z = 0\.93/);
     expect(out.heroStatus).toBe("Screening OK");
     expect(out.callouts).toHaveLength(1);
-    expect(out.callouts[0]?.tone).toBe("info");
+    expect(out.callouts?.[0]?.tone).toBe("info");
     expect(out.rows.length).toBeLessThanOrEqual(4);
     expect(out.rows.some((r) => /Ideal density/i.test(r.label))).toBe(true);
     expectNoPoison(out);
@@ -72,8 +72,8 @@ describe("natural-gas-z-density", () => {
       specificGravity: 0.6,
     });
     expect(out.heroStatusLevel).toBe("warn");
-    expect(out.callouts[0]?.tone).toBe("warn");
-    expect(out.callouts[0]?.title).toMatch(/High-pressure/i);
+    expect(out.callouts?.[0]?.tone).toBe("warn");
+    expect(out.callouts?.[0]?.title).toMatch(/High-pressure/i);
   });
 
   it("50 bar · 40 °C · SG 0.65", () => {

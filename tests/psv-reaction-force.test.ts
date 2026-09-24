@@ -31,9 +31,9 @@ describe("psv-reaction-force", () => {
     const out = calculatePsvReactionForce(DEFAULT_PSV_REACTION_FORCE_INPUTS);
     expect(out.heroValue).toMatch(/5\.9[0-9]|6\.0[0-9]/);
     expect(out.heroValue).toMatch(/kN/);
-    expect(out.callouts.length).toBeGreaterThanOrEqual(1);
-    expect(out.callouts.some((c) => c.tone === "warn")).toBe(true);
-    expect(out.callouts.some((c) => c.tone === "info")).toBe(true);
+    expect(out.callouts?.length).toBeGreaterThanOrEqual(1);
+    expect(out.callouts?.some((c) => c.tone === "warn")).toBe(true);
+    expect(out.callouts?.some((c) => c.tone === "info")).toBe(true);
     expect(out.rows.length).toBeLessThanOrEqual(4);
     expect(out.rows.some((r) => /F_steady|F_total/.test(r.label))).toBe(false);
     expectNoPoison(out);
