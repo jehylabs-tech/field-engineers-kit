@@ -19,6 +19,10 @@ import {
   defaultBlindFlangeSeoChart,
 } from "@/lib/calculators/blind-flange-seo-chart";
 import { canonicalUrl } from "@/lib/site";
+import {
+  documentTitle,
+  ensureBrandedTitle,
+} from "@/lib/metadata/site-metadata";
 
 type CalculatorPageProps = {
   params: { slug: string };
@@ -97,7 +101,7 @@ export async function generateMetadata({
         };
 
   return {
-    title,
+    title: documentTitle(title),
     description,
     keywords: calculatorKeywords,
     // Pattern B: self-referencing canonical on the clean root calculator path.
@@ -109,7 +113,7 @@ export async function generateMetadata({
       follow: true,
     },
     openGraph: {
-      title: `${title} | FieldEngineersKit`,
+      title: ensureBrandedTitle(title),
       description,
       url: canonical,
       type: "website",
@@ -119,7 +123,7 @@ export async function generateMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      title: `${title} | FieldEngineersKit`,
+      title: ensureBrandedTitle(title),
       description,
       images: [ogImage.url],
     },

@@ -2010,5 +2010,337 @@
     },
     "is_published": true,
     "created_at": "2026-09-24T12:00:00.000Z"
+  },
+  {
+    "id": "local-lifting-lug-rigging-capacity",
+    "category": "mechanical",
+    "title": "Lifting Lug & Rigging Capacity Calculator (ASME BTH-1 / AISC)",
+    "slug": "lifting-lug-rigging-capacity",
+    "meta_description": "ASME BTH-1 Category B / AISC lifting lug capacity screen — sling P_t and P_s, pin-hole bearing, tear-out shear, and base fillet weld unity for pad-eye design.",
+    "formula_json": {
+      "type": "lifting-lug-rigging-capacity",
+      "standard": "ASME BTH-1-2023 · AISC Steel Construction Manual · ASME B30.20 · AWS D1.1",
+      "formulaLatex": "P_t=W_{lift}\\cdot IF/(N\\cos\\theta),\\quad \\sigma_b=P_t/(D_{pin} t)\\le 1.25 F_y/N_d,\\quad \\tau_w=\\sqrt{(P_t/A_w)^2+(P_s h/S_w)^2}\\le 0.30 F_{EXX}",
+      "formulaBasis": "ASME BTH-1 Design Category B (Nd = 2.0) pin-hole bearing, AISC-style lug tear-out, and both-face fillet weld combined shear/bending at the lug base. Screening only — not a stamped BTH-1 / B30.20 lift package. Sling angle from vertical limited to 60°.",
+      "related": [
+        {
+          "slug": "pressure-vessel-head-thickness",
+          "title": "Pressure Vessel Head Thickness",
+          "carry": "Related vessel fabrication geometry"
+        },
+        {
+          "slug": "bolt-torque-tensioning",
+          "title": "Bolt Torque & Tensioning",
+          "carry": "Related connection / fastener checks"
+        },
+        {
+          "slug": "pipe-wall-thickness",
+          "title": "Pipe Wall Thickness",
+          "carry": "Related pressure-boundary thickness"
+        }
+      ],
+      "faq": [
+        {
+          "q": "What is Design Category B Nd = 2.0?",
+          "a": "ASME BTH-1 Design Category B uses design factor Nd = 2.0 on yield for the pin-hole bearing and related lug plate checks in this screen."
+        },
+        {
+          "q": "Why is sling angle capped at 60° from vertical?",
+          "a": "Angles above 60° from vertical produce large lateral components and buckling risk outside this pad-eye screen — use a spreader / lifting beam and a stamped design."
+        },
+        {
+          "q": "Is weld stress based on one-face or both-face fillet?",
+          "a": "This app models both-face fillet welds along the lug base length (A_w = 2 · 0.707 · w · L), which is standard pad-eye practice."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-24T20:00:00.000Z"
+  },
+  {
+    "id": "local-steam-turbine-power-ssc",
+    "category": "mechanical",
+    "title": "Steam Turbine Power Output & Specific Steam Consumption Calculator (ASME PTC 6 / IAPWS-IF97)",
+    "slug": "steam-turbine-power-ssc",
+    "meta_description": "ASME PTC 6 / IAPWS-IF97 steam turbine power and SSC screen — isentropic enthalpy drop, shaft and electrical MW, specific steam consumption, and condensate heat-rate estimate.",
+    "formula_json": {
+      "type": "steam-turbine-power-ssc",
+      "standard": "ASME PTC 6-2004 (R2014) · IAPWS-IF97",
+      "formulaLatex": "h_2=h_1-\\eta_{is}(h_1-h_{2s}),\\quad W_{elec}=\\dot{m}(h_1-h_2)\\eta_{mech}\\eta_{gen},\\quad SSC=\\dot{m}/W_{elec}",
+      "formulaBasis": "Single-pressure steam turbine expansion using IAPWS-IF97 Region 2 inlet and isentropic exhaust at P2. Screening only — no reheat or multi-extraction heat balance.",
+      "related": [
+        {
+          "slug": "steam-properties-iapws",
+          "title": "Steam Properties (IAPWS-IF97)",
+          "carry": "Confirm inlet steam enthalpy / saturation"
+        },
+        {
+          "slug": "compressor-polytropic-power",
+          "title": "Compressor Polytropic Power",
+          "carry": "Related rotating equipment power"
+        },
+        {
+          "slug": "pump-tdh-power",
+          "title": "TDH & Pump Power",
+          "carry": "Related shaft power screening"
+        }
+      ],
+      "faq": [
+        {
+          "q": "What is SSC?",
+          "a": "Specific steam consumption — main steam mass per unit electrical energy (kg/kWh or lb/kWh)."
+        },
+        {
+          "q": "Does this include reheat?",
+          "a": "No. This is a single-pressure expansion screen. Reheat and extraction balances need OEM / process-simulator tools."
+        },
+        {
+          "q": "What moisture limit is flagged?",
+          "a": "Exhaust moisture above about 12% raises a warning for last-stage blade erosion risk."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-24T21:00:00.000Z"
+  },
+  {
+    "id": "local-shaft-torque-key-sizing",
+    "category": "mechanical",
+    "title": "Shaft Power, Torque & Parallel Key Sizing Calculator (DIN 6885 / ASME B17.1)",
+    "slug": "shaft-torque-key-sizing",
+    "meta_description": "DIN 6885-1 / ASME B17.1 shaft torque and parallel-key shear/bearing screen — transmitted torque, key length L_min, and unity ratios for pure torsion duty.",
+    "formula_json": {
+      "type": "shaft-torque-key-sizing",
+      "standard": "DIN 6885-1 · ISO R773 · ASME B17.1 · AGMA 6001",
+      "formulaLatex": "T=P\\cdot 9549/n,\\quad \\tau_{key}=2T/(d\\,b\\,L),\\quad \\sigma_{b}=2T/(d\\,h_1\\,L)",
+      "formulaBasis": "Pure-torsion shaft shear and parallel-key shear/bearing length screening. DIN 6885-1 key sizes (metric) or ASME B17.1 square keys (imperial). Bending moment and keyseat Kt fatigue are out of scope.",
+      "related": [
+        {
+          "slug": "bearing-life-l10h",
+          "title": "Bearing Life L10h",
+          "carry": "shaftPower,rotationalSpeed"
+        },
+        {
+          "slug": "pump-tdh-power",
+          "title": "TDH & Pump Power",
+          "carry": "shaftPower,rotationalSpeed"
+        },
+        {
+          "slug": "steam-turbine-power-ssc",
+          "title": "Steam Turbine Power & SSC",
+          "carry": "shaftPower,rotationalSpeed"
+        }
+      ],
+      "faq": [
+        {
+          "q": "Which standard sizes the key?",
+          "a": "Metric duties use DIN 6885-1 parallel keys by shaft diameter band. Imperial duties use ASME B17.1 square-key screening sizes."
+        },
+        {
+          "q": "What is h1 in the bearing check?",
+          "a": "Keyseat contact depth in the shaft is taken as h1 ≈ 0.5·h for the compressive stress formula."
+        },
+        {
+          "q": "Does this include bending from overhang?",
+          "a": "No. Pure torsion only. Significant overhang moments need combined stress and keyseat Kt review."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-24T22:00:00.000Z"
+  },
+  {
+    "id": "local-api2000-tank-venting",
+    "category": "mechanical",
+    "title": "Storage Tank Venting Rate Calculator (API 2000 7th Ed)",
+    "slug": "api2000-tank-venting",
+    "meta_description": "API Std 2000 7th Ed normal inbreathing/outbreathing and fire-exposure emergency vent capacity for atmospheric and low-pressure metal storage tanks — PVRV screening.",
+    "formula_json": {
+      "type": "api2000-tank-venting",
+      "standard": "API Std 2000 7th Edition (2014/R2020) §3.3 / §3.4",
+      "formulaLatex": "V_{out}=1.01 V_{in}+0.8 V^{0.9} C Y,\\quad Q=43.2 A_w^{0.82} F,\\quad V_{emer}=(Q/L_v)\\sqrt{70.6/M}\\cdot 1234",
+      "formulaBasis": "API 2000 §3.3 liquid and thermal normal venting plus §3.4 fire emergency capacity for vertical cylindrical tanks. Screening only — not thermal shock or reactive gas cases.",
+      "related": [
+        {
+          "slug": "tank-vessel-volume",
+          "title": "Tank & Vessel Volume",
+          "carry": "tankDiameter,tankHeight"
+        },
+        {
+          "slug": "pressure-vessel-head-thickness",
+          "title": "Pressure Vessel Head Thickness",
+          "carry": "tankDiameter"
+        },
+        {
+          "slug": "valve-cv-sizing",
+          "title": "Control Valve Cv Sizing",
+          "carry": "liquidFlowRate"
+        }
+      ],
+      "faq": [
+        {
+          "q": "What does normal outbreathing include?",
+          "a": "Liquid pump-in displacement plus thermal expansion outbreathing (API 2000 §3.3)."
+        },
+        {
+          "q": "How is wetted area limited?",
+          "a": "Vertical-tank wetted height for fire is capped at 9.14 m (30 ft) per API 2000 §3.4."
+        },
+        {
+          "q": "Is this a certified PVRV selection?",
+          "a": "No. It is a field screen of required free-air rates — confirm OEM PVRV / hatch charts."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-24T23:00:00.000Z"
+  },
+  {
+    "id": "local-valve-wall-thickness-rating",
+    "category": "piping",
+    "title": "ASME B16.34 Valve Wall Thickness & Pressure Rating Calculator",
+    "slug": "valve-wall-thickness-rating",
+    "meta_description": "ASME B16.34 Standard Class valve body minimum wall thickness (Appendix VI / Table 3) and P-T rating screen with hydrostatic shell test pressure.",
+    "formula_json": {
+      "type": "valve-wall-thickness-rating",
+      "standard": "ASME B16.34-2020 §6.1 · Table 3 · Table 2 · Mandatory Appendix VI",
+      "formulaLatex": "t_m=1.5\\frac{P_c d}{2S-1.2 P_c}+A,\\quad p_{max}=f_{B16.34}(Class,Group,T),\\quad p_{hydro}=1.5\\,p_{amb}",
+      "formulaBasis": "Standard Class valve body minimum wall from Appendix VI (S=7000 psi, A=0.10 in) with Table 3 discrete check, plus Standard Class P-T rating and 1.5× ambient hydro shell test. Special Class and Section 8 NDE rules are out of scope.",
+      "related": [
+        {
+          "slug": "pipe-wall-thickness",
+          "title": "Pipe Wall Thickness",
+          "carry": "nps,designTemperature"
+        },
+        {
+          "slug": "valve-cv-sizing",
+          "title": "Control Valve Cv Sizing",
+          "carry": "workingPressure,designTemperature"
+        },
+        {
+          "slug": "flange-dimension-weight",
+          "title": "Flange Dimension & Weight",
+          "carry": "nps,pressureClass"
+        },
+        {
+          "slug": "flange-pressure-temperature-rating",
+          "title": "Flange P-T Rating",
+          "carry": "pressureClass,designTemperature"
+        }
+      ],
+      "faq": [
+        {
+          "q": "What is t_m in ASME B16.34?",
+          "a": "Minimum valve body wall thickness from Table 3 / Appendix VI for the class designation pressure P_c and inside diameter d."
+        },
+        {
+          "q": "Does Standard Class P-T match B16.5?",
+          "a": "For the same material group, ASME B16.34 Standard Class ratings align with B16.5 Table 2. Phase-1 FEK extract covers Groups 1.1 and 2.2."
+        },
+        {
+          "q": "Is Special Class included?",
+          "a": "No. Special Class and Section 8 NDE / forged high-pressure rules are out of this screen."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-24T23:30:00.000Z"
+  },
+  {
+    "id": "local-psv-reaction-force",
+    "category": "piping",
+    "title": "Safety Relief Valve (PSV) Reaction Force Calculator (API 520 Part II)",
+    "slug": "psv-reaction-force",
+    "meta_description": "API RP 520 Part II open-discharge PSV reaction force screen — momentum and exit pressure thrust with dynamic load factor for vapor/gas service.",
+    "formula_json": {
+      "type": "psv-reaction-force",
+      "standard": "API RP 520 Part II (2015) §4.2 · ASME VIII-1 Appendix M",
+      "formulaLatex": "F=(W/3600)v+(P_e-P_{atm})A,\\quad v=\\sqrt{2k/(k+1)\\cdot(R/M)T},\\quad F_{total}=F_{steady}\\cdot DLF",
+      "formulaBasis": "Open-discharge vapor/gas reaction force from sonic exit momentum plus exit static pressure thrust, scaled by DLF for popping. Liquid and two-phase out of scope.",
+      "related": [
+        {
+          "slug": "psv-prv-screening",
+          "title": "PSV / PRV Orifice Screening",
+          "carry": "massFlow,relievingTemperature,molecularWeight"
+        },
+        {
+          "slug": "valve-cv-sizing",
+          "title": "Control Valve Cv Sizing",
+          "carry": "relievingTemperature"
+        },
+        {
+          "slug": "pipe-wall-thickness",
+          "title": "Pipe Wall Thickness",
+          "carry": "outletNps"
+        },
+        {
+          "slug": "pressure-vessel-nozzle-reinforcement",
+          "title": "Nozzle Reinforcement",
+          "carry": "outletNps"
+        }
+      ],
+      "faq": [
+        {
+          "q": "What is PSV reaction force?",
+          "a": "The thrust on the discharge piping when a safety valve pops — momentum of the jet plus any exit pressure above atmosphere, often amplified by a dynamic load factor."
+        },
+        {
+          "q": "Why use DLF = 2.0?",
+          "a": "API 520 Part II recommends up to 2.0 for sudden popping on open vent elbows as a screening dynamic amplification."
+        },
+        {
+          "q": "Does this cover liquid relief?",
+          "a": "No. Liquid and two-phase cases need separate transient piping analysis."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-25T00:00:00.000Z"
+  },
+  {
+    "id": "local-non-metallic-gasket-b1621",
+    "category": "piping",
+    "title": "Non-Metallic Flat Gasket Dimensions & Sealing Area Calculator (ASME B16.21)",
+    "slug": "non-metallic-gasket-b1621",
+    "meta_description": "ASME B16.21 nonmetallic flat gasket OD/ID from B16.5 geometry with VIII-1 Appendix 2 Wm2 seating load and m/y factors for IBC and full-face sheets.",
+    "formula_json": {
+      "type": "non-metallic-gasket-b1621",
+      "standard": "ASME B16.21 · B16.5 · VIII-1 App. 2",
+      "formulaLatex": "A_g=\\pi/4(d_o^2-d_i^2),\\quad W_{m2}=A_g·y,\\quad b=f(b_0),\\quad G=d_o-2b",
+      "formulaBasis": "IBC ring uses B16.5 raised-face OD × B36 pipe OD. Full face uses flange OD with B16.5 bolt circle. Wm2 = Ag·y; Wm1 uses App. 2 G, b, m, P.",
+      "related": [
+        {
+          "slug": "flange-dimension-weight",
+          "title": "Flange Dimensions & Weight",
+          "carry": "nps,pressureClass"
+        },
+        {
+          "slug": "bolt-torque-tensioning",
+          "title": "Bolt Torque / Tensioning",
+          "carry": "nps,pressureClass"
+        },
+        {
+          "slug": "flange-bolt-wrench-size-lookup",
+          "title": "Bolt & Wrench Lookup",
+          "carry": "nps,pressureClass"
+        }
+      ],
+      "faq": [
+        {
+          "q": "What is an ASME B16.21 flat gasket calculator?",
+          "a": "A lookup of nonmetallic sheet gasket OD/ID for B16.5 flanges plus Appendix 2 seating load Wm2 from Agasket and y."
+        },
+        {
+          "q": "IBC vs full face?",
+          "a": "IBC (ring) seats on the raised face. Full face covers the flange face and includes bolt holes on the B16.5 pitch circle."
+        },
+        {
+          "q": "Is B16.47 covered?",
+          "a": "Not in Phase-1. Large-diameter B16.47 Series A/B tables are out of the local flangeDimension extract."
+        }
+      ]
+    },
+    "is_published": true,
+    "created_at": "2026-09-25T12:00:00.000Z"
   }
 ]

@@ -110,6 +110,20 @@ export const CATALOG_SEO_BLURBS: Record<string, string> = {
     "ASME VIII-1 UG-37 / UG-40 nozzle opening area replacement — required A vs A₁–A₄₂ and minimum repad thickness.",
   "bearing-life-l10h":
     "ISO 281 / ABMA bearing L₁₀h rating life: P = X·Fr + Y·Fa, L₁₀ = (C/P)^p, hours at 90% reliability.",
+  "lifting-lug-rigging-capacity":
+    "ASME BTH-1 Category B / AISC lifting lug screen: sling P_t, pin bearing, tear-out, and base fillet weld unity.",
+  "steam-turbine-power-ssc":
+    "ASME PTC 6 / IAPWS-IF97 steam turbine electrical power, isentropic drop, and specific steam consumption (SSC).",
+  "shaft-torque-key-sizing":
+    "DIN 6885 / ASME B17.1 shaft torque and parallel-key shear/bearing length screen for pure torsion duty.",
+  "api2000-tank-venting":
+    "API Std 2000 7th Ed storage-tank normal in/outbreathing and fire-exposure emergency vent capacity screen.",
+  "valve-wall-thickness-rating":
+    "ASME B16.34 Standard Class valve body minimum wall t_m (App. VI / Table 3) and P-T rating screen with hydro shell test.",
+  "psv-reaction-force":
+    "API 520 Part II PSV open-discharge reaction force: momentum + exit pressure with DLF for vapor/gas popping screens.",
+  "non-metallic-gasket-b1621":
+    "ASME B16.21 nonmetallic flat gasket OD/ID lookup from B16.5 geometry plus VIII-1 App. 2 Wm2 seating load screen.",
   "control-valve-noise":
     "ISA/IEC 60534 control valve noise prediction L_p,1m (dBA) for gas and liquid service.",
   "orifice-plate-flow-meter":

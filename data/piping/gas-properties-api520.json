@@ -1,0 +1,52 @@
+{
+  "description": "Common gas/vapor MW and k = Cp/Cv screening values aligned with API 520 Appendix B / GPSA handbook defaults for PSV reaction-force screens.",
+  "standard": "API RP 520 Part II (screening gas properties)",
+  "notes": [
+    "Molecular weight in g/mol (= kg/kmol). k = Cp/Cv at moderate pressure.",
+    "Not a full EOS. Confirm project fluid data for purchase / detailed dynamics."
+  ],
+  "gases": [
+    {
+      "id": "co2",
+      "label": "Carbon dioxide (CO₂)",
+      "molecularWeight": 44.01,
+      "kRatio": 1.3
+    },
+    {
+      "id": "air",
+      "label": "Air",
+      "molecularWeight": 28.97,
+      "kRatio": 1.4
+    },
+    {
+      "id": "steam",
+      "label": "Steam (superheated screening)",
+      "molecularWeight": 18.02,
+      "kRatio": 1.33
+    },
+    {
+      "id": "nitrogen",
+      "label": "Nitrogen (N₂)",
+      "molecularWeight": 28.01,
+      "kRatio": 1.4
+    },
+    {
+      "id": "methane",
+      "label": "Methane (CH₄)",
+      "molecularWeight": 16.04,
+      "kRatio": 1.31
+    },
+    {
+      "id": "hydrocarbon",
+      "label": "Light hydrocarbon (C4-like)",
+      "molecularWeight": 58.12,
+      "kRatio": 1.12
+    },
+    {
+      "id": "custom",
+      "label": "Custom (enter MW & k)",
+      "molecularWeight": 44.01,
+      "kRatio": 1.3
+    }
+  ]
+}

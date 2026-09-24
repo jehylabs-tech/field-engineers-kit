@@ -51,7 +51,14 @@ export type CalculatorType =
   | "socket-weld-threaded-fitting-dimension"
   | "pressure-vessel-head-thickness"
   | "pressure-vessel-nozzle-reinforcement"
-  | "bearing-life-l10h";
+  | "bearing-life-l10h"
+  | "lifting-lug-rigging-capacity"
+  | "steam-turbine-power-ssc"
+  | "shaft-torque-key-sizing"
+  | "api2000-tank-venting"
+  | "valve-wall-thickness-rating"
+  | "psv-reaction-force"
+  | "non-metallic-gasket-b1621";
 
 export type FaqItem = {
   q: string;

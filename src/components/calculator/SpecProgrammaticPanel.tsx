@@ -76,7 +76,7 @@ function panelCopy(args: {
   return {
     title: h2,
     blurb:
-      "Pre-seeded geometry for this programmatic URL. Adjust inputs in the calculator to recalculate; primary selections update the clean path for sharing and indexing.",
+      "Live inputs drive this summary. Adjust values in the calculator to recalculate; primary selections update the clean share URL for indexing and handoff.",
   };
 }
 

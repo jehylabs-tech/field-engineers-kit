@@ -1,0 +1,51 @@
+{
+  "description": "ASME B16.21 nonmetallic flat gasket screening — geometry from ASME B16.5 flangeDimension.json (IBC = raised-face OD × B36 pipe OD; Full Face = flange OD × pipe OD + B16.5 bolt circle / holes). m and y from ASME VIII-1 Appendix 2 Table 2-5.1 style values already used in flange-gasket-stress.",
+  "standard": "ASME B16.21-2021 · ASME B16.5-2020 · ASME VIII-1 App. 2",
+  "geometrySource": "data/piping/flangeDimension.json + B36 pipe OD via getPipeScheduleSize",
+  "coverage": {
+    "flangeStandard": "ASME B16.5 NPS ½–24 Class 150–900 (Phase-1)",
+    "outOfScope": [
+      "ASME B16.47 Series A/B NPS 26–60 — not in local flangeDimension extract",
+      "Spiral-wound / RTJ (use gasket-dimension-selection / B16.20)",
+      "OEM crush / creep-relaxation curves"
+    ]
+  },
+  "materials": [
+    {
+      "id": "compressed-elastomer-sheet",
+      "label": "Compressed elastomer sheet (non-asbestos)",
+      "m": 2.0,
+      "yPsi": 1600,
+      "tempLimitC": 200,
+      "notes": "VIII-1 App. 2 compressed fiber / CAF-NA style seating factors"
+    },
+    {
+      "id": "ptfe-ePTFE",
+      "label": "PTFE / ePTFE sheet",
+      "m": 2.0,
+      "yPsi": 1600,
+      "tempLimitC": 260,
+      "notes": "Cold flow / creep under Class 600+ — prefer SWG with rings for high P-T"
+    },
+    {
+      "id": "flexible-graphite",
+      "label": "Flexible graphite sheet",
+      "m": 2.0,
+      "yPsi": 900,
+      "tempLimitC": 450,
+      "notes": "VIII-1 App. 2 flexible graphite sheet seating factors"
+    },
+    {
+      "id": "neoprene-rubber",
+      "label": "Neoprene / soft rubber sheet",
+      "m": 0.5,
+      "yPsi": 0,
+      "tempLimitC": 80,
+      "notes": "VIII-1 App. 2 soft elastomer (below ~75 Shore A): y ≈ 0"
+    }
+  ],
+  "thicknesses": [
+    { "id": "1.5", "labelMetric": "1.5 mm", "labelImperial": "1/16 in", "mm": 1.5 },
+    { "id": "3.2", "labelMetric": "3.2 mm", "labelImperial": "1/8 in", "mm": 3.2 }
+  ]
+}

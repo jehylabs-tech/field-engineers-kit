@@ -211,6 +211,34 @@ const CALCULATOR_VIEWS: Record<
     () => import("./calculators/BearingLifeL10hCalculator"),
     { loading: loadingFallback },
   ),
+  "lifting-lug-rigging-capacity": dynamic(
+    () => import("./calculators/LiftingLugRiggingCapacityCalculator"),
+    { loading: loadingFallback },
+  ),
+  "steam-turbine-power-ssc": dynamic(
+    () => import("./calculators/SteamTurbinePowerSscCalculator"),
+    { loading: loadingFallback },
+  ),
+  "shaft-torque-key-sizing": dynamic(
+    () => import("./calculators/ShaftTorqueKeySizingCalculator"),
+    { loading: loadingFallback },
+  ),
+  "api2000-tank-venting": dynamic(
+    () => import("./calculators/Api2000TankVentingCalculator"),
+    { loading: loadingFallback },
+  ),
+  "valve-wall-thickness-rating": dynamic(
+    () => import("./calculators/ValveWallThicknessRatingCalculator"),
+    { loading: loadingFallback },
+  ),
+  "psv-reaction-force": dynamic(
+    () => import("./calculators/PsvReactionForceCalculator"),
+    { loading: loadingFallback },
+  ),
+  "non-metallic-gasket-b1621": dynamic(
+    () => import("./calculators/NonMetallicGasketB1621Calculator"),
+    { loading: loadingFallback },
+  ),
   "olet-fitting-dimensions": dynamic(
     () => import("./calculators/OletFittingDimensionsCalculator"),
     { loading: loadingFallback },

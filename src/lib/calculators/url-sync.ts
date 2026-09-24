@@ -185,6 +185,26 @@ export function useCalculatorUrlSync<T extends Record<string, unknown>>(
           "dynamicLoadRating",
           "radialLoad",
           "axialLoad",
+          // Shaft torque & parallel key (DIN 6885 / ASME B17.1)
+          "shaftPower",
+          "shaftDiameter",
+          "keyWidth",
+          "keyHeight",
+          "keyLength",
+          // API 2000 tank venting
+          "tankDiameter",
+          "tankHeight",
+          "pumpInRate",
+          "pumpOutRate",
+          "latentHeat",
+          // ASME B16.34 valve wall
+          "insideDiameter",
+          "workingPressure",
+          // PSV reaction force
+          "massFlow",
+          "relievingTemperature",
+          "atmosphericPressure",
+          "molecularWeight",
         ] as const;
         const bridge: Record<string, unknown> = {
           ...(next as Record<string, unknown>),

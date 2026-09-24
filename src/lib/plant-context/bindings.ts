@@ -594,6 +594,84 @@ export function applyPlantContext<T extends Record<string, unknown>>(
     }
     case "bearing-life-l10h":
       return inputs;
+    case "lifting-lug-rigging-capacity":
+      return inputs;
+    case "steam-turbine-power-ssc":
+      return inputs;
+    case "shaft-torque-key-sizing":
+      return inputs;
+    case "api2000-tank-venting":
+      return inputs;
+    case "valve-wall-thickness-rating": {
+      const next = { ...inputs } as T & {
+        nps?: string;
+        pressureClass?: string;
+        designTemperature?: number;
+        workingPressure?: number;
+        materialId?: string;
+        unitSystem?: string;
+      };
+      const nps = normalizeNps(ctx.size);
+      if (nps) next.nps = nps;
+      if (ctx.class_rating) {
+        const cls = String(ctx.class_rating).replace(/[^0-9]/g, "");
+        if (cls) next.pressureClass = cls;
+      }
+      if (ctx.temperature != null && Number.isFinite(Number(ctx.temperature))) {
+        next.designTemperature = Number(ctx.temperature);
+      }
+      if (ctx.pressure != null && Number.isFinite(Number(ctx.pressure))) {
+        // Plant pressure is typically bar-like process pressure for valve tools.
+        next.workingPressure = Number(ctx.pressure);
+      }
+      if (ctx.material) {
+        const m = String(ctx.material).toLowerCase();
+        if (m.includes("316") || m.includes("cf8m")) {
+          next.materialId = "group-2.2-A351-CF8M-316";
+        } else if (m.includes("wc6")) {
+          next.materialId = "group-1.9-A217-WC6";
+        } else if (m.includes("wcc")) {
+          next.materialId = "group-1.2-A216-WCC";
+        } else if (m.includes("wcb") || m.includes("a105")) {
+          next.materialId = "group-1.1-A105-WCB";
+        }
+      }
+      return next as T;
+    }
+    case "psv-reaction-force": {
+      const next = { ...inputs } as T & {
+        outletNps?: string;
+        outletSchedule?: string;
+        relievingTemperature?: number;
+      };
+      const nps = normalizeNps(ctx.size);
+      if (nps) next.outletNps = nps;
+      if (ctx.schedule) {
+        const sch = String(ctx.schedule).replace(/^Sch\s*/i, "");
+        if (sch) next.outletSchedule = sch;
+      }
+      if (ctx.temperature != null && Number.isFinite(Number(ctx.temperature))) {
+        next.relievingTemperature = Number(ctx.temperature);
+      }
+      return next as T;
+    }
+    case "non-metallic-gasket-b1621": {
+      const next = { ...inputs } as T & {
+        nps?: string;
+        pressureClass?: string;
+        pressure?: number;
+      };
+      const nps = normalizeNps(ctx.size);
+      if (nps) next.nps = nps;
+      if (ctx.class_rating) {
+        const cls = String(ctx.class_rating).replace(/[^0-9]/g, "");
+        if (cls) next.pressureClass = cls;
+      }
+      if (ctx.pressure != null && Number.isFinite(Number(ctx.pressure.value))) {
+        next.pressure = Number(ctx.pressure.value);
+      }
+      return next as T;
+    }
     case "pipe-slope-calculator": {
       const next = { ...inputs } as T & { pipeNps?: string };
       const nps = normalizeNps(ctx.size);
@@ -804,6 +882,70 @@ export function extractPlantContext(
       unitSystem === "imperial"
         ? { value: Number(inputs.designTemperature.toFixed(1)), unit: "F" }
         : { value: Number(inputs.designTemperature.toFixed(1)), unit: "C" };
+  }
+  if (
+    type === "valve-wall-thickness-rating" &&
+    typeof inputs.designTemperature === "number"
+  ) {
+    ctx.temperature =
+      unitSystem === "imperial"
+        ? { value: Number(inputs.designTemperature.toFixed(1)), unit: "F" }
+        : { value: Number(inputs.designTemperature.toFixed(1)), unit: "C" };
+  }
+  if (
+    type === "valve-wall-thickness-rating" &&
+    typeof inputs.workingPressure === "number"
+  ) {
+    ctx.pressure =
+      unitSystem === "imperial"
+        ? { value: Number(inputs.workingPressure.toFixed(1)), unit: "psi" }
+        : { value: Number(inputs.workingPressure.toFixed(2)), unit: "bar" };
+  }
+  if (
+    type === "valve-wall-thickness-rating" &&
+    typeof inputs.materialId === "string" &&
+    inputs.materialId
+  ) {
+    ctx.material = String(inputs.materialId);
+  }
+  if (
+    type === "psv-reaction-force" &&
+    typeof inputs.relievingTemperature === "number"
+  ) {
+    ctx.temperature =
+      unitSystem === "imperial"
+        ? { value: Number(inputs.relievingTemperature.toFixed(1)), unit: "F" }
+        : { value: Number(inputs.relievingTemperature.toFixed(1)), unit: "C" };
+  }
+  if (
+    type === "psv-reaction-force" &&
+    typeof inputs.outletNps === "string" &&
+    inputs.outletNps
+  ) {
+    const nps = normalizeNps(inputs.outletNps);
+    if (nps) ctx.size = formatSizeLabel(nps);
+  }
+  if (
+    type === "psv-reaction-force" &&
+    typeof inputs.outletSchedule === "string" &&
+    inputs.outletSchedule
+  ) {
+    ctx.schedule = `Sch ${inputs.outletSchedule}`;
+  }
+  if (type === "non-metallic-gasket-b1621") {
+    if (typeof inputs.nps === "string" && inputs.nps) {
+      const nps = normalizeNps(inputs.nps);
+      if (nps) ctx.size = formatSizeLabel(nps);
+    }
+    if (typeof inputs.pressureClass === "string" && inputs.pressureClass) {
+      ctx.class_rating = `Class ${inputs.pressureClass}`;
+    }
+    if (typeof inputs.pressure === "number") {
+      ctx.pressure =
+        unitSystem === "imperial"
+          ? { value: Number(inputs.pressure.toFixed(1)), unit: "psi" }
+          : { value: Number(inputs.pressure.toFixed(2)), unit: "bar" };
+    }
   }
   if (
     (type === "flange-pressure-temperature-rating" ||

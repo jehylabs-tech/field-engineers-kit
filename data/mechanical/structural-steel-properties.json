@@ -1,0 +1,40 @@
+{
+  "description": "Ambient structural steel min yield for ASME BTH-1 / AISC lifting-lug screening. Not temperature-derated Section II-D allowables.",
+  "materials": [
+    {
+      "id": "S275",
+      "label": "S275",
+      "fyMPa": 275,
+      "fyKsi": 39.9,
+      "source": "EN 10025-2 S275JR"
+    },
+    {
+      "id": "S355",
+      "label": "S355",
+      "fyMPa": 355,
+      "fyKsi": 51.5,
+      "source": "EN 10025-2 S355JR"
+    },
+    {
+      "id": "A36",
+      "label": "ASTM A36",
+      "fyMPa": 250,
+      "fyKsi": 36,
+      "source": "ASTM A36"
+    },
+    {
+      "id": "A572-50",
+      "label": "ASTM A572 Grade 50",
+      "fyMPa": 345,
+      "fyKsi": 50,
+      "source": "ASTM A572"
+    },
+    {
+      "id": "SA-516-70",
+      "label": "ASME SA-516 Grade 70",
+      "fyMPa": 260,
+      "fyKsi": 38,
+      "source": "ASME SA-516"
+    }
+  ]
+}

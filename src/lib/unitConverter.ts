@@ -323,6 +323,7 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
     "tempColdOut",
     "suctionTemp",
     "maintainTemp",
+    "inletTemperature",
   ]) {
     if (typeof next[key] === "number" && Number.isFinite(next[key] as number)) {
       convertNum(key, toImperial ? cToF : fToC, 0);
@@ -419,6 +420,7 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
     "surfacePressureAbs",
     "bypassDp",
     "pressure",
+    "workingPressure",
     "p1",
     "p2",
     "vaporPressure",
@@ -427,6 +429,8 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
     "suctionPress",
     "dischargePress",
     "steamPressure",
+    "exhaustPressure",
+    "atmosphericPressure",
   ]) {
     if (typeof next[key] === "number" && Number.isFinite(next[key] as number)) {
       convertNum(key, toImperial ? barToPsi : psiToBar, 3);
@@ -445,14 +449,23 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
     );
   }
 
-  // Mass flow: kg/h ↔ lb/h (control valve noise · heat exchanger)
+  // Mass flow: steam-turbine screening uses t/h ↔ lb/h; others kg/h ↔ lb/h
   if (typeof next.massFlow === "number" && Number.isFinite(next.massFlow)) {
-    const KG_TO_LB = 2.2046226218;
-    convertNum(
-      "massFlow",
-      toImperial ? (n) => n * KG_TO_LB : (n) => n / KG_TO_LB,
-      1,
-    );
+    if ("etaIsentropicPct" in next && "exhaustPressure" in next) {
+      const T_TO_LB = 2204.6226218;
+      convertNum(
+        "massFlow",
+        toImperial ? (n) => n * T_TO_LB : (n) => n / T_TO_LB,
+        toImperial ? 0 : 2,
+      );
+    } else {
+      const KG_TO_LB = 2.2046226218;
+      convertNum(
+        "massFlow",
+        toImperial ? (n) => n * KG_TO_LB : (n) => n / KG_TO_LB,
+        1,
+      );
+    }
   }
   if (
     typeof next.massFlowHot === "number" &&
@@ -583,6 +596,31 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
   for (const key of ["dynamicLoadRating", "radialLoad", "axialLoad"]) {
     if (typeof next[key] === "number" && Number.isFinite(next[key] as number)) {
       convertNum(key, toImperial ? knToLbf : lbfToKn, toImperial ? 1 : 3);
+    }
+  }
+
+  // Lifting lug / pad-eye: force kN ↔ kip; geometry mm ↔ in
+  if (
+    typeof next.liftWeight === "number" &&
+    Number.isFinite(next.liftWeight) &&
+    "lugCount" in next &&
+    "slingAngleDeg" in next
+  ) {
+    const knToKip = (kn: number) => kn / 4.448221615;
+    const kipToKn = (kip: number) => kip * 4.448221615;
+    convertNum("liftWeight", toImperial ? knToKip : kipToKn, toImperial ? 2 : 1);
+    for (const key of [
+      "plateThickness",
+      "outerRadius",
+      "holeDiameter",
+      "pinDiameter",
+      "lugHeight",
+      "weldSize",
+      "weldLength",
+    ]) {
+      if (typeof next[key] === "number" && Number.isFinite(next[key] as number)) {
+        convertNum(key, toImperial ? mmToIn : inToMm, toImperial ? 3 : 1);
+      }
     }
   }
 
@@ -797,6 +835,75 @@ export function syncCompanionUnits<T extends Record<string, unknown>>(
   }
   if (typeof next.run === "number" && Number.isFinite(next.run)) {
     convertNum("run", toImperial ? mToFt : ftToM, toImperial ? 2 : 3);
+  }
+
+  // Shaft torque & parallel key: kW ↔ HP, mm ↔ in, steel id aliases
+  const isShaftKey =
+    "shaftPower" in next &&
+    "keyWidth" in next &&
+    "keyHeight" in next &&
+    "keyLength" in next &&
+    "autoKeySize" in next;
+  if (isShaftKey) {
+    const KW_PER_HP = 0.745699872;
+    convertNum(
+      "shaftPower",
+      toImperial ? (kw) => kw / KW_PER_HP : (hp) => hp * KW_PER_HP,
+      toImperial ? 1 : 1,
+    );
+    for (const key of [
+      "shaftDiameter",
+      "keyWidth",
+      "keyHeight",
+      "keyLength",
+    ] as const) {
+      if (typeof next[key] === "number" && Number.isFinite(next[key] as number)) {
+        convertNum(key, toImperial ? mmToIn : inToMm, toImperial ? 3 : 1);
+      }
+    }
+    const mapSteel = (id: unknown): string | undefined => {
+      if (typeof id !== "string") return undefined;
+      if (toImperial) {
+        if (id === "S45C") return "AISI1045";
+        if (id === "SCM440") return "AISI4140";
+        return id;
+      }
+      if (id === "AISI1045") return "S45C";
+      if (id === "AISI4140") return "SCM440";
+      return id;
+    };
+    const shaftMat = mapSteel(next.shaftMaterial);
+    const keyMat = mapSteel(next.keyMaterial);
+    if (shaftMat) next.shaftMaterial = shaftMat;
+    if (keyMat) next.keyMaterial = keyMat;
+  }
+
+  // API 2000 tank venting: pump rates m³/h ↔ GPM, latent heat kJ/kg ↔ Btu/lb.
+  // tankDiameter / tankHeight already converted above (m ↔ ft) — do not double.
+  const isApi2000Vent =
+    "pumpInRate" in next &&
+    "pumpOutRate" in next &&
+    "latentHeat" in next &&
+    "molecularWeight" in next &&
+    "volatility" in next;
+  if (isApi2000Vent) {
+    const M3H_TO_GPM = 4.402867513;
+    for (const key of ["pumpInRate", "pumpOutRate"] as const) {
+      if (typeof next[key] === "number" && Number.isFinite(next[key] as number)) {
+        convertNum(
+          key,
+          toImperial ? (q) => q * M3H_TO_GPM : (q) => q / M3H_TO_GPM,
+          1,
+        );
+      }
+    }
+    if (typeof next.latentHeat === "number" && Number.isFinite(next.latentHeat)) {
+      convertNum(
+        "latentHeat",
+        toImperial ? (v) => v / 2.326 : (v) => v * 2.326,
+        1,
+      );
+    }
   }
 
   return next as T;

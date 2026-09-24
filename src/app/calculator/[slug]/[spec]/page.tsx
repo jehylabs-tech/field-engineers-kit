@@ -26,6 +26,10 @@ import {
 } from "@/lib/calculators/blind-flange-seo-chart";
 import { SLUG_TO_CALCULATOR_TYPE } from "@/lib/plant-context/tags";
 import { canonicalUrl } from "@/lib/site";
+import {
+  documentTitle,
+  ensureBrandedTitle,
+} from "@/lib/metadata/site-metadata";
 
 type SpecPageProps = {
   params: { slug: string; spec: string };
@@ -106,7 +110,7 @@ export async function generateMetadata({
         };
 
   return {
-    title: copy.title,
+    title: documentTitle(copy.title),
     description: copy.description,
     // Pattern B: self-referencing canonical for THIS spec path (never the root).
     alternates: { canonical },
@@ -115,7 +119,7 @@ export async function generateMetadata({
       follow: true,
     },
     openGraph: {
-      title: copy.title,
+      title: ensureBrandedTitle(copy.title),
       description: copy.description,
       url: canonical,
       type: "website",
@@ -124,7 +128,7 @@ export async function generateMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      title: copy.title,
+      title: ensureBrandedTitle(copy.title),
       description: copy.description,
       images: [ogImage.url],
     },

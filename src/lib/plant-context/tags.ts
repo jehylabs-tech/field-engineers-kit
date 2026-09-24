@@ -64,6 +64,13 @@ export const CALCULATOR_TYPE_SLUG: Record<CalculatorType, string> = {
   "pressure-vessel-nozzle-reinforcement":
     "pressure-vessel-nozzle-reinforcement",
   "bearing-life-l10h": "bearing-life-l10h",
+  "lifting-lug-rigging-capacity": "lifting-lug-rigging-capacity",
+  "steam-turbine-power-ssc": "steam-turbine-power-ssc",
+  "shaft-torque-key-sizing": "shaft-torque-key-sizing",
+  "api2000-tank-venting": "api2000-tank-venting",
+  "valve-wall-thickness-rating": "valve-wall-thickness-rating",
+  "psv-reaction-force": "psv-reaction-force",
+  "non-metallic-gasket-b1621": "non-metallic-gasket-b1621",
 };
 
 export const SLUG_TO_CALCULATOR_TYPE: Record<string, CalculatorType> =
@@ -290,6 +297,34 @@ export const CALCULATOR_PLANT_TAGS: Record<CalculatorType, CalculatorPlantTags> 
     "bearing-life-l10h": {
       consumes: [],
       produces: [],
+    },
+    "lifting-lug-rigging-capacity": {
+      consumes: [],
+      produces: [],
+    },
+    "steam-turbine-power-ssc": {
+      consumes: [],
+      produces: [],
+    },
+    "shaft-torque-key-sizing": {
+      consumes: [],
+      produces: [],
+    },
+    "api2000-tank-venting": {
+      consumes: [],
+      produces: [],
+    },
+    "valve-wall-thickness-rating": {
+      consumes: ["size", "class_rating", "temperature", "pressure", "material"],
+      produces: ["size", "class_rating", "temperature", "pressure"],
+    },
+    "psv-reaction-force": {
+      consumes: ["size", "schedule", "temperature"],
+      produces: ["size", "schedule", "temperature"],
+    },
+    "non-metallic-gasket-b1621": {
+      consumes: ["size", "class_rating", "pressure"],
+      produces: ["size", "class_rating", "pressure"],
     },
   };
 

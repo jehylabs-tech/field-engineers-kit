@@ -1,0 +1,240 @@
+---
+title: "Pipe Insulation Thickness, Heat Loss, and Personnel Protection Surface Temperature Guide"
+description: "Calculate pipe insulation thickness, jacket surface temperature, and linear heat loss with ASTM C680 / ISO 12241 screening and ASTM C1055 60 °C Pass checks."
+date: "2026-09-24"
+category: "Piping Engineering"
+tags:
+  - Insulation Thickness
+  - Heat Loss
+  - Personnel Protection
+  - ASTM C680
+  - ISO 12241
+  - Surface Temperature
+relatedCalculatorUrl: "/calculator/insulation-heat-loss"
+relatedCalculatorName: "Piping Insulation Thickness & Heat Loss Calculator (ASTM C680 / ISO 12241)"
+---
+
+Hot-service lines that look “insulated enough” still burn unprotected skin and waste steam or process heat when jacket surface temperature or linear heat loss was never closed against a real film model. This guide owns **pipe insulation thickness** screening for heat loss and personnel protection with the same ASTM C680 / ISO 12241-style radial solver used in FieldEngineersKit.
+
+Run the live [Piping Insulation Thickness & Heat Loss Calculator (ASTM C680 / ISO 12241)](/calculator/insulation-heat-loss) (NPS → B36 OD, material $k(T_m)$, wind, emissivity, and ASTM C1055 Pass/Fail on one screen).
+
+## Quick Summary (TL;DR)
+
+- **Takeaway:** Size thickness so outer jacket $T_s \le 60\text{ }^\circ\text{C}$ (ASTM C1055 ~5 s contact) while reading linear heat loss $Q$ from the C680 / ISO 12241 resistance network — not from a fixed “$k=0.045$” rule of thumb.
+- **Governing relation:** $Q=(T_h-T_a)/R_{\mathrm{tot}}$, $R_{\mathrm{tot}}=\ln(r_2/r_1)/(2\pi k)+1/(2\pi r_2 h_o)$, $h_o=h_c+h_r$.
+- **Code / basis:** ASTM **C680** / ISO **12241** steady radial screen · ASTM **C547**-style mineral-wool $k(T_m)$ · ASTM **C1055** personnel $T_s\le 60\text{ }^\circ\text{C}$ · ASME **B36** pipe OD for $r_1$.
+
+| Item | Field takeaway |
+| :--- | :--- |
+| **Personnel limit** | **$T_s \le 60\text{ }^\circ\text{C}$ (140 °F)** — Pass/Fail in FEK |
+| **Hero worked case** | NPS **4** (OD 114.3 mm) · MW **50 mm** · $T_h=250\text{ }^\circ\text{C}$ · $\varepsilon=0.2$ → **$T_s\approx 46.6\text{ }^\circ\text{C}$**, **$Q\approx 106.6\text{ W/m}$** (PASS) |
+| **First FEK Pass thickness (same duty)** | **38 mm (≈ 1.5 in)** already Pass ($T_s\approx 52.8\text{ }^\circ\text{C}$); **25 mm** Fail |
+| **FEK default jacket $\varepsilon$** | **0.90** (painted-jacket screen); aluminum often **$\approx 0.2$** |
+| **$k$ model** | Mineral wool $k(T_m)=0.032+1.05\times 10^{-4}T_m+2.2\times 10^{-7}T_m^2$ (W/m·K, $T_m$ in °C) |
+| **Wind model** | Mild outdoor forced term blended with C680 natural $h_c$ (Churchill cube-root) |
+| **Limits** | Screening only — not anti-sweat dew-point design, not certified C680 report, not CUI material selection |
+
+---
+
+## Why pipe insulation thickness and surface temperature matter
+
+Personnel burns, energy waste, and condensate formation are three different insulation jobs. This article focuses on **hot-service heat-loss and personnel-protection screening**: steady radial conduction through the insulation annulus plus outer convection/radiation, iterated until jacket $T_s$ and $Q$ converge.
+
+Field failure modes look like: bare or thin jackets above **60 °C** on walkways and valve clusters; “catalog thickness” copied from another duty without wind or emissivity; and spreadsheet $k$ frozen at room temperature while $T_m$ is 150 °C. Use [Piping Insulation Thickness & Heat Loss](/calculator/insulation-heat-loss/4inch-mineral-wool-50mm) for the NPS 4 mineral-wool starting point, [ASME B31.3 Pipe Thickness](/calculator/pipe-wall-thickness) when schedule (and OD/wall mass context) changes, and [Steam Turbine Power & SSC](/calculator/steam-turbine-power-ssc) when steam-line heat loss feeds plant heat-rate screening.
+
+<Callout title="Screening vs code / OEM / CUI design" variant="info">
+This guide and the FEK calculator implement an **ASTM C680 / ISO 12241–aligned** steady-state radial heat-loss and surface-temperature **screen**, with personnel Pass/Fail at **$T_s \le 60\text{ }^\circ\text{C}$** (ASTM **C1055** ~5 s contact guidance). They are **not** a substitute for a certified ASTM C680 report, manufacturer $k(T)$ curves, project jacket emissivity, or site wind turbulence. **Anti-sweat (dew-point / condensation)** and **CUI (corrosion under insulation)** duties need separate moisture, cladding, and often cellular-glass / aerogel material design — do not treat a personnel Pass as an anti-sweat or CUI Pass. FEK is not affiliated with ASTM or ISO.
+</Callout>
+
+---
+
+## Core formulas & parameter definitions
+
+### Linear heat loss (steady radial)
+
+$$
+Q = \frac{T_h - T_a}{R_{\mathrm{tot}}}
+$$
+
+$$
+R_{\mathrm{tot}} = R_{\mathrm{ins}} + R_{\mathrm{conv}}
+= \frac{\ln(r_2/r_1)}{2\pi k} + \frac{1}{2\pi r_2 h_o}
+$$
+
+with outer film $h_o = h_c + h_r$.
+
+### Outer film coefficients (FEK)
+
+Natural convection (horizontal cylinder, SI screening form used in FEK):
+
+$$
+h_{c,\mathrm{nat}} = 1.32\left(\frac{T_s - T_a}{d_2}\right)^{0.25}
+$$
+
+Mild outdoor forced term (intentionally soft so light wind does not erase the C680 natural formula):
+
+$$
+h_{c,\mathrm{forced}} \approx \frac{2.2\,v^{0.6}}{d_2^{0.4}}\quad (v>0.05\text{ m/s})
+$$
+
+Churchill cube-root blend:
+
+$$
+h_c = \left(h_{c,\mathrm{nat}}^3 + h_{c,\mathrm{forced}}^3\right)^{1/3}
+$$
+
+Radiation linearized about $T_s$:
+
+$$
+h_r = \varepsilon\,\sigma\,\frac{T_s^4 - T_a^4}{T_s - T_a}
+$$
+
+($\sigma = 5.670374419\times 10^{-8}\text{ W/m}^2\cdot\text{K}^4$; temperatures absolute in the $T^4$ terms.)
+
+FEK iterates $T_s$ until the heat leaving through $R_{\mathrm{tot}}$ matches the outer film balance $Q = 2\pi r_2 h_o (T_s - T_a)$.
+
+### Mineral-wool conductivity $k(T_m)$ (ASTM C547–style screen)
+
+Mean insulation temperature $T_m = (T_h + T_s)/2$. FEK mineral wool:
+
+$$
+k(T_m) = 0.032 + 1.05\times 10^{-4}\,T_m + 2.2\times 10^{-7}\,T_m^2
+\quad[\text{W/m·K},\ T_m\text{ in }^\circ\text{C}]
+$$
+
+Other FEK materials use parallel ASTM C533 / C552 / C591–style screening polynomials in the same calculator engine.
+
+### Parameter definitions
+
+| Symbol | Meaning | FEK source |
+| :--- | :--- | :--- |
+| $T_h$ | Hot (operating / fluid-side) temperature | User input |
+| $T_a$ | Ambient air temperature | User input |
+| $T_s$ | Outer jacket surface temperature | Iterative solve |
+| $r_1$ | Outer radius of bare pipe $= OD/2$ | ASME B36 OD via NPS |
+| $r_2$ | Outer radius of insulation $= r_1 + t_{\mathrm{ins}}$ | Thickness input |
+| $k$ | Insulation conductivity at $T_m$ | Material polynomial |
+| $h_o$ | Combined outer film coefficient | $h_c + h_r$ |
+| $\varepsilon$ | Jacket emissivity | Default **0.90**; aluminum often **~0.2** |
+| $v$ | Wind speed | m/s (or mph in imperial) |
+| $Q$ | Linear heat loss | W/m (dual Btu/hr·ft in UI) |
+
+### FEK material options (engine)
+
+| Material | ASTM family (screen) | Typical hot-service note |
+| :--- | :--- | :--- |
+| Mineral wool | C547 | Default industrial hot pipe screen |
+| Calcium silicate | C533 | Higher-temperature rigid boards |
+| Cellular glass | C552 | Moisture / CUI-oriented systems (still thermal screen only here) |
+| Polyurethane | C591 | Low-$k$ cold/warm; FEK warns above ~120 °C continuous |
+
+### NPS 4 mineral-wool personnel screen (engine assert)
+
+Fixed: NPS **4** (OD **114.3 mm**), $T_a=25\text{ }^\circ\text{C}$, $v=1.5\text{ m/s}$, aluminum-class $\varepsilon=\mathbf{0.2}$, mineral wool.
+
+| $T_h$ | $t_{\mathrm{ins}}$ | $T_s$ | $Q$ | Personnel |
+| :---: | :---: | :---: | :---: | :---: |
+| **150 °C** | **40 mm** | **38.1 °C** | **58.1 W/m** | **Pass** |
+| **250 °C** | **50 mm** | **46.6 °C** | **106.6 W/m** | **Pass** |
+| **350 °C** | **75 mm** | **49.1 °C** | **139.2 W/m** | **Pass** |
+| **450 °C** | **100 mm** | **51.9 °C** | **178.6 W/m** | **Pass** |
+
+<Callout title="Why these numbers differ from some published “C680 tables”" variant="warning">
+Published or spreadsheet tables often quote different **$T_s$ / $Q$** for similar NPS 4 / mineral-wool rows, or freeze **$k\approx 0.045\text{ W/m·K}$**. FEK reports the **engine** assert above: C547-style $k(T_m)$, Churchill mild-wind blend, and the chosen $\varepsilon$. With FEK **default $\varepsilon=0.90$** at the same wind, the **250 °C / 50 mm** row becomes roughly **$T_s\approx 39.0\text{ }^\circ\text{C}$**, **$Q\approx 109.2\text{ W/m}$** — cooler surface, slightly higher $Q$, because higher radiation raises $h_o$ and softens $R_{\mathrm{conv}}$. Always re-run with project $\varepsilon$ and wind.
+</Callout>
+
+---
+
+## What minimum insulation thickness meets a 60 °C surface temp on NPS 4 at 250 °C?
+
+### Scenario
+
+NPS **4** line (ASME B36 OD **114.3 mm** — schedule does not change OD for this thermal screen), operating fluid temperature $T_h = 250\text{ }^\circ\text{C}$, ambient $T_a = 25\text{ }^\circ\text{C}$, outdoor wind $v = 1.5\text{ m/s}$, mineral wool (ASTM C547–style), aluminum jacketing $\varepsilon = 0.2$. Target: personnel protection $T_s \le 60\text{ }^\circ\text{C}$.
+
+### Inputs
+
+| Input | Value |
+| :--- | :--- |
+| NPS / OD | **4** / **114.3 mm** (B36; schedule-independent for $r_1$) |
+| $T_h$ | **250 °C** |
+| $T_a$ | **25 °C** |
+| Wind | **1.5 m/s** |
+| Material | Mineral wool (ASTM C547) |
+| $\varepsilon$ | **0.2** (aluminum-class jacket) |
+| Trial thickness (hero) | **50 mm (≈ 2 in)** |
+
+Open [/calculator/insulation-heat-loss/4inch-mineral-wool-50mm](/calculator/insulation-heat-loss/4inch-mineral-wool-50mm), set **operating temp = 250 °C**, **ambient = 25 °C**, **wind = 1.5 m/s**, and **emissivity = 0.2** (the Pattern B route seeds thickness/material; override $\varepsilon$ and $T_h$ as above).
+
+### Step 1 — Geometry
+
+$$
+r_1 = OD/2 = 57.15\text{ mm},\qquad
+r_2 = r_1 + 50 = 107.15\text{ mm}
+$$
+
+### Step 2 — Iterate $T_s$, $k(T_m)$, and $Q$
+
+FEK converges (engine):
+
+| Quantity | Result |
+| :--- | ---: |
+| $T_s$ | **46.6 °C** |
+| $T_m$ | **≈ 148 °C** |
+| $k(T_m)$ | **≈ 0.0524 W/m·K** |
+| $R_{\mathrm{ins}}$ | **≈ 1.91 K·m/W** |
+| $R_{\mathrm{conv}}$ | **≈ 0.20 K·m/W** |
+| $h_o$ | **≈ 7.3 W/m²·K** |
+| $Q$ | **106.6 W/m** |
+| Bare-pipe $Q$ (same film model) | **≈ 1075 W/m** |
+| Savings vs bare | **≈ 90%** |
+| Annual screen loss | **≈ 933 kWh/m·yr** |
+
+### Step 3 — Personnel check
+
+$$
+T_s = 46.6\text{ }^\circ\text{C} \le 60\text{ }^\circ\text{C}\quad\Rightarrow\quad\textbf{PASS}
+$$
+
+### Step 4 — Minimum commercial thickness on this duty
+
+Thickness sweep at the same $T_h$, $T_a$, wind, $\varepsilon$, and mineral wool (FEK engine):
+
+| $t_{\mathrm{ins}}$ | $T_s$ | $Q$ | C1055 |
+| :---: | :---: | :---: | :---: |
+| **25 mm** | **64.9 °C** | **173.0 W/m** | **Fail** |
+| **38 mm (≈ 1.5 in)** | **52.8 °C** | **128.7 W/m** | **Pass** |
+| **50 mm (≈ 2 in)** | **46.6 °C** | **106.6 W/m** | **Pass** |
+
+So the **first Pass** among these FEK steps is **38 mm (≈ 1.5 in)**; **50 mm** is a common stock step with extra surface-temperature margin. Do not treat “2 inches” as a physics minimum without checking $T_s$.
+
+<Callout title="Field note — frozen k ≈ 0.045 is not this duty" variant="tip">
+A constant **$k\approx 0.045\text{ W/m·K}$** is a room-temperature-ish mineral-wool talking number. At $T_m\approx 148\text{ }^\circ\text{C}$ the FEK C547-style polynomial gives **$k\approx 0.052\text{ W/m·K}$**, which raises $Q$ and $T_s$ versus a frozen-0.045 spreadsheet. Always evaluate $k$ at $T_m$.
+</Callout>
+
+---
+
+## Interactive tool CTA
+
+<Callout title="Run the same screen in FieldEngineersKit" variant="tip">
+Use [Piping Insulation Thickness & Heat Loss Calculator (ASTM C680 / ISO 12241)](/calculator/insulation-heat-loss) for NPS × material × thickness, wind, and emissivity with live $T_s$ / $Q$ / Pass-Fail. Start from [/calculator/insulation-heat-loss/4inch-mineral-wool-50mm](/calculator/insulation-heat-loss/4inch-mineral-wool-50mm) and set **$T_h=250\text{ }^\circ\text{C}$**, **wind 1.5 m/s**, **$\varepsilon=0.2$** to match the worked example. Pair schedule/OD changes with [ASME B31.3 Pipe Thickness](/calculator/pipe-wall-thickness) and steam energy context with [Steam Turbine Power & SSC](/calculator/steam-turbine-power-ssc).
+</Callout>
+
+---
+
+## Frequently Asked Questions (FAQ)
+
+### What personnel protection surface temperature limit does FEK use?
+
+ASTM **C1055** screening for brief (~5 s) contact is implemented as **$T_s \le 60\text{ }^\circ\text{C}$ (140 °F)**. Higher jacket temperature is flagged **Fail** — increase thickness, add personnel guards, or reroute the walkway. Do **not** invent a lower $\varepsilon$ to force a Pass: bright aluminum ($\varepsilon\approx 0.2$) runs **hotter** at the jacket than a painted finish ($\varepsilon\approx 0.9$) under the same FEK film model. Longer contact, moisture, or metal tools against the jacket can still injure below that screen; treat 60 °C as a project Pass gate, not a guarantee of “safe to lean on.”
+
+### How does a pipe heat loss calculation ASTM C680 screen work in FEK?
+
+FEK builds $R_{\mathrm{ins}}=\ln(r_2/r_1)/(2\pi k)$ with $k(T_m)$ from the material polynomial, adds $R_{\mathrm{conv}}=1/(2\pi r_2 h_o)$ with natural/forced convection blend plus radiation, then iterates $T_s$ until $Q=(T_h-T_a)/R_{\mathrm{tot}}$ matches the outer film. That is the same structure as ASTM **C680** / ISO **12241** steady radial practice — still a **screen**, not a certified lab report.
+
+### Why does mineral wool insulation thermal conductivity in FEK differ from $k\approx 0.045\text{ W/m·K}$?
+
+Because conductivity rises with mean temperature. FEK mineral wool is $k=0.032+1.05\times 10^{-4}T_m+2.2\times 10^{-7}T_m^2$. At the worked $T_m\approx 148\text{ }^\circ\text{C}$, $k\approx\mathbf{0.0524}\text{ W/m·K}$. Spreadsheets that freeze $0.045$ under-predict heat loss and over-predict how cool the jacket will be.
+
+### Why don’t FEK $T_s$ / $Q$ match some internet thickness charts?
+
+Charts differ on $\varepsilon$ (painted **0.9** vs aluminum **~0.2**), wind model aggressiveness, whether $k$ is evaluated at $T_m$, and pipe OD basis. FEK asserts the engine rows in this article (e.g. NPS 4 · MW · 50 mm · 250 °C · 1.5 m/s · $\varepsilon=0.2$ → **$T_s\approx 46.6\text{ }^\circ\text{C}$**, **$Q\approx 106.6\text{ W/m}$**). Confirm manufacturer $k(T)$ and jacket finish before locking MTO thickness.

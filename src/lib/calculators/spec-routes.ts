@@ -122,6 +122,36 @@ import {
   matchBearingLifeL10hSpecRoute,
 } from "@/lib/calculators/pseo/bearing-life-l10h-routes";
 import {
+  listLiftingLugRiggingCapacityPseoRoutes,
+  matchLiftingLugRiggingCapacitySpecRoute,
+  parseLiftingLugRiggingCapacitySpec,
+} from "@/lib/calculators/pseo/lifting-lug-rigging-capacity-routes";
+import {
+  listSteamTurbinePowerSscPseoRoutes,
+  matchSteamTurbinePowerSscSpecRoute,
+  parseSteamTurbinePowerSscSpec,
+} from "@/lib/calculators/pseo/steam-turbine-power-ssc-routes";
+import {
+  listShaftTorqueKeySizingPseoRoutes,
+  matchShaftTorqueKeySizingSpecRoute,
+} from "@/lib/calculators/pseo/shaft-torque-key-sizing-routes";
+import {
+  listApi2000TankVentingPseoRoutes,
+  matchApi2000TankVentingSpecRoute,
+} from "@/lib/calculators/pseo/api2000-tank-venting-routes";
+import {
+  listValveWallThicknessRatingPseoRoutes,
+  matchValveWallThicknessRatingSpecRoute,
+} from "@/lib/calculators/pseo/valve-wall-thickness-rating-routes";
+import {
+  listPsvReactionForcePseoRoutes,
+  matchPsvReactionForceSpecRoute,
+} from "@/lib/calculators/pseo/psv-reaction-force-routes";
+import {
+  listNonMetallicGasketB1621PseoRoutes,
+  matchNonMetallicGasketB1621SpecRoute,
+} from "@/lib/calculators/pseo/non-metallic-gasket-b1621-routes";
+import {
   listAvailableNps,
   listFlangeClassesForNps,
   listFlangeNps,
@@ -305,6 +335,12 @@ export function parseSpecToQuery(spec: string): Record<string, string> | null {
 
   const headThickness = parsePressureVesselHeadThicknessSpec(value);
   if (headThickness) return headThickness;
+
+  const liftingLug = parseLiftingLugRiggingCapacitySpec(value);
+  if (liftingLug) return liftingLug;
+
+  const steamTurbine = parseSteamTurbinePowerSscSpec(value);
+  if (steamTurbine) return steamTurbine;
 
   const nozzleReinforcement = parsePressureVesselNozzleReinforcementSpec(value);
   if (nozzleReinforcement) return nozzleReinforcement;
@@ -872,6 +908,20 @@ export function listSpecRoutesForSlug(slug: string): SpecRoute[] {
       return listPressureVesselNozzleReinforcementPseoRoutes(slug);
     case "bearing-life-l10h":
       return listBearingLifeL10hPseoRoutes(slug);
+    case "lifting-lug-rigging-capacity":
+      return listLiftingLugRiggingCapacityPseoRoutes(slug);
+    case "steam-turbine-power-ssc":
+      return listSteamTurbinePowerSscPseoRoutes(slug);
+    case "shaft-torque-key-sizing":
+      return listShaftTorqueKeySizingPseoRoutes(slug);
+    case "api2000-tank-venting":
+      return listApi2000TankVentingPseoRoutes(slug);
+    case "valve-wall-thickness-rating":
+      return listValveWallThicknessRatingPseoRoutes(slug);
+    case "psv-reaction-force":
+      return listPsvReactionForcePseoRoutes(slug);
+    case "non-metallic-gasket-b1621":
+      return listNonMetallicGasketB1621PseoRoutes(slug);
     case "pneumatic-safety":
       return listPneumaticSafetyPseoRoutes(slug);
     case "pump-npsh":
@@ -1819,6 +1869,61 @@ export function findSpecRouteForInputs(
     if (bearingHit) return bearingHit;
   }
 
+  {
+    const lugHit = matchLiftingLugRiggingCapacitySpecRoute(
+      routes,
+      partial,
+      units,
+    );
+    if (lugHit) return lugHit;
+  }
+
+  {
+    const stHit = matchSteamTurbinePowerSscSpecRoute(routes, partial, units);
+    if (stHit) return stHit;
+  }
+
+  {
+    const shaftKeyHit = matchShaftTorqueKeySizingSpecRoute(
+      routes,
+      partial,
+      units,
+    );
+    if (shaftKeyHit) return shaftKeyHit;
+  }
+
+  {
+    const tankVentHit = matchApi2000TankVentingSpecRoute(
+      routes,
+      partial,
+      units,
+    );
+    if (tankVentHit) return tankVentHit;
+  }
+
+  {
+    const valveWallHit = matchValveWallThicknessRatingSpecRoute(
+      routes,
+      partial,
+      units,
+    );
+    if (valveWallHit) return valveWallHit;
+  }
+
+  {
+    const psvRxnHit = matchPsvReactionForceSpecRoute(routes, partial, units);
+    if (psvRxnHit) return psvRxnHit;
+  }
+
+  {
+    const gasketB1621Hit = matchNonMetallicGasketB1621SpecRoute(
+      routes,
+      partial,
+      units,
+    );
+    if (gasketB1621Hit) return gasketB1621Hit;
+  }
+
   // Piping equivalent length / Darby 3-K: nps + schedule + fittingType (+ re).
   const fittingType =
     partial.fittingType != null && partial.fittingType !== ""
@@ -2398,6 +2503,53 @@ export function buildSpecSeoCopy(
     };
   }
 
+  // Duty-based calculators that also carry nps+sch in the query must run
+  // before the generic pipe nps+sch SEO branch (otherwise Spec H2 collapses
+  // to "4 Inch Schedule 40" and loses the duty label).
+  if (
+    calculatorType === "psv-reaction-force" ||
+    route.slug === "psv-reaction-force"
+  ) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus} | ${brand}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `API 520 Part II PSV open-discharge reaction force screen for ${focus}.`;
+    const clipped =
+      description.length > 160
+        ? `${description.slice(0, 157).trimEnd()}…`
+        : description;
+    return {
+      title,
+      description: clipped,
+      h1: `${shortTitle} — ${focus}`,
+      h2: `${focus} PSV reaction force summary`,
+    };
+  }
+
+  if (
+    calculatorType === "non-metallic-gasket-b1621" ||
+    route.slug === "non-metallic-gasket-b1621"
+  ) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus} | ${brand}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `ASME B16.21 nonmetallic flat gasket OD/ID and VIII-1 App. 2 Wm2 screen for ${focus}.`;
+    const clipped =
+      description.length > 160
+        ? `${description.slice(0, 157).trimEnd()}…`
+        : description;
+    return {
+      title,
+      description: clipped,
+      h1: `${shortTitle} — ${focus}`,
+      h2: `${focus} B16.21 flat gasket summary`,
+    };
+  }
+
   if (q.nps && q.sch) {
     const size = humanNps(q.nps);
     const schedule = humanSch(q.sch);
@@ -2448,6 +2600,28 @@ export function buildSpecSeoCopy(
       description,
       h1: `Flange Gasket Stress — ${focus}`,
       h2: `${focus} stress summary`,
+    };
+  }
+
+  if (
+    calculatorType === "valve-wall-thickness-rating" ||
+    route.slug === "valve-wall-thickness-rating"
+  ) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus} | ${brand}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `ASME B16.34 Standard Class body minimum wall t_m and P-T rating screen for ${focus}.`;
+    const clipped =
+      description.length > 160
+        ? `${description.slice(0, 157).trimEnd()}…`
+        : description;
+    return {
+      title,
+      description: clipped,
+      h1: `${shortTitle} — ${focus}`,
+      h2: `${focus} valve wall & P-T rating summary`,
     };
   }
 
@@ -2664,6 +2838,94 @@ export function buildSpecSeoCopy(
       description: clipped,
       h1: `${shortTitle} — ${focus}`,
       h2: `${focus} L₁₀h rating life summary`,
+    };
+  }
+
+  if (
+    calculatorType === "lifting-lug-rigging-capacity" ||
+    route.slug === "lifting-lug-rigging-capacity"
+  ) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `ASME BTH-1 / AISC lifting lug capacity screening for ${focus} (bearing, tear-out, weld).`;
+    const clipped =
+      description.length > 160
+        ? `${description.slice(0, 157).trimEnd()}…`
+        : description;
+    return {
+      title,
+      description: clipped,
+      h1: `${shortTitle} — ${focus}`,
+      h2: `${focus} lifting lug capacity summary`,
+    };
+  }
+
+  if (
+    calculatorType === "steam-turbine-power-ssc" ||
+    route.slug === "steam-turbine-power-ssc"
+  ) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `ASME PTC 6 / IAPWS-IF97 steam turbine power and SSC screening for ${focus}.`;
+    const clipped =
+      description.length > 160
+        ? `${description.slice(0, 157).trimEnd()}…`
+        : description;
+    return {
+      title,
+      description: clipped,
+      h1: `${shortTitle} — ${focus}`,
+      h2: `${focus} steam turbine power & SSC summary`,
+    };
+  }
+
+  if (
+    calculatorType === "shaft-torque-key-sizing" ||
+    route.slug === "shaft-torque-key-sizing"
+  ) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `DIN 6885 / ASME B17.1 shaft torque and parallel-key shear/bearing screen for ${focus}.`;
+    const clipped =
+      description.length > 160
+        ? `${description.slice(0, 157).trimEnd()}…`
+        : description;
+    return {
+      title,
+      description: clipped,
+      h1: `${shortTitle} — ${focus}`,
+      h2: `${focus} shaft torque & key sizing summary`,
+    };
+  }
+
+  if (
+    calculatorType === "api2000-tank-venting" ||
+    route.slug === "api2000-tank-venting"
+  ) {
+    const focus = route.label;
+    const title = `${shortTitle} — ${focus}`;
+    const description =
+      metaDescription != null && metaDescription.length > 0
+        ? `${focus}: ${metaDescription}`
+        : `API Std 2000 7th Ed normal in/outbreathing and fire emergency venting for ${focus}.`;
+    const clipped =
+      description.length > 160
+        ? `${description.slice(0, 157).trimEnd()}…`
+        : description;
+    return {
+      title,
+      description: clipped,
+      h1: `${shortTitle} — ${focus}`,
+      h2: `${focus} tank venting rate summary`,
     };
   }
 

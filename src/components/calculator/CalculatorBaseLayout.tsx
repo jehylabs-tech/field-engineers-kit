@@ -132,7 +132,7 @@ export default function CalculatorBaseLayout({
         diagramSpan = "col-span-12 w-full min-w-0 self-start lg:col-span-4";
       }
     } else {
-      // 4:8 split — stretch equal-height cards when no side diagram
+      // 4:8 split ??stretch equal-height cards when no side diagram
       inputSpan = "col-span-12 flex w-full min-w-0 lg:col-span-4";
       resultSpan = "col-span-12 flex w-full min-w-0 lg:col-span-8";
       fieldMax = "[&_.calc-field]:max-w-none";

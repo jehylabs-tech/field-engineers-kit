@@ -9,6 +9,9 @@ type Props = {
   classLabel: string;
   groupLabel: string;
   unitSystem: "metric" | "imperial";
+  /** Override aria / title standard (default ASME B16.5 flange). */
+  standardLabel?: string;
+  footnote?: string;
 };
 
 const BAR_TO_PSI = 14.5037738;
@@ -20,6 +23,8 @@ export default function FlangePtRatingChart({
   classLabel,
   groupLabel,
   unitSystem,
+  standardLabel = "ASME B16.5",
+  footnote = "P-T rating curve · design point highlighted · ASME B16.5 Phase-1 table",
 }: Props) {
   const w = 440;
   const h = 220;
@@ -72,10 +77,10 @@ export default function FlangePtRatingChart({
         viewBox={`0 0 ${w} ${h}`}
         className="h-auto w-full"
         role="img"
-        aria-label={`${groupLabel} Class ${classLabel} flange pressure-temperature rating curve per ASME B16.5`}
+        aria-label={`${groupLabel} ${classLabel} pressure-temperature rating curve per ${standardLabel}`}
       >
         <title>
-          {`ASME B16.5 ${groupLabel} Class ${classLabel} P-T rating curve`}
+          {`${standardLabel} ${groupLabel} ${classLabel} P-T rating curve`}
         </title>
         {/* axes */}
         <line
@@ -166,7 +171,7 @@ export default function FlangePtRatingChart({
         />
       </svg>
       <p className="m-0 px-1 pb-1 text-center text-[11px] text-slate-500 dark:text-slate-400">
-        P-T rating curve · design point highlighted · ASME B16.5 Phase-1 table
+        {footnote}
       </p>
     </div>
   );

@@ -1,0 +1,36 @@
+{
+  "description": "DIN 6885-1 parallel key / keyway sizes by shaft diameter band (Form A screening). Dimensions in mm. t1 = shaft keyseat depth, t2 = hub keyseat depth.",
+  "standard": "DIN 6885-1",
+  "rows": [
+    { "dMinMm": 6, "dMaxMm": 8, "bMm": 2, "hMm": 2, "t1Mm": 1.2, "t2Mm": 1.0 },
+    { "dMinMm": 8, "dMaxMm": 10, "bMm": 3, "hMm": 3, "t1Mm": 1.8, "t2Mm": 1.4 },
+    { "dMinMm": 10, "dMaxMm": 12, "bMm": 4, "hMm": 4, "t1Mm": 2.5, "t2Mm": 1.8 },
+    { "dMinMm": 12, "dMaxMm": 17, "bMm": 5, "hMm": 5, "t1Mm": 3.0, "t2Mm": 2.3 },
+    { "dMinMm": 17, "dMaxMm": 22, "bMm": 6, "hMm": 6, "t1Mm": 3.5, "t2Mm": 2.8 },
+    { "dMinMm": 22, "dMaxMm": 30, "bMm": 8, "hMm": 7, "t1Mm": 4.0, "t2Mm": 3.3 },
+    { "dMinMm": 30, "dMaxMm": 38, "bMm": 10, "hMm": 8, "t1Mm": 5.0, "t2Mm": 3.3 },
+    { "dMinMm": 38, "dMaxMm": 44, "bMm": 12, "hMm": 8, "t1Mm": 5.0, "t2Mm": 3.3 },
+    { "dMinMm": 44, "dMaxMm": 50, "bMm": 14, "hMm": 9, "t1Mm": 5.5, "t2Mm": 3.8 },
+    { "dMinMm": 50, "dMaxMm": 58, "bMm": 16, "hMm": 10, "t1Mm": 6.0, "t2Mm": 4.3 },
+    { "dMinMm": 58, "dMaxMm": 65, "bMm": 18, "hMm": 11, "t1Mm": 7.0, "t2Mm": 4.4 },
+    { "dMinMm": 65, "dMaxMm": 75, "bMm": 20, "hMm": 12, "t1Mm": 7.5, "t2Mm": 4.9 },
+    { "dMinMm": 75, "dMaxMm": 85, "bMm": 22, "hMm": 14, "t1Mm": 9.0, "t2Mm": 5.4 },
+    { "dMinMm": 85, "dMaxMm": 95, "bMm": 25, "hMm": 14, "t1Mm": 9.0, "t2Mm": 5.4 },
+    { "dMinMm": 95, "dMaxMm": 110, "bMm": 28, "hMm": 16, "t1Mm": 10.0, "t2Mm": 6.4 },
+    { "dMinMm": 110, "dMaxMm": 130, "bMm": 32, "hMm": 18, "t1Mm": 11.0, "t2Mm": 7.4 },
+    { "dMinMm": 130, "dMaxMm": 150, "bMm": 36, "hMm": 20, "t1Mm": 12.0, "t2Mm": 8.4 },
+    { "dMinMm": 150, "dMaxMm": 170, "bMm": 40, "hMm": 22, "t1Mm": 13.0, "t2Mm": 9.4 },
+    { "dMinMm": 170, "dMaxMm": 200, "bMm": 45, "hMm": 25, "t1Mm": 15.0, "t2Mm": 10.4 },
+    { "dMinMm": 200, "dMaxMm": 230, "bMm": 50, "hMm": 28, "t1Mm": 17.0, "t2Mm": 11.4 },
+    { "dMinMm": 230, "dMaxMm": 260, "bMm": 56, "hMm": 32, "t1Mm": 20.0, "t2Mm": 12.4 },
+    { "dMinMm": 260, "dMaxMm": 290, "bMm": 63, "hMm": 32, "t1Mm": 20.0, "t2Mm": 12.4 },
+    { "dMinMm": 290, "dMaxMm": 330, "bMm": 70, "hMm": 36, "t1Mm": 22.0, "t2Mm": 14.4 },
+    { "dMinMm": 330, "dMaxMm": 380, "bMm": 80, "hMm": 40, "t1Mm": 25.0, "t2Mm": 15.4 },
+    { "dMinMm": 380, "dMaxMm": 440, "bMm": 90, "hMm": 45, "t1Mm": 28.0, "t2Mm": 17.4 },
+    { "dMinMm": 440, "dMaxMm": 500, "bMm": 100, "hMm": 50, "t1Mm": 31.0, "t2Mm": 19.5 }
+  ],
+  "notes": [
+    "Bands are exclusive on dMin and inclusive on dMax (dMin < d ≤ dMax), matching DIN 6885-1 published ranges.",
+    "For d = 50 mm use the 44–50 mm band (b×h = 14×9). For d = 65 mm use 58–65 mm (18×11)."
+  ]
+}

@@ -11942,7 +11942,1629 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
     ],
   },
 
+  "lifting-lug-rigging-capacity": {
+    slug: "lifting-lug-rigging-capacity",
+    formulaTitle: "Lifting Lug Capacity (ASME BTH-1 / AISC)",
+    formulaHtml:
+      '<p class="font-mono text-sm not-italic leading-relaxed text-slate-800 dark:text-slate-100 md:text-base">P<sub>t</sub> = W<sub>lift</sub>·IF / (N·cos θ) &nbsp;·&nbsp; P<sub>s</sub> = P<sub>t</sub>·sin θ</p>' +
+      '<p class="font-mono text-sm not-italic leading-relaxed text-slate-800 dark:text-slate-100 md:text-base">σ<sub>b</sub> = P<sub>t</sub>/(D<sub>pin</sub>·t) ≤ 1.25 F<sub>y</sub>/N<sub>d</sub> &nbsp;·&nbsp; τ<sub>tear</sub> = P<sub>t</sub>/(2·a·t) ≤ 0.40 F<sub>y</sub>/N<sub>d</sub></p>' +
+      '<p class="font-mono text-sm not-italic leading-relaxed text-slate-800 dark:text-slate-100 md:text-base">τ<sub>w</sub> = √[(P<sub>t</sub>/A<sub>w</sub>)² + (P<sub>s</sub>·h/S<sub>w</sub>)²] ≤ 0.30 F<sub>EXX</sub></p>' +
+      '<p class="eng-plain">ASME BTH-1-2023 Category B (N<sub>d</sub> = 2.0) · AISC lug practice · AWS D1.1 fillet · ASME B30.20 below-the-hook</p>',
+    formulaLatex:
+      "P_t=\\frac{W_{lift}\\cdot IF}{N\\cos\\theta},\\quad \\sigma_b=\\frac{P_t}{D_{pin} t}\\le\\frac{1.25 F_y}{N_d},\\quad \\tau_w=\\sqrt{\\left(\\frac{P_t}{A_w}\\right)^2+\\left(\\frac{P_s h}{S_w}\\right)^2}\\le 0.30 F_{EXX}",
+    formulaNotes:
+      "θ is sling angle from vertical (0–60°). Edge distance a = R_outer − D_hole/2. Weld throat uses both-face fillets: A_w = 2·0.707·w·L and S_w = 0.707·w·L²/3. Screening only — not a stamped BTH-1 / B30.20 design package.",
+    formulaHighlight: true,
+    formulaBadges: [
+      { label: "Standard", value: "ASME BTH-1" },
+      { label: "Category", value: "B · Nd = 2.0" },
+      { label: "Hero", value: "W_safe / lug" },
+      { label: "θ max", value: "60° from vertical" },
+    ],
+    variables: [
+      {
+        symbol: "W_lift",
+        name: "Total lift weight",
+        definition: "Static load to lift (kN or kip), before impact factor.",
+      },
+      {
+        symbol: "IF",
+        name: "Dynamic impact factor",
+        definition: "Multiplier on W_lift for dynamic / snatch effects (typically 1.0–2.0).",
+      },
+      {
+        symbol: "θ",
+        name: "Sling angle from vertical",
+        definition: "Angle between sling and vertical; limited to ≤ 60° in this screen.",
+      },
+      {
+        symbol: "N",
+        name: "Number of acting lugs",
+        definition: "Load-sharing pad eyes (1, 2, or 4).",
+      },
+      {
+        symbol: "P_t, P_s",
+        name: "Tension and shear per lug",
+        definition: "P_t = W·IF/(N·cos θ); P_s = P_t·sin θ.",
+      },
+      {
+        symbol: "σ_b",
+        name: "Pin-hole bearing stress",
+        definition: "P_t / (D_pin · t) compared to 1.25 F_y / Nd (BTH-1 Category B).",
+      },
+      {
+        symbol: "a",
+        name: "Edge distance",
+        definition: "a = R_outer − 0.5·D_hole for tear-out shear path.",
+      },
+      {
+        symbol: "τ_w",
+        name: "Combined fillet weld stress",
+        definition: "√[(P_t/A_w)² + (P_s·h/S_w)²] ≤ 0.30 F_EXX (both-face fillet).",
+      },
+    ],
+    standards: [
+      "ASME BTH-1-2023 — Design of Below-the-Hook Lifting Devices (Chapter 3 lug / pin)",
+      "AISC Steel Construction Manual 15th Ed. — Connections / lug plate practice",
+      "ASME B30.20-2021 — Below-the-Hook Lifting Devices",
+      "AWS D1.1 — Structural Welding Code — Steel (fillet weld sizing)",
+    ],
+    allowancesAndTolerances: {
+      title: "Screening rules & default duty (Category B)",
+      summary:
+        "Default metric duty: W = 150 kN, IF = 1.15, 2 lugs, θ = 30°, S355 plate 25 mm, hole 42 mm, pin 38 mm, both-face 12 mm fillet × 160 mm. Pass when bearing, tear-out, and weld unity ≤ 1.0 and θ ≤ 60°.",
+      items: [
+        {
+          label: "Design factor Nd",
+          value: "2.0 (Category B)",
+          description:
+            "Pin bearing allowable = 1.25 F_y / Nd; tear-out allowable = 0.40 F_y / Nd.",
+        },
+        {
+          label: "Sling angle",
+          value: "0° ≤ θ ≤ 60° from vertical",
+          description:
+            "θ > 60° fails this screen — use a spreader / lifting beam and stamped BTH-1 design.",
+        },
+        {
+          label: "Pin clearance",
+          value: "D_hole − D_pin ≤ 5 mm (0.2 in)",
+          description:
+            "Larger clearance may require BTH-1 local stress concentration review (Eq. 3-48 class).",
+        },
+        {
+          label: "Out of scope",
+          value: "Stamped lift plan / B30.20 device cert",
+          description:
+            "Fatigue, fracture toughness at low temperature, spreader beams, and OEM shackle charts are not certified here.",
+        },
+      ],
+    },
+    tableCaption:
+      "Illustrative ASME BTH-1 / AISC lifting-lug duties (this app — engine assert)",
+    tableHeaders: ["Case", "P_t / lug", "Governing notes"],
+    tableAllNumeric: false,
+    tableRows: [
+      [
+        "15 t · 2 lugs · 30° · S355 · t 25 mm · pin 38 mm",
+        "99.6 kN",
+        "Pass · weld unity 75% · W_safe/lug ≈ 100 kN",
+      ],
+      [
+        "50 t · 4 lugs · 45° · S355 · t 40 mm · pin 60 mm",
+        "212.1 kN",
+        "Pass · σ_b 88.4 MPa / allow 221.9 MPa",
+      ],
+      [
+        "30 kip · 2 lugs · 0° · A36 · t 0.75 in · pin 1.25 in",
+        "17.25 kip",
+        "Pass · σ_b ≈ 18.4 ksi",
+      ],
+      [
+        "100 kip · 4 lugs · 30° · A572-50 · t 1.5 in · pin 2 in",
+        "36.1 kip",
+        "Pass · weld governs · W_safe/lug ≈ 33 kip",
+      ],
+    ],
+    tableFootnote:
+      "P_t = W·IF/(N·cos θ). Weld model is both-face fillet at the lug base. Values are from the calculator engine, not LLM placeholders.",
+    materialLimitations: {
+      title: "Applicability & structural steel service limits",
+      summary:
+        "Ambient structural carbon steels (S275 / S355 / A36 / A572 Gr.50 / SA-516 Gr.70) with Category B Nd = 2.0. Not temperature-derated ASME Section II-D allowables.",
+      items: [
+        {
+          materialGroup: "S275 / S355 (EN 10025-2 class)",
+          temperatureLimit: "Screening −20 °C to +100 °C ambient",
+          stressLimit: "Fy from structural-steel-properties.json",
+          notes:
+            "Below −20 °C, confirm toughness / impact requirements for the lift. Above +100 °C, re-rate yield and weld allowables.",
+        },
+        {
+          materialGroup: "ASTM A36 / A572 Gr.50",
+          temperatureLimit: "Screening −20 °C to +100 °C ambient",
+          stressLimit: "Fy 36 ksi / 50 ksi class",
+          notes:
+            "Use mill cert Fy when thicker plate derates yield. Not a substitute for project fracture-critical review.",
+        },
+        {
+          materialGroup: "Fillet weld E70XX / E80XX",
+          temperatureLimit: "Match electrode to base-metal service",
+          stressLimit: "τ_w ≤ 0.30 F_EXX",
+          notes:
+            "Both-face fillet assumed along base length L. One-sided welds or intermittent fillets need separate review.",
+        },
+      ],
+      codeRestrictions: [
+        "Field screening only — not a stamped ASME BTH-1 or B30.20 design package.",
+        "Sling angle > 60° from vertical is out of scope; use a spreader beam.",
+        "Shackle WLL shown is a Grade 80 pin-diameter reference, not a certified rigging selection.",
+        "Export / PDF is a duty worksheet — verify final geometry with qualified lift engineering.",
+      ],
+    },
+    workedExample: {
+      title:
+        "Step-by-Step Worked Example: 15 t · 2 Lugs · 30° · S355 Metric",
+      scenario:
+        "Screen a pad-eye for W_lift = 150 kN, IF = 1.15, two acting lugs, sling angle 30° from vertical, S355 plate t = 25 mm, R_outer = 80 mm, D_hole = 42 mm, D_pin = 38 mm, hole height 150 mm, both-face 12 mm fillet × 160 mm, E70XX (F_EXX = 485 MPa), ASME BTH-1 Category B Nd = 2.0.",
+      designConditions: [
+        { label: "W_lift / IF / N", value: "150 kN / 1.15 / 2" },
+        { label: "θ", value: "30° from vertical" },
+        { label: "Plate", value: "S355 · t = 25 mm · R = 80 mm" },
+        { label: "Pin / hole", value: "D_pin = 38 mm · D_hole = 42 mm" },
+        { label: "Weld", value: "12 mm fillet × 160 mm both faces · E70XX" },
+      ],
+      steps: [
+        {
+          step: "Step 1",
+          name: "Sling tension and shear per lug",
+          formula: "P_t=W\\cdot IF/(N\\cos\\theta)",
+          calculation:
+            "W_design = 150×1.15 = 172.5 kN. P_t = 172.5/(2·cos 30°) ≈ 99.6 kN. P_s = 99.6·sin 30° ≈ 49.8 kN.",
+          result: "P_t ≈ 99.6 kN · P_s ≈ 49.8 kN",
+        },
+        {
+          step: "Step 2",
+          name: "Pin-hole bearing vs allowable",
+          formula: "\\sigma_b=P_t/(D_{pin} t)\\le 1.25 F_y/N_d",
+          calculation:
+            "σ_b = 99.6×10³/(38×25) ≈ 104.8 MPa. Allowable = 1.25×355/2 = 221.9 MPa → unity ≈ 47%.",
+          result: "σ_b ≈ 104.8 MPa (Pass)",
+        },
+        {
+          step: "Step 3",
+          name: "Tear-out and both-face weld",
+          formula: "\\tau_w=\\sqrt{(P_t/A_w)^2+(P_s h/S_w)^2}",
+          calculation:
+            "a = 80 − 21 = 59 mm. Tear-out unity ≈ 48%. Both-face A_w and S_w give τ_w ≈ 109.5 MPa vs 0.30×485 = 145.5 MPa → weld unity ≈ 75% (governs). W_safe/lug ≈ 100 kN.",
+          result: "Pass · weld governs · W_safe/lug ≈ 100 kN",
+          note: "Open /15ton-2lugs-30deg-s355-metric for the live default case.",
+        },
+      ],
+      conclusion:
+        "For the default 15 t · 2-lug · 30° · S355 duty, P_t is about 99.6 kN per lug. Bearing and tear-out run near 47–48% unity; both-face fillet weld at ~75% governs. Status is Pass with safe lift capacity per lug near 100 kN under Category B Nd = 2.0.",
+    },
+    ...howTo("How to screen lifting lug capacity (BTH-1 / AISC)", [
+      {
+        name: "1. Enter lift duty",
+        text: "Set total lift weight, impact factor, number of acting lugs, and sling angle from vertical (keep θ ≤ 60°).",
+      },
+      {
+        name: "2. Enter lug geometry and steel",
+        text: "Input plate thickness, outer radius, pin hole and shackle pin diameters, hole height, and select S275/S355/A36/A572-50/SA-516-70.",
+      },
+      {
+        name: "3. Set base fillet weld",
+        text: "Enter fillet leg size, weld length along the base, and electrode (E70XX or E80XX). The engine assumes both-face fillets.",
+      },
+      {
+        name: "4. Read W_safe/lug and unities",
+        text: "Hero shows safe lift capacity per lug. Summary chips show bearing, tear-out, and weld unity. Pass means all ≤ 100% and θ ≤ 60°.",
+      },
+    ]),
+    faq: [
+      {
+        question: "What is ASME BTH-1 Design Category B?",
+        answer:
+          "**Category B** uses design factor **Nd = 2.0** on yield for the pin-hole bearing and related lug-plate checks in this screen (ASME BTH-1).",
+      },
+      {
+        question: "Why is sling angle limited to 60° from vertical?",
+        answer:
+          "Angles **above 60°** produce large lateral loads and buckling risk outside this pad-eye screen. Use a **spreader / lifting beam** and a stamped BTH-1 design.",
+      },
+      {
+        question: "Is the weld check one-face or both-face?",
+        answer:
+          "This app models **both-face** fillet welds along the lug base (**A_w = 2 · 0.707 · w · L**), which is standard pad-eye practice.",
+      },
+      {
+        question: "Does Pass mean I can lift without further review?",
+        answer:
+          "**No.** Pass is a **field screening** result only. Confirm **ASME B30.20**, site lift plan, shackle OEM charts, and qualified engineering before the lift.",
+      },
+    ],
+  },
+
+  "steam-turbine-power-ssc": {
+    slug: "steam-turbine-power-ssc",
+    formulaTitle: "Steam Turbine Power & SSC (ASME PTC 6 / IAPWS-IF97)",
+    formulaHtml:
+      '<p class="font-mono text-sm not-italic leading-relaxed text-slate-800 dark:text-slate-100 md:text-base">h<sub>2s</sub> = f<sub>IF97</sub>(P<sub>2</sub>, s<sub>1</sub>) &nbsp;·&nbsp; Δh<sub>ideal</sub> = h<sub>1</sub> − h<sub>2s</sub></p>' +
+      '<p class="font-mono text-sm not-italic leading-relaxed text-slate-800 dark:text-slate-100 md:text-base">h<sub>2</sub> = h<sub>1</sub> − η<sub>is</sub>·Δh<sub>ideal</sub> &nbsp;·&nbsp; W<sub>elec</sub> = ṁ·(h<sub>1</sub>−h<sub>2</sub>)·η<sub>mech</sub>·η<sub>gen</sub></p>' +
+      '<p class="font-mono text-sm not-italic leading-relaxed text-slate-800 dark:text-slate-100 md:text-base">SSC = ṁ / W<sub>elec</sub> &nbsp;·&nbsp; Heat rate ≈ SSC·(h<sub>1</sub> − h<sub>fw</sub>)</p>' +
+      '<p class="eng-plain">ASME PTC 6 · IAPWS-IF97 Region 1 / 2 / 4 — single-pressure screening (no reheat / extraction)</p>',
+    formulaLatex:
+      "h_{2s}=f_{IF97}(P_2,s_1),\\quad h_2=h_1-\\eta_{is}(h_1-h_{2s}),\\quad W_{elec}=\\dot{m}(h_1-h_2)\\eta_{mech}\\eta_{gen},\\quad SSC=\\dot{m}/W_{elec}",
+    formulaNotes:
+      "Inlet state from Region 2 (P₁, T₁). Isentropic exhaust from (P₂, s₁) on the wet dome or Region 2. Feedwater enthalpy for heat-rate screening is saturated liquid hf at P₂. No reheat or multi-extraction heat balance.",
+    formulaHighlight: true,
+    formulaBadges: [
+      { label: "Standard", value: "ASME PTC 6" },
+      { label: "Steam", value: "IAPWS-IF97" },
+      { label: "Hero", value: "W_elec" },
+      { label: "SSC", value: "kg/kWh · lb/kWh" },
+    ],
+    variables: [
+      {
+        symbol: "P₁, T₁",
+        name: "Inlet steam pressure & temperature",
+        definition: "Absolute inlet pressure and temperature (barA/°C or psia/°F).",
+      },
+      {
+        symbol: "P₂",
+        name: "Exhaust / condensing pressure",
+        definition: "Absolute back pressure or condenser pressure.",
+      },
+      {
+        symbol: "ṁ",
+        name: "Main steam mass flow",
+        definition: "t/h (metric) or lb/h (imperial).",
+      },
+      {
+        symbol: "η_is",
+        name: "Isentropic internal efficiency",
+        definition: "Fraction of ideal enthalpy drop realized in the expansion.",
+      },
+      {
+        symbol: "η_mech, η_gen",
+        name: "Mechanical & generator efficiency",
+        definition: "Shaft and electrical conversion efficiencies.",
+      },
+      {
+        symbol: "W_elec",
+        name: "Electrical power output",
+        definition: "Generator terminal power (MW).",
+      },
+      {
+        symbol: "SSC",
+        name: "Specific steam consumption",
+        definition: "Steam mass per unit electrical energy (kg/kWh or lb/kWh).",
+      },
+      {
+        symbol: "h_fw",
+        name: "Feedwater / condensate enthalpy",
+        definition: "Screening uses saturated liquid hf at P₂.",
+      },
+    ],
+    standards: [
+      "ASME PTC 6-2004 (R2014) — Steam Turbines Performance Test Codes",
+      "IAPWS-IF97 — Industrial Formulation 1997 for Water and Steam (Regions 1, 2, 4)",
+    ],
+    allowancesAndTolerances: {
+      title: "Screening rules & default duty (PTC 6)",
+      summary:
+        "Default metric duty: P₁ = 60 barA, T₁ = 480 °C, P₂ = 0.1 barA, ṁ = 50 t/h, η_is = 80%, η_mech = 98%, η_gen = 97%. Engine assert: W_elec ≈ 12.84 MW, SSC ≈ 3.90 kg/kWh.",
+      items: [
+        {
+          label: "Expansion model",
+          value: "Single pressure",
+          description:
+            "No reheat or multi-stage extraction — use a process simulator for cogeneration heat balances.",
+        },
+        {
+          label: "Inlet state",
+          value: "Superheated Region 2",
+          description:
+            "T₁ must be at or above Tsat(P₁). Wet inlet is out of scope.",
+        },
+        {
+          label: "Exhaust moisture",
+          value: "Warn > ~12%",
+          description:
+            "Higher wetness increases L-0 blade erosion risk — raise P₂ or T₁ or confirm OEM limits.",
+        },
+        {
+          label: "Out of scope",
+          value: "Reheat / extraction / supercritical",
+          description:
+            "Critical and supercritical cycles, gland leakage, and part-load maps are not included.",
+        },
+      ],
+    },
+    tableCaption:
+      "Illustrative PTC 6 / IAPWS-IF97 turbine duties (this app — engine assert)",
+    tableHeaders: ["Case", "W_elec", "SSC"],
+    tableAllNumeric: false,
+    tableRows: [
+      [
+        "60 barA · 480 °C · 50 t/h · η_is 80%",
+        "12.84 MW",
+        "3.90 kg/kWh",
+      ],
+      [
+        "100 barA · 540 °C · 100 t/h · η_is 84%",
+        "30.76 MW",
+        "3.25 kg/kWh",
+      ],
+      [
+        "850 psia · 850 °F · 100 klb/h · η_is 80%",
+        "11.25 MW",
+        "8.89 lb/kWh",
+      ],
+      [
+        "1200 psia · 950 °F · 200 klb/h · η_is 82%",
+        "24.76 MW",
+        "8.08 lb/kWh",
+      ],
+    ],
+    tableFootnote:
+      "W_elec = ṁ·Δh_actual·η_mech·η_gen with IAPWS-IF97 states. Values are from the calculator engine, not LLM placeholders.",
+    materialLimitations: {
+      title: "Applicability & IAPWS-IF97 / PTC 6 limits",
+      summary:
+        "Industrial water/steam within the IAPWS-IF97 formulation used by this app (Region 1 liquid, Region 2 vapor, Region 4 saturation). Screening temperatures 100–600 °C and pressures within the calculator ranges — not a full ASME steam-table / OEM acceptance test.",
+      items: [
+        {
+          materialGroup: "Water / steam (IAPWS-IF97 Regions 1, 2, 4)",
+          temperatureLimit: "Screening 100 °C to 600 °C (IF97 industrial up to ~800 °C)",
+          stressLimit: "P up to ~220 barA screening (IF97 industrial to 100 MPa)",
+          notes:
+            "Supercritical and ultra-supercritical states are out of this Region 2/4 screen.",
+        },
+        {
+          materialGroup: "Condensing / back-pressure single-pressure turbines",
+          temperatureLimit: "Exhaust P₂ 0.02–30 barA",
+          stressLimit: "N/A — thermodynamic screen",
+          notes:
+            "Extraction / reheat machines need a multi-node heat balance beyond this tool.",
+        },
+        {
+          materialGroup: "Wet exhaust / L-0 blade erosion regime",
+          temperatureLimit: "N/A",
+          stressLimit: "Moisture warn ≈ 12%",
+          notes:
+            "Confirm OEM wetness / Baumann factor practice for final-stage blades.",
+        },
+      ],
+      codeRestrictions: [
+        "Field screening only — not a stamped ASME PTC 6 acceptance test report.",
+        "No reheat, feedwater heaters, or extraction steam accounting.",
+        "Heat rate uses condensate hf at P₂ as h_fw — not a full plant heat-rate guarantee.",
+        "Export / PDF is a duty worksheet — verify with OEM heat-balance software.",
+      ],
+    },
+    workedExample: {
+      title:
+        "Step-by-Step Worked Example: 60 barA · 480 °C · 50 t/h Metric",
+      scenario:
+        "Screen a single-pressure condensing steam turbine at P₁ = 60 barA, T₁ = 480 °C, P₂ = 0.1 barA, ṁ = 50 t/h, η_is = 80%, η_mech = 98%, η_gen = 97% using IAPWS-IF97 states.",
+      designConditions: [
+        { label: "P₁ / T₁", value: "60 barA / 480 °C" },
+        { label: "P₂", value: "0.1 barA" },
+        { label: "ṁ", value: "50 t/h" },
+        { label: "η_is / η_mech / η_gen", value: "80% / 98% / 97%" },
+      ],
+      steps: [
+        {
+          step: "Step 1",
+          name: "Inlet enthalpy and entropy",
+          formula: "h_1,s_1=f_{IF97}(P_1,T_1)",
+          calculation:
+            "Region 2 at 6.0 MPa, 753.15 K gives h₁ ≈ 3375 kJ/kg and s₁ ≈ 6.76 kJ/kg·K.",
+          result: "h₁ ≈ 3375 kJ/kg",
+        },
+        {
+          step: "Step 2",
+          name: "Isentropic exhaust and actual drop",
+          formula: "h_2=h_1-\\eta_{is}(h_1-h_{2s})",
+          calculation:
+            "At P₂ = 0.01 MPa with s = s₁, h₂s ≈ 2160 kJ/kg (wet). Δh_ideal ≈ 1215 kJ/kg. With η_is = 0.80, Δh_actual ≈ 972 kJ/kg and h₂ ≈ 2403 kJ/kg.",
+          result: "Δh_actual ≈ 972 kJ/kg",
+        },
+        {
+          step: "Step 3",
+          name: "Electrical power and SSC",
+          formula: "W_{elec}=\\dot{m}\\Delta h\\eta_{mech}\\eta_{gen}",
+          calculation:
+            "ṁ = 50 000 kg/h. W_shaft ≈ ṁ/3600·972·0.98 ≈ 13.23 MW shaft. W_elec ≈ 12.84 MW. SSC = 50 000 / 12 836 ≈ 3.90 kg/kWh.",
+          result: "W_elec ≈ 12.84 MW · SSC ≈ 3.90 kg/kWh",
+          note: "Open /60bar-480c-50th-metric for the live default case.",
+        },
+      ],
+      conclusion:
+        "For the default 60 barA · 480 °C · 50 t/h duty, electrical output is about 12.84 MW with SSC ≈ 3.90 kg/kWh under Category PTC 6 / IAPWS-IF97 screening (exhaust moisture under the 12% warn band).",
+    },
+    ...howTo("How to calculate steam turbine power and SSC", [
+      {
+        name: "1. Enter inlet steam",
+        text: "Set absolute inlet pressure and temperature (must be superheated vs Tsat).",
+      },
+      {
+        name: "2. Enter exhaust pressure and flow",
+        text: "Set condenser / back pressure and main steam mass flow (t/h or lb/h).",
+      },
+      {
+        name: "3. Set efficiencies",
+        text: "Enter isentropic, mechanical, and generator efficiencies in percent.",
+      },
+      {
+        name: "4. Read W_elec and SSC",
+        text: "Hero shows electrical MW. Badges show SSC and ideal enthalpy drop. Check moisture callout if wetness is high.",
+      },
+    ]),
+    faq: [
+      {
+        question: "What is specific steam consumption (SSC)?",
+        answer:
+          "**SSC** is the main steam mass required per unit **electrical** energy — **kg/kWh** (metric) or **lb/kWh** (imperial).",
+      },
+      {
+        question: "Does this include reheat or extractions?",
+        answer:
+          "**No.** This is a **single-pressure** expansion screen. Reheat and multi-extraction balances need OEM / process-simulator heat balances.",
+      },
+      {
+        question: "How is heat rate defined here?",
+        answer:
+          "Screening heat rate ≈ **SSC · (h₁ − h_fw)** with **h_fw = hf(P₂)** condensate enthalpy — not a full plant heat-rate guarantee.",
+      },
+      {
+        question: "When is exhaust moisture a concern?",
+        answer:
+          "Above about **12%** moisture, last-stage (**L-0**) blade **erosion** risk rises — raise exhaust pressure or inlet temperature, or confirm OEM wetness limits.",
+      },
+    ],
+  },
+
+  "shaft-torque-key-sizing": {
+    slug: "shaft-torque-key-sizing",
+    formulaTitle: "Shaft Torque & Parallel Key Shear/Bearing (DIN 6885 / ASME B17.1)",
+    formulaHtml:
+      '<p class="font-mono text-sm not-italic leading-relaxed text-slate-800 dark:text-slate-100 md:text-base">T = P·9549/n &nbsp;(N·m) &nbsp;·&nbsp; T = HP·63025/n &nbsp;(in·lbf)</p>' +
+      '<p class="font-mono text-sm not-italic leading-relaxed text-slate-800 dark:text-slate-100 md:text-base">τ<sub>key</sub> = 2T/(d·b·L) ≤ 0.577·F<sub>y</sub>/S.F. &nbsp;·&nbsp; σ<sub>b</sub> = 2T/(d·h<sub>1</sub>·L) ≤ F<sub>y</sub>/S.F.</p>' +
+      '<p class="eng-plain">DIN 6885-1 · ISO R773 · ASME/ANSI B17.1 · ANSI/AGMA 6001 — pure torsion screening</p>',
+    formulaLatex:
+      "T=\\frac{P\\cdot 9549}{n},\\quad \\tau_{key}=\\frac{2T}{d\\,b\\,L}\\le\\frac{0.577 F_{y}}{S.F.},\\quad \\sigma_{b}=\\frac{2T}{d\\,h_1\\,L}\\le\\frac{F_{y}}{S.F.}",
+    formulaNotes:
+      "Transmitted torque from shaft power and speed. Parallel-key shear and bearing (compressive) stress use engagement length L with h₁ ≈ 0.5·h. Allowables use von Mises shear factor 0.577·Fy/S.F. and Fy/S.F. Metric key sizes follow DIN 6885-1 by shaft diameter band; imperial uses ASME B17.1 square-key screening sizes. Pure torsion only — bending from overhang and keyseat Kt fatigue are out of scope.",
+    formulaHighlight: true,
+    formulaBadges: [
+      { label: "Standard", value: "DIN 6885-1" },
+      { label: "Hero", value: "T + Pass/Fail" },
+      { label: "h₁", value: "≈ 0.5·h" },
+      { label: "τ_allow", value: "0.577·Fy/SF" },
+    ],
+    variables: [
+      {
+        symbol: "P",
+        name: "Shaft / motor power",
+        definition: "Transmitted power — kW (metric) or HP (imperial).",
+      },
+      {
+        symbol: "n",
+        name: "Rotational speed",
+        definition: "Operating speed (rpm).",
+      },
+      {
+        symbol: "T",
+        name: "Transmitted torque",
+        definition: "T = P·9549/n (N·m) or HP·63025/n (in·lbf).",
+      },
+      {
+        symbol: "d",
+        name: "Shaft diameter",
+        definition: "Shaft OD at the keyseat (mm or in).",
+      },
+      {
+        symbol: "b, h",
+        name: "Key width and height",
+        definition:
+          "Parallel key cross-section from DIN 6885-1 (metric) or ASME B17.1 square key (imperial), or manual override.",
+      },
+      {
+        symbol: "h₁",
+        name: "Keyseat depth in shaft",
+        definition:
+          "Bearing contact depth approximated as h₁ ≈ 0.5·h for compressive stress.",
+      },
+      {
+        symbol: "L",
+        name: "Key engagement length",
+        definition: "Effective parallel-key length in the hub (mm or in).",
+      },
+      {
+        symbol: "F_y",
+        name: "Key / shaft yield strength",
+        definition:
+          "Ambient screening yield — S45C/AISI 1045 ≈ 345 MPa; SCM440/AISI 4140 ≈ 655 MPa; SUS304 ≈ 205 MPa.",
+      },
+      {
+        symbol: "S.F.",
+        name: "Service / safety factor",
+        definition: "Design factor on allowables (typical 1.5–3.0).",
+      },
+    ],
+    standards: [
+      "DIN 6885-1 — Drive type fastenings without taper; parallel keys",
+      "ISO R773 — Rectangular and square parallel keys and their keyways",
+      "ASME/ANSI B17.1-1967 (R2013) — Keys and keyseats",
+      "ANSI/AGMA 6001-E08 — Design guide for shafts and keys",
+    ],
+    allowancesAndTolerances: {
+      title: "Screening rules & default duty",
+      summary:
+        "Default metric duty: 45 kW · 1750 rpm · Ø50 mm · S45C shaft/key · DIN 6885 14×9 mm · L = 50 mm · S.F. = 2.0. Pass when key shear and bearing unities ≤ 1.0 and engagement L ≥ L_min = max(L_shear,min, L_bearing,min).",
+      items: [
+        {
+          label: "Torque",
+          value: "T = P·9549/n",
+          description:
+            "Metric N·m from kW and rpm. Imperial uses T = HP·63025/n (in·lbf).",
+        },
+        {
+          label: "Key allowables",
+          value: "τ = 0.577·Fy/SF · σ_b = Fy/SF",
+          description:
+            "von Mises shear factor on key yield; bearing allowable equals Fy/S.F.",
+        },
+        {
+          label: "Keyseat depth h₁",
+          value: "≈ 0.5·h",
+          description:
+            "Compressive stress uses half key height (h₁ ≈ 0.5·h). Diagram shows shaft seat h₁ and hub seat h₂ (DIN t2 when available).",
+        },
+        {
+          label: "Recommended L band",
+          value: "0.9·d ≤ L ≤ 1.5·d",
+          description:
+            "DIN 6885-1 typical hub engagement band — not a hard pass/fail gate.",
+        },
+        {
+          label: "Out of scope",
+          value: "Bending · Kt fatigue",
+          description:
+            "Overhang bending moment, combined von Mises shaft stress, and keyseat stress concentration (Kt ≈ 2–3) are not evaluated.",
+        },
+      ],
+    },
+    tableCaption:
+      "DIN 6885-1 parallel key sizes by shaft diameter band (mm) — screening lookup in this app",
+    tableHeaders: ["Shaft d (mm)", "b × h (mm)", "t1 / t2 (mm)"],
+    tableAllNumeric: false,
+    tableRows: [
+      ["Over 22 to 30", "8 × 7", "4.0 / 3.3"],
+      ["Over 30 to 38", "10 × 8", "5.0 / 3.3"],
+      ["Over 38 to 44", "12 × 8", "5.0 / 3.3"],
+      ["Over 44 to 50", "14 × 9", "5.5 / 3.8"],
+      ["Over 50 to 58", "16 × 10", "6.0 / 4.3"],
+      ["Over 58 to 65", "18 × 11", "7.0 / 4.4"],
+      ["Over 65 to 75", "20 × 12", "7.5 / 4.9"],
+      ["Over 75 to 85", "22 × 14", "9.0 / 5.4"],
+      ["Over 85 to 95", "25 × 14", "9.0 / 5.4"],
+      ["Over 95 to 110", "28 × 16", "10.0 / 6.4"],
+      ["Over 110 to 130", "32 × 18", "11.0 / 7.4"],
+      ["Over 130 to 150", "36 × 20", "12.0 / 8.4"],
+    ],
+    tableFootnote:
+      "Bands follow DIN 6885-1 Form A screening (dMin < d ≤ dMax). Confirm OEM / finished keyseat drawings for final selection. Imperial duties use ASME B17.1 square-key sizes by shaft diameter.",
+    materialLimitations: {
+      title: "Applicability & allowable stress limits",
+      summary:
+        "Ambient yield screening for carbon / alloy / stainless shaft and key steels. Temperature derating, notch sensitivity, and surface finish factors are not applied. τ_allow = 0.577·Fy/S.F.; σ_b,allow = Fy/S.F.",
+      items: [
+        {
+          materialGroup: "S45C / AISI 1045 class",
+          stressLimit: "Fy ≈ 345 MPa (50 ksi)",
+          notes:
+            "Default shaft and key material. Ambient min-yield screening — confirm mill cert for tempered condition.",
+        },
+        {
+          materialGroup: "SCM440 / AISI 4140 QT class",
+          stressLimit: "Fy ≈ 655 MPa (95 ksi)",
+          notes:
+            "Higher-strength alloy shaft option. Key often remains S45C/1045 — check galvanic / hardness mismatch.",
+        },
+        {
+          materialGroup: "SUS304 / SS304",
+          stressLimit: "Fy ≈ 205 MPa (30 ksi)",
+          notes:
+            "Austenitic stainless screening yield. Expect longer L_min vs carbon steel at the same torque.",
+        },
+        {
+          materialGroup: "Service regime",
+          notes:
+            "Pure torsion parallel-key screen only. Pump/motor overhang bending and reversing fatigue need separate Kt-based review.",
+        },
+      ],
+      codeRestrictions: [
+        "Not a certified AGMA / OEM shaft design — field screening against DIN 6885 / ASME B17.1 geometry and basic stress formulas.",
+        "Do not substitute for detailed shaft FEA or OEM coupling hub charts when bending or shock loads dominate.",
+      ],
+    },
+    workedExample: {
+      title: "Worked example — 45 kW · 1750 rpm · Ø50 mm · S45C",
+      scenario:
+        "Screen a motor shaft at 45 kW, 1750 rpm with a 50 mm diameter S45C shaft and DIN 6885 14×9 mm parallel key, L = 50 mm, S.F. = 2.0.",
+      designConditions: [
+        { label: "Power P", value: "45 kW" },
+        { label: "Speed n", value: "1750 rpm" },
+        { label: "Shaft d", value: "50 mm" },
+        { label: "Key b × h", value: "14 × 9 mm (DIN 6885)" },
+        { label: "Key length L", value: "50 mm" },
+        { label: "Materials", value: "S45C shaft & key · Fy = 345 MPa" },
+        { label: "S.F.", value: "2.0" },
+      ],
+      steps: [
+        {
+          step: "1",
+          name: "Transmitted torque",
+          formula: "T = P·9549/n",
+          calculation: "T = 45·9549/1750",
+          result: "T = 245.5 N·m",
+        },
+        {
+          step: "2",
+          name: "Key allowables",
+          formula: "τ_allow = 0.577·Fy/SF · σ_allow = Fy/SF",
+          calculation: "τ_allow = 0.577·345/2 · σ_allow = 345/2",
+          result: "τ_allow ≈ 99.5 MPa · σ_allow = 172.5 MPa",
+        },
+        {
+          step: "3",
+          name: "Key stresses at L = 50 mm",
+          formula: "τ = 2T/(d·b·L) · σ_b = 2T/(d·h₁·L) · h₁ = 0.5·h",
+          calculation:
+            "h₁ = 4.5 mm · τ = 2·245.5·1000/(50·14·50) · σ_b = 2·245.5·1000/(50·4.5·50)",
+          result: "τ_key ≈ 14.0 MPa (14% unity) · σ_b ≈ 43.7 MPa (25% unity)",
+        },
+        {
+          step: "4",
+          name: "Minimum key length",
+          formula: "L_min = max(L_shear,min, L_bearing,min)",
+          calculation:
+            "L_bearing,min = 2·T·SF·1000/(d·h₁·σ_allow) governs",
+          result: "L_min ≈ 25.3 mm · Pass (L = 50 mm ≥ L_min)",
+          note: "Open /45kw-1750rpm-d50mm-s45c-metric for the live default case.",
+        },
+      ],
+      conclusion:
+        "For the default 45 kW · 1750 rpm · Ø50 mm · S45C duty, transmitted torque is 245.5 N·m with key check Pass. Governing minimum key length is about 25.3 mm (bearing), well below the 50 mm engagement.",
+    },
+    ...howTo("How to size shaft torque and a parallel key", [
+      {
+        name: "1. Enter power and speed",
+        text: "Set shaft power (kW or HP) and rotational speed (rpm) to compute transmitted torque T.",
+      },
+      {
+        name: "2. Enter shaft diameter and materials",
+        text: "Set shaft OD and select shaft/key steels (S45C/1045, SCM440/4140, or SUS304).",
+      },
+      {
+        name: "3. Select key size",
+        text: "Use DIN 6885 (metric) or ASME B17.1 (imperial) auto lookup, or enter b×h manually. Set engagement length L and S.F.",
+      },
+      {
+        name: "4. Read torque and key check",
+        text: "Hero shows T and Pass/Fail. Summary shows L_min and shear/bearing unities. Increase L or key size if Fail.",
+      },
+    ]),
+    faq: [
+      {
+        question: "How is transmitted torque calculated?",
+        answer:
+          "**Metric:** T (N·m) = **P(kW)·9549/n**. **Imperial:** T (in·lbf) = **HP·63025/n**.",
+      },
+      {
+        question: "Which key standard applies?",
+        answer:
+          "**Metric** duties look up **DIN 6885-1** parallel keys by shaft diameter band. **Imperial** duties use **ASME B17.1** square-key screening sizes. Manual b×h overrides either table.",
+      },
+      {
+        question: "What does key check Pass mean?",
+        answer:
+          "**Pass** means key **shear** and **bearing** unities are ≤ **1.0** and engagement **L ≥ L_min** = max(L_shear,min, L_bearing,min) under the stated S.F.",
+      },
+      {
+        question: "Does this cover shaft bending from overhang?",
+        answer:
+          "**No.** This is **pure torsion** screening. Significant overhang moments need combined (von Mises) stress and keyseat **Kt ≈ 2–3** fatigue review.",
+      },
+    ],
+  },
+
+  "api2000-tank-venting": {
+    slug: "api2000-tank-venting",
+    formulaTitle: "API 2000 Normal & Emergency Tank Venting (§3.3 / §3.4)",
+    formulaHtml:
+      '<p class="font-mono text-sm not-italic leading-relaxed text-slate-800 dark:text-slate-100 md:text-base">V<sub>out,liq</sub> = 1.01·V<sub>pump-in</sub> &nbsp;·&nbsp; V<sub>in,liq</sub> = 0.94·V<sub>pump-out</sub></p>' +
+      '<p class="font-mono text-sm not-italic leading-relaxed text-slate-800 dark:text-slate-100 md:text-base">V<sub>out,th</sub> = 0.8·V<sup>0.9</sup>·C<sub>lat</sub>·Y &nbsp;·&nbsp; V<sub>in,th</sub> = 3.0·V<sup>0.7</sup>·C<sub>lat</sub></p>' +
+      '<p class="font-mono text-sm not-italic leading-relaxed text-slate-800 dark:text-slate-100 md:text-base">Q = 43.2·A<sub>w</sub><sup>0.82</sup>·F &nbsp;·&nbsp; V<sub>emer</sub> = (Q/L<sub>v</sub>)·√(70.6/M)·1234</p>' +
+      '<p class="eng-plain">API Std 2000 7th Edition (2014/R2020) — free-air Nm³/h screening for API 650/620 class tanks</p>',
+    formulaLatex:
+      "V_{out}=1.01 V_{in}+0.8 V^{0.9} C_{lat} Y,\\quad Q=43.2 A_w^{0.82} F,\\quad V_{emer}=(Q/L_v)\\sqrt{70.6/M}\\cdot 1234",
+    formulaNotes:
+      "Normal outbreathing is liquid pump-in displacement plus thermal expansion. Normal inbreathing is liquid pump-out plus thermal contraction. Fire emergency uses wetted lateral area with H_wett ≤ 9.14 m (30 ft). Rates are free-air equivalents for PVRV / hatch screening — not certified OEM selection.",
+    formulaHighlight: true,
+    formulaBadges: [
+      { label: "Standard", value: "API 2000 7th" },
+      { label: "Hero", value: "V_out · V_emer" },
+      { label: "H_wett max", value: "9.14 m" },
+      { label: "Y (volatile)", value: "1.0" },
+    ],
+    variables: [
+      {
+        symbol: "V",
+        name: "Tank capacity",
+        definition: "Vertical cylinder volume π/4·D²·H (m³ or bbl).",
+      },
+      {
+        symbol: "V_pump-in / out",
+        name: "Max liquid transfer rates",
+        definition: "Maximum filling and emptying rates (m³/h or GPM).",
+      },
+      {
+        symbol: "C_lat",
+        name: "Latitude factor",
+        definition: "1.0 below 42° latitude; 0.65 at or above 42°.",
+      },
+      {
+        symbol: "Y",
+        name: "Product / volatility factor",
+        definition:
+          "Table 1 class factor on thermal outbreathing — 1.0 for flash point < 37.8 °C; 0.5 for higher flash.",
+      },
+      {
+        symbol: "A_w",
+        name: "Wetted surface area",
+        definition: "π·D·H_wett with H_wett = min(H, 9.14 m / 30 ft).",
+      },
+      {
+        symbol: "F",
+        name: "Environment factor",
+        definition: "1.0 bare; 0.3 insulated; 0.15 water deluge (screening).",
+      },
+      {
+        symbol: "L_v, M",
+        name: "Latent heat & molecular weight",
+        definition: "Liquid latent heat and vapor MW for emergency air-equivalent rate.",
+      },
+    ],
+    standards: [
+      "API Standard 2000 7th Edition (2014, Reaffirmed 2020) — Venting Atmospheric and Low-pressure Storage Tanks §3.3 / §3.4",
+      "API Standard 650 — Welded Tanks for Oil Storage (tank class context)",
+      "API Standard 620 — Design and Construction of Large, Welded, Low-Pressure Storage Tanks",
+    ],
+    allowancesAndTolerances: {
+      title: "Screening rules & default duty",
+      summary:
+        "Default metric duty: Ø15 m · H 12 m (≈ 2,121 m³), pump-in 200 m³/h, pump-out 250 m³/h, flash point < 37.8 °C (Y = 1.0), bare F = 1.0, M = 72, L_v = 360 kJ/kg, latitude < 42°. Engine asserts V_out ≈ 991 Nm³/h and V_emer ≈ 21,200 Nm³/h.",
+      items: [
+        {
+          label: "Liquid movement",
+          value: "1.01 / 0.94",
+          description:
+            "Outbreathing 1.01·pump-in and inbreathing 0.94·pump-out (Nm³/h free air per m³/h liquid).",
+        },
+        {
+          label: "Thermal",
+          value: "0.8·V^0.9·C·Y / 3.0·V^0.7·C",
+          description:
+            "SI thermal out/inbreathing with latitude and Table 1 Y on outbreathing only.",
+        },
+        {
+          label: "Wetted height cap",
+          value: "9.14 m (30 ft)",
+          description:
+            "Fire wetted lateral height limited per API 2000 §3.4 for vertical tanks.",
+        },
+        {
+          label: "Out of scope",
+          value: "Thermal shock · reaction · tube rupture",
+          description:
+            "Cooling-water ingress, chemical reaction, and heat-exchanger tube rupture gas blow-by need dedicated overpressure design.",
+        },
+      ],
+    },
+    tableCaption:
+      "API 2000 screening duties (this app — engine assert, not LLM placeholders)",
+    tableHeaders: ["Case", "V_out", "V_emergency"],
+    tableAllNumeric: false,
+    tableRows: [
+      [
+        "Ø15 m · H 12 m · pump-in 200 · FP < 37.8 °C · F=1.0",
+        "991 Nm³/h",
+        "21,197 Nm³/h",
+      ],
+      [
+        "Ø25 m · H 18 m · insulated · FP ≥ 37.8 °C · F=0.3",
+        "1,930 Nm³/h",
+        "9,526 Nm³/h",
+      ],
+      [
+        "Ø50 ft · H 40 ft · 1000 GPM · FP < 100 °F · F=1.0",
+        "37,173 SCFH",
+        "757,244 SCFH",
+      ],
+      [
+        "Ø80 ft · H 50 ft · insulated · FP ≥ 100 °F · F=0.3",
+        "57,609 SCFH",
+        "310,244 SCFH",
+      ],
+      [
+        "Ø15 m · H 12 m · latitude ≥ 42° (C=0.65)",
+        "715 Nm³/h",
+        "21,197 Nm³/h",
+      ],
+      [
+        "Ø15 m · H 12 m · water deluge F=0.15",
+        "991 Nm³/h",
+        "3,179 Nm³/h",
+      ],
+    ],
+    tableFootnote:
+      "Emergency rates use V_emer = (Q/L_v)·√(70.6/M)·1234 with Q = 43.2·A_w^0.82·F. Confirm OEM PVRV / emergency hatch charts before purchase.",
+    materialLimitations: {
+      title: "Applicability & service limits",
+      summary:
+        "API 2000 applies to atmospheric and low-pressure metal storage tanks typically in the about −0.5 kPa(g) to 103 kPa(g) design-pressure band with ambient hydrocarbon / chemical liquids. Not for refrigerated cryogenic tanks or high-pressure vessels.",
+      items: [
+        {
+          materialGroup: "Tank class",
+          notes:
+            "Intended for API 650 / API 620 style vertical cylindrical tanks with PVRV or open vents — not ASME VIII pressure vessels as the primary relief path.",
+        },
+        {
+          materialGroup: "Design pressure band",
+          stressLimit: "≈ −0.5 to 103 kPa(g)",
+          notes:
+            "Higher design pressures fall outside API 2000 venting philosophy — use PSV / rupture-disk methods.",
+        },
+        {
+          materialGroup: "Fluid service",
+          temperatureLimit: "Ambient / near-ambient liquids",
+          notes:
+            "Enter site L_v and M. Flash-point class sets Y on thermal outbreathing only.",
+        },
+        {
+          materialGroup: "Fire case",
+          notes:
+            "Assumes pool-fire exposure with environment factor F. Drainage, diking, and foam systems are not modeled beyond F.",
+        },
+      ],
+      codeRestrictions: [
+        "Screening free-air rates only — not a certified PVRV orifice selection.",
+        "Do not use for thermal shock, runaway reaction, or tube-rupture blow-by without process overpressure analysis.",
+      ],
+    },
+    workedExample: {
+      title: "Worked example — Ø15 m · H 12 m · 200 m³/h pump-in",
+      scenario:
+        "Screen an API 650 vertical tank at 15 m diameter and 12 m shell height with 200 m³/h max fill, 250 m³/h max empty, flash point < 37.8 °C, bare tank, M = 72, L_v = 360 kJ/kg, latitude < 42°.",
+      designConditions: [
+        { label: "D × H", value: "15 m × 12 m" },
+        { label: "V_tank", value: "≈ 2,121 m³" },
+        { label: "Pump-in / out", value: "200 / 250 m³/h" },
+        { label: "Y / C_lat / F", value: "1.0 / 1.0 / 1.0" },
+        { label: "M / L_v", value: "72 g/mol / 360 kJ/kg" },
+      ],
+      steps: [
+        {
+          step: "1",
+          name: "Liquid movement",
+          formula: "V_out,liq = 1.01·V_in · V_in,liq = 0.94·V_out",
+          calculation: "1.01·200 · 0.94·250",
+          result: "202 Nm³/h out · 235 Nm³/h in",
+        },
+        {
+          step: "2",
+          name: "Thermal out/inbreathing",
+          formula: "0.8·V^0.9·C·Y · 3.0·V^0.7·C",
+          calculation: "V ≈ 2121 m³ · Y = 1.0 · C = 1.0",
+          result: "≈ 789 Nm³/h out · ≈ 639 Nm³/h in",
+        },
+        {
+          step: "3",
+          name: "Normal totals",
+          formula: "V_out = liq + th · V_in = liq + th",
+          calculation: "202+789 · 235+639",
+          result: "V_out ≈ 991 Nm³/h · V_in ≈ 874 Nm³/h",
+        },
+        {
+          step: "4",
+          name: "Fire emergency",
+          formula: "A_w = π·D·min(H,9.14) · Q = 43.2·A^0.82·F · V_emer",
+          calculation: "H_w = 9.14 m · A_w ≈ 431 m² · Q ≈ 6,247 kW",
+          result: "V_emer ≈ 21,197 Nm³/h free air",
+          note: "Open /d15m-h12m-pumpin200-metric for the live default case.",
+        },
+      ],
+      conclusion:
+        "For the default Ø15 m · H 12 m duty, normal outbreathing is about 991 Nm³/h and fire emergency capacity about 21,200 Nm³/h under API 2000 §3.3 / §3.4 screening (free-air basis).",
+    },
+    ...howTo("How to calculate API 2000 tank venting rates", [
+      {
+        name: "1. Enter tank geometry",
+        text: "Set diameter and shell height. Volume is computed as a vertical cylinder.",
+      },
+      {
+        name: "2. Enter transfer rates",
+        text: "Set maximum pump-in and pump-out liquid rates for liquid-movement venting.",
+      },
+      {
+        name: "3. Set fluid and site factors",
+        text: "Choose flash/volatility class (Y), latitude (C), environment F, L_v, and M.",
+      },
+      {
+        name: "4. Read V_out and V_emergency",
+        text: "Hero shows normal outbreathing. Badges show emergency fire venting and normal inbreathing. Size PVRV/hatch to the governing rates.",
+      },
+    ]),
+    faq: [
+      {
+        question: "What is included in normal outbreathing?",
+        answer:
+          "**Liquid pump-in** displacement (**1.01·V_pump-in**) plus **thermal expansion** outbreathing (**0.8·V^0.9·C·Y**).",
+      },
+      {
+        question: "How is fire wetted area calculated?",
+        answer:
+          "For vertical tanks, **A_w = π·D·H_wett** with **H_wett = min(H, 9.14 m / 30 ft)** per API 2000 §3.4.",
+      },
+      {
+        question: "When is the Y factor increased?",
+        answer:
+          "Fluids with **flash point < 37.8 °C (100 °F)** or **hexane-like** class use **Y = 1.0** on thermal outbreathing; higher flash uses **Y = 0.5** in this screen.",
+      },
+      {
+        question: "Is this a certified PVRV size?",
+        answer:
+          "**No.** Results are **free-air screening rates**. Confirm **OEM PVRV / emergency hatch** capacity charts and project specifications.",
+      },
+    ],
+  },
+
+  "valve-wall-thickness-rating": {
+    slug: "valve-wall-thickness-rating",
+    formulaTitle: "Core Formula & Variable Definitions",
+    formulaHtml:
+      '<p class="eng-eq"><i>t</i><sub>m</sub> = 1.5 · [<i>P</i><sub>c</sub> · <i>d</i> / (2<i>S</i> − 1.2 <i>P</i><sub>c</sub>)] + <i>A</i></p>' +
+      '<p class="eng-eq"><i>p</i><sub>max</sub> = <i>f</i><sub>B16.34</sub>(Class, Material Group, <i>T</i>) &nbsp;·&nbsp; <i>p</i><sub>hydro</sub> = 1.5 · <i>p</i><sub>amb,38°C</sub></p>' +
+      '<p class="eng-plain">ASME B16.34-2020 Mandatory Appendix VI (S = 7000 psi, A = 0.10 in / 2.54 mm) · Table 3 discrete check · Table 2 Standard Class P-T</p>',
+    formulaLatex:
+      "t_m = 1.5\\frac{P_c d}{2S-1.2 P_c}+A,\\quad p_{\\max}=f_{\\mathrm{B16.34}}(\\mathrm{Class},\\mathrm{Group},T),\\quad p_{\\mathrm{hydro}}=1.5\\,p_{\\mathrm{amb}}",
+    formulaNotes:
+      "Wall thickness uses the Appendix VI US-customary equation with class designation pressure P_c (psi) and fixed S = 7000 psi. Table 3 values in this tool are the same equation evaluated at discrete inside diameters. Standard Class P-T for Groups 1.1 and 2.2 matches the ASME B16.5 Table 2 Phase-1 extract. Special Class and Section 8 NDE rules are out of scope.",
+    formulaBadges: [
+      { label: "S", value: "7000 psi (48.3 MPa)" },
+      { label: "A", value: "0.10 in (2.54 mm)" },
+      { label: "Default duty", value: "NPS 4 · Class 300 · 5.91 mm" },
+      { label: "Hydro", value: "1.5 × ambient rating" },
+    ],
+    variables: [
+      {
+        symbol: "t_m",
+        name: "Minimum body wall thickness",
+        definition:
+          "Required valve body wall from Appendix VI / Table 3 for the selected class and inside diameter d.",
+      },
+      {
+        symbol: "d",
+        name: "Inside / port diameter",
+        definition: "Valve flow-passage inside diameter used in Appendix VI (mm or in).",
+      },
+      {
+        symbol: "P_c",
+        name: "Class designation pressure",
+        definition: "Class rating reference pressure: 150, 300, 600, 900, 1500, or 2500 psi.",
+      },
+      {
+        symbol: "S",
+        name: "Appendix VI stress factor",
+        definition: "Fixed 7000 psi basis in Mandatory Appendix VI wall equations.",
+      },
+      {
+        symbol: "p_max",
+        name: "Allowable pressure at temperature",
+        definition:
+          "Standard Class P-T rating from ASME B16.34 Table 2 for the material group and design temperature.",
+      },
+      {
+        symbol: "p_hydro",
+        name: "Hydrostatic shell test pressure",
+        definition: "1.5 × ambient (38 °C) Standard Class rating for factory shell test screening.",
+      },
+    ],
+    standards: [
+      "ASME B16.34-2020 Valves — Flanged, Threaded, and Welding End",
+      "ASME B16.34 §6.1 Minimum Wall Thickness",
+      "ASME B16.34 Table 3 Valve Body Minimum Wall Thickness",
+      "ASME B16.34 Table 2 Pressure-Temperature Ratings (Standard Class)",
+      "ASME B16.34 Mandatory Appendix VI Basis for Minimum Wall Thickness Equations",
+    ],
+    tableCaption:
+      "Appendix VI / Table 3 wall check — Class 300 inside diameter vs t_m (metric)",
+    tableHeaders: ["Inside d (mm)", "t_m (mm)", "P_c (psi)", "Basis"],
+    tableRows: [
+      ["50", "4.19", "300", "Appendix VI"],
+      ["80", "5.18", "300", "Appendix VI"],
+      ["100", "5.84", "300", "Appendix VI"],
+      ["102", "5.91", "300", "Default duty"],
+      ["150", "7.49", "300", "Appendix VI"],
+      ["200", "9.14", "300", "Appendix VI"],
+      ["250", "10.79", "300", "Appendix VI"],
+    ],
+    tableFootnote:
+      "Values are Appendix VI equation results (S = 7000 psi, A = 0.10 in) rounded for field screening. Confirm published ASME B16.34 Table 3 for purchase documents.",
+    allowancesAndTolerances: {
+      title: "Screening Assumptions",
+      summary:
+        "Standard Class body wall and P-T screen for metal valves. Neck detailing, casting/forging tolerance, and Special Class rules are out of scope.",
+      items: [
+        {
+          label: "Wall basis",
+          value: "Appendix VI + Table 3 discrete check",
+          description:
+            "Governing t_m is the greater of the closed-form Appendix VI result and the interpolated Table 3 discrete grid (same equation basis).",
+        },
+        {
+          label: "Default duty",
+          value: "NPS 4 · Class 300 · d = 102 mm · 200 °C · 35 bar · Group 1.1",
+          description:
+            "Hero t_m = 5.91 mm; p_max = 43.8 bar (Pass). Hydro shell screen = 1.5 × 51.1 bar = 76.7 bar.",
+        },
+        {
+          label: "P-T Phase-1 groups",
+          value: "1.1 and 2.2 tabulated; 1.2 proxy; 1.9 unavailable",
+          description:
+            "Groups 1.1 / 2.2 use the published Standard Class extract (aligned with B16.5 Table 2). Group 1.2 (WCC) uses Group 1.1 as a conservative proxy. Group 1.9 (WC6) wall still screens; P-T is marked unavailable.",
+        },
+        {
+          label: "Out of scope",
+          value: "Special Class · Section 8 NDE · soft-seat trim",
+          description:
+            "Forged high-pressure valves with additional NDE and Special Class ratings require the full ASME B16.34 Section 8 path and OEM charts.",
+        },
+      ],
+    },
+    materialLimitations: {
+      title: "Material Groups & Temperature Limits",
+      summary:
+        "ASME B16.34 Table 1A material groups used for Standard Class P-T screening in this Phase-1 extract.",
+      items: [
+        {
+          materialGroup: "Group 1.1 — A105 / A216 WCB",
+          temperatureLimit: "−29 to 538 °C (Class-dependent)",
+          stressLimit: "Standard Class Table 2-1.1",
+          notes: "Default carbon-steel forged / cast body group.",
+        },
+        {
+          materialGroup: "Group 1.2 — A216 WCC",
+          temperatureLimit: "Same band as Group 1.1 (proxy)",
+          stressLimit: "Phase-1 uses Group 1.1 curve",
+          notes:
+            "Conservative screening proxy only — confirm published Table 2-1.2 for purchase.",
+        },
+        {
+          materialGroup: "Group 2.2 — A351 CF8M / 316",
+          temperatureLimit: "−29 to 538 °C (Class-dependent)",
+          stressLimit: "Standard Class Table 2-2.2 (Phase-1: Class 150–600)",
+          notes: "Austenitic stainless cast / forged bodies in Phase-1 extract.",
+        },
+        {
+          materialGroup: "Group 1.9 — A217 WC6",
+          temperatureLimit: "P-T Phase-1 unavailable",
+          stressLimit: "Wall screen only (Appendix VI)",
+          notes:
+            "Load full ASME B16.34 Table 2-1.9 before accepting Cr-Mo P-T duty.",
+        },
+      ],
+      codeRestrictions: [
+        "Standard Class only — Special Class ratings are not tabulated here",
+        "Confirm OEM casting drawings for neck thickness beyond pure t_m",
+      ],
+    },
+    workedExample: {
+      title: "Worked example — NPS 4 · Class 300 · WCB · 200 °C",
+      scenario:
+        "Standard Class carbon-steel gate/globe body, NPS 4, Class 300, port inside diameter 102 mm, design 35 bar at 200 °C, material Group 1.1 (A105 / WCB).",
+      designConditions: [
+        { label: "NPS / Class", value: "4 / 300" },
+        { label: "d", value: "102 mm" },
+        { label: "T / P", value: "200 °C / 35 bar" },
+        { label: "Material", value: "Group 1.1 A105 / WCB" },
+      ],
+      steps: [
+        {
+          step: "Step 1",
+          name: "Appendix VI wall",
+          calculation:
+            "t_m = 1.5 · [300 · (102/25.4) / (2·7000 − 1.2·300)] + 0.10 in → mm",
+          result: "t_m = 5.91 mm (Table 3 check agrees)",
+        },
+        {
+          step: "Step 2",
+          name: "P-T rating at 200 °C",
+          calculation: "Interpolate Standard Class Group 1.1 · Class 300 table",
+          result: "p_max = 43.8 bar",
+        },
+        {
+          step: "Step 3",
+          name: "Duty check & hydro",
+          calculation: "P_design ≤ p_max; p_hydro = 1.5 · p_amb(38 °C)",
+          result: "35 ≤ 43.8 → Pass; p_hydro = 76.7 bar",
+        },
+      ],
+      conclusion:
+        "Required minimum body wall is t_m = 5.91 mm. Allowable pressure at 200 °C is 43.8 bar (Pass vs 35 bar design). Factory shell hydro screen is 76.7 bar. Confirm OEM casting drawing for neck and casting allowance beyond this pure t_m.",
+    },
+    ...howTo("How to screen ASME B16.34 valve body wall and P-T rating", [
+      {
+        name: "1. Select NPS, class, and inside diameter",
+        text: "Enter the valve NPS, Standard Class (150–2500), and the port / inside diameter d in mm or inches.",
+      },
+      {
+        name: "2. Choose material group and duty",
+        text: "Pick the B16.34 Table 1A group and enter design temperature and working pressure in the active unit system.",
+      },
+      {
+        name: "3. Read t_m and p_max",
+        text: "Hero shows governing t_m. Badges show p_max at temperature and Pass / Overpressure vs design pressure.",
+      },
+      {
+        name: "4. Export or continue",
+        text: "Export CSV/PDF for the duty pack, or carry NPS/class/temperature to pipe wall, flange dimension, or valve Cv tools.",
+      },
+    ]),
+    faq: [
+      {
+        question: "What is an ASME B16.34 valve wall thickness calculator?",
+        answer:
+          "A field screen of **Standard Class** valve **body minimum wall** **t_m** from **Appendix VI / Table 3**, plus **Table 2 P-T** allowable pressure and a **1.5× ambient** hydro shell test estimate.",
+      },
+      {
+        question: "Why can t_m differ from a pipe B31.3 t calculation?",
+        answer:
+          "**B16.34** sizes the **valve body** with fixed **S = 7000 psi** and class designation **P_c**. **B31.3** sizes **pipe** with material allowable stress **S**, joint efficiency **E**, and coefficient **Y** — different code paths.",
+      },
+      {
+        question: "Does Standard Class P-T match ASME B16.5?",
+        answer:
+          "For the same material group, **B16.34 Standard Class** ratings align with **B16.5 Table 2**. This Phase-1 extract covers **Groups 1.1 and 2.2** from that shared basis.",
+      },
+      {
+        question: "Is Special Class included?",
+        answer:
+          "**No.** **Special Class** and **Section 8** NDE / forged high-pressure rules are **out of scope**. Use the full **ASME B16.34** text and OEM data for those valves.",
+      },
+    ],
+  },
+
+  "psv-reaction-force": {
+    slug: "psv-reaction-force",
+    formulaTitle: "Core Formula & Variable Definitions",
+    formulaHtml:
+      '<p class="eng-eq"><i>v</i> = √[ 2<i>k</i>/(<i>k</i>+1) · (<i>R</i>/<i>M</i>) · <i>T</i> ] &nbsp;·&nbsp; <i>F</i><sub>mom</sub> = (<i>W</i>/3600)·<i>v</i></p>' +
+      '<p class="eng-eq"><i>F</i><sub>press</sub> = max(0, <i>P</i><sub>e</sub> − <i>P</i><sub>atm</sub>)·<i>A</i><sub>exit</sub> &nbsp;·&nbsp; <i>F</i><sub>total</sub> = (<i>F</i><sub>mom</sub> + <i>F</i><sub>press</sub>)·DLF</p>' +
+      '<p class="eng-plain">API RP 520 Part II §4.2 open-discharge vapor/gas screen · ASME VIII-1 Appendix M guidance · R = 8314 J/(kmol·K)</p>',
+    formulaLatex:
+      "v=\\sqrt{\\frac{2k}{k+1}\\frac{R}{M}T},\\quad F_{\\mathrm{mom}}=\\frac{W}{3600}v,\\quad F_{\\mathrm{total}}=(F_{\\mathrm{mom}}+F_{\\mathrm{press}})\\cdot\\mathrm{DLF}",
+    formulaNotes:
+      "Sonic exit velocity from stagnation temperature matches the API 520 Part II US customary momentum term when converted to SI. Exit static pressure uses continuity at T_e = T·2/(k+1). Outlet area from ASME B36.10 pipe ID. Base bending moment assumes a 1.5 m (4.92 ft) vent-elbow lever arm for screening only.",
+    formulaBadges: [
+      { label: "Default duty", value: "CO₂ · 25 000 kg/h · NPS 4" },
+      { label: "F_total", value: "5.98 kN (DLF 2.0)" },
+      { label: "F_steady", value: "2.99 kN" },
+      { label: "DLF", value: "1.0 – 2.0" },
+    ],
+    variables: [
+      {
+        symbol: "F_total",
+        name: "Peak dynamic reaction force",
+        definition: "Steady reaction scaled by DLF for sudden popping (N or lbf).",
+      },
+      {
+        symbol: "W",
+        name: "Nameplate relieving capacity",
+        definition: "Mass flow rate on the PSV nameplate (kg/h or lb/h).",
+      },
+      {
+        symbol: "v",
+        name: "Exit velocity",
+        definition: "Sonic exit velocity from isentropic critical flow at relieving temperature.",
+      },
+      {
+        symbol: "P_e",
+        name: "Exit static pressure",
+        definition: "Absolute static pressure at the sonic exit plane from mass continuity.",
+      },
+      {
+        symbol: "A_exit",
+        name: "Outlet pipe flow area",
+        definition: "π/4 · ID² from selected NPS and schedule (B36.10).",
+      },
+      {
+        symbol: "DLF",
+        name: "Dynamic load factor",
+        definition: "Popping amplification (typically 1.1–2.0 for open vent elbows).",
+      },
+    ],
+    standards: [
+      "API Recommended Practice 520 Part II (6th Ed., 2015) §4.2 Reaction Forces",
+      "ASME BPVC Section VIII Division 1 Appendix M (Para. M-14)",
+      "ASME B31.1 Appendix II (safety valve installation guidance)",
+      "ASME B36.10M outlet pipe inside diameter",
+    ],
+    tableCaption:
+      "Open-discharge screening — CO₂ at 180 °C, DLF 2.0, Sch 40 outlet",
+    tableHeaders: ["W (kg/h)", "NPS", "F_steady (kN)", "F_total (kN)", "v (m/s)"],
+    tableRows: [
+      ["10 000", "3", "1.05", "2.09", "311"],
+      ["25 000", "4", "2.99", "5.98", "311"],
+      ["25 000", "6", "2.16", "4.32", "311"],
+      ["50 000", "6", "5.76", "11.51", "311"],
+      ["50 000", "8", "4.37", "8.75", "311"],
+      ["100 000", "8", "12.02", "24.04", "311"],
+    ],
+    tableFootnote:
+      "Forces scale with W; exit velocity depends on T, M, and k (not NPS). Larger NPS reduces exit pressure thrust. Confirm project fluid data and piping dynamics for design.",
+    allowancesAndTolerances: {
+      title: "Screening Assumptions",
+      summary:
+        "Vapor/gas open-discharge reaction screen with optional closed-header momentum-only mode. Not a substitute for transient piping analysis.",
+      items: [
+        {
+          label: "Default duty",
+          value: "25 000 kg/h CO₂ · 180 °C · NPS 4 Sch 40 · DLF 2.0",
+          description:
+            "Hero F_total = 5.98 kN; F_steady = 2.99 kN (momentum + exit pressure).",
+        },
+        {
+          label: "Outlet area",
+          value: "ASME B36.10 ID for selected NPS / schedule",
+          description: "A_exit = π/4 · ID². Sch 10 / 40 / 80 supported in Phase-1.",
+        },
+        {
+          label: "Base moment arm",
+          value: "1.5 m (4.92 ft) screening offset",
+          description:
+            "M_bending = F_total · 1.5 m for open vent elbow. Adjust in detailed layout.",
+        },
+        {
+          label: "Out of scope",
+          value: "Liquid · two-phase · water hammer · full closed-header P₁/P₂ layout",
+          description:
+            "Use Caesar II / equivalent dynamic piping analysis for those cases.",
+        },
+      ],
+    },
+    materialLimitations: {
+      title: "Applicability & Fluid Limits",
+      summary:
+        "API 520 Part II reaction-force screening applies to single-phase vapor/gas relieving through an open vent or simplified closed header.",
+      items: [
+        {
+          materialGroup: "Vapor / gas (ideal-gas screen)",
+          temperatureLimit: "−50 to 600 °C input band",
+          notes:
+            "Uses MW and k from API 520–style presets (CO₂, air, steam, N₂, methane, light HC) or custom entries.",
+        },
+        {
+          materialGroup: "Open discharge vent elbow",
+          temperatureLimit: "Same",
+          notes:
+            "Includes exit pressure thrust above atmosphere and DLF up to 2.0 for popping.",
+        },
+        {
+          materialGroup: "Closed discharge header",
+          temperatureLimit: "Same",
+          notes:
+            "Momentum-only screen — layout-specific pressure terms are not modeled.",
+        },
+        {
+          materialGroup: "Liquid / two-phase / flashing",
+          temperatureLimit: "N/A",
+          notes: "Out of scope — requires multiphase transient analysis.",
+        },
+      ],
+      codeRestrictions: [
+        "Screening only — not a certified piping support design",
+        "Confirm nameplate capacity units (kg/h vs lb/h) before applying DLF",
+      ],
+    },
+    workedExample: {
+      title: "Worked example — CO₂ · 25 000 kg/h · NPS 4 Sch 40",
+      scenario:
+        "Open-discharge PSV relieving carbon dioxide at 25 000 kg/h and 180 °C through an NPS 4 Schedule 40 vent (ID 102.26 mm), DLF = 2.0, P_atm = 1.013 barA.",
+      designConditions: [
+        { label: "W", value: "25 000 kg/h" },
+        { label: "T", value: "180 °C (453.15 K)" },
+        { label: "Gas", value: "CO₂ · M = 44.01 · k = 1.30" },
+        { label: "Outlet", value: "NPS 4 Sch 40" },
+      ],
+      steps: [
+        {
+          step: "Step 1",
+          name: "Sonic exit velocity",
+          calculation: "v = √[2k/(k+1)·(R/M)·T]",
+          result: "v ≈ 311 m/s",
+        },
+        {
+          step: "Step 2",
+          name: "Momentum and pressure thrust",
+          calculation: "F_mom = (W/3600)·v; P_e from continuity; F_press = (P_e−P_atm)·A",
+          result: "F_mom ≈ 2.16 kN; F_press ≈ 0.83 kN; F_steady ≈ 2.99 kN",
+        },
+        {
+          step: "Step 3",
+          name: "Apply DLF",
+          calculation: "F_total = F_steady · 2.0",
+          result: "F_total ≈ 5.98 kN",
+        },
+      ],
+      conclusion:
+        "Peak screening reaction is F_total = 5.98 kN (F_steady = 2.99 kN). Use this thrust with the project support/layout model; liquid or two-phase relief is out of scope.",
+    },
+    ...howTo("How to screen PSV open-discharge reaction force", [
+      {
+        name: "1. Enter nameplate capacity and temperature",
+        text: "Use the PSV nameplate relieving rate W and relieving temperature in the active unit system.",
+      },
+      {
+        name: "2. Select gas and outlet pipe",
+        text: "Pick a preset gas (or custom MW/k) and the discharge NPS / schedule for A_exit.",
+      },
+      {
+        name: "3. Set DLF and discharge mode",
+        text: "Open discharge includes exit pressure thrust; closed header uses momentum only. DLF 2.0 is typical for open vent popping screens.",
+      },
+      {
+        name: "4. Read F_total and export",
+        text: "Hero shows F_total. Badges show F_steady and DLF. Export CSV/PDF or carry NPS/temperature to related pipe and nozzle tools.",
+      },
+    ]),
+    faq: [
+      {
+        question: "What is a PSV reaction force calculator?",
+        answer:
+          "A field screen of the **thrust** on discharge piping when a **safety valve** pops — **momentum** of the vapor jet plus **exit pressure** above atmosphere, often multiplied by a **dynamic load factor (DLF)**.",
+      },
+      {
+        question: "Which standard does FieldEngineersKit follow?",
+        answer:
+          "**API RP 520 Part II §4.2** for open-discharge vapor/gas reaction forces, with **ASME VIII-1 Appendix M** guidance. Momentum matches the Part II US customary term when converted to SI.",
+      },
+      {
+        question: "Why is DLF often 2.0?",
+        answer:
+          "For **sudden popping** on **open vent elbows**, API 520 Part II allows a **dynamic load factor up to 2.0** as a screening amplification of the steady thrust.",
+      },
+      {
+        question: "Can I use this for liquid relief?",
+        answer:
+          "**No.** **Liquid**, **two-phase**, and **water-hammer** cases need dedicated **transient piping analysis** — not this vapor/gas screen.",
+      },
+    ],
+  },
+
+  "non-metallic-gasket-b1621": {
+    slug: "non-metallic-gasket-b1621",
+    formulaTitle: "Core Formula & Variable Definitions",
+    formulaHtml:
+      '<p class="eng-eq"><i>A</i><sub>g</sub> = π/4 · (<i>d</i><sub>o</sub>² − <i>d</i><sub>i</sub>²)</p>' +
+      '<p class="eng-eq"><i>W</i><sub>m2</sub> = <i>A</i><sub>g</sub> · <i>y</i> &nbsp;·&nbsp; <i>W</i><sub>m1</sub> = π/4 · <i>G</i>²·<i>P</i> + 2π·<i>b</i>·<i>G</i>·<i>m</i>·<i>P</i></p>' +
+      '<p class="eng-plain">IBC: <i>d</i><sub>o</sub> = B16.5 raised-face OD · <i>d</i><sub>i</sub> = B36 pipe OD · Full face: <i>d</i><sub>o</sub> = flange OD</p>',
+    formulaLatex:
+      "A_g=\\frac{\\pi}{4}(d_o^2-d_i^2),\\quad W_{m2}=A_g y,\\quad b=f(b_0),\\quad G=d_o-2b",
+    formulaNotes:
+      "Geometry from ASME B16.5 flangeDimension.json (not a separate invented B16.21 numeric table). Effective width b follows VIII-1 App. 2 (inch basis). Soft rubber y = 0 → Wm2 = 0. B16.47 NPS 26–60 out of Phase-1.",
+    formulaBadges: [
+      { label: "Default", value: "NPS 4 · 150 · IBC" },
+      { label: "OD × ID", value: "157.2 × 114.3 mm" },
+      { label: "Wm2", value: "100.9 kN" },
+      { label: "y", value: "1600 psi" },
+    ],
+    variables: [
+      {
+        symbol: "d_o",
+        name: "Gasket outer diameter",
+        definition: "IBC: B16.5 raised-face diameter. Full face: flange outside diameter.",
+      },
+      {
+        symbol: "d_i",
+        name: "Gasket inner diameter",
+        definition: "ASME B36 pipe outside diameter for the NPS.",
+      },
+      {
+        symbol: "A_g",
+        name: "Gasket contact area",
+        definition: "π/4 · (d_o² − d_i²).",
+      },
+      {
+        symbol: "y",
+        name: "Minimum seating stress",
+        definition: "VIII-1 App. 2 Table 2-5.1 style seating stress.",
+      },
+      {
+        symbol: "m",
+        name: "Gasket factor",
+        definition: "VIII-1 App. 2 maintenance factor for operating load Wm1.",
+      },
+      {
+        symbol: "W_m2",
+        name: "Minimum seating load",
+        definition: "A_g · y — assembly seating requirement.",
+      },
+    ],
+    standards: [
+      "ASME B16.21 Nonmetallic Flat Gaskets for Pipe Flanges",
+      "ASME B16.5 Pipe Flanges and Flanged Fittings",
+      "ASME BPVC Section VIII Division 1 Appendix 2",
+      "ASME B36.10M / B36.19M pipe outside diameter",
+    ],
+    tableCaption:
+      "Class 150 IBC ring — compressed elastomer (y = 1600 psi) · OD/ID from B16.5 RF × B36 OD",
+    tableHeaders: ["NPS", "OD (mm)", "ID (mm)", "Wm2 (kN)"],
+    tableRows: [
+      ["2", "91.9", "60.3", "41.7"],
+      ["3", "127.0", "88.9", "71.3"],
+      ["4", "157.2", "114.3", "100.9"],
+      ["6", "215.9", "168.3", "158.5"],
+      ["8", "269.9", "219.1", "215.2"],
+      ["10", "323.8", "273.0", "262.7"],
+      ["12", "381.0", "323.8", "349.3"],
+    ],
+    tableFootnote:
+      "Wm2 uses App. 2 y for compressed elastomer sheet. Confirm OEM B16.21 charts and facing (RF vs FF) before procurement.",
+    allowancesAndTolerances: {
+      title: "Screening Assumptions",
+      summary:
+        "B16.5 NPS ½–24 Class 150–900 IBC/FF geometry with VIII-1 App. 2 Wm1/Wm2. Not a substitute for OEM crush or creep data.",
+      items: [
+        {
+          label: "Default duty",
+          value: "NPS 4 · Class 150 · IBC · compressed elastomer · 1.5 mm · 10 bar",
+          description: "Hero OD × ID = 157.2 × 114.3 mm; Wm2 ≈ 100.9 kN from B16.5 RF OD × B36 pipe OD and App. 2 y.",
+        },
+        {
+          label: "IBC geometry",
+          value: "RF OD × pipe OD",
+          description: "Matches flange-gasket-stress sheet proxy from flangeDimension.json.",
+        },
+        {
+          label: "Full-face geometry",
+          value: "Flange OD × pipe OD + B16.5 BCD/holes",
+          description: "Bolt pattern 100% from B16.5 drilling fields in the same table.",
+        },
+        {
+          label: "Out of scope",
+          value: "B16.47 Series A/B · spiral-wound/RTJ · OEM cold-flow curves",
+          description: "Use gasket-dimension-selection for B16.20 metal gaskets.",
+        },
+      ],
+    },
+    materialLimitations: {
+      title: "Gasket Material & Code Limits",
+      summary:
+        "m and y follow ASME VIII-1 Appendix 2 Table 2-5.1 style screening values used elsewhere in FieldEngineersKit.",
+      items: [
+        {
+          materialGroup: "Compressed elastomer sheet (non-asbestos)",
+          temperatureLimit: "≈ 200 °C screening",
+          stressLimit: "m = 2.0 · y = 1600 psi",
+          notes: "Default CAF/NA sheet factors.",
+        },
+        {
+          materialGroup: "PTFE / ePTFE sheet",
+          temperatureLimit: "≈ 260 °C screening",
+          stressLimit: "m = 2.0 · y = 1600 psi",
+          notes: "Cold flow under Class 600+ — prefer SWG with rings.",
+        },
+        {
+          materialGroup: "Flexible graphite sheet",
+          temperatureLimit: "≈ 450 °C screening",
+          stressLimit: "m = 2.0 · y = 900 psi",
+          notes: "App. 2 flexible graphite sheet seating factors.",
+        },
+        {
+          materialGroup: "Neoprene / soft rubber",
+          temperatureLimit: "≈ 80 °C screening",
+          stressLimit: "m = 0.5 · y = 0 psi",
+          notes: "Soft elastomer — Wm2 = 0; sealing relies on elastomer contact, not App. 2 y.",
+        },
+      ],
+      codeRestrictions: [
+        "Screening only — confirm OEM B16.21 dimensional charts",
+        "B16.47 large-diameter flanges not in Phase-1 extract",
+      ],
+    },
+    workedExample: {
+      title: "Worked example — NPS 4 Class 150 IBC compressed elastomer",
+      scenario:
+        "Select an ASME B16.21-style IBC ring gasket for NPS 4 Class 150 RF flanges in compressed non-asbestos sheet, 1.5 mm thick, design pressure 10 bar.",
+      designConditions: [
+        { label: "NPS / Class", value: "4 / 150" },
+        { label: "Profile", value: "IBC ring" },
+        { label: "Material", value: "Compressed elastomer · m = 2 · y = 1600 psi" },
+        { label: "P", value: "10 bar" },
+      ],
+      steps: [
+        {
+          step: "Step 1",
+          name: "Lookup geometry",
+          calculation: "d_o = RF OD from B16.5; d_i = B36 pipe OD",
+          result: "d_o = 157.2 mm · d_i = 114.3 mm",
+        },
+        {
+          step: "Step 2",
+          name: "Contact area",
+          calculation: "A_g = π/4 · (d_o² − d_i²)",
+          result: "A_g ≈ 9148 mm² (91.5 cm²)",
+        },
+        {
+          step: "Step 3",
+          name: "Seating load Wm2",
+          calculation: "W_m2 = A_g · y",
+          result: "W_m2 ≈ 100.9 kN",
+        },
+      ],
+      conclusion:
+        "Screening dimensions are 157.2 × 114.3 mm with Wm2 ≈ 100.9 kN. Carry NPS/class to flange dimension and PCC-1 torque tools; confirm OEM B16.21 charts before PO.",
+    },
+    ...howTo("How to look up B16.21 flat gasket dimensions", [
+      {
+        name: "1. Select NPS and class",
+        text: "Choose the mating flange NPS and pressure class (B16.5 Phase-1).",
+      },
+      {
+        name: "2. Choose IBC or full face",
+        text: "IBC for raised-face rings; full face when both flanges are flat face or FF gasket is specified.",
+      },
+      {
+        name: "3. Pick material and thickness",
+        text: "Sheet material sets App. 2 m and y. Thickness is recorded for procurement (area loads use face geometry).",
+      },
+      {
+        name: "4. Read OD × ID and Wm2",
+        text: "Hero shows OD × ID. Badges show Wm2 and m·y. Export CSV/PDF or carry size/class to related flange and bolt tools.",
+      },
+    ]),
+    faq: [
+      {
+        question: "What is an ASME B16.21 flat gasket dimensions calculator?",
+        answer:
+          "A field lookup of **nonmetallic sheet gasket OD/ID** for **ASME B16.5** flanges, plus **VIII-1 Appendix 2 Wm2** seating load from contact area and **y**.",
+      },
+      {
+        question: "Why does OD differ from some catalog 174.6 mm values?",
+        answer:
+          "This app uses the **B16.5 raised-face diameter** stored in **flangeDimension.json** (NPS 4 Class 150 RF OD = **157.2 mm**) with **B36 pipe OD** as ID — the same proxy used by the flange gasket stress tool.",
+      },
+      {
+        question: "When is full face required?",
+        answer:
+          "When both flanges are **flat face** or the specification requires a **full-face gasket**. Bolt holes follow the **B16.5** pitch circle for the selected NPS/class.",
+      },
+      {
+        question: "Does soft rubber report Wm2 = 0?",
+        answer:
+          "**Yes.** App. 2 soft elastomer uses **y ≈ 0**, so **Wm2 = 0**. Operating load still uses **m** in **Wm1**.",
+      },
+    ],
+  },
+
 };
+
 
 export function getCalculatorSeo(slug: string): CalculatorSeoEntry | undefined {
   return CALCULATOR_SEO[slug];

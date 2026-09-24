@@ -1,0 +1,216 @@
+---
+title: "Pipe Support Span, Deflection Limits, and MSS SP-69 Layout Guide"
+description: "Pipe support span screening with ASME B31.3 dead-weight beam theory, B31.1 Table 121.5–style chart spans, and FEK water-filled NPS 2–12 worked checks."
+date: "2026-09-24"
+category: "Piping Engineering"
+tags:
+  - Pipe Support
+  - Support Span
+  - ASME B31.3
+  - MSS SP-69
+  - Pipe Deflection
+  - Stress Analysis
+relatedCalculatorUrl: "/calculator/pipe-support-span"
+relatedCalculatorName: "Pipe Support Span Calculator (ASME B31.3 & B31.1 Chart)"
+---
+
+Picking a hanger spacing from “rule of thumb” often leaves mid-span sag that traps condensate, hammers adjacent nozzles, or overloads shoes before anyone opens Caesar II. This guide owns **pipe support span** layout screening with the same dead-weight beam model and ASME B31.1 Table 121.5–style chart used in FieldEngineersKit.
+
+Run the numbers in the live [Pipe Support Span Calculator (ASME B31.3 & B31.1 Chart)](/calculator/pipe-support-span) (NPS × schedule, fluid fill, insulation thickness, and deflection limit on one screen).
+
+## Quick Summary (TL;DR)
+
+- **Takeaway:** Layout span is $L_{\mathrm{rec}}=\min(L_{\mathrm{def}},L_{\mathrm{str}},L_{\mathrm{chart}})$ — for water-filled carbon steel at FEK defaults, the **chart** usually governs.
+- **Governing relation:** $L_{\mathrm{def}}=(384 E I y_{\max}/(5 w))^{1/4}$, $L_{\mathrm{str}}=\sqrt{10 Z S_{\mathrm{allow}}/w}$, with $S_{\mathrm{allow}}=0.5 S_h$.
+- **Code / basis:** ASME **B31.3** Para. **321** dead-weight screening · **B31.1 Table 121.5**–style spacing (numbers commonly reprinted in MSS hanger guides) · ASME **B36** pipe OD/ID/weight.
+
+| Item | Field takeaway |
+| :--- | :--- |
+| **Hero span (NPS 4 Sch 40, water)** | **$L_{\mathrm{rec}}=4.27\text{ m}$ (14 ft)** — chart limited |
+| **Beam check at that span** | $\delta\approx\mathbf{1.71\text{ mm}}$, $\sigma_b\approx\mathbf{8.2\text{ MPa}}$ (FEK engine) |
+| **Default $y_{\max}$ in FEK** | **12.7 mm (0.5 in)** mid-span screen (tighten to 2.54 mm / 0.1 in when the project requires it) |
+| **$S_{\mathrm{allow}}$ screen** | **$0.5 S_h$** → **69 MPa** for ambient CS $S_h=138\text{ MPa}$ (project may impose a tighter stress preference) |
+| **Insulation density (FEK)** | **120 kg/m³** mineral-wool-class annulus (project insulation can differ) |
+| **Worked insulated NPS 4** | $w\approx\mathbf{27.4\text{ kg/m}}$, $\delta\approx\mathbf{1.93\text{ mm}}$ at 4.27 m (PASS vs 2.54 mm) |
+| **Limits** | Dead-weight only — seismic, thermal flexibility, and concentrated loads need analysis |
+
+---
+
+## Why pipe support span matters on the rack
+
+ASME B31.3 Para. **321** expects supports to carry sustained loads without excessive deflection or bending that damages attachments and adjacent equipment. On the rack, the first cut is almost always a **uniform dead-weight span**: pipe steel + contents + insulation, checked against a mid-span deflection limit and a sustained bending stress screen, then capped by a published **support spacing chart**.
+
+Field failures from over-long spans look like: standing condensate at low points, flange rotation at valves, shoe liftoff under thermal growth, and unexpected nozzle loads. Use [Pipe Support Span](/calculator/pipe-support-span/4inch-sch40-water) for the layout recommendation, [ASME B31.3 Pipe Thickness](/calculator/pipe-wall-thickness) when schedule changes the mass and section modulus, and [Flange Dimensions & Weight](/calculator/flange-dimension-weight) when heavy flanged valves force local span cuts. Sister rack topics: [ASME B31.3 Thermal Expansion Loop Sizing](/docs/asme-b31-3-thermal-expansion-loop-sizing-guide) and [Piping Line Spec & Spool Fabrication Workflow](/docs/piping-line-spec-spool-fabrication-workflow).
+
+<Callout title="Screening vs detailed stress analysis" variant="info">
+This guide and the FEK span tool provide **ASME B31.3 Para. 321–aligned dead-weight screening** with a simply-supported deflection formula, continuous-span bending $M\approx wL^2/10$, and an ASME **B31.1 Table 121.5**–style spacing chart (the same metre/foot values commonly reprinted in MSS hanger guides such as SP-69-style tables). They are **not** a substitute for seismic load cases, three-dimensional thermal flexibility (e.g. CAESAR II), or concentrated loads from valves, strainers, and inline instruments. Final support locations on critical lines must be confirmed by project stress analysis and the current hanger manufacturer charts. FEK is not affiliated with ASME or MSS.
+</Callout>
+
+---
+
+## Core formulas & parameter definitions
+
+### Deflection-limited span (simply supported uniform load)
+
+FEK implements the classic mid-span deflection form used for dead-weight screening:
+
+$$
+y_{\max} = \frac{5\,w\,L^4}{384\,E\,I}
+\quad\Rightarrow\quad
+L_{\mathrm{def}}=\left(\frac{384\,E\,I\,y_{\max}}{5\,w}\right)^{1/4}
+$$
+
+### Stress-limited span (continuous-span bending screen)
+
+Sustained bending is screened with continuous-span $M\approx w L^2/10$ and $S_{\mathrm{allow}}=0.5 S_h$:
+
+$$
+\sigma_b=\frac{w L^2}{10\,Z}
+\quad\Rightarrow\quad
+L_{\mathrm{str}}=\sqrt{\frac{10\,Z\,S_{\mathrm{allow}}}{w}}
+$$
+
+<Callout title="FEK beam-model note" variant="info">
+**Deflection** uses the **simply supported** uniform-load formula; **stress** uses a **continuous-span** $M\approx wL^2/10$ screen. That mixed convention is intentional in the FEK calculator for dead-weight layout screening — not a full multi-span structural model. Prefer $L_{\mathrm{chart}}$ when it is shorter than $L_{\mathrm{beam}}$.
+</Callout>
+
+### Layout recommendation
+
+$$
+L_{\mathrm{beam}}=\min(L_{\mathrm{def}},L_{\mathrm{str}}),\qquad
+L_{\mathrm{rec}}=\min(L_{\mathrm{beam}},L_{\mathrm{chart}})
+$$
+
+where $L_{\mathrm{chart}}$ is the B31.1 Table 121.5–style water or vapor chart span for the NPS.
+
+### Parameter definitions
+
+| Symbol | Meaning | FEK source |
+| :--- | :--- | :--- |
+| $w$ | Total distributed load (pipe + fluid + insulation) | B36 weight + $\rho_{\mathrm{fluid}}\cdot A_{\mathrm{ID}}$ + insulation annulus |
+| $E$ | Elastic modulus | Carbon steel **200 GPa**; SS304/316 **193 GPa** |
+| $I$, $Z$ | Area moment & section modulus | From ASME B36 OD / ID |
+| $y_{\max}$ | Allowable mid-span deflection | Default **12.7 mm**; user may tighten (e.g. **2.54 mm**) |
+| $S_{\mathrm{allow}}$ | Sustained bending screen | **$0.5 S_h$** (ambient CS screen **69 MPa**) |
+| $L_{\mathrm{chart}}$ | Chart span | FEK water / vapor spacing table (B31.1 Table 121.5–style) |
+
+### Unit weight build-up
+
+| Component | FEK model |
+| :--- | :--- |
+| Pipe steel | ASME B36 tabulated kg/m (stainless scaled by density) |
+| Fluid | Water **1000 kg/m³**; steam ~2.5; gas ~1.2; empty 0 |
+| Insulation | Annulus at **120 kg/m³** outside OD (mineral-wool-class screen) |
+
+### Water-filled carbon-steel chart spans (Sch 40, FEK engine)
+
+At FEK default $y_{\max}=12.7\text{ mm}$ (chart still governs for these sizes), mid-span checks at $L_{\mathrm{chart}}$:
+
+| NPS | $L_{\mathrm{chart}}=L_{\mathrm{rec}}$ | $\delta$ at $L_{\mathrm{rec}}$ | $\sigma_b$ at $L_{\mathrm{rec}}$ |
+| :---: | :---: | :---: | :---: |
+| **2** | **3.05 m (10 ft)** | **1.52 mm** | **7.6 MPa** |
+| **4** | **4.27 m (14 ft)** | **1.71 mm** | **8.2 MPa** |
+| **8** | **5.79 m (19 ft)** | **1.78 mm** | **8.9 MPa** |
+| **12** | **7.01 m (23 ft)** | **1.88 mm** | **9.5 MPa** |
+
+For vapor / gas / empty service the chart is longer (example: NPS 8 Sch 40 gas → **$L_{\mathrm{chart}}=7.32\text{ m}$ (24 ft)** in FEK). Always re-run with the correct fluid type.
+
+<Callout title="Why mid-span δ / σ at chart spacing can differ from other tables" variant="warning">
+Some published or spreadsheet tables quote $\delta\approx 2.1$–$2.5\text{ mm}$ and $\sigma_b\approx 11$–$15\text{ MPa}$ at the same chart spans, or use a heavier insulation density / a free **15 MPa** stress cap. FEK reports **engine** values: B36 mass + water fill, insulation at **120 kg/m³**, $S_{\mathrm{allow}}=0.5 S_h$, and beam checks at $L_{\mathrm{rec}}$. Chart metre values (**3.05 / 4.27 / 5.79 / 7.01 m**) match the B31.1-style water table; the δ/σ columns above are the FEK physics assert.
+</Callout>
+
+---
+
+## How to check maximum allowable pipe span for water-filled NPS 4 Sch 40
+
+### Scenario inputs
+
+| Input | Value |
+| :--- | :--- |
+| Pipe | NPS **4** Sch **40** (OD **114.3 mm**, $t$ **6.02 mm**) |
+| Material | Carbon steel, $E=200\text{ GPa}$, $S_h=138\text{ MPa}$ |
+| Contents | Water **1000 kg/m³** |
+| Insulation | **50 mm** thick (FEK density **120 kg/m³**) |
+| Deflection limit | **$y_{\max}=2.54\text{ mm}$ (0.1 in)** tighter project screen |
+
+Open [/calculator/pipe-support-span/4inch-sch40-water](/calculator/pipe-support-span/4inch-sch40-water), set insulation to **50 mm** and allowable deflection to **2.54 mm**.
+
+### Step 1 — Total distributed load $w$
+
+FEK builds:
+
+| Term | Result |
+| :--- | :--- |
+| $w_{\mathrm{pipe}}$ | **16.07 kg/m** (B36) |
+| $w_{\mathrm{fluid}}$ | **8.21 kg/m** |
+| $w_{\mathrm{ins}}$ | **3.10 kg/m** |
+| **$w_{\mathrm{total}}$** | **≈ 27.4 kg/m** ≈ **0.269 N/mm** |
+
+If a hand calc assumes ≈22 kg/m, check the insulation density and whether fluid fill was included — FEK uses **120 kg/m³** insulation plus full water ID fill.
+
+### Step 2 — Beam limits at $y_{\max}=2.54\text{ mm}$
+
+$$
+L_{\mathrm{def}}\approx 4.57\text{ m},\qquad L_{\mathrm{str}}\approx 11.6\text{ m}
+\quad\Rightarrow\quad L_{\mathrm{beam}}\approx 4.57\text{ m (deflection)}
+$$
+
+### Step 3 — Chart cap and recommendation
+
+$$
+L_{\mathrm{chart}}=4.27\text{ m (14 ft)}
+\quad\Rightarrow\quad
+L_{\mathrm{rec}}=\min(4.57,\,4.27)=\mathbf{4.27\text{ m}}
+$$
+
+**Governing:** chart.
+
+### Step 4 — Checks at $L_{\mathrm{rec}}$
+
+$$
+\delta=\frac{5 w L^4}{384 E I}\approx\mathbf{1.93\text{ mm}}\le 2.54\text{ mm}\ \text{(PASS)}
+$$
+
+$$
+\sigma_b=\frac{w L^2}{10 Z}\approx\mathbf{9.3\text{ MPa}}\le S_{\mathrm{allow}}=69\text{ MPa}\ \text{(PASS)}
+$$
+
+<Callout title="Field callout" variant="tip">
+Keep **4.27 m** as the water-service layout span for this NPS unless analysis justifies more. Shorten further at heavy valves, branch fittings, and vibration/slug service per B31.3 Para. 321. Re-check wall with [Pipe Wall Thickness](/calculator/pipe-wall-thickness) if you change schedule — mass and $Z$ both move $L_{\mathrm{beam}}$.
+</Callout>
+
+---
+
+## Interactive tool CTA
+
+<Callout title="Open the FEK pipe support span calculator" variant="tip">
+Use [Pipe Support Span Calculator (ASME B31.3 & B31.1 Chart)](/calculator/pipe-support-span) for NPS × schedule, water/gas/steam/empty fill, insulation thickness, and deflection limit. Start from the water duty [/calculator/pipe-support-span/4inch-sch40-water](/calculator/pipe-support-span/4inch-sch40-water) (NPS 4 · Sch 40 · water). Pair schedule changes with [ASME B31.3 Pipe Thickness](/calculator/pipe-wall-thickness) and flanged valve mass context with [Flange Dimensions & Weight](/calculator/flange-dimension-weight).
+</Callout>
+
+---
+
+## Frequently Asked Questions (FAQ)
+
+### Q1. What is the maximum allowable pipe span for water-filled Sch 40 carbon steel?
+
+For FEK’s B31.1 Table 121.5–style **water** chart, examples are **NPS 2 → 3.05 m (10 ft)**, **NPS 4 → 4.27 m (14 ft)**, **NPS 8 → 5.79 m (19 ft)**, **NPS 12 → 7.01 m (23 ft)**. Always take $L_{\mathrm{rec}}=\min(L_{\mathrm{beam}},L_{\mathrm{chart}})$ after you set fluid, insulation, and $y_{\max}$ in the calculator.
+
+### Q2. How does the pipe sag deflection limit relate to ASME B31.1 / 0.1 in practice?
+
+Many projects cite **0.5 in (12.7 mm)** as a practical mid-span screen aligned with chart usage; others tighten to **0.1 in (2.54 mm)** for drainage-critical lines. FEK defaults to **12.7 mm** but lets you enter **2.54 mm**. For water-filled NPS 4 at the **4.27 m** chart span, engine mid-span sag is about **1.7 mm** (bare) to **1.9 mm** (50 mm insulation) — still inside a 2.54 mm cap when the chart governs.
+
+### Q3. Is the MSS SP-69 support spacing table the same as FEK’s chart?
+
+FEK stores metre values that match **ASME B31.1 Table 121.5** water/vapor spacing and the **same numbers** widely reprinted in MSS hanger spacing guides. Treat printed MSS/OEM charts as confirmation sources — do not paste copyrighted table pages into deliverables; confirm the current hanging manufacturer chart for specialty materials and temperatures.
+
+### Q4. Why does FEK’s continuous beam pipe span stress not match a “15 MPa” internet screen?
+
+FEK fixes $S_{\mathrm{allow}}=0.5 S_h$ (ambient CS screen **69 MPa**) inside $L_{\mathrm{str}}=\sqrt{10 Z S_{\mathrm{allow}}/w}$. A free **15 MPa** cap is a project preference, not the FEK engine default. At chart spans for water-filled Sch 40 CS, engine $\sigma_b$ is typically **≈ 7.6–9.5 MPa** — well below 69 MPa, so **deflection/chart**, not that stress screen, usually sets layout.
+
+### Q5. When must I shorten the calculated support span?
+
+Cut spans near concentrated loads (valves, heavy flanges, strainers), elbows/tees, temporary blinds, and high-vibration or slug-flow service per ASME B31.3 Para. 321. Dead-weight span screening does not replace seismic or thermal flexibility analysis.
+
+---
+
+Confirm current ASME B31.1 / B31.3 text, project piping class, and hanger OEM charts before IFC. FieldEngineersKit span results are **preliminary screening** for layout — not certified pipe-stress deliverables.

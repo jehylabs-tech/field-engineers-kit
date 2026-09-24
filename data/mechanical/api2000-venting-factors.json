@@ -1,0 +1,75 @@
+{
+  "description": "API Standard 2000 7th Edition (2014/R2020) screening factors for normal thermal venting and fire emergency environment factor. Liquid movement multipliers and fire heat flux follow §3.3 / §3.4 SI forms used in this app.",
+  "standard": "API Std 2000 7th Ed",
+  "liquidMovement": {
+    "outbreathingPerPumpIn": 1.01,
+    "inbreathingPerPumpOut": 0.94,
+    "notes": "Nm³/h free air per m³/h liquid (§3.3.1 screening form)."
+  },
+  "thermal": {
+    "outbreathingCoeff": 0.8,
+    "outbreathingExponent": 0.9,
+    "inbreathingCoeff": 3.0,
+    "inbreathingExponent": 0.7,
+    "notes": "V_out,th = 0.8·V^0.9·C_lat·Y ; V_in,th = 3.0·V^0.7·C_lat (Nm³/h, V in m³)."
+  },
+  "latitude": [
+    {
+      "id": "below-42-deg",
+      "label": "Latitude < 42°",
+      "cLatitude": 1.0
+    },
+    {
+      "id": "above-42-deg",
+      "label": "Latitude ≥ 42°",
+      "cLatitude": 0.65
+    }
+  ],
+  "volatility": [
+    {
+      "id": "flash-point-below-37.8c",
+      "label": "Flash point < 37.8 °C (100 °F)",
+      "yFactor": 1.0,
+      "notes": "API 2000 Table 1 volatile / low flash class — Y applied on thermal outbreathing."
+    },
+    {
+      "id": "flash-point-above-37.8c",
+      "label": "Flash point ≥ 37.8 °C (100 °F)",
+      "yFactor": 0.5,
+      "notes": "Higher flash / less volatile thermal outbreathing factor."
+    },
+    {
+      "id": "hexane-like",
+      "label": "Hexane-like / highly volatile",
+      "yFactor": 1.0,
+      "notes": "Treated as low-flash volatile class for Y screening."
+    }
+  ],
+  "environmentFactor": [
+    {
+      "id": "bare",
+      "label": "Bare tank (F = 1.0)",
+      "f": 1.0
+    },
+    {
+      "id": "insulated",
+      "label": "Insulated (F = 0.3)",
+      "f": 0.3
+    },
+    {
+      "id": "water-deluge",
+      "label": "Water deluge (F = 0.15)",
+      "f": 0.15
+    }
+  ],
+  "fire": {
+    "heatCoeffKw": 43.2,
+    "heatCoeffBtuh": 21000,
+    "areaExponent": 0.82,
+    "maxWettedHeightM": 9.14,
+    "maxWettedHeightFt": 30,
+    "airRateConstant": 1234,
+    "mwRef": 70.6,
+    "notes": "Q = 43.2·A_wett^0.82·F (kW, A in m²). V_emer = (Q/Lv)·√(70.6/M)·1234 (Nm³/h free air)."
+  }
+}
