@@ -1,6 +1,6 @@
 ---
 title: "ASME PCC-1 Flange Bolt Tightening Sequence & Torque Guide: Star Pattern & Pass Protocols"
-description: "Master ASME PCC-1 flange bolt tightening sequences, star patterns, torque pass steps, and nut factor friction equations for leak-free flanged joint assemblies."
+description: "ASME PCC-1 flange bolt torque patterns and sequences — star/cross order, 12- and 20-bolt examples, pass protocol, and nut-factor screening with FEK tools."
 date: "2026-09-09"
 category: "Piping Engineering"
 tags:
@@ -8,29 +8,32 @@ tags:
   - Flange Bolting
   - Bolt Torque
   - Star Pattern
+  - Torque Pattern
   - Flange Leakage
-relatedCalculatorUrl: "/calculator/flange-bolt-tightening-sequence"
+relatedCalculatorUrl: "/calculator/flange-bolt-tightening-sequence/20-bolt-star"
 relatedCalculatorName: "Flange Bolt Tightening Sequence Generator"
 ---
 
-Improper bolt tightening is a leading root cause of bolted flange joint assembly (BFJA) leaks in hydrocarbon, steam, and chemical service. A target wrench reading alone is not enough: **ASME PCC-1** (*Guidelines for Pressure Boundary Bolted Flange Joint Assembly*) requires controlled **tightening sequences** and incremental **torque passes** so gasket seating stress builds uniformly around the bolt circle.
+Improper bolt tightening is a leading root cause of bolted flange joint assembly (BFJA) leaks in hydrocarbon, steam, and chemical service. A target wrench reading alone is not enough: **ASME PCC-1** (*Guidelines for Pressure Boundary Bolted Flange Joint Assembly*) requires a controlled **torque pattern** (star/cross **tightening sequence**) and incremental **torque passes** so gasket seating stress builds uniformly around the bolt circle.
 
-When nuts are run down in simple circumferential order (1-2-3-4…), elastic interaction unloads neighboring studs, cocking the flange faces and leaving leak paths at the gasket. Field crews therefore use **cross-pattern (star) sequences** for the early passes and a final **circular (round-robin)** pass at full target torque.
+When nuts are run down in simple circumferential order (1-2-3-4…), elastic interaction unloads neighboring studs, cocking the flange faces and leaving leak paths at the gasket. Field crews therefore use **cross-pattern (star) sequences** for the early passes and a final **circular (round-robin)** pass at full target torque — that star order is what most crews mean by a **20 bolt** or **12 bolt torque pattern**.
 
-Generate numbered star diagrams and Round 1–4 sequences with the interactive [Flange Bolt Tightening Sequence Generator](/calculator/flange-bolt-tightening-sequence). For B16.5 stud count and PCC-1-style screening torque, pair it with the [Bolt Torque & Tensioning Calculator](/calculator/bolt-torque-tensioning).
+Generate numbered star diagrams and Round 1–4 sequences with the [20-bolt star Sequence Generator](/calculator/flange-bolt-tightening-sequence/20-bolt-star) or the [12-bolt star](/calculator/flange-bolt-tightening-sequence/12-bolt-star) landing. For B16.5 stud count and PCC-1-style screening torque / tension, pair it with the [Bolt Torque & Tensioning Calculator](/calculator/bolt-torque-tensioning/6-inch-class-300) and the [bolt torque & tension calculation guide](/docs/asme-pcc-1-flange-bolt-torque-tension-calculation-guide).
 
 ## Quick Summary (TL;DR)
 
-- **Takeaway:** Star / cross patterns on early torque passes limit flange tilt from elastic interaction; a final circular pass seats the joint at 100%.
+- **Takeaway:** A **torque pattern** is the star/cross bolt order on early passes — it limits flange tilt from elastic interaction; a final circular pass seats the joint at 100%.
 - **Governing relation:** Screening torque $T = K \cdot D \cdot F$ with $F = \sigma_b \cdot A_s$; FEK passes 30% → 60% → 100% star → 100% circular.
 - **Code / basis:** ASME PCC-1 assembly guidance · B16.5 stud count/size · FEK sequence generator screening.
 
 | Item | Field takeaway |
 | :--- | :--- |
+| **Torque pattern** | Field name for **star/cross tightening sequence** (Rounds 1–3), not the circular walk |
 | **Why star pattern?** | Opposite-bolt order limits flange tilt and uneven gasket crush from elastic interaction. |
 | **Numbering** | Bolt **#1 at top (12 o’clock)**; remaining bolts increase **clockwise**. |
 | **8-bolt star** | `1 → 5 → 3 → 7 → 2 → 6 → 4 → 8` |
 | **12-bolt star** | `1 → 7 → 4 → 10 → 2 → 8 → 5 → 11 → 3 → 9 → 6 → 12` |
+| **20-bolt star** | `1 → 11 → 6 → 16 → 2 → 12 → 7 → 17 → 3 → 13 → 8 → 18 → 4 → 14 → 9 → 19 → 5 → 15 → 10 → 20` |
 | **FEK / PCC-1 passes** | R1 **30%** star → R2 **60%** star → R3 **100%** star → R4 **100%** circular |
 | **Torque screen** | $T = K \cdot D \cdot F$ with $F = \sigma_b \cdot A_s$; $K$ rises sharply if threads are dry. |
 | **B16.5 geometry** | NPS × class sets **stud count and size** (e.g. 8″ Cl 300 → 12 × ⅞″). |
@@ -146,7 +149,24 @@ $$
 1 \rightarrow 7 \rightarrow 4 \rightarrow 10 \rightarrow 2 \rightarrow 8 \rightarrow 5 \rightarrow 11 \rightarrow 3 \rightarrow 9 \rightarrow 6 \rightarrow 12
 $$
 
-Use the [Sequence Generator](/calculator/flange-bolt-tightening-sequence/12-bolt-star) to step through each bolt on a live diagram.
+Use the [12-bolt star Sequence Generator](/calculator/flange-bolt-tightening-sequence/12-bolt-star) to step through each bolt on a live diagram.
+
+### 3.3 Twenty-bolt torque pattern (star / cross)
+
+A **20 bolt torque pattern** in the field almost always means this star/cross order for Rounds 1–3 (bolt 1 at top, numbered clockwise), then Round 4 circular at 100% $T$:
+
+$$
+\begin{aligned}
+&1 \rightarrow 11 \rightarrow 6 \rightarrow 16 \rightarrow 2 \rightarrow 12 \rightarrow 7 \rightarrow 17 \rightarrow 3 \rightarrow 13 \\
+&\rightarrow 8 \rightarrow 18 \rightarrow 4 \rightarrow 14 \rightarrow 9 \rightarrow 19 \rightarrow 5 \rightarrow 15 \rightarrow 10 \rightarrow 20
+\end{aligned}
+$$
+
+<Callout title="Star pattern vs circular pass" variant="info">
+**Star / torque pattern** = opposite-bolt order on Rounds 1–3 (30% / 60% / 100%). **Circular** = Round 4 only — walk $1 \rightarrow 2 \rightarrow \ldots \rightarrow 20$ at 100% until nuts stop rotating. Do not use circular order for the early passes on a fresh joint.
+</Callout>
+
+Open the live [20-bolt star](/calculator/flange-bolt-tightening-sequence/20-bolt-star) or [20-bolt circular](/calculator/flange-bolt-tightening-sequence/20-bolt-circular) diagram. The same generator covers 24- and 48-bolt patterns when the bolt circle is larger.
 
 ---
 
@@ -202,18 +222,26 @@ $$
 ## Interactive tool CTA
 
 <Callout title="Try the live tools" variant="tip">
-Open the [Flange Bolt Tightening Sequence Generator](/calculator/flange-bolt-tightening-sequence/12-bolt-star) for the visual star diagram and optional Round 1–4 wrench values from a target $T$. Use [Bolt Torque & Tensioning](/calculator/bolt-torque-tensioning) for B16.5 stud lookup and moly-table screening torque with $K$ / grade rescale.
+For the most common search case, open the [20-bolt star torque pattern](/calculator/flange-bolt-tightening-sequence/20-bolt-star) diagram (or [12-bolt star](/calculator/flange-bolt-tightening-sequence/12-bolt-star)). Enter optional target $T$ for Round 1–4 wrench chips. Use [Bolt Torque & Tensioning](/calculator/bolt-torque-tensioning/6-inch-class-300) for B16.5 stud lookup and moly-table screening torque with $K$ / grade rescale — see also the [torque & tension calculation guide](/docs/asme-pcc-1-flange-bolt-torque-tension-calculation-guide).
 </Callout>
 
 ---
 
 ## Frequently Asked Questions (FAQ)
 
-### Q1. Why does ASME PCC-1 require a final circular (round-robin) pass?
+### Q1. What is a 20 bolt torque pattern?
+
+It is the **star/cross tightening sequence** for a 20-stud flange: number bolts **1–20** clockwise from the top, then tighten
+
+`1 → 11 → 6 → 16 → 2 → 12 → 7 → 17 → 3 → 13 → 8 → 18 → 4 → 14 → 9 → 19 → 5 → 15 → 10 → 20`
+
+on Rounds 1–3 (30% / 60% / 100% of target $T$), and finish with a **circular** `1 → 2 → … → 20` pass at 100%. Generate the live diagram in the [20-bolt star Sequence Generator](/calculator/flange-bolt-tightening-sequence/20-bolt-star).
+
+### Q2. Why does ASME PCC-1 require a final circular (round-robin) pass?
 
 Star passes build clamp load while limiting flange distortion, but **elastic interaction** still relaxes neighbors as each stud is tightened. The final **clockwise 100% pass** equalizes residual nut rotation so every stud ends near the same preload before hydrotest or startup.
 
-### Q2. What happens if the same torque is applied to dry threads?
+### Q3. What happens if the same torque is applied to dry threads?
 
 Raising $K$ from 0.14 to 0.20 at fixed $T = 2{,}545\ \text{in·lbf}$:
 
@@ -223,10 +251,10 @@ $$
 
 That is roughly a **30% loss of clamp force** versus the lubricated case ($F \approx 20{,}780\ \text{lbf}$). Under-loaded spiral-wound joints are a classic hydrotest leak or blowout risk.
 
-### Q3. What is ASME PCC-1 Alternative Pattern #1?
+### Q4. What is ASME PCC-1 Alternative Pattern #1?
 
 **Alternative Pattern #1** is a modern assembly option for **large bolt circles** (often ≥ 20 bolts / large NPS) or multi-tool setups. Instead of every move jumping across the flange, studs are grouped (quadrants / simultaneous tools) to cut walk time while still controlling gasket stress. Legacy star/cross remains the default teaching pattern for common 4–16 bolt B16.5 joints and is what FEK diagrams generate.
 
-### Q4. How do FEK Round percentages relate to PCC-1 “20–30% / 50–60%” wording?
+### Q5. How do FEK Round percentages relate to PCC-1 “20–30% / 50–60%” wording?
 
 PCC-1 discusses **banded** early-pass targets. FEK’s Sequence and Bolt Torque tools standardize on **30% / 60% / 100% / circular 100%** for consistent screening and export sheets. If the owner appendix specifies 20–30% and 50–60%, use those fractions on the same star order — do not mix two different pass plans on one joint.

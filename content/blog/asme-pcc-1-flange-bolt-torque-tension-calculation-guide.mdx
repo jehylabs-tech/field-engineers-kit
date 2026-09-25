@@ -1,0 +1,180 @@
+---
+title: "ASME PCC-1 Flange Bolt Torque & Tension Calculation Guide"
+description: "Bolt tension calculation for B16.5 flanges — preload F = σ_b·A_s, nut factor K, T = K·D·F, and FEK PCC-1 moly table screening with Round 1–4 passes."
+date: "2026-09-25"
+category: "Piping Engineering"
+tags:
+  - ASME PCC-1
+  - Bolt Torque
+  - Bolt Tension
+  - Nut Factor
+  - Flange Bolting
+  - A193 B7
+relatedCalculatorUrl: "/calculator/bolt-torque-tensioning/6-inch-class-300"
+relatedCalculatorName: "Bolt Torque & Tensioning Calculator"
+---
+
+Field crews often search for a **bolt tension calculation** when they really need two linked numbers: **target preload (tension)** in each stud and the **wrench torque** that produces it under a stated nut factor $K$. **ASME B16.5** fixes stud count and size; **ASME PCC-1** governs assembly practice (lubricant, multi-pass sequence, and friction-aware torque).
+
+Use the live [Bolt Torque & Tensioning Calculator](/calculator/bolt-torque-tensioning/6-inch-class-300) for B16.5 → moly $T_{\mathrm{table}}$ lookup, $K$ / grade rescale, and Round 1–4 wrench chips. For the **star / torque pattern** that applies those passes, open the [Flange Bolt Tightening Sequence Generator](/calculator/flange-bolt-tightening-sequence/12-bolt-star) (or the [20-bolt star](/calculator/flange-bolt-tightening-sequence/20-bolt-star) when the circle has 20 studs).
+
+## Quick Summary (TL;DR)
+
+- **Takeaway:** Tension $F$ is the design intent; torque $T$ is the field control — linked by $T = K \cdot D \cdot F$ when friction is known.
+- **Governing relation:** $F = \sigma_b \cdot A_s$; FEK screening uses moly table $T = T_{\mathrm{table}} \cdot (K/0.13) \cdot f_{\mathrm{grade}}$.
+- **Code / basis:** ASME PCC-1 assembly · B16.5 stud geometry · FEK moly $K_{\mathrm{ref}} = 0.13$ (A193 B7 baseline).
+
+| Item | Field takeaway |
+| :--- | :--- |
+| **Bolt tension** | Axial preload $F$ in the stud (lbf or kN) |
+| **Bolt torque** | Applied nut wrench reading $T$ (ft·lbf or N·m) |
+| **Nut factor $K$** | Moly ≈ 0.13 · PTFE ≈ 0.11 · dry ≈ 0.20 |
+| **FEK table path** | NPS × class → $T_{\mathrm{table}}$ (moly B7) → rescale by $K$ and grade |
+| **FEK rounds** | 30% → 60% → 100% star → 100% circular |
+| **Worked FEK row** | NPS 6 Class 300 · 12 × ¾″ · moly B7 → **$T = 366\ \mathrm{N·m}$** |
+| **Dry rescale** | $366 \times (0.20/0.13) \approx 563\ \mathrm{N·m}$ — do not use moly $T$ on dry threads |
+
+---
+
+## Bolt tension vs bolt torque
+
+**Tension (preload)** seats the gasket and resists hydrostatic end force. **Torque** is what calibrated wrenches read. They are not interchangeable labels:
+
+$$
+T = K \cdot D \cdot F
+$$
+
+$$
+F = \sigma_b \cdot A_s
+$$
+
+Raising $K$ at fixed $T$ **cuts** preload roughly as $1/K$. That is why a moly table value applied to dry threads under-loads the joint.
+
+<Callout title="What FEK computes vs hand calc" variant="info">
+The [Bolt Torque calculator](/calculator/bolt-torque-tensioning) is a **B16.5 + PCC-1-style table lookup** with $K$ / grade rescale. It does **not** solve live $F = \sigma_b \cdot A_s$ inside the hero. Hand calc $T = K \cdot D \cdot F$ and table $T$ can differ — the **owner PCC-1 appendix** governs critical joints.
+</Callout>
+
+---
+
+## 1. Core formulas & nut factor
+
+### 1.1 Tensile stress area (Unified inch)
+
+$$
+A_s = \frac{\pi}{4}\left(D - \frac{0.9743}{n}\right)^2
+$$
+
+### 1.2 FEK screening torque (moly table)
+
+Stored $T_{\mathrm{table}}$ assumes moly anti-seize at $K_{\mathrm{ref}} = 0.13$ and A193 B7:
+
+$$
+T = T_{\mathrm{table}} \cdot \frac{K}{0.13} \cdot f_{\mathrm{grade}}
+$$
+
+| Lubricant / grade | FEK preset |
+| :--- | :--- |
+| Moly anti-seize | $K = 0.13$ |
+| PTFE / coated | $K = 0.11$ |
+| Dry / lightly oiled | $K = 0.20$ |
+| A193 B7 | $f_{\mathrm{grade}} = 1.00$ |
+| A193 B8 / B8M Class 2 | $f_{\mathrm{grade}} = 0.85$ |
+
+Annealed **B8 Class 1** is **not** offered — never apply B7 table torque to Class 1 studs.
+
+### 1.3 Pass protocol (same as Sequence tool)
+
+| Round | Fraction of $T$ | Pattern |
+| :---: | :---: | :--- |
+| 1 | 30% | Star / cross |
+| 2 | 60% | Star / cross |
+| 3 | 100% | Star / cross |
+| 4 | 100% | Circular check |
+
+---
+
+## 2. Worked example — NPS 6 Class 300 (match the calculator)
+
+| Input | Value |
+| :--- | :--- |
+| Flange | NPS 6 Class 300 RF |
+| Studs | 12 × ¾″ (M20) A193 B7 |
+| Lubricant | Moly ($K = 0.13$) |
+
+### Step 1 — Read $T_{\mathrm{table}}$
+
+From the FEK B16.5 / PCC-1 screening table (calculator hero):
+
+$$
+T_{\mathrm{table}} = 366\ \mathrm{N·m}\ (270\ \mathrm{ft·lbf})
+$$
+
+Open the live row: [NPS 6 Class 300 Bolt Torque](/calculator/bolt-torque-tensioning/6-inch-class-300).
+
+### Step 2 — Apply $K$ and grade
+
+$$
+T = 366 \cdot \frac{0.13}{0.13} \cdot 1.00 = 366\ \mathrm{N·m}
+$$
+
+B8 Class 2: $366 \times 0.85 = 311\ \mathrm{N·m}$.
+
+### Step 3 — Round 1–4 wrench targets
+
+| Round | Target |
+| :---: | :--- |
+| 1 | $0.30 \times 366 = 110\ \mathrm{N·m}$ |
+| 2 | $0.60 \times 366 = 220\ \mathrm{N·m}$ |
+| 3 / 4 | $366\ \mathrm{N·m}$ |
+
+Star order for this joint (12-bolt): use the [12-bolt star Sequence Generator](/calculator/flange-bolt-tightening-sequence/12-bolt-star).
+
+### Step 4 — Dry-thread rescale (same preload intent)
+
+$$
+T_{\mathrm{dry}} = 366 \cdot \frac{0.20}{0.13} \approx 563\ \mathrm{N·m}\ (415\ \mathrm{ft·lbf})
+$$
+
+---
+
+## 3. First-principles tension screen (optional check)
+
+When the project specifies target bolt stress $\sigma_b$ (e.g. ~50% of B7 $S_y$ screening), compute $F$ and $T$ by hand, then compare to the FEK table — do not mix two pass plans on one joint.
+
+Example (⅞″-9 UNC, $\sigma_b = 45{,}000\ \mathrm{psi}$, $K = 0.14$) is worked in the companion [PCC-1 sequence & torque guide](/docs/asme-pcc-1-flange-bolt-tightening-sequence-torque-guide) (8″ Class 300 · 12 × ⅞″ spiral-wound case). Use that path when you need $A_s$ arithmetic; use this page when you need the **FEK table → Round 1–4** path.
+
+---
+
+## Interactive tool CTA
+
+<Callout title="Try the live tools" variant="tip">
+Start at [NPS 6 Class 300](/calculator/bolt-torque-tensioning/6-inch-class-300) (or pick your NPS × class). Set lubricant $K$ and grade in Advanced, read Round 1–4 on **Torque & Passes**, then open the matching [12-bolt star sequence](/calculator/flange-bolt-tightening-sequence/12-bolt-star) for this joint (or [20-bolt star](/calculator/flange-bolt-tightening-sequence/20-bolt-star) when $N = 20$).
+</Callout>
+
+---
+
+## Frequently Asked Questions (FAQ)
+
+### Q1. How do I do a bolt tension calculation for a flange?
+
+1. Get stud size and count from **B16.5** (or the FEK Bolt Torque joint row).  
+2. Choose target bolt stress $\sigma_b$ per the owner appendix.  
+3. Compute $A_s$, then $F = \sigma_b \cdot A_s$.  
+4. Convert to wrench torque with $T = K \cdot D \cdot F$ using the **actual** lubricant $K$.  
+5. Or, for FEK screening, read $T_{\mathrm{table}}$ and rescale — [Bolt Torque & Tensioning](/calculator/bolt-torque-tensioning).
+
+### Q2. Is bolt torque the same as bolt tension?
+
+**No.** Tension is axial preload $F$; torque is the wrench reading $T$. They are linked only when $K$ (and geometry) are known: $T = K \cdot D \cdot F$.
+
+### Q3. Why does dry makeup need a higher torque?
+
+Friction rises ($K \approx 0.20$ vs moly $0.13$). For the same intended preload, wrench torque must rise by about $0.20/0.13 \approx 1.54\times$. Applying the moly number on dry threads **under-tensions** the gasket.
+
+### Q4. When should I use hydraulic tensioning instead of torque?
+
+Prefer tensioning for **large studs (about $D \ge 1\text{-}1/2$″)**, **Class 900+**, or **critical services** — axial load is applied without relying on nut factor $K$.
+
+### Q5. Where is the star / torque pattern?
+
+For this worked joint use the [12-bolt star Sequence Generator](/calculator/flange-bolt-tightening-sequence/12-bolt-star). For a 20-stud circle open [20-bolt star](/calculator/flange-bolt-tightening-sequence/20-bolt-star). Rounds 1–3 use star/cross; Round 4 is circular at 100% $T$.

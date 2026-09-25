@@ -1,22 +1,23 @@
 ---
 title: "ASME B36.10M & B36.19M Pipe Schedule & Dimensions: Complete Engineering Guide"
-description: "ASME B36.10M / B36.19M NPS, OD, schedule wall t, ID, and plain-end linear weight — with STD vs Sch 40 traps and a verified NPS 8 Sch 80 worked example for FEK."
+description: "ASME B36 pipe schedule dimensions — Schedule 160 walls, OD/ID/W_m lookup, STD vs Sch 40 traps, and a verified NPS 8 Sch 80 worked example for FEK."
 date: "2026-09-02"
 category: "Piping Engineering"
 tags:
   - ASME B36.10M
   - ASME B36.19M
   - Pipe Schedule
+  - Schedule 160
   - NPS vs DN
   - Piping Weight
   - Pipe Dimensions
-relatedCalculatorUrl: "/calculator/pipe-schedule-dimension"
+relatedCalculatorUrl: "/calculator/pipe-schedule-dimension/6-inch-sch-160"
 relatedCalculatorName: "Pipe Schedule & Dimension"
 ---
 
-Converting Nominal Pipe Size (NPS) and Schedule into OD, wall $t$, ID, and linear weight is daily plant work. Confusing NPS with OD, or STD with Sch 40, drives procurement errors and field fit-up failures.
+Converting Nominal Pipe Size (NPS) and Schedule into OD, wall $t$, ID, and linear weight is daily plant work. Confusing NPS with OD, or STD with Sch 40, drives procurement errors and field fit-up failures. High-pressure line classes often call **Schedule 160** — a thick wall that is easy to mis-order if the MTO only says “extra heavy.”
 
-Look up NPS ½–24 schedules, ID/OD, $W_m$, and MTO totals in the [Pipe Schedule & Dimension](/calculator/pipe-schedule-dimension) calculator.
+Look up NPS ½–24 schedules (including Sch 160) in the [Pipe Schedule & Dimension](/calculator/pipe-schedule-dimension/6-inch-sch-160) calculator — start from the common [NPS 6 Sch 160](/calculator/pipe-schedule-dimension/6-inch-sch-160) or [NPS 4 Sch 160](/calculator/pipe-schedule-dimension/4-inch-sch-160) SpecRoute.
 
 ## Quick Summary (TL;DR)
 
@@ -30,6 +31,7 @@ Look up NPS ½–24 schedules, ID/OD, $W_m$, and MTO totals in the [Pipe Schedul
 | **NPS ≥ 14 OD** | OD equals nominal inches (NPS 14 = 355.60 mm) |
 | **STD vs Sch 40** | Match through NPS 10; diverge at NPS 12+ |
 | **XS vs Sch 80** | Match through NPS 8; diverge above |
+| **Schedule 160 (NPS 6)** | OD 168.28 mm · $t$ 18.26 mm · ID 131.76 mm · $W_m \approx 67.56\text{ kg/m}$ |
 | **Worked NPS 8 Sch 80** | OD 219.08 mm · $t$ 12.70 mm · $W_m \approx 64.64\text{ kg/m}$ |
 | **Limits** | Catalog nominal wall — apply mill under-tolerance in B31.3 thickness design |
 
@@ -98,23 +100,37 @@ Ordering NPS 12 STD when the line class requires Sch 40 delivers an under-design
 ### Trap 2 — B36.19M Sch 40S vs B36.10M Sch 40
 For $\text{NPS} \le 12$, Sch 40 and Sch 40S walls match. At $\text{NPS} \ge 14$, Sch 40S is capped at $9.53\text{ mm}$ while B36.10M Sch 40 continues to grow (NPS 16 Sch 40 = $12.70\text{ mm}$).
 
+### Trap 3 — “Schedule 160 pipe” vs XS / XXS
+**Schedule 160** is a B36.10M wall class — thicker than Sch 80 / XS on common sizes. It is **not** the same tag as XXS. Example FEK rows (carbon screening):
+
+| NPS | Sch 160 $t$ (mm) | ID (mm) | $W_m$ (kg/m) | SpecRoute |
+| :---: | ---: | ---: | ---: | :--- |
+| **4** | 13.49 | 87.32 | 33.54 | [4-inch-sch-160](/calculator/pipe-schedule-dimension/4-inch-sch-160) |
+| **6** | 18.26 | 131.76 | 67.56 | [6-inch-sch-160](/calculator/pipe-schedule-dimension/6-inch-sch-160) |
+
+OD is unchanged by schedule (NPS 6 OD = **168.28 mm**). Ordering Sch 80 when the class needs Sch 160 understates wall and weight.
+
 ## Interactive tool CTA
 
 <Callout title="Open the Pipe Schedule & Dimension calculator" variant="tip">
-Look up OD, $t$, ID, and $W_m$ in [Pipe Schedule & Dimension](/calculator/pipe-schedule-dimension). Continue to pressure design with [ASME B31.3 Pipe Thickness](/calculator/pipe-wall-thickness).
+For Schedule 160 lookups open [NPS 6 Sch 160](/calculator/pipe-schedule-dimension/6-inch-sch-160) (or pick any NPS × schedule). Continue to pressure design with [ASME B31.3 Pipe Thickness](/calculator/pipe-wall-thickness).
 </Callout>
 
 ## Frequently Asked Questions (FAQ)
 
-### Q1. Why is NPS 4 OD 114.3 mm, not 101.6 mm?
+### Q1. What is Schedule 160 pipe?
+
+**Schedule 160** is a thick B36.10M wall designation used on higher-pressure carbon/alloy lines. Example: **NPS 6 Sch 160** → OD **168.28 mm**, $t$ **18.26 mm**, ID **131.76 mm**, $W_m \approx 67.56\text{ kg/m}$ in FEK. Open the live row: [6-inch-sch-160](/calculator/pipe-schedule-dimension/6-inch-sch-160).
+
+### Q2. Why is NPS 4 OD 114.3 mm, not 101.6 mm?
 Historical NPS tags reflect nominal internal capacity, not OD. Only at NPS 14+ does NPS equal OD in inches.
 
-### Q2. Should I use OD or ID for velocity vs pressure calculations?
+### Q3. Should I use OD or ID for velocity vs pressure calculations?
 * **Velocity ($v = Q / A$)**: Inside Diameter ($ID$).
 * **ASME B31.3 Pressure Design & Insulation**: Outside Diameter ($OD$).
 
-### Q3. What is the standard mill under-tolerance for pipe?
+### Q4. What is the standard mill under-tolerance for pipe?
 ASTM A106 / A53 / A312 typically allow $-12.5\%$ on nominal wall. Minimum delivered wall can be $0.875 \times t$ — always account for this in pressure design.
 
-### Q4. Why do some websites list STD = Sch 40 for NPS 12?
+### Q5. Why do some websites list STD = Sch 40 for NPS 12?
 That is a common internet shortcut and **wrong for NPS 12+**. FEK and B36.10M keep STD and Sch 40 as separate walls above NPS 10 — verify the schedule tag on the MTO, not a blog table that merges them.

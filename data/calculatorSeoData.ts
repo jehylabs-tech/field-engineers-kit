@@ -550,9 +550,9 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
       '<p class="eng-plain">ASME B36.10M / B36.19M pipe schedule lookup (this app)</p>',
     formulaLatex: "ID = OD - 2t,\\quad W_{tot} = W_m \\cdot L \\cdot n",
     formulaNotes:
-      "This calculator looks up OD, t, ID, and unit mass W_m from the app pipeSchedule table (B36.10M carbon/alloy; B36.19M stainless S schedules). Hero is nominal wall thickness t. Optional MTO inputs L and n give W_tot = W_m × L × n (plain-end screening mass). NPS is dimensionless: for NPS ≤ 12, OD exceeds the nominal inch size; from NPS 14 upward OD equals the nominal inch. STD ≈ Sch 40 through NPS 10; XS ≈ Sch 80 through NPS 8 — above those sizes weight-class walls diverge.",
+      "This calculator looks up OD, t, ID, and unit mass W_m from the app pipeSchedule table (B36.10M carbon/alloy; B36.19M stainless S schedules) — including Schedule 160 thick-wall rows. Hero is nominal wall thickness t. Optional MTO inputs L and n give W_tot = W_m × L × n (plain-end screening mass). NPS is dimensionless: for NPS ≤ 12, OD exceeds the nominal inch size; from NPS 14 upward OD equals the nominal inch. STD ≈ Sch 40 through NPS 10; XS ≈ Sch 80 through NPS 8 — above those sizes weight-class walls diverge. Example: NPS 6 Sch 160 → t = 18.26 mm, W_m ≈ 67.56 kg/m (SpecRoute 6-inch-sch-160).",
     formulaBadges: [
-      { label: "Hero", value: "t (wall)" },
+      { label: "Sch 160 · NPS 6", value: "t = 18.26 mm" },
       { label: "ID", value: "OD − 2t" },
       { label: "W_tot", value: "W_m × L × n" },
       { label: "B36.19M", value: "5S / 10S / 40S / 80S" },
@@ -595,6 +595,12 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
             "Stainless schedules follow B36.19M. For NPS ≤ 12, Sch 40S usually matches Sch 40; from NPS 14, Sch 40S often stays 9.53 mm while carbon Sch 40 increases.",
         },
         {
+          label: "Schedule 160 (thick wall)",
+          value: "NPS 6 → t = 18.26 mm",
+          description:
+            "Sch 160 is thicker than Sch 80 / XS on common sizes. NPS 6 Sch 160: OD 168.28 mm, ID 131.76 mm, W_m ≈ 67.56 kg/m — SpecRoute 6-inch-sch-160. Not the same tag as XXS.",
+        },
+        {
           label: "MTO Mass Scope",
           value: "Plain-end W_tot only",
           description:
@@ -619,7 +625,7 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
       { index: 4, quantity: "length", digits: 2 },
     ],
     tableFootnote:
-      "Values match data/piping/pipeSchedule.json. Live lookup also covers additional schedules (10, 160, XXS, STD where listed) and B36.19M S schedules. Unit toggle converts OD / t / ID columns.",
+      "Values match data/piping/pipeSchedule.json. Live lookup also covers Schedule 160 (e.g. NPS 6 → t 18.26 mm), XXS, STD, and B36.19M S schedules. Unit toggle converts OD / t / ID columns.",
     materialLimitations: {
       title: "Material Classes & Code Notes",
       summary:
@@ -718,6 +724,11 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
     ]),
     faq: [
       {
+        question: "What is Schedule 160 pipe?",
+        answer:
+          "**Schedule 160** is a thick **ASME B36.10M** wall class. Example FEK row **NPS 6 Sch 160**: OD **168.28 mm**, t **18.26 mm**, ID **131.76 mm**, W_m ≈ **67.56 kg/m**. Open SpecRoute **/6-inch-sch-160**. Sch 160 is not the same tag as XXS.",
+      },
+      {
         question: "Why is 4 inch pipe 114.3 mm OD instead of 101.6 mm?",
         answer:
           "NPS is a **dimensionless designator**. For **NPS ≤ 12**, OD is larger than the nominal inch size (**NPS 4 = 114.3 mm OD**). From **NPS 14** upward, OD equals the nominal inch size.",
@@ -754,12 +765,12 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
       '<p class="eng-plain">ASME B16.5 flange envelope &amp; mated-pair screening mass (this app)</p>',
     formulaLatex: "W_{pair} = 2W_f + W_g + n(W_{stud}+2W_{nut})",
     formulaNotes:
-      "This calculator looks up ASME B16.5 dimensions and screening masses for NPS ½–24 (Classes 150–1500; Class 2500 through NPS 12). Select flange type (WN / SO / SW / BL), facing (RF / FF / RTJ≥300), and pipe schedule for WN hub bore. Blind W_f uses a solid-disc estimate (ρ·π/4·OD²·T); SO/SW scale the WN RF catalog mass by type factors unless a type override is stored. Facing adjusts gasket mass and stud length. Hero W_pair = 2 flanges + gasket + full stud/nut set. Stud lengths are screening — confirm B16.5 / vendor lists before PO. Large diameters NPS 26–60 are B16.47 (not in this table).",
+      "This calculator looks up ASME B16.5 dimensions and screening masses for NPS ½–24 (Classes 150–1500; Class 2500 through NPS 12). A common field lookup is 6 inch flange OD in mm: Class 150 → 280 mm, Class 300 → 320 mm (SpecRoutes 6-inch-class-150 / 6-inch-class-300). Select flange type (WN / SO / SW / BL), facing (RF / FF / RTJ≥300), and pipe schedule for WN hub bore. Blind W_f uses a solid-disc estimate (ρ·π/4·OD²·T); SO/SW scale the WN RF catalog mass by type factors unless a type override is stored. Facing adjusts gasket mass and stud length. Hero W_pair = 2 flanges + gasket + full stud/nut set. Stud lengths are screening — confirm B16.5 / vendor lists before PO. Large diameters NPS 26–60 are B16.47 (not in this table).",
     formulaBadges: [
-      { label: "Scope", value: "B16.5 NPS ½–24" },
+      { label: "6″ Cl 150 OD", value: "280 mm" },
+      { label: "6″ Cl 300 OD", value: "320 mm" },
       { label: "W_pair", value: "2 W_f + W_g + hardware" },
       { label: "WN bore", value: "Selected schedule ID" },
-      { label: "Blind W_f", value: "Solid-disc estimate" },
     ],
     variables: [
       { symbol: "OD", name: "Flange Outside Diameter", definition: "Circular flange forging OD from the B16.5 row (mm or in)." },
@@ -798,6 +809,12 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
           value: "RF / FF / RTJ deltas by class",
           description:
             "Base stud length from the table is adjusted for facing and rounded to 5 mm. Confirm ASME B16.5 Appendix / vendor stud charts for purchase.",
+        },
+        {
+          label: "6 inch flange OD (mm)",
+          value: "Cl 150 = 280 · Cl 300 = 320",
+          description:
+            "ASME B16.5 NPS 6 WN RF outside diameters in this app. Do not confuse with pipe OD (NPS 6 = 168.28 mm). SpecRoutes: 6-inch-class-150 / 6-inch-class-300.",
         },
         {
           label: "B16.47 Series A vs B",
@@ -924,6 +941,11 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
       { name: "4. Export / carry over", text: "Confirm stud length and RTJ ring on vendor charts; carry NPS/class into gasket and bolt-torque tools." },
     ]),
     faq: [
+      {
+        question: "What is a 6 inch flange OD in mm?",
+        answer:
+          "ASME B16.5 **NPS 6** flange outside diameter (WN RF screening): **Class 150 = 280 mm**, **Class 300 = 320 mm**. Open **/6-inch-class-150** or **/6-inch-class-300**. Pipe OD for NPS 6 is **168.28 mm** — different number.",
+      },
       {
         question: "Does Class 150 mean the flange is rated for 150 psi?",
         answer:
@@ -1988,10 +2010,10 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
     formulaLatex:
       "\\mathrm{NC}=\\max_i\\{\\text{lowest NC curve with }L_p(f_i)\\le L_{\\mathrm{NC}}(f_i)\\}",
     formulaNotes:
-      "Field screening using the ANSI/ASA S12.2 octave-band tangent method. Rated NC is the lowest standard curve (NC-15 to NC-65) that is nowhere exceeded by measured L_p. Pass/Fail uses ASHRAE HVAC Applications recommended maxima by space type. Estimated A-weighted level is a coarse NC+5…8 rule — not a substitute for calibrated dBA measurement. For rumble or tonal complaints, use RC or NCB analysis.",
+      "Field NC calculator using the ANSI/ASA S12.2 octave-band tangent method. Rated NC is the lowest standard curve (NC-15 to NC-65) that is nowhere exceeded by measured L_p. Pass/Fail uses ASHRAE HVAC Applications recommended maxima by space type. SpecRoutes: control-room-nc35, office-nc30, equipment-room-nc50, workshop-nc55. Estimated A-weighted level is a coarse NC+5…8 rule — not a substitute for calibrated dBA measurement. For rumble or tonal complaints, use RC or NCB analysis.",
     formulaBadges: [
-      { label: "Hero", value: "NC · Pass/Fail" },
-      { label: "Code", value: "ANSI S12.2" },
+      { label: "NC calculator", value: "S12.2 tangent" },
+      { label: "Control Room", value: "NC-35" },
       { label: "Scope", value: "NC-15…65" },
       { label: "Space", value: "ASHRAE HVAC" },
     ],
@@ -2174,6 +2196,11 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
       },
     ]),
     faq: [
+      {
+        question: "What is an NC calculator?",
+        answer:
+          "An **NC calculator** rates room noise by the **ANSI/ASA S12.2** octave-band **tangent** method: find the lowest NC-15…65 curve that is nowhere exceeded by measured $L_p$, then compare to an **ASHRAE** space maximum. FEK SpecRoute **/control-room-nc35** is the default Control Room path.",
+      },
       {
         question: "What is a Noise Criterion (NC) rating?",
         answer:
@@ -4312,14 +4339,14 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
       '<p class="eng-eq"><b>Liquid:</b> <i>Cv</i> = <i>Q</i><sub>gpm</sub> · √(<span class="eng-frac"><span class="eng-num"><i>SG</i></span><span class="eng-den">Δ<i>P</i><sub>psi</sub></span></span>) &nbsp;(metric Q/ΔP converted inside the app)</p>' +
       '<p class="eng-eq"><b>Gas (simplified non-choked):</b> screening form with P1/P2 absolute = gauge + 1 atm</p>' +
       '<p class="eng-eq">Adequate when <i>Cv</i> ≤ <i>Cv</i><sub>sel</sub> &nbsp;·&nbsp; Travel proxy ≈ <i>Cv</i> / <i>Cv</i><sub>sel</sub></p>' +
-      '<p class="eng-plain">ISA-75.01 / IEC 60534 US Cv screening — choked FL / xT purchase checks are out of scope</p>',
+      '<p class="eng-plain">ISA-75.01 / IEC 60534 US Cv screening — FL cavitation in sister Choked Flow tool · full xT purchase checks out of scope</p>',
     formulaLatex: "C_v = Q_{\\text{gpm}} \\sqrt{SG / \\Delta P_{\\text{psi}}},\\quad \\text{adequate if } C_v \\le C_{v,\\text{sel}}",
     formulaNotes:
-      "This calculator returns US Cv. Liquid mode converts metric Q (m³/h) and ΔP (bar) to gpm/psi, then Cv = Q_gpm √(SG / ΔP_psi). P1/P2 are gauge; liquid ΔP is the gauge differential. Gas mode converts gauge to absolute with +1.01325 bar (+14.696 psi) and applies a simplified non-choked screening equation — not a full IEC 60534-2-1 purchase calculation with xT / Fγ. Enter catalog Cv,sel to check headroom (adequate when calculated Cv ≤ Cv,sel). Temperature is used for gas only.",
+      "This valve sizing calculator returns US Cv for liquid and simplified gas screening. Liquid mode converts metric Q (m³/h) and ΔP (bar) to gpm/psi, then Cv = Q_gpm √(SG / ΔP_psi). P1/P2 are gauge; liquid ΔP is the gauge differential. Gas mode converts gauge to absolute with +1.01325 bar (+14.696 psi) and applies a simplified non-choked screening equation — not a full IEC 60534-2-1 purchase calculation with xT / Fγ. Enter catalog Cv,sel to check headroom (adequate when calculated Cv ≤ Cv,sel). Temperature is used for gas only. Use SpecRoutes /liquid and /gas; run FL cavitation in the Control Valve Choked Flow sister tool.",
     formulaBadges: [
-      { label: "Liquid", value: "Cv = Q_gpm √(SG/ΔP_psi)" },
-      { label: "1 m³/h", value: "4.403 GPM" },
-      { label: "1 bar", value: "14.504 psi" },
+      { label: "Valve sizing", value: "US Cv + Cv,sel" },
+      { label: "Default liquid", value: "Cv ≈ 80.1" },
+      { label: "Docs duty ΔP 2.5", value: "Cv ≈ 87.7" },
       { label: "Adequate", value: "Cv ≤ Cv,sel" },
     ],
     variables: [
@@ -4339,7 +4366,7 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
     allowancesAndTolerances: {
       title: "Sizing Rules Matching This Calculator",
       summary:
-        "The app computes required Cv and compares it to catalog Cv,sel. Choked-flow, Fp, and noise checks remain site / vendor steps.",
+        "The valve sizing calculator computes required Cv and compares it to catalog Cv,sel. Choked-flow FL checks live in the sister Choked Flow tool; Fp and noise remain site / vendor steps.",
       items: [
         {
           label: "Catalog Headroom (this app)",
@@ -4357,13 +4384,19 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
           label: "Default Liquid Case",
           value: "Q = 120 m³/h, ΔP = 3 bar → Cv ≈ 80.1",
           description:
-            "Matches the Quick Reference row and the calculator defaults (with Cv,sel = 100 → adequate).",
+            "Matches the Quick Reference row and the calculator defaults (with Cv,sel = 100 → adequate). SpecRoute /liquid.",
+        },
+        {
+          label: "Docs cooling-water duty",
+          value: "Q = 120 m³/h, ΔP = 2.5 bar → Cv ≈ 87.7",
+          description:
+            "Same Q with a lower ΔP — used in the ISA guide with the cavitation sister-tool check (ΔP_cav ≈ 4.84 bar).",
         },
         {
           label: "Out of Scope Here",
           value: "FL choked ceiling · Fp · noise · true lift curve",
           description:
-            "FL / FF choked checks, piping geometry Fp, and equal-percentage lift maps are not solved in-app. Confirm on the vendor sizing sheet before purchase.",
+            "FL / FF choked checks → Control Valve Choked Flow tool. Piping geometry Fp and equal-percentage lift maps → vendor sheet.",
         },
       ],
     },
@@ -4410,15 +4443,15 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
         },
       ],
       codeRestrictions: [
-        "Calculator scope: liquid US Cv and simplified gas Cv, plus Cv ≤ Cv,sel headroom. It does not compute FL choked ΔP, Fp, aerodynamic noise, or stem-lift curves.",
+        "Calculator scope: liquid US Cv and simplified gas Cv, plus Cv ≤ Cv,sel headroom. FL choked ΔP → Control Valve Choked Flow. Fp, aerodynamic noise, and stem-lift curves remain vendor / site steps.",
         "If P2 < Pv (flashing) or ΔP approaches choked limits, use anti-cavitation / severe-service trim — not covered here.",
         "Avoid chronic operation at very low opening fractions; set Cv,sel so normal Cv/Cv,sel stays in a controllable band.",
       ],
     },
     workedExample: {
-      title: "Step-by-Step Worked Example: Match the Calculator Liquid Path",
+      title: "Worked example — valve sizing calculator liquid default",
       scenario:
-        "Reproduce the app default liquid case: Q = 120 m³/h water (SG = 1.0), P1 = 10 bar g, P2 = 7 bar g (ΔP = 3 bar), catalog Cv,sel = 100. Confirm required Cv and adequacy.",
+        "Reproduce the app default liquid valve-sizing case: Q = 120 m³/h water (SG = 1.0), P1 = 10 bar g, P2 = 7 bar g (ΔP = 3 bar), catalog Cv,sel = 100. Confirm required Cv and adequacy on SpecRoute /liquid.",
       designConditions: [
         { label: "Fluid", value: "Liquid water, SG = 1.00" },
         { label: "Flow rate (Q)", value: "120 m³/h (≈ 528.3 GPM)" },
@@ -4461,23 +4494,28 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
         },
         {
           step: "Step 5",
-          name: "Site checks outside the app",
+          name: "Cavitation / site checks",
           calculation:
-            "Confirm non-choked service with FL / Pv, noise, and equal-percentage lift on the vendor sheet before purchase.",
+            "Open Control Valve Choked Flow for FL / ΔP_cav (docs duty at ΔP = 2.5 bar → Cv ≈ 87.7). Confirm noise and equal-percentage lift on the vendor sheet before purchase.",
           result: "Export / copy the sizing sheet",
-          note: "Gas cases need absolute P1/P2 and are screening-only here.",
+          note: "Gas cases need absolute P1/P2 and are screening-only here — use SpecRoute /gas.",
         },
       ],
       conclusion:
-        "For Q = 120 m³/h water with ΔP = 3 bar, required Cv ≈ 80.1. With Cv,sel = 100 the calculator reports Adequate at ~80% of catalog capacity — the same path as the live default case.",
+        "For Q = 120 m³/h water with ΔP = 3 bar, required Cv ≈ 80.1. With Cv,sel = 100 the valve sizing calculator reports Adequate at ~80% of catalog capacity — the same path as SpecRoute /liquid.",
     },
-    ...howTo("How to size a control-valve Cv", [
-      { name: "1. Choose liquid or gas", text: "Liquid uses US Cv after unit conversion. Gas needs absolute P1/P2 (gauge + 1 atm) and temperature." },
+    ...howTo("How to use the valve sizing calculator", [
+      { name: "1. Choose liquid or gas", text: "Open SpecRoute /liquid or /gas. Liquid uses US Cv after unit conversion. Gas needs absolute P1/P2 (gauge + 1 atm) and temperature." },
       { name: "2. Enter Q, P1, P2", text: "{{pick:Q in m³/h (Nm³/h gas), P1/P2 in bar g.|Q in GPM (SCFH gas), P1/P2 in psig.}} ΔP must be positive." },
       { name: "3. Open 1.2 for SG, T, Cv,sel", text: "Water SG = 1. Set catalog Cv,sel to check Cv ≤ Cv,sel headroom." },
-      { name: "4. Read hero Cv and export", text: "If Undersized, raise Cv,sel or reduce required capacity. Export the sizing sheet." },
+      { name: "4. Read hero Cv and export", text: "If Undersized, raise Cv,sel or reduce required capacity. Run FL cavitation next in the Choked Flow tool when ΔP is high." },
     ]),
     faq: [
+      {
+        question: "What is a valve sizing calculator?",
+        answer:
+          "A **valve sizing calculator** computes the **required US Cv** from process flow and differential pressure, then checks whether catalog **Cv,sel** is adequate (**Cv ≤ Cv,sel**). FEK’s tool follows **ISA-75.01 / IEC 60534** screening ($F_P = 1$). Open **SpecRoute /liquid** or **/gas**. Cavitation uses the separate **Control Valve Choked Flow** calculator.",
+      },
       {
         question: "Does this calculator output Kv or Cv?",
         answer:
@@ -4496,12 +4534,17 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
       {
         question: "Does the app check choked flow or cavitation?",
         answer:
-          "**No.** FL / FF choked ceilings and cavitation indices are **not** computed. Treat the result as **non-choked screening** and confirm severe-service cases on a vendor IEC 60534 worksheet.",
+          "**Not inside this calculator.** FL / FF choked ceilings are screened in **Control Valve Choked Flow**. Treat the Cv result as **non-choked capacity screening** and confirm severe-service cases on a vendor IEC 60534 worksheet.",
       },
       {
         question: "Why doesn’t liquid Cv use temperature?",
         answer:
           "The liquid US Cv screening equation uses **Q, SG, and ΔP** only. Temperature is shown for documentation and is **required for gas** sizing.",
+      },
+      {
+        question: "Why is the docs example Cv ≈ 87.7 but the app default ≈ 80.1?",
+        answer:
+          "Same **Q = 120 m³/h** water, different **ΔP**: docs cooling-water duty uses **2.5 bar** (Cv ≈ **87.7**); the calculator default uses **3 bar** (Cv ≈ **80.1**). Both use the same US Cv engine path.",
       },
     ],
   },
@@ -4516,15 +4559,16 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
     formulaLatex:
       "T = T_{\\text{table}} \\cdot (K / 0.13) \\cdot f_{\\text{grade}},\\quad \\text{Rounds } 30\\%/60\\%/100\\%/100\\%\\text{ circular}",
     formulaNotes:
-      "This calculator looks up ASME B16.5 flange stud size and bolt count, then returns a PCC-1-style moly assembly torque T_table (K_ref = 0.13, A193 B7 baseline). Selected lubricant scales torque as T = T_table × (K / 0.13) × f_grade. A193 B8 / B8M Class 2 use f_grade = 0.85; B7 uses 1.00. The Torque & Passes tab shows Round 1–4 at 30% / 60% / 100% / circular 100% of T. The Sequence tab draws clockwise bolt numbering; Joint Details lists NPS, class, studs, K, and T. First-principles T = K · D · Fp is not solved in-app — confirm critical joints against the owner’s PCC-1 appendix.",
+      "This calculator looks up ASME B16.5 flange stud size and bolt count, then returns a PCC-1-style moly assembly torque T_table (K_ref = 0.13, A193 B7 baseline) — the field path for bolt torque / tension screening when you need wrench targets rather than a live Appendix O solver. Selected lubricant scales torque as T = T_table × (K / 0.13) × f_grade. A193 B8 / B8M Class 2 use f_grade = 0.85; B7 uses 1.00. The Torque & Passes tab shows Round 1–4 at 30% / 60% / 100% / circular 100% of T. Pair with the Sequence generator for the star torque pattern. First-principles T = K · D · F (bolt tension F = σ_b · A_s) is not solved in-app — confirm critical joints against the owner’s PCC-1 appendix.",
     formulaBadges: [
       { label: "Moly baseline", value: "K_ref = 0.13" },
-      { label: "Dry / lightly oiled", value: "K = 0.20" },
-      { label: "PTFE coated", value: "K = 0.11" },
+      { label: "NPS 6 Cl 300", value: "T = 366 N·m" },
+      { label: "Dry rescale", value: "K = 0.20 → ×1.54" },
       { label: "B8/B8M Class 2", value: "f_grade = 0.85" },
     ],
     variables: [
-      { symbol: "T", name: "Target Assembly Torque", definition: "Hero output after K and grade scaling (N·m or ft·lb). Same value labeled Target assembly torque (T) in Joint Details." },
+      { symbol: "T", name: "Target Assembly Torque", definition: "Hero output after K and grade scaling (N·m or ft·lb). Field control for intended bolt tension / preload." },
+      { symbol: "F", name: "Bolt tension (preload)", definition: "Axial stud force from a first-principles calc F = σ_b · A_s. Not a live hero output here — use T = K · D · F offline or the project appendix." },
       { symbol: "T_table", name: "Tabulated Moly Torque", definition: "Stored PCC-1-style screening torque for moly K = 0.13 and A193 B7 at the selected NPS × class (see Quick Reference and boltTorque.json)." },
       { symbol: "K", name: "Nut Friction Factor", definition: "Advanced 1.2 presets: moly 0.13, PTFE 0.11, dry / lightly oiled 0.20." },
       { symbol: "K_ref", name: "Table Reference Nut Factor", definition: "Fixed 0.13 — the lubricant assumed when T_table was stored." },
@@ -4553,7 +4597,19 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
           label: "Nut Factor (K) Scaling",
           value: "T = T_table × (K / 0.13) × f_grade",
           description:
-            "Changing from moly (0.13) to dry (0.20) raises required wrench torque by ~54% for the same target preload. Applying a moly table value on dry threads under-loads the gasket.",
+            "Changing from moly (0.13) to dry (0.20) raises required wrench torque by ~54% for the same target preload (bolt tension). Applying a moly table value on dry threads under-loads the gasket.",
+        },
+        {
+          label: "Bolt tension vs torque",
+          value: "T = K · D · F",
+          description:
+            "Tension F is axial preload; torque T is the wrench reading. A bolt tension calculation starts from F = σ_b · A_s, then converts with K — or use this table path for screening wrench targets.",
+        },
+        {
+          label: "Pair with sequence",
+          value: "Star then circular",
+          description:
+            "Apply Round 1–4 torques on the star/cross torque pattern from the Flange Bolt Tightening Sequence generator.",
         },
         {
           label: "Thread Engagement & Extension",
@@ -4627,9 +4683,9 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
       ],
     },
     workedExample: {
-      title: "Step-by-Step Worked Example: NPS 6 Class 300 — Match the Calculator",
+      title: "Worked example — NPS 6 Class 300 bolt torque / tension screen",
       scenario:
-        "Follow the same UI path: select NPS 6 / Class 300, keep moly K = 0.13 and A193 B7, read T from the hero card, then open Torque & Passes for Round 1–4. Finally rescale for dry lubricant (K = 0.20) in Advanced 1.2.",
+        "Run a bolt tension–aligned torque screen: select NPS 6 / Class 300, keep moly K = 0.13 and A193 B7, read T from the hero, open Torque & Passes for Round 1–4, then rescale for dry lubricant (K = 0.20). Carry the same joint into the Sequence generator for the 12-bolt star pattern.",
       designConditions: [
         { label: "Nominal Flange Size", value: "NPS 6 (DN 150) Class 300" },
         { label: "Fastener Quantity & Size", value: "N = 12 × 3/4\" (M20) — Joint Details / B16.5" },
@@ -4644,7 +4700,7 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
           calculation:
             "Calculator / boltTorque.json for NPS 6 Class 300: T_table = 366 N·m (270 ft·lb), 12 × 3/4\" studs.",
           result: "T_table = 366 N·m",
-          note: "Hero shows Target Assembly Torque (T) = 366 N·m with badges for K, grade, and studs.",
+          note: "Hero shows Target Assembly Torque (T) = 366 N·m — screening wrench value for the intended preload band.",
         },
         {
           step: "Step 2",
@@ -4659,7 +4715,7 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
           name: "Read Round 1–4 on Torque & Passes",
           formula: "0.30T,\\ 0.60T,\\ 1.00T,\\ 1.00T\\ (circular)",
           calculation:
-            "Round 1 = 0.30 × 366 = 110 N·m; Round 2 = 0.60 × 366 = 220 N·m; Round 3/4 = 366 N·m. Sequence tab: 1-7-4-10-2-8-5-11-3-9-6-12.",
+            "Round 1 = 0.30 × 366 = 110 N·m; Round 2 = 0.60 × 366 = 220 N·m; Round 3/4 = 366 N·m. Sequence: 1-7-4-10-2-8-5-11-3-9-6-12.",
           result: "R1 = 110 N·m, R2 = 220 N·m, R3/R4 = 366 N·m",
           note: "Whole-N·m rounding matches formatTorque in the engine.",
         },
@@ -4669,7 +4725,7 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
           formula: "T_{dry} = 366 \\cdot (0.20 / 0.13)",
           calculation: "T_dry = 366 × 1.5385 ≈ 563 N·m (415 ft·lb).",
           result: "T_dry = 563 N·m",
-          note: "Same preload intent needs higher wrench torque when friction rises.",
+          note: "Same bolt-tension intent needs higher wrench torque when friction rises.",
         },
         {
           step: "Step 5",
@@ -4677,20 +4733,30 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
           calculation:
             "Copy or export T, K, grade, studs, and star sequence. Confirm against the owner’s PCC-1 appendix and calibrated wrench certificate.",
           result: "Joint checklist ready for the work pack",
-          note: "Hand calc T = K·D·Fp may differ from screening tables — project appendix governs.",
+          note: "Hand calc T = K·D·F (bolt tension F) may differ from screening tables — project appendix governs.",
         },
       ],
       conclusion:
-        "NPS 6 Class 300 with moly + B7 returns T = 366 N·m and Rounds 110 / 220 / 366 / 366 N·m on the 12-bolt star. Dry makeup (K = 0.20) scales to 563 N·m — do not apply the moly number to dry threads.",
+        "NPS 6 Class 300 with moly + B7 returns T = 366 N·m and Rounds 110 / 220 / 366 / 366 N·m on the 12-bolt star. Dry makeup (K = 0.20) scales to 563 N·m — do not apply the moly number to dry threads. Open SpecRoute /6-inch-class-300 for the live row.",
     },
-    ...howTo("How to apply flange bolt torque", [
-      { name: "1. Select NPS and class", text: "Match the B16.5 flange (½\"–24\" × 150 / 300 / 600)." },
+    ...howTo("How to run a flange bolt torque / tension screen", [
+      { name: "1. Select NPS and class", text: "Match the B16.5 flange (½\"–24\" × 150 / 300 / 600) — e.g. 6-inch-class-300." },
       { name: "2. Open 1.2 for K and grade", text: "Default moly K = 0.13 and A193 B7. Dry uses K = 0.20; B8/B8M Class 2 uses 0.85×." },
-      { name: "3. Read Torque & Passes", text: "Round 1–4 at 30% / 60% / 100% / circular 100% of target T." },
-      { name: "4. Use the Sequence diagram", text: "Numbering is clockwise from top; follow the joint sequence text under the diagram." },
+      { name: "3. Read Torque & Passes", text: "Round 1–4 at 30% / 60% / 100% / circular 100% of target T (wrench targets for intended tension)." },
+      { name: "4. Use the Sequence diagram", text: "Numbering is clockwise from top; or open the dedicated Sequence generator for larger bolt circles." },
       { name: "5. Check Joint Details & export", text: "Confirm studs, K, and T, then export / copy the checklist sheet." },
     ]),
     faq: [
+      {
+        question: "How do I do a bolt tension calculation with this tool?",
+        answer:
+          "For **screening wrench targets**, select NPS × class, set lubricant **K** and grade, then read hero **T** and Round 1–4. That T is the FEK path for the intended preload band. For a first-principles **bolt tension** calc, use **F = σ_b · A_s** and **T = K · D · F** offline (or the project PCC-1 appendix) — the app does not solve live F in the hero. See SpecRoute **/6-inch-class-300** (366 N·m moly B7) as the worked row.",
+      },
+      {
+        question: "Is bolt torque the same as bolt tension?",
+        answer:
+          "**No.** **Tension** is axial preload **F** in the stud; **torque** is the wrench reading **T**. They link through the nut factor: **T = K · D · F**. Raising K at fixed T cuts preload.",
+      },
       {
         question: "Why is bolt torque governed by ASME PCC-1 rather than ASME B16.5?",
         answer:
@@ -4707,14 +4773,14 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
           "**No.** Options are **B7** and **B8 / B8M Class 2** (0.85× factor). Annealed **B8 Class 1** has much lower yield (~207 MPa) — never apply B7 table torque to Class 1 studs.",
       },
       {
-        question: "Why doesn’t the hero torque match T = K·D·Fp from a hand calc?",
+        question: "Why doesn’t the hero torque match T = K·D·F from a hand calc?",
         answer:
           "The app is a **table lookup + K/grade rescale**, not a live Appendix O solver. Screening tables embed owner-style target stress assumptions. Use the worked example path (NPS 6 Class 300 → **366 N·m**) and confirm critical joints against the project PCC-1 appendix.",
       },
       {
-        question: "What do the three result tabs show?",
+        question: "Where do I get the star / torque pattern?",
         answer:
-          "**Torque & Passes** — hero T plus Round 1–4. **Bolt Sequence Diagram** — clockwise numbering and the star/cross text. **Joint Details** — NPS, class, stud size, count, grade, K, and T.",
+          "Use this calculator’s Sequence tab for the joint row, or open the **Flange Bolt Tightening Sequence** generator (e.g. **12-bolt star** / **20-bolt star**) for the live diagram and Round reminder.",
       },
       {
         question: "When is hydraulic bolt tensioning preferred?",
@@ -4734,10 +4800,10 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
     formulaLatex:
       "\\text{Star: }1\\rightarrow\\tfrac{N}{2}+1\\rightarrow\\ldots\\quad R_{1..3}\\text{ star, }R_4\\text{ circular at }100\\%T",
     formulaNotes:
-      "This generator builds ASME PCC-1 style star/cross and circular bolt sequences for even counts from 4 to 64. Bolts are numbered clockwise with bolt 1 at the top of the flange. Optional NPS × class selection fills bolt count from the same B16.5 / B16.47 table used by the Bolt Torque calculator. Round fractions (30% / 60% / 100% / circular 100%) match FEK torque screening — confirm wrench targets against the project procedure.",
+      "This generator builds ASME PCC-1 style star/cross and circular bolt sequences (field “torque patterns”) for even counts from 4 to 64 — including the common 12- and 20-bolt star orders. Bolts are numbered clockwise with bolt 1 at the top of the flange. Optional NPS × class selection fills bolt count from the same B16.5 / B16.47 table used by the Bolt Torque calculator. Round fractions (30% / 60% / 100% / circular 100%) match FEK torque screening — confirm wrench targets against the project procedure.",
     formulaBadges: [
-      { label: "8-bolt star", value: "1→5→3→7→2→6→4→8" },
-      { label: "Round 1–3", value: "Star / cross" },
+      { label: "20-bolt star", value: "1→11→6→16→…" },
+      { label: "Round 1–3", value: "Star / torque pattern" },
       { label: "Round 4", value: "Circular 100%" },
       { label: "Bolt counts", value: "4–64" },
     ],
@@ -4768,7 +4834,7 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
     allowancesAndTolerances: {
       title: "PCC-1 sequence practice",
       summary:
-        "Use star/cross for incremental passes, then a circular check pass. Sequence diagrams are field aids — project procedures govern.",
+        "Use star/cross (torque pattern) for incremental passes, then a circular check pass. Sequence diagrams are field aids — project procedures govern.",
       items: [
         {
           label: "Numbering",
@@ -4778,17 +4844,24 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
         {
           label: "Rounds 1–3",
           value: "30% / 60% / 100% star",
-          description: "Aligned with FEK Bolt Torque screening targets.",
+          description:
+            "Torque pattern = star/cross order. Aligned with FEK Bolt Torque screening targets.",
         },
         {
           label: "Round 4",
           value: "100% circular",
           description: "Continue clockwise until nuts no longer rotate at target torque.",
         },
+        {
+          label: "20-bolt torque pattern",
+          value: "Star then circular",
+          description:
+            "On a 20-stud circle use the star order for Rounds 1–3, then circular at 100% for Round 4.",
+        },
       ],
     },
     tableCaption:
-      "Common star / cross sequences (bolt 1 at top, numbered clockwise)",
+      "Common star / cross torque patterns (bolt 1 at top, numbered clockwise)",
     tableHeaders: ["Bolts (N)", "Pattern name", "Tightening sequence"],
     tableAllNumeric: false,
     tableRows: [
@@ -4812,7 +4885,7 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
       ],
     ],
     tableFootnote:
-      "Star/cross order for even bolt counts with bolt 1 at top, numbered clockwise. Round fractions match FEK Bolt Torque screening (30% / 60% / 100% / circular 100%).",
+      "Star/cross (torque pattern) order for even bolt counts with bolt 1 at top, numbered clockwise. Round fractions match FEK Bolt Torque screening (30% / 60% / 100% / circular 100%).",
     materialLimitations: {
       title: "Joint Types, Gaskets & Sequence Applicability",
       summary:
@@ -4853,26 +4926,27 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
       ],
     },
     workedExample: {
-      title: "Worked example — NPS 4 Class 300 · 8-bolt star",
+      title: "Worked example — 20-bolt torque pattern (star)",
       scenario:
-        "Generate the PCC-1 star/cross order for an 8-stud joint, then carry into Bolt Torque for Round 1–4 targets.",
+        "Generate the PCC-1 star/cross torque pattern for a 20-stud joint (common field search), then finish with a circular check and carry into Bolt Torque for Round 1–4 wrench targets.",
       designConditions: [
-        { label: "Flange", value: "NPS 4 Class 300 RF" },
-        { label: "Bolt count", value: "8 × 3/4\"" },
+        { label: "Bolt count", value: "20 studs (even bolt circle)" },
+        { label: "Numbering", value: "Bolt 1 at 12 o'clock, clockwise" },
         { label: "Pattern", value: "Star Rounds 1–3 · Circular Round 4" },
       ],
       steps: [
         {
           step: "Step 1",
           name: "Number bolts",
-          calculation: "Bolt 1 at 12 o'clock; 2–8 clockwise",
-          result: "N = 8 numbered",
+          calculation: "Bolt 1 at 12 o'clock; 2–20 clockwise",
+          result: "N = 20 numbered",
         },
         {
           step: "Step 2",
-          name: "Star sequence",
-          calculation: "1 → 5 → 3 → 7 → 2 → 6 → 4 → 8",
-          result: "8-bolt star order",
+          name: "20-bolt star (torque pattern)",
+          calculation:
+            "1 → 11 → 6 → 16 → 2 → 12 → 7 → 17 → 3 → 13 → 8 → 18 → 4 → 14 → 9 → 19 → 5 → 15 → 10 → 20",
+          result: "20-bolt star order",
         },
         {
           step: "Step 3",
@@ -4883,21 +4957,21 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
         {
           step: "Step 4",
           name: "Round 4 circular",
-          calculation: "1 → 2 → … → 8 at 100% T",
+          calculation: "1 → 2 → … → 20 at 100% T",
           result: "Circular check complete",
         },
       ],
       conclusion:
-        "NPS 4 Class 300 uses **1 → 5 → 3 → 7 → 2 → 6 → 4 → 8** for star rounds, then a clockwise circular check. Pair with Bolt Torque for wrench targets.",
+        "A **20 bolt torque pattern** is the star order above for Rounds 1–3, then a clockwise circular check at 100%. Open the **20-bolt star** SpecRoute or pair with Bolt Torque for wrench targets.",
     },
     ...howTo("How to generate a flange bolt tightening sequence", [
       {
         name: "1. Select bolt count",
-        text: "Choose 4–64 bolts, or pick NPS × class to auto-fill from B16.5 / B16.47.",
+        text: "Choose 4–64 bolts (e.g. 20 for the common torque pattern), or pick NPS × class to auto-fill from B16.5 / B16.47.",
       },
       {
         name: "2. Choose pattern mode",
-        text: "Star/cross for Rounds 1–3; circular for the final check pass (or practice either).",
+        text: "Star/cross (torque pattern) for Rounds 1–3; circular for the final check pass (or practice either).",
       },
       {
         name: "3. Step through the diagram",
@@ -4913,6 +4987,16 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
       },
     ]),
     faq: [
+      {
+        question: "What is a 20 bolt torque pattern?",
+        answer:
+          "It is the **star/cross tightening sequence** for 20 studs: number bolts **1–20** clockwise from the top, then tighten **1 → 11 → 6 → 16 → 2 → 12 → 7 → 17 → 3 → 13 → 8 → 18 → 4 → 14 → 9 → 19 → 5 → 15 → 10 → 20** on Rounds 1–3 (30% / 60% / 100%). Finish with a **circular** `1 → 2 → … → 20` pass at 100%. Open the **20-bolt star** SpecRoute on this calculator.",
+      },
+      {
+        question: "Star pattern vs circular pass — which is the torque pattern?",
+        answer:
+          "**Torque pattern** usually means the **star/cross** order used on Rounds 1–3. **Circular** is Round 4 only — walk the bolt circle at 100% until nuts stop rotating. Do not use circular order for early passes on a fresh joint.",
+      },
       {
         question: "What is the 8-bolt star pattern?",
         answer:
@@ -5359,10 +5443,10 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
     formulaLatex:
       "m = \\rho V,\\quad V_{\\text{pipe}} = \\tfrac{\\pi}{4}(OD^2 - ID^2)L,\\quad ID = OD - 2t",
     formulaNotes:
-      "This calculator screens piece and total mass from catalog densities for stainless, duplex, nickel alloys, and common comparison metals. SS304 uses 7.93 g/cm³ and SS316 uses 8.00 g/cm³ so the density delta is visible for MTO. Optional unit price estimates material cost. Mill certificates govern contractual mass.",
+      "This calculator screens piece and total mass from catalog densities for stainless, duplex, nickel alloys, and common comparison metals. SS 316 / 316L density is 8.00 g/cm³ (8,000 kg/m³); SS304 uses 7.93 g/cm³ so the density delta is visible for MTO. SpecRoutes ss316 / ss316l land on those materials. Optional unit price estimates material cost. Mill certificates govern contractual mass.",
     formulaBadges: [
-      { label: "SS304", value: "7.93 g/cm³" },
-      { label: "SS316 / 316L", value: "8.00 g/cm³" },
+      { label: "SS316 density", value: "8.00 g/cm³" },
+      { label: "SS304 density", value: "7.93 g/cm³" },
       { label: "Duplex 2205", value: "7.80 g/cm³" },
       { label: "Inconel 625", value: "8.44 g/cm³" },
     ],
@@ -5520,6 +5604,11 @@ export const CALCULATOR_SEO: Record<string, CalculatorSeoEntry> = {
       },
     ]),
     faq: [
+      {
+        question: "What is the density of SS 316 / 316L?",
+        answer:
+          "This tool uses catalog **SS 316 / 316L density = 8.00 g/cm³** (8,000 kg/m³). **SS 304 / 304L = 7.93 g/cm³**. Open SpecRoute **/ss316** or **/ss316l** for live mass screens.",
+      },
       {
         question: "What is the density difference between SS304 and SS316?",
         answer:

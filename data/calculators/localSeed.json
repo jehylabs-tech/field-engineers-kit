@@ -19,12 +19,18 @@
     "category": "piping",
     "title": "Pipe Schedule & Dimension",
     "slug": "pipe-schedule-dimension",
-    "meta_description": "ASME B36.10M / B36.19M pipe OD, ID, wall t, unit mass W_m, and MTO total W_tot = W_m × L × n by NPS and schedule.",
+    "meta_description": "ASME B36 pipe schedule dimensions — Schedule 160 (NPS 6 t=18.26 mm), OD/ID/W_m, STD vs Sch 40. SpecRoute 6-inch-sch-160.",
     "formula_json": {
       "type": "pipe-schedule",
       "standard": "ASME B36.10M / B36.19M",
       "subtitle": "OD · t · ID · W_m lookup",
-      "formulaBasis": "Lookup OD, t, ID, W_m from B36.10M / B36.19M. Hero = t. W_tot = W_m × L × n."
+      "formulaBasis": "Lookup OD, t, ID, W_m from B36.10M / B36.19M including Schedule 160. Hero = t. W_tot = W_m × L × n. NPS 6 Sch 160 → t 18.26 mm, W_m ≈ 67.56 kg/m.",
+      "faq": [
+        {
+          "q": "What is Schedule 160 pipe?",
+          "a": "Thick B36.10M wall. NPS 6 Sch 160: OD 168.28 mm, t 18.26 mm, ID 131.76 mm, W_m ≈ 67.56 kg/m."
+        }
+      ]
     },
     "is_published": true,
     "created_at": "2026-08-12T00:00:01.000Z"
@@ -34,12 +40,18 @@
     "category": "piping",
     "title": "Flange Dimension & Weight",
     "slug": "flange-dimension-weight",
-    "meta_description": "ASME B16.5 flange OD, T, PCD, bolting, and mated-pair weight W_pair for NPS ½–24. WN hub bore uses Sch 40/STD ID.",
+    "meta_description": "6 inch flange OD in mm — B16.5 Class 150 = 280 mm, Class 300 = 320 mm. PCD, bolting, W_pair for NPS ½–24.",
     "formula_json": {
       "type": "flange-dimension",
       "standard": "ASME B16.5",
       "formulaLatex": "W_{\\mathrm{pair}} = 2 W_f + W_g + n(W_{\\mathrm{stud}}+2 W_{\\mathrm{nut}})",
-      "formulaBasis": "W_pair = 2 W_f + W_g + n(W_stud + 2 W_nut). WN RF table lookup with type/facing factors; WN hub bore = Sch 40/STD ID (B36.10M)."
+      "formulaBasis": "B16.5 OD/T/PCD/bolting and W_pair. NPS 6 Class 150 OD = 280 mm; Class 300 OD = 320 mm. WN hub bore uses Sch 40/STD ID.",
+      "faq": [
+        {
+          "q": "What is a 6 inch flange OD in mm?",
+          "a": "B16.5 NPS 6 WN RF: Class 150 = 280 mm, Class 300 = 320 mm. Pipe OD is 168.28 mm — different."
+        }
+      ]
     },
     "is_published": true,
     "created_at": "2026-08-12T00:00:02.000Z"
@@ -129,12 +141,22 @@
     "category": "mechanical",
     "title": "Valve Cv Sizing Calculator",
     "slug": "valve-cv-sizing",
-    "meta_description": "ISA/IEC US Cv screening for liquid and gas: Q, P1/P2 gauge, SG, and catalog Cv,sel headroom check.",
+    "meta_description": "Free valve sizing calculator — ISA/IEC US Cv for liquid & gas, Q/P1/P2, catalog Cv,sel headroom. Default liquid Cv≈80.1; docs duty Cv≈87.7.",
     "formula_json": {
       "type": "valve-cv",
       "standard": "ISA / IEC 60534",
       "formulaLatex": "C_v = Q\\sqrt{\\mathrm{SG}/\\Delta P}",
-      "formulaBasis": "Liquid: convert m³/h & bar to gpm/psi, Cv = Q_gpm √(SG/ΔP_psi). Gas: gauge→absolute (+1 atm), simplified non-choked screening. Adequate when calculated Cv ≤ catalog Cv,sel. Choked FL/xT not solved in-app."
+      "formulaBasis": "Valve sizing calculator: liquid converts m³/h & bar to gpm/psi, Cv = Q_gpm √(SG/ΔP_psi). Gas: gauge→absolute (+1 atm), simplified non-choked screening. Adequate when calculated Cv ≤ catalog Cv,sel. Choked FL → Control Valve Choked Flow sister tool.",
+      "faq": [
+        {
+          "q": "What is a valve sizing calculator?",
+          "a": "It computes required US Cv from Q and ΔP, then checks catalog Cv,sel (adequate when Cv ≤ Cv,sel). FEK: SpecRoutes /liquid and /gas."
+        },
+        {
+          "q": "Why docs Cv≈87.7 vs app default ≈80.1?",
+          "a": "Same Q=120 m³/h water; docs use ΔP=2.5 bar, app default uses ΔP=3 bar. Same US Cv engine."
+        }
+      ]
     },
     "is_published": true,
     "created_at": "2026-08-12T00:00:05.000Z"
@@ -144,12 +166,22 @@
     "category": "mechanical",
     "title": "Bolt Torque & Tensioning",
     "slug": "bolt-torque-tensioning",
-    "meta_description": "ASME PCC-1 flange bolt torque lookup: B16.5 studs, moly T_table (K=0.13), K/grade scaling, and Round 1–4 star sequence.",
+    "meta_description": "ASME PCC-1 flange bolt torque & tension calculation — B16.5 studs, moly T_table (K=0.13), K/grade scaling, Round 1–4. NPS 6 Cl 300 → 366 N·m.",
     "formula_json": {
       "type": "bolt-torque",
       "standard": "ASME PCC-1",
       "formulaLatex": "T = T_{\\mathrm{table}}\\times(K/0.13)\\times f_{\\mathrm{grade}}",
-      "formulaBasis": "Lookup ASME B16.5 stud size/count and PCC-1-style moly T_table (K_ref = 0.13, A193 B7). Scale T = T_table × (K/0.13) × f_grade (B8/B8M Class 2 = 0.85). Four-round targets: 30% / 60% / 100% / circular 100%. Confirm against the owner’s PCC-1 appendix."
+      "formulaBasis": "Bolt torque / tension screening: lookup ASME B16.5 stud size/count and PCC-1-style moly T_table (K_ref = 0.13, A193 B7). Scale T = T_table × (K/0.13) × f_grade (B8/B8M Class 2 = 0.85). Four-round targets: 30% / 60% / 100% / circular 100%. First-principles tension F = σ_b·A_s is offline — confirm against the owner’s PCC-1 appendix.",
+      "faq": [
+        {
+          "q": "How do I do a bolt tension calculation?",
+          "a": "Screening path: pick NPS × class, set K and grade, read T and Round 1–4. First-principles: F = σ_b·A_s then T = K·D·F. App hero is table lookup, not live F."
+        },
+        {
+          "q": "Is bolt torque the same as bolt tension?",
+          "a": "No. Tension is axial preload F; torque is wrench reading T. Linked by T = K·D·F when nut factor K is known."
+        }
+      ]
     },
     "is_published": true,
     "created_at": "2026-08-12T00:00:06.000Z"
@@ -159,12 +191,12 @@
     "category": "mechanical",
     "title": "Flange Bolt Tightening Sequence",
     "slug": "flange-bolt-tightening-sequence",
-    "meta_description": "Free online flange bolt tightening sequence generator. View interactive star pattern diagrams and tightening passes for 4 to 64 bolt flanges per ASME PCC-1.",
+    "meta_description": "Free flange bolt torque pattern & tightening sequence generator — 12- and 20-bolt star diagrams, PCC-1 passes, even counts 4–64.",
     "formula_json": {
       "type": "bolt-sequence",
       "standard": "ASME PCC-1",
       "subtitle": "Star / circular bolt sequence",
-      "formulaBasis": "ASME PCC-1 legacy cross-pattern (star) sequences for even bolt counts 4–64, numbered clockwise from bolt 1 at top. Optional NPS × class helper fills bolt count from the same ASME B16.5 / B16.47 joint table as the Bolt Torque tool. Assembly rounds: 30% / 60% / 100% star, then 100% circular check — aligned with FEK torque screening.",
+      "formulaBasis": "ASME PCC-1 legacy cross-pattern (star) torque patterns for even bolt counts 4–64, numbered clockwise from bolt 1 at top — including common 12- and 20-bolt star orders. Optional NPS × class helper fills bolt count from the same ASME B16.5 / B16.47 joint table as the Bolt Torque tool. Assembly rounds: 30% / 60% / 100% star, then 100% circular check — aligned with FEK torque screening.",
       "related": [
         {
           "slug": "bolt-torque-tensioning",
@@ -183,6 +215,10 @@
         }
       ],
       "faq": [
+        {
+          "q": "What is a 20 bolt torque pattern?",
+          "a": "The star/cross order for 20 studs: 1 → 11 → 6 → 16 → 2 → 12 → 7 → 17 → 3 → 13 → 8 → 18 → 4 → 14 → 9 → 19 → 5 → 15 → 10 → 20 on Rounds 1–3, then circular 1→2→…→20 at 100%."
+        },
         {
           "q": "What is an 8-bolt flange star pattern?",
           "a": "Number bolts 1–8 clockwise from the top. Tighten in order 1 → 5 → 3 → 7 → 2 → 6 → 4 → 8 (opposite pairs), then finish with a circular 100% pass."
@@ -231,12 +267,12 @@
     "category": "procurement",
     "title": "Stainless Steel & Special Alloy Weight & Density",
     "slug": "stainless-alloy-weight-density",
-    "meta_description": "Calculate weight and volume for SS304, SS316L, Duplex, Inconel, and Titanium plates, pipes, and bars. Includes material density reference tables.",
+    "meta_description": "SS 316 density 8.00 g/cm³ — stainless / Duplex / Inconel plate, pipe, and bar weight. SpecRoute ss316 / ss316l.",
     "formula_json": {
       "type": "alloy-weight",
       "standard": "Procurement · catalog densities",
       "formulaLatex": "m = \\rho \\times V",
-      "formulaBasis": "Mass = density × volume. Densities are typical catalog values (e.g. SS304 7930 kg/m³, SS316 8000 kg/m³). Pipe volume uses OD and wall; plate/rect use L×W×t; round bar uses π/4·D²·L. Optional unit price screens material cost. Not a mill certificate substitute.",
+      "formulaBasis": "Mass = density × volume. SS316/316L ρ = 8.00 g/cm³; SS304 = 7.93 g/cm³. Pipe volume uses OD and wall; plate/rect use L×W×t; round bar uses π/4·D²·L. Optional unit price screens material cost. Not a mill certificate substitute.",
       "related": [
         {
           "slug": "metal-weight-cost",
@@ -250,6 +286,10 @@
         }
       ],
       "faq": [
+        {
+          "q": "What is the density of SS 316?",
+          "a": "FEK catalog SS316/316L density = 8.00 g/cm³ (8,000 kg/m³). SS304 = 7.93 g/cm³."
+        },
         {
           "q": "Why does SS316 weigh more than SS304 for the same size?",
           "a": "Typical catalog density for SS316 is about 8.00 g/cm³ versus 7.93 g/cm³ for SS304 — roughly 0.9% denser, so the same volume is slightly heavier."
@@ -1113,12 +1153,12 @@
     "category": "inspection",
     "title": "Noise Criterion Rating Calculator",
     "slug": "noise-criterion",
-    "meta_description": "ANSI/ASA S12.2 Noise Criterion (NC) tangent rating from octave-band SPL with ASHRAE HVAC space screening (NC-15 to NC-65).",
+    "meta_description": "Free NC calculator — ANSI/ASA S12.2 Noise Criterion tangent rating, ASHRAE space Pass/Fail. SpecRoute control-room-nc35.",
     "formula_json": {
       "type": "noise-criterion",
       "standard": "ANSI/ASA S12.2 / ASHRAE HVAC Applications",
       "formulaLatex": "\\mathrm{NC}=\\max_i\\{\\text{lowest NC curve with }L_p(f_i)\\le L_{\\mathrm{NC}}(f_i)\\}",
-      "formulaBasis": "Octave-band tangent method per ANSI/ASA S12.2. Rated NC is the lowest published NC curve (15–65) that is nowhere exceeded by measured L_p at 63–8000 Hz. ASHRAE HVAC Applications space limits drive Pass/Fail. Estimated dBA ≈ NC + 5…8 dB. Screening only — use RC/NCB for rumble or tonal isolation.",
+      "formulaBasis": "NC calculator: octave-band tangent method per ANSI/ASA S12.2. Rated NC is the lowest published NC curve (15–65) that is nowhere exceeded by measured L_p at 63–8000 Hz. ASHRAE HVAC Applications space limits drive Pass/Fail. Estimated dBA ≈ NC + 5…8 dB. Screening only — use RC/NCB for rumble or tonal isolation.",
       "related": [
         {
           "slug": "link-seal-penetration-sleeve",
@@ -1132,6 +1172,10 @@
         }
       ],
       "faq": [
+        {
+          "q": "What is an NC calculator?",
+          "a": "It rates room noise with the ANSI/ASA S12.2 octave-band tangent method and checks an ASHRAE space NC limit. FEK: /control-room-nc35."
+        },
         {
           "q": "What is the NC tangent method?",
           "a": "Plot octave-band SPL against standard NC curves. The NC rating is the lowest curve that is nowhere exceeded — the band that touches (or comes closest) is the tangent band."

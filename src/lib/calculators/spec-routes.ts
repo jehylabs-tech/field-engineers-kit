@@ -658,6 +658,8 @@ export function parseSpecToQuery(spec: string): Record<string, string> | null {
     value === "stainless-316" ||
     value in ALLOY_MATERIAL_BY_ID
   ) {
+    // metal-weight engine id for 316 is ss316l (SpecRoute slug stays stainless-316)
+    if (value === "stainless-316") return { material: "ss316l" };
     return { material: value };
   }
   return null;
@@ -851,7 +853,7 @@ export function listSpecRoutesForSlug(slug: string): SpecRoute[] {
         {
           slug,
           spec: "stainless-316",
-          query: { material: "stainless-316" },
+          query: { material: "ss316l" },
           label: "Stainless 316",
         },
       ];

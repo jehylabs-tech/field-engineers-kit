@@ -1,22 +1,23 @@
 ---
 title: "Stainless Steel & Special Alloy Density & Weight Calculation Guide"
-description: "Calculate stainless steel pipe weight per meter for SS316L, Duplex, and Inconel using ASME B36.19M geometry and catalog densities for accurate MTO screening."
+description: "SS 316 density (8.00 g/cm³) and stainless pipe/plate weight — FEK catalog ρ for 304/316/Duplex/Inconel with B36 geometry for MTO screening."
 date: "2026-09-19"
 category: "Piping Engineering"
 tags:
   - Pipe Weight
+  - SS 316 Density
   - Stainless Steel Density
   - Material Take Off
   - ASME B36.19M
   - Special Alloy
   - MTO Weight
-relatedCalculatorUrl: "/calculator/stainless-alloy-weight-density"
+relatedCalculatorUrl: "/calculator/stainless-alloy-weight-density/ss316"
 relatedCalculatorName: "Stainless Steel & Special Alloy Weight & Density"
 ---
 
-Underestimated spool mass shows up as crane capacity shortfalls, wrong truck loading, and MTO bid gaps. Overestimated mass locks capital in freight and support steel that the line never needed. Accurate **stainless steel pipe weight calculation** starts from B36 OD / wall geometry and the right alloy density—not a carbon-steel rule of thumb with a vague “add 2%.”
+Underestimated spool mass shows up as crane capacity shortfalls, wrong truck loading, and MTO bid gaps. Overestimated mass locks capital in freight and support steel that the line never needed. Accurate **stainless steel pipe weight calculation** starts from B36 OD / wall geometry and the right alloy density—not a carbon-steel rule of thumb with a vague “add 2%.” A common search is **SS 316 density**: FEK catalog **ρ = 8.00 g/cm³** (8,000 kg/m³) for SS316 / 316L.
 
-Run the same geometry and density catalog in the interactive [Stainless Steel & Special Alloy Weight & Density](/calculator/stainless-alloy-weight-density) calculator (pipe / plate / bar screening).
+Run the same geometry and density catalog in the interactive [Stainless Steel & Special Alloy Weight & Density](/calculator/stainless-alloy-weight-density/ss316) calculator (pipe / plate / bar screening) — SpecRoute **ss316** / **ss316l**.
 
 ## Quick Summary (TL;DR)
 
@@ -26,11 +27,12 @@ Run the same geometry and density catalog in the interactive [Stainless Steel & 
 
 | Item | Field takeaway |
 | :--- | :--- |
+| **SS 316 / 316L density** | **8.00 g/cm³** (8,000 kg/m³) — FEK catalog |
+| **SS 304 / 304L density** | **7.93 g/cm³** (~0.9% lighter than 316) |
 | **Metal area** | $A = \frac{\pi}{4}(OD^2 - ID^2)$ with $ID = OD - 2t$ |
 | **Linear weight** | $w_m = A \cdot \rho$ ($\text{kg/m}$ or $\text{lb/ft}$) |
 | **Spool total** | $W = w_m \cdot L \cdot N_{\text{pieces}}$ |
 | **CS density** | $\rho \approx 7.85\text{ g/cm}^3$ ($7{,}850\text{ kg/m}^3$) |
-| **SS 304 / 316L** | $7.93$ / $8.00\text{ g/cm}^3$ (FEK catalog) |
 | **Duplex 2205** | $7.80\text{ g/cm}^3$ |
 | **Inconel 625** | $8.44\text{ g/cm}^3$ |
 | **Limit** | Nominal B36 wall — not mill under-tolerance mass |
@@ -41,7 +43,7 @@ Run the same geometry and density catalog in the interactive [Stainless Steel & 
 
 Carbon-steel rack and freight estimates often reuse the B36.10M plain-end weight formula with $\rho = 7{,}850\text{ kg/m}^3$. Austenitic stainless (304/316), duplex, and nickel alloys change $\rho$ by several percent—and Inconel 625 by nearly **8%** versus CS for the same OD and wall. On a long alloy header, that error is measurable money and crane tonnage.
 
-FieldEngineersKit screens pipe, plate, and bar mass from catalog densities in [Stainless Steel & Special Alloy Weight & Density](/calculator/stainless-alloy-weight-density). Pair OD / wall lookup with [Pipe Schedule & Dimensions](/calculator/pipe-schedule-dimension) when you need B36.10M / B36.19M tables instead of typed OD.
+FieldEngineersKit screens pipe, plate, and bar mass from catalog densities in [Stainless Steel & Special Alloy Weight & Density](/calculator/stainless-alloy-weight-density/ss316). Pair OD / wall lookup with [Pipe Schedule & Dimensions](/calculator/pipe-schedule-dimension) when you need B36.10M / B36.19M tables instead of typed OD.
 
 <Callout title="Screening Note" variant="info">
 Calculated weights are **nominal estimation values** based on ASME B36.10M / B36.19M geometric dimensions and standard material densities. Actual delivered MTO shipment weights may vary by about **±10%** due to mill manufacturing wall thickness tolerances (ASTM A53 / A312) and weld seam reinforcement. Use mill certificates for contractual mass.
@@ -171,29 +173,33 @@ Same OD/wall in **carbon steel** ($\rho = 7{,}850$) yields $\approx 169.6\text{ 
 ## Interactive tool CTA
 
 <Callout title="Try the live alloy weight tool" variant="tip">
-Open [Stainless Steel & Special Alloy Weight & Density](/calculator/stainless-alloy-weight-density) → choose **Round pipe / tube** → pick **SS316L** (or Inconel 625 / Duplex 2205) → enter OD, wall, and length. For carbon-steel plate / general metals, use [Metal Weight & Cost Estimator](/calculator/metal-weight-cost). Confirm wall vs design pressure with [Pipe Wall Thickness](/calculator/pipe-wall-thickness), and flange mass with [Flange Dimension & Weight](/calculator/flange-dimension-weight).
+Open [SS316](/calculator/stainless-alloy-weight-density/ss316) (or [SS316L](/calculator/stainless-alloy-weight-density/ss316l)) → choose **Round pipe / tube** → enter OD, wall, and length. For carbon-steel plate / general metals, use [Metal Weight & Cost Estimator](/calculator/metal-weight-cost/stainless-316). Confirm wall vs design pressure with [Pipe Wall Thickness](/calculator/pipe-wall-thickness), and flange mass with [Flange Dimension & Weight](/calculator/flange-dimension-weight).
 </Callout>
 
 ---
 
 ## Frequently Asked Questions (FAQ)
 
-### Q1. How to calculate pipe weight per meter for SS316L and Inconel 625?
+### Q1. What is the density of SS 316 / 316L?
+
+FEK catalog **SS 316 / 316L density = 8.00 g/cm³** (8,000 kg/m³). **SS 304 / 304L = 7.93 g/cm³**. Open [ss316](/calculator/stainless-alloy-weight-density/ss316) or [ss316l](/calculator/stainless-alloy-weight-density/ss316l) for live mass screens.
+
+### Q2. How to calculate pipe weight per meter for SS316L and Inconel 625?
 
 Use $w_m = A\cdot\rho$ with $A = \frac{\pi}{4}(OD^2 - ID^2)$ from B36.19M OD and wall. FEK catalog densities: **SS316L = 8,000 kg/m³**, **Inconel 625 = 8,440 kg/m³**. For NPS 6 Sch 40S, SS316L screens at **28.80 kg/m**; Inconel 625 at about **30.4 kg/m** on the same geometry.
 
-### Q2. What is the difference between carbon steel and stainless steel pipe density factors?
+### Q3. What is the difference between carbon steel and stainless steel pipe density factors?
 
 Carbon steel screening density is **7.85 g/cm³**. SS304/304L is **7.93 g/cm³** and SS316/316L is **8.00 g/cm³** in the FEK catalog—about **1.9%** heavier than CS for identical OD and wall. Duplex 2205 is slightly lighter (**7.80 g/cm³**). Do not reuse the CS-only $0.0246615\cdot t\cdot(OD-t)$ constant without rescaling $\rho$.
 
-### Q3. How do ASME B36.10M vs ASME B36.19M weight schedule differences show up?
+### Q4. How do ASME B36.10M vs ASME B36.19M weight schedule differences show up?
 
 B36.10M covers CS/alloy schedules; B36.19M covers stainless **S** schedules. Through NPS 12, Sch 40 and Sch 40S walls often match; at larger NPS, Sch 40S may stay thinner than B36.10M Sch 40, so stainless “40S” can weigh less than a CS Sch 40 of the same NPS even before density is applied. Always specify **40S vs 40** on the MTO.
 
-### Q4. Why does my mill ticket weight differ from this calculation?
+### Q5. Why does my mill ticket weight differ from this calculation?
 
 Nominal B36 walls ignore the ASTM A312 / A53 **−12.5%** wall under-tolerance band, weld reinforcement, bevels, and fittings. FEK (and this guide) are **screening** tools—expect roughly **±10%** on shipped mass versus a perfect nominal calculation. Contractual weight should follow the purchase order and MTRs.
 
-### Q5. Can I use the same calculator for plate and bar MTO?
+### Q6. Can I use the same calculator for plate and bar MTO?
 
 Yes. The [Stainless Steel & Special Alloy Weight & Density](/calculator/stainless-alloy-weight-density) tool also screens plate, round bar, and rectangular bar with the same density catalog ($m = \rho V$). Pipe mode is the hollow-cylinder path used in the worked example above.

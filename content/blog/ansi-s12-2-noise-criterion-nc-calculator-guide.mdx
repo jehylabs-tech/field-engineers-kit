@@ -1,0 +1,73 @@
+---
+title: "NC Calculator Guide: ANSI/ASA S12.2 Noise Criterion Rating"
+description: "Free NC calculator path — ANSI/ASA S12.2 octave-band tangent Noise Criterion rating, ASHRAE space Pass/Fail, and FEK Control Room NC-35 worked example."
+date: "2026-09-25"
+category: "ASME Standards"
+tags:
+  - NC Calculator
+  - Noise Criterion
+  - ANSI S12.2
+  - ASHRAE HVAC
+  - Octave Band
+  - Control Room NC-35
+relatedCalculatorUrl: "/calculator/noise-criterion/control-room-nc35"
+relatedCalculatorName: "Noise Criterion Rating Calculator"
+---
+
+An **NC calculator** rates room noise against **Noise Criterion (NC)** curves: enter octave-band sound pressure levels $L_p(f_i)$, find the lowest NC curve that is nowhere exceeded (ANSI/ASA S12.2 **tangent** method), then compare to an ASHRAE space maximum for Pass/Fail.
+
+Open the live [Noise Criterion Rating Calculator](/calculator/noise-criterion/control-room-nc35) — SpecRoutes include [Control Room NC-35](/calculator/noise-criterion/control-room-nc35), [Office NC-30](/calculator/noise-criterion/office-nc30), [Equipment Room NC-50](/calculator/noise-criterion/equipment-room-nc50), and [Workshop NC-55](/calculator/noise-criterion/workshop-nc55).
+
+## Quick Summary (TL;DR)
+
+- **Takeaway:** NC = lowest clear NC-15…65 curve under the measured octave-band spectrum; Pass when NC ≤ ASHRAE space max.
+- **Governing relation:** $L_p(f_i) \le L_{\mathrm{NC}}(f_i)$ for all bands $f_i \in \{63,\ldots,8000\}\text{ Hz}$.
+- **Code / basis:** ANSI/ASA S12.2 · ASHRAE HVAC Applications space maxima.
+
+| Item | Field takeaway |
+| :--- | :--- |
+| **NC calculator** | FEK octave-band tangent rating + space Pass/Fail |
+| **Worked SpecRoute** | [control-room-nc35](/calculator/noise-criterion/control-room-nc35) |
+| **dBA estimate** | ≈ NC + 5…8 dB (screening only) |
+| **Out of scope** | RC / NCB for rumble or tonal complaints |
+
+---
+
+## How an NC calculator works
+
+1. Select space type (sets ASHRAE max NC).  
+2. Enter $L_p$ at 63, 125, 250, 500, 1k, 2k, 4k, 8k Hz.  
+3. Read hero **NC-XX** and Pass/Fail.  
+4. Use the spectrum chart to see the tangent (governing) band.
+
+<Callout title="Screening vs calibrated survey" variant="info">
+FEK is an **ANSI/ASA S12.2 screening** aid. Calibrated meters, RC/NCB analysis, and project criteria govern compliance documentation.
+</Callout>
+
+### Worked path — Control Room NC-35
+
+SpecRoute [control-room-nc35](/calculator/noise-criterion/control-room-nc35) loads a Control Room spectrum on the **NC-35** tangent and rates **NC-35 Pass** (est. dBA ≈ 40–43). The calculator default Control Room duty also returns NC-35 Pass.
+
+---
+
+## Interactive tool CTA
+
+<Callout title="Open the NC calculator" variant="tip">
+Start at [Control Room NC-35](/calculator/noise-criterion/control-room-nc35) or pick Office / Equipment Room / Workshop SpecRoutes. Enter your octave-band SPL and read NC + Pass/Fail.
+</Callout>
+
+---
+
+## Frequently Asked Questions (FAQ)
+
+### Q1. What is an NC calculator?
+
+A tool that computes a **Noise Criterion (NC)** rating from octave-band SPL using the **ANSI/ASA S12.2** tangent method, then checks an **ASHRAE** space limit. FEK: [Noise Criterion Rating Calculator](/calculator/noise-criterion/control-room-nc35).
+
+### Q2. Is estimated dBA exact?
+
+**No.** Screening uses **dBA ≈ NC + 5…8 dB**. Use a calibrated A-weighted measurement for compliance records.
+
+### Q3. When should I use RC or NCB instead?
+
+For **low-frequency rumble** or **tonal** complaints, use **RC** or **NCB** — NC alone can miss those modes.

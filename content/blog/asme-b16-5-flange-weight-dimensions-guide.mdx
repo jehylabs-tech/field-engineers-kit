@@ -1,21 +1,22 @@
 ---
 title: "ASME B16.5 Flange Weight & Dimensions: Rigging & Bolting Calculation Guide"
-description: "ASME B16.5 flange OD, PCD, stud count, wrench size, and mated-pair assembly weight for crane rigging and pipe-rack deadload — aligned to the FEK flange calculator."
+description: "6 inch flange OD in mm and ASME B16.5 flange dimensions — Class 150 OD 280 mm, Class 300 OD 320 mm, PCD, bolting, and mated-pair weight for FEK."
 date: "2026-09-03"
 category: "Piping Engineering"
 tags:
   - ASME B16.5
   - Flange Dimensions
+  - Flange OD
   - Flange Weight
   - Bolting Specs
   - Piping Stress
-relatedCalculatorUrl: "/calculator/flange-dimension-weight"
+relatedCalculatorUrl: "/calculator/flange-dimension-weight/6-inch-class-150"
 relatedCalculatorName: "Flange Dimension & Weight"
 ---
 
-Specifying flange face dimensions is only half the field job. Crane lifts, pipe-rack deadload, and stress models need the **total mated-pair assembly weight**—two flanges, gasket, studs, and heavy hex nuts—not a single catalog flange mass.
+Specifying flange face dimensions is only half the field job. Crane lifts, pipe-rack deadload, and stress models need the **total mated-pair assembly weight**—two flanges, gasket, studs, and heavy hex nuts—not a single catalog flange mass. A frequent lookup is **6 inch flange OD in mm**: B16.5 **Class 150** is **280 mm**; **Class 300** is **320 mm**.
 
-Look up OD, thickness, PCD, bolting, and $W_{\text{pair}}$ in the interactive [Flange Dimension & Weight](/calculator/flange-dimension-weight) calculator (ASME B16.5 NPS ½–24).
+Look up OD, thickness, PCD, bolting, and $W_{\text{pair}}$ in the interactive [Flange Dimension & Weight](/calculator/flange-dimension-weight/6-inch-class-150) calculator (ASME B16.5 NPS ½–24) — or jump to [NPS 6 Class 300](/calculator/flange-dimension-weight/6-inch-class-300).
 
 ## Quick Summary (TL;DR)
 
@@ -25,10 +26,11 @@ Look up OD, thickness, PCD, bolting, and $W_{\text{pair}}$ in the interactive [F
 
 | Item | Field takeaway |
 | :--- | :--- |
+| **6″ flange OD (mm)** | Cl **150 → 280 mm** · Cl **300 → 320 mm** (B16.5 WN RF) |
 | **Scope** | ASME B16.5 NPS ½–24 (use B16.47 Series A/B above NPS 24) |
 | **RF height** | Cl 150/300: 1.6 mm **in** $T_f$; Cl 600–2500: 6.4 mm **added** to $T_f$ |
 | **PCD tolerance** | $\pm 1.5\text{ mm}$ on bolt circle |
-| **Worked NPS 6 Cl 300 WN RF** | 12 × ¾″ studs · PCD 269.9 mm · $W_{\text{pair}} \approx 61.5\text{ kg}$ |
+| **Worked NPS 6 Cl 300 WN RF** | OD 320 mm · 12 × ¾″ studs · PCD 269.9 mm · $W_{\text{pair}} = 44.56\text{ kg}$ |
 | **Limits** | Screening catalog weights — confirm mill certs and project MTO |
 
 <Callout title="Screening vs. stamped B16.5 edition" variant="info">
@@ -75,45 +77,43 @@ $$
 ### Field Problem Statement
 Calculate envelope dimensions, stud bolting, wrench size, and total mated-pair assembly weight for an **NPS 6 (DN 150) Class 300 Weld Neck Raised Face (WN RF)** joint on Schedule 40 pipe.
 
-Open the same duty in FEK: [Flange Dimension & Weight](/calculator/flange-dimension-weight) (NPS 6 · Class 300 · WN · RF).
+Open the same duty in FEK: [Flange Dimension & Weight · NPS 6 Class 300](/calculator/flange-dimension-weight/6-inch-class-300) (WN · RF).
 
 ### Step 1: Extract ASME B16.5 Dimensions
-Per ASME B16.5 Table 11 for NPS 6 Class 300:
-* **Flange Outside Diameter ($OD_f$)**: $317.5\text{ mm}$ ($12.50"$)
-* **Flange Minimum Thickness ($T_f$)**: $36.5\text{ mm}$ ($1.44"$)
-* **Hub Bore Diameter**: $154.06\text{ mm}$ (Matches NPS 6 Sch 40 ID)
+FEK `flangeDimension.json` (same source as the live calculator) for NPS 6 Class 300 WN RF:
+* **Flange Outside Diameter ($OD_f$)**: $320.0\text{ mm}$
+* **Flange Thickness ($T_f$)**: $35.0\text{ mm}$
+* **Hub Bore Diameter**: $154.1\text{ mm}$ (NPS 6 Sch 40 / STD ID)
 
 ### Step 2: Determine Bolting Layout & Tool Specs
-Per ASME B16.5 Table 12:
 * **Pitch Circle Diameter (PCD)**: $269.9\text{ mm}$ ($10.62"$)
-* **Bolting Pattern**: $12 \times 3/4"$ studs ($L_{\text{stud}} = 120\text{ mm}$)
+* **Bolting Pattern**: $12 \times 3/4"$ studs ($L_{\text{stud}} = 120\text{ mm}$ screening)
 * **Bolt Hole Size ($d_h$)**: $22.2\text{ mm}$ ($7/8"$)
 * **Wrench / Spanner Size**: $1-1/4"$ ($32\text{ mm}$) heavy hex nut socket
 
 ### Step 3: Calculate Bare Flange Weight (2 Flanges)
-For a single NPS 6 Class 300 WN RF flange, $W_f \approx 26.50\text{ kg}$.
+Single NPS 6 Class 300 WN RF catalog mass $W_f = 19.10\text{ kg}$.
 
 $$
-W_{2f} = 2 \times 26.50\text{ kg} = 53.00\text{ kg}
+W_{2f} = 2 \times 19.10\text{ kg} = 38.20\text{ kg}
 $$
 
 ### Step 4: Calculate Fastener Mass (12 Studs + 24 Heavy Hex Nuts)
-* Mass of one $3/4" \times 120\text{ mm}$ B7 stud $\approx 0.38\text{ kg}$.
-* Mass of two $3/4"$ 2H heavy hex nuts $\approx 2 \times 0.15\text{ kg} = 0.30\text{ kg}$.
-* Per stud assembly mass $= 0.68\text{ kg}$.
+FEK screening masses from the same JSON row (engine rounds stud mass to $0.01\text{ kg}$):
+* $W_{\text{stud}} \approx 0.27\text{ kg}$, $W_{\text{nut}} = 0.118\text{ kg}$ → per set $0.506\text{ kg}$.
 
 $$
-W_{\text{fasteners}} = 12 \times 0.68\text{ kg} = 8.16\text{ kg}
+W_{\text{hw}} = 12 \times 0.506\text{ kg} = 6.07\text{ kg}
 $$
 
 ### Step 5: Total Mated-Pair Assembly Rigging Mass
-Adding the spiral-wound gasket mass ($W_g \approx 0.35\text{ kg}$):
+Adding the spiral-wound gasket screening mass ($W_g = 0.29\text{ kg}$):
 
 $$
-W_{\text{pair}} = 53.00\text{ kg} + 0.35\text{ kg} + 8.16\text{ kg} = 61.51\text{ kg}
+W_{\text{pair}} = 38.20\text{ kg} + 0.29\text{ kg} + 6.07\text{ kg} = 44.56\text{ kg}
 $$
 
-**Conclusion**: Crane rigging and pipe rack load calculations must account for **$\approx 61.5\text{ kg}$** per joint for NPS 6 Class 300 WN RF.
+**Conclusion**: Crane rigging and pipe rack load calculations must account for **$44.56\text{ kg}$** per joint for NPS 6 Class 300 WN RF in FEK — matching the calculator hero.
 
 <Callout title="Field callout" variant="tip">
 Confirm stud length and nut type (heavy hex vs standard) against the facing and gasket stack before ordering. FEK screening weights are catalog averages — use mill MTO for critical lifts.
@@ -122,19 +122,31 @@ Confirm stud length and nut type (heavy hex vs standard) against the facing and 
 ## Interactive tool CTA
 
 <Callout title="Open the Flange Dimension & Weight calculator" variant="tip">
-Run NPS × class × type × facing lookups and mated-pair mass in [Flange Dimension & Weight](/calculator/flange-dimension-weight). Pair gasket face sizes with [Gasket Dimension Selection](/calculator/gasket-dimension-selection).
+For **6 inch flange OD in mm**, open [NPS 6 Class 150](/calculator/flange-dimension-weight/6-inch-class-150) (**OD = 280 mm**) or [Class 300](/calculator/flange-dimension-weight/6-inch-class-300) (**OD = 320 mm**). Pair gasket face sizes with [Gasket Dimension Selection](/calculator/gasket-dimension-selection).
 </Callout>
 
 ## Frequently Asked Questions (FAQ)
 
-### Q1. Does Class 150 mean the maximum pressure is 150 psi?
+### Q1. What is a 6 inch flange OD in mm?
+
+ASME B16.5 **NPS 6** flange outside diameter depends on pressure class (WN RF screening in FEK):
+
+| Class | Flange OD |
+| :---: | ---: |
+| **150** | **280 mm** |
+| **300** | **320 mm** |
+| **600** | **355 mm** (live lookup) |
+
+Open [6-inch-class-150](/calculator/flange-dimension-weight/6-inch-class-150) or [6-inch-class-300](/calculator/flange-dimension-weight/6-inch-class-300). Pipe OD for NPS 6 is **168.28 mm** — do not confuse pipe OD with flange OD.
+
+### Q2. Does Class 150 mean the maximum pressure is 150 psi?
 **No.** Pressure class is a dimensionless designator. Maximum Allowable Working Pressure (MAWP) depends on temperature and material group. Check the [Flange Pressure-Temperature Rating](/calculator/flange-pressure-temperature-rating) calculator for Group 1.1 / 2.2 screening.
 
-### Q2. When must ASME B16.47 be used instead of ASME B16.5?
+### Q3. When must ASME B16.47 be used instead of ASME B16.5?
 ASME B16.5 covers sizes up to **NPS 24**. For **NPS 26 to NPS 60**, use ASME B16.47. **Series A** and **Series B** have different bolt circles and are **not interchangeable**.
 
-### Q3. Can I bolt a Flat Face (FF) flange directly to a Raised Face (RF) flange?
+### Q4. Can I bolt a Flat Face (FF) flange directly to a Raised Face (RF) flange?
 **Never mate carbon steel RF flanges to cast iron or bronze FF flanges** without removing the raised face or using a full-face gasket. The bending moment from the raised-face gap can crack brittle FF flanges.
 
-### Q4. Why does the FEK pair weight differ from a single flange catalog sheet?
+### Q5. Why does the FEK pair weight differ from a single flange catalog sheet?
 Catalog sheets often list **one** flange. Field lifts and rack loads need **two flanges + gasket + full stud/nut set** ($W_{\text{pair}}$). That is why internet “flange only” masses understate crane demand.

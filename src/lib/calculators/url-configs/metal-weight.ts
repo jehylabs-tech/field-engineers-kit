@@ -48,10 +48,13 @@ export const METAL_WEIGHT_URL_CONFIG: ParamConfig<MetalWeightInputs> = {
   material: {
     param: "material",
     serialize: (value: MetalMaterial) => value,
-    deserialize: (value: string | null, fallback: MetalMaterial) =>
-      MATERIALS.includes(value as MetalMaterial)
+    deserialize: (value: string | null, fallback: MetalMaterial) => {
+      // SpecRoute / legacy alias → engine id
+      if (value === "stainless-316") return "ss316l";
+      return MATERIALS.includes(value as MetalMaterial)
         ? (value as MetalMaterial)
-        : fallback,
+        : fallback;
+    },
   },
   length: { param: "length", ...urlSyncHelpers.number },
   width: { param: "width", ...urlSyncHelpers.number },
